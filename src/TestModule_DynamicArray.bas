@@ -8,6 +8,7 @@ Option Private Module
 Private Assert As Object
 Private Fakes As Object
 
+Private Const TEST_ARRAY_LENGTH As Long = 10
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -67,5 +68,724 @@ TestFail:
 End Sub
 
 
+'@TestMethod("DynamicArrayConstructor")
+Private Sub DynamicArray_CreatesWithDefaultCapacity_CapacityIs4()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Dim returnedCapacity As Long
+    Dim testResult As Boolean
+    'Act:
+    Set SUT = New DynamicArray
+    returnedCapacity = SUT.Capacity
+    testResult = (returnedCapacity = 4)
+    'Assert:
+    Assert.IsTrue testResult
 
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Capacity")
+Private Sub Capacity_CanSetCapacity_ReturnedCapacityMatchesSetCapacity()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const DESIRED_CAPACITY As Long = 20
+    Dim SUT As DynamicArray
+    Dim returnedCapacity As Long
+    Dim testResult As Boolean
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Capacity = DESIRED_CAPACITY
+    returnedCapacity = SUT.Capacity
+    testResult = (returnedCapacity = DESIRED_CAPACITY)
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Items")
+Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(10, Variants, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    returnedItems = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals testArray, returnedItems
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Items")
+Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(10, Variants, MultiDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    returnedItems = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals testArray, returnedItems
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Items")
+'does not use SequenceEquals due to Rubberduck Bug: https://github.com/rubberduck-vba/Rubberduck/issues/5161
+Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim i As Long, j As Long
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    returnedItems = SUT.Items
+    testResult = True
+    For i = LBound(returnedItems) To UBound(returnedItems)
+        For j = LBound(returnedItems(i)) To UBound(returnedItems(i))
+            If returnedItems(i)(j) <> testArray(i)(j) Then
+                testResult = False
+                Exit For
+            End If
+        Next
+        If testResult = False Then Exit For
+    Next
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Length")
+Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedLength As Long
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    testResult = (SUT.length = TEST_ARRAY_LENGTH)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Length")
+Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOriginalArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedLength As Long
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, MultiDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    testResult = (SUT.length = TEST_ARRAY_LENGTH)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Length")
+Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    testResult = (SUT.length = TEST_ARRAY_LENGTH)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Length")
+Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsOriginalArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    testResult = (SUT.UpperBound = UBound(testArray))
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Base")
+Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim testResult As Boolean
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    testResult = (SUT.Base = LBound(testArray))
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Base")
+Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewBase()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    newBase = oldBase + 1
+    SUT.Base = newBase
+    returnedItems = SUT.Items
+    testResult = (LBound(returnedItems) = newBase)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Base")
+Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewUpperBound()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    newBase = oldBase + 1
+    SUT.Base = newBase
+    returnedItems = SUT.Items
+    testResult = (UBound(returnedItems) = (UBound(testArray) + 1))
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Base")
+Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasSameLength()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    newBase = oldBase + 1
+    SUT.Base = newBase
+    testResult = (SUT.length = TEST_ARRAY_LENGTH)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Item")
+Private Sub Item_ChangingExistingIndex_ItemIsChanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const TEST_VALUE As String = "Hello World"
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Item(1) = TEST_VALUE
+    testResult = (SUT.Item(1) = TEST_VALUE)
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Item")
+Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const TEST_VALUE As String = "Hello World"
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Item(SUT.UpperBound + 1) = TEST_VALUE
+    testResult = (SUT.Item(SUT.UpperBound) = TEST_VALUE)
+
+    'Assert:
+    Assert.IsTrue testResult
+    Assert.IsTrue (SUT.length = TEST_ARRAY_LENGTH + 1)
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Item")
+Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const TEST_VALUE As String = "Hello World"
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+    Dim testResult As Boolean
+    
+    Dim oldBase As Long, newBase As Long
+    
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    oldBase = LBound(testArray)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Item(SUT.Base - 10) = TEST_VALUE
+    testResult = (SUT.Item(SUT.Base) = TEST_VALUE)
+
+    'Assert:
+    Assert.IsTrue testResult
+    Assert.IsTrue (SUT.length = TEST_ARRAY_LENGTH + 1)
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Item")
+Private Sub Item_GetScalarValue_ValueReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedItem As Variant
+    Dim testResult As Boolean
+       
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    returnedItem = SUT.Item(1)
+    testResult = (returnedItem = testArray(1))
+
+    'Assert:
+    Assert.IsTrue testResult
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Item")
+Private Sub Item_GetObject_SameObjectReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As DynamicArray
+    Dim testArray As Variant
+    Dim returnedObject As Object
+    Dim testResult As Boolean
+       
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Objects, OneDimension)
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Items = testArray
+    Set returnedObject = SUT.Item(1)
+
+    'Assert:
+    Assert.AreSame returnedObject, testArray(1)
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Push")
+Private Sub Push_AddToNewDynamicArray_ItemAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Dim testResult As Boolean
+    Set SUT = New DynamicArray
+    Dim element As Variant
+    element = "Hello World"
+    
+    'Act:
+    SUT.Push element
+
+    'Assert:
+    Assert.IsTrue (SUT.Item(SUT.Base) = element), "Element value incorrect"
+    Assert.IsTrue (SUT.length = 1), "Length value incorrect"
+    Assert.IsTrue (SUT.UpperBound = 0), "Upperbound value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Push")
+Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Dim testResult As Boolean
+    Dim element As Variant
+    Dim testArray As Variant
+    Dim gen As ArrayGenerator
+    
+    Set SUT = New DynamicArray
+    Set gen = New ArrayGenerator
+    
+    element = "Hello World"
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Push element
+
+    'Assert:
+    Assert.IsTrue (SUT.Item(SUT.UpperBound) = element), "Element value incorrect"
+    Assert.IsTrue (SUT.length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Push")
+Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Dim testResult As Boolean
+    Dim expected As Variant, actual As Variant
+    Dim testArray As Variant
+    Dim returnedArray As Variant
+    Dim gen As ArrayGenerator
+    
+    Set SUT = New DynamicArray
+    Set gen = New ArrayGenerator
+    
+    expected = "Hello World"
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, MultiDimension)
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Push expected
+    returnedArray = SUT.Items
+    actual = returnedArray(UBound(returnedArray), UBound(returnedArray, 2))
+
+    'Assert:
+    Assert.IsTrue (expected = actual), "Element value incorrect"
+    Assert.IsTrue (SUT.length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Push")
+Private Sub Push_AddToExistingJaggedArray_ItemAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Dim testResult As Boolean
+    Dim expected As Variant, actual As Variant
+    Dim testArray As Variant
+    Dim returnedArray As Variant
+    Dim gen As ArrayGenerator
+    
+    Set SUT = New DynamicArray
+    Set gen = New ArrayGenerator
+    
+    expected = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    
+    'Act:
+    SUT.Items = testArray
+    SUT.Push expected
+    returnedArray = SUT.Items
+    actual = returnedArray(UBound(returnedArray))
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Element value incorrect"
+    Assert.IsTrue (SUT.length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Push")
+Private Sub Push_AddMultipleToNewDynamicArray_ItemsAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+    SUT.Push 1, 2, 3
+
+    'Assert:
+    Assert.IsTrue (SUT.Item(SUT.Base) = 1), "Element value incorrect"
+    Assert.IsTrue (SUT.length = 3), "Length value incorrect"
+    Assert.IsTrue (SUT.UpperBound = 2), "Upperbound value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Pop")
+Private Sub Pop_OneDimensionalArray_LastItemRemoved()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    Dim gen As New ArrayGenerator
+    Dim testArray As Variant
+    
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, Strings, OneDimension)
+    Dim expected As String, actual As String
+    expected = testArray(UBound(testArray))
+    
+    'Act:
+    SUT.Items = testArray
+    actual = SUT.Pop
+
+    'Assert:
+    Assert.IsTrue (actual = expected), "Element value incorrect"
+    Assert.IsTrue (SUT.length = (TEST_ARRAY_LENGTH - 1)), "Length value incorrect"
+    Assert.IsTrue (SUT.UpperBound = (UBound(testArray) - 1)), "Upperbound value incorrect"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
 
