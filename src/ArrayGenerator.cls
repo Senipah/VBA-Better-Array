@@ -26,6 +26,8 @@ Public Enum ArrayTypes
 End Enum
 
 Public Function getArray(Optional length As Long, Optional valType As ValueTypes, Optional arrType As ArrayTypes) As Variant
+    ' remove 1 as arrays are base 0
+    length = length - 1
     If length <= 0 Then length = 1
     If IsMissing(valType) Then valType = Variants
     If IsMissing(arrType) Then arrType = OneDimension
