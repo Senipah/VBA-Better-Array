@@ -133,11 +133,15 @@ Public Property Let Base(value As Long)
 End Property
 
 Public Property Let Item(index As Long, element As Variant)
-    If pLength >= index Then
-        If IsObject(element) Then
-            Set pItems(index) = element
+    If Me.UpperBound >= index Then
+        If index < Me.Base Then
+            Me.Unshift element
         Else
-            pItems(index) = element
+            If IsObject(element) Then
+                Set pItems(index) = element
+            Else
+                pItems(index) = element
+            End If
         End If
     Else
         Me.Push element
