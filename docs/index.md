@@ -2,8 +2,8 @@
 
 ## Properties
 
-* [Base](/properties/Base.md)  
-* [Capacity](/properties/Capacity.md)  
+* [Base](properties/Base.md)  
+* [Capacity](properties/Capacity.md)  
 * [Item](/properties/Item.md)  
 * [Items](/properties/Items.md)  
 * [Length](/properties/Length.md)  
