@@ -5,4 +5,4 @@
 
 
 ## Methods
-* [Concat](/methods/Concat)  
+* [Concat](/methods/Concat.md)  
