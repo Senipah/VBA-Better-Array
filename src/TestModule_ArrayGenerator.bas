@@ -3,7 +3,10 @@ Option Explicit
 Option Private Module
 
 '@TestModule
-'@Folder("Tests")
+'@Folder("Tests.Dependencies.ArrayGenerator.Tests")
+
+'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule LineLabelNotUsed
 
 Private Assert As Object
 Private Fakes As Object
@@ -85,7 +88,9 @@ Private Sub GetArray_BooleansMultiDimension_ValuesAreBoolean()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -114,7 +119,9 @@ Private Sub GetArray_BooleansJagged_ValuesAreBoolean()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -170,7 +177,9 @@ Private Sub GetArray_BytesMultiDimension_ValuesAreBytes()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -199,7 +208,9 @@ Private Sub GetArray_BytesJagged_ValuesAreBytes()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -256,7 +267,9 @@ Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -285,7 +298,9 @@ Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -341,7 +356,9 @@ Private Sub GetArray_LongsMultiDimension_ValuesAreLongs()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -370,7 +387,9 @@ Private Sub GetArray_LongsJagged_ValuesAreLongs()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -429,7 +448,9 @@ Private Sub GetArray_ObjectsMultiDimension_ValuesAreObjects()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -458,7 +479,9 @@ Public Sub GetArray_ObjectsJagged_ValuesAreObjects()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -517,7 +540,9 @@ Private Sub GetArray_StringsMultiDimension_ValuesAreStrings()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -546,7 +571,9 @@ Private Sub GetArray_StringsJagged_ValuesAreStrings()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     
@@ -608,7 +635,9 @@ Private Sub GetArray_VariantsMultiDimension_ValueTypesVary()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     Dim firstType As String
@@ -641,7 +670,9 @@ Private Sub GetArray_VariantsJagged_ValueTypesVary()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim i As Long, j As Long
+    Dim i As Long
+Dim j As Long
+
     Dim returnedArray As Variant
     Dim testResult As Boolean
     Dim firstType As String

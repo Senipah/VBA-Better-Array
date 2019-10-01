@@ -7,6 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
+
+'@Folder("Tests.Dependencies.ArrayGenerator")
+
 Public Enum ValueTypes
     Booleans
     Bytes
@@ -25,44 +29,43 @@ Public Enum ArrayTypes
     jagged
 End Enum
 
-Public Function getArray(Optional length As Long, Optional valType As ValueTypes, Optional arrType As ArrayTypes) As Variant
-    ' remove 1 as arrays are base 0
-    length = length - 1
-    If length <= 0 Then length = 1
-    If IsMissing(valType) Then valType = Variants
-    If IsMissing(arrType) Then arrType = OneDimension
-    Dim rtn As Variant
+Public Function getArray(Optional ByVal Length As Long, Optional ByVal ValueType As ValueTypes = ValueTypes.Variants, Optional ByVal ArrayType As ArrayTypes = ArrayTypes.OneDimension) As Variant
+    Dim localLength As Long
     Dim gen As IArrayGenerator
-    Select Case valType
-        Case ValueTypes.Booleans
-            Set gen = New ArrayGenerator_Booleans
-        Case ValueTypes.Bytes
-            Set gen = New ArrayGenerator_Bytes
-        Case ValueTypes.Doubles
-            Set gen = New ArrayGenerator_Doubles
-        Case ValueTypes.Longs
-            Set gen = New ArrayGenerator_Longs
-        Case ValueTypes.Objects
-            Set gen = New ArrayGenerator_Objects
-        Case ValueTypes.Strings
-            Set gen = New ArrayGenerator_Strings
-        Case ValueTypes.Variants
-            Set gen = New ArrayGenerator_Variants
+       
+    ' subtract 1 1 as arrays are base 0
+    localLength = Length - 1
+    If localLength <= 0 Then localLength = 1
+    
+    Select Case ValueType
+    Case ValueTypes.Booleans
+        Set gen = New ArrayGenerator_Booleans
+    Case ValueTypes.Bytes
+        Set gen = New ArrayGenerator_Bytes
+    Case ValueTypes.Doubles
+        Set gen = New ArrayGenerator_Doubles
+    Case ValueTypes.Longs
+        Set gen = New ArrayGenerator_Longs
+    Case ValueTypes.Objects
+        Set gen = New ArrayGenerator_Objects
+    Case ValueTypes.Strings
+        Set gen = New ArrayGenerator_Strings
+    Case ValueTypes.Variants
+        Set gen = New ArrayGenerator_Variants
     End Select
-    getArray = getArrayOfType(length, gen, arrType)
+    getArray = getArrayOfType(localLength, gen, ArrayType)
 End Function
 
-Private Function getArrayOfType(length As Long, gen As IArrayGenerator, arrType As ArrayTypes) As Variant
-    Dim rtn As Variant
-    Select Case arrType
-        Case ArrayTypes.jagged
-            rtn = gen.getJaggedArray(length)
-        Case ArrayTypes.MultiDimension
-            rtn = gen.getMultidimensionalArray(length)
-        Case ArrayTypes.OneDimension
-            rtn = gen.getOneDimensionalArray(length)
+Private Function getArrayOfType(ByVal Length As Long, ByVal gen As IArrayGenerator, ByVal ArrayType As ArrayTypes) As Variant
+    Dim result As Variant
+    Select Case ArrayType
+    Case ArrayTypes.jagged
+        result = gen.getJaggedArray(Length)
+    Case ArrayTypes.MultiDimension
+        result = gen.getMultidimensionalArray(Length)
+    Case ArrayTypes.OneDimension
+        result = gen.getOneDimensionalArray(Length)
     End Select
-    getArrayOfType = rtn
+    getArrayOfType = result
 End Function
-
 

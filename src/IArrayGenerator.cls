@@ -9,15 +9,17 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public Function getOneDimensionalArray(length As Long) As Variant()
+'@Folder("Tests.Dependencies.IArrayGenerator.Implementations")
+
+Public Function getOneDimensionalArray(Length As Long) As Variant()
 
 End Function
 
-Public Function getMultidimensionalArray(length As Long) As Variant()
+Public Function getMultidimensionalArray(Length As Long) As Variant()
 
 End Function
 
-Public Function getJaggedArray(length As Long) As Variant()
+Public Function getJaggedArray(Length As Long) As Variant()
 
 End Function
 

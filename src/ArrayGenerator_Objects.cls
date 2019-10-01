@@ -10,51 +10,54 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IArrayGenerator
 
+'@Folder("Tests.Dependencies.IArrayGenerator.Implementations")
+
 Private i As Long
 Private j As Long
 
-Private Function rand(Max As Long, Optional Min As Long = 0) As Long
+Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
     Randomize: rand = Int(Rnd * (Max - Min) + 1) + Min
 End Function
 
 Private Function getRandomValue() As Collection
-    Dim rtn As New Collection
-    rtn.Add rand(-1000, 1000)
-    Set getRandomValue = rtn
+    Dim result As Collection
+    Set result = New Collection
+    result.Add rand(-1000, 1000)
+    Set getRandomValue = result
 End Function
 
-Public Function IArrayGenerator_getOneDimensionalArray(length As Long) As Variant()
+Public Function IArrayGenerator_getOneDimensionalArray(Length As Long) As Variant()
     Dim arr() As Variant
-    ReDim arr(length)
-    For i = 0 To length
+    ReDim arr(Length)
+    For i = 0 To Length
         Set arr(i) = getRandomValue()
     Next
     IArrayGenerator_getOneDimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getMultidimensionalArray(length As Long) As Variant()
+Public Function IArrayGenerator_getMultidimensionalArray(Length As Long) As Variant()
     Dim arr() As Variant
-    ReDim arr(length, length)
-    For i = 0 To length
-        For j = 0 To length
+    ReDim arr(Length, Length)
+    For i = 0 To Length
+        For j = 0 To Length
             Set arr(i, j) = getRandomValue()
         Next
     Next
     IArrayGenerator_getMultidimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getJaggedArray(length As Long) As Variant()
-    Dim arr1() As Variant
-    Dim arr2() As Variant
-    ReDim arr1(length)
-    ReDim arr2(length)
-    For i = 0 To length
-        For j = 0 To length
-            Set arr2(j) = getRandomValue()
+Public Function IArrayGenerator_getJaggedArray(Length As Long) As Variant()
+    Dim parentArray() As Variant
+    Dim childArray() As Variant
+    ReDim parentArray(Length)
+    ReDim childArray(Length)
+    For i = 0 To Length
+        For j = 0 To Length
+            childArray(j) = getRandomValue()
         Next
-        arr1(i) = arr2
+        parentArray(i) = childArray
     Next
-    IArrayGenerator_getJaggedArray = arr1
+    IArrayGenerator_getJaggedArray = parentArray
 End Function
 
 
