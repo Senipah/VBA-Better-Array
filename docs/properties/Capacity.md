@@ -1,20 +1,22 @@
-### Capacity
+# Capacity
 
-#### Get
+## Get
 
-##### Description
+### Description
 Returns the current capacity of the internal array.
-##### Arguments
+### Arguments
 None
-##### Returns
-###### (Long)
+### Returns
+#### (Long)
 Current capacity of the internal array.
 
-#### Let
-##### Description
+## Let
+### Description
 Sets the capacity of the internal array.
-##### Arguments
-###### `value` (Long) 
+### Arguments
+#### `value` (Long) 
 The new size of the internal array.
-##### Returns
+### Returns
 None
+
+# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)

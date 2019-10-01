@@ -1,14 +1,16 @@
 
-### Length
+# Length
 
 *(Read-Only)*
 
-#### Get
+## Get
 
-##### Description
+### Description
 Gets the length of the current array
-##### Arguments
+### Arguments
 None
-##### Returns
-###### (Long) 
+### Returns
+#### (Long) 
 The length of the current array.
+
+# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)

@@ -1,11 +1,13 @@
 
-### FromRange
-##### Inspiration
-##### Description
-##### Arguments
-###### `Range` (Range [Object])
-##### Returns
-##### (Variant)
+# FromRange
+### Inspiration
+### Description
+### Arguments
+#### `Range` (Range [Object])
+### Returns
+#### (Variant)
+
+# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
 
 
 

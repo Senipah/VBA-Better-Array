@@ -1,15 +1,17 @@
-### Base
+# Base
 
 *(Read-Only)*
 
-#### Get
+## Get
 
-##### Description
+### Description
 Gets the base (starting index) of the array
 
-##### Arguments
+### Arguments
 None
 
-##### Returns
-###### (Long) 
+### Returns
+#### (Long) 
 Starting index of the array.
+
+# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)

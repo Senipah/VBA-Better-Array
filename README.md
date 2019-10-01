@@ -7,7 +7,7 @@
 
 ## Table of Contents: Optionally, include a table of contents in order to allow other people to quickly navigate especially long or detailed READMEs.
 
-## Link To Docs
+## [Read The Docs](https://senipah.github.io/VBA-DynamicArray/)
 
 ## Installation: Simply download DynamicArray.cls from this repo and import into your VBA project.
 
