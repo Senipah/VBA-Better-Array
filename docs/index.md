@@ -1,8 +1,8 @@
 # VBA-DynamicArray Documentation
 
 ## Properties
-* [Base](/Base.md)
+* [Base](/properties/Base.md)
 
 
 ## Methods
-* [Concat](/Base)  
+* [Concat](/methods/Concat)  
