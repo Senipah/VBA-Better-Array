@@ -33,4 +33,4 @@ Include a section for credits in order to highlight and link to the authors of y
 
 ## License: 
 
-This library is free software; you can redistribute it and/or modify it under the terms of the MIT license. See LICENSE for details.
+This library is free software; you can redistribute it and/or modify it under the terms of the MIT license. See [LICENSE](LICENSE) for details.
