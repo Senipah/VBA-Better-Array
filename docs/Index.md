@@ -4,3 +4,6 @@
 
 ## Methods
 [Concat](/Concat.md)
+
+## Properties
+[Base](/Base.md)
