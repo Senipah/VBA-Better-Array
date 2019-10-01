@@ -2,12 +2,12 @@
 
 ## Properties
 
-* [Base](/methods/Base.md)  
-* [Capacity](/methods/Capacity.md)  
-* [Item](/methods/Item.md)  
-* [Items](/methods/Items.md)  
-* [Length](/methods/Length.md)  
-* [UpperBound](/methods/UpperBound.md)
+* [Base](/properties/Base.md)  
+* [Capacity](/properties/Capacity.md)  
+* [Item](/properties/Item.md)  
+* [Items](/properties/Items.md)  
+* [Length](/properties/Length.md)  
+* [UpperBound](/properties/UpperBound.md)
 
 ## Methods
 
