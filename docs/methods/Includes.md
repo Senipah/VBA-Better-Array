@@ -10,7 +10,7 @@ The `Includes()` method determines whether the array includes a certain value am
 #### `SearchElement` (Variant)
 The value to search for.
 #### *Optional* `FromIndex` (Long)
-The position in this array at which to begin searching for `searchElement`; the first character to be searched is found at `fromIndex` for positive values of `fromIndex`, or at the array's `Length` property + `fromIndex` for negative values of `fromIndex` (using the absolute value of `fromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `Base` property.
+The position in this array at which to begin searching for `SearchElement`; the first character to be searched is found at `FromIndex` for positive values of `FromIndex`, or at the array's `Length` property + `FromIndex` for negative values of `FromIndex` (using the absolute value of `FromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `Base` property.
 ### Returns
 ### (Boolean)
 `True` if the array includes valueToFind, `False` if not.
