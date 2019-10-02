@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'@Folder("TestArrayGenerator")
+'@Folder("DynamicArray")
 
 '@IgnoreModule MultipleDeclarations
 '@IgnoreModule ProcedureNotUsed
@@ -95,7 +95,7 @@ Public Property Get Items()
     Dim result() As Variant
     result = getInternalItems()
     If pArrayType = ArrayTypes.MultiDimension And _
-            getArrayType(result) = ArrayTypes.jagged Then result = jaggedToMulti(result)
+       getArrayType(result) = ArrayTypes.jagged Then result = jaggedToMulti(result)
     Items = result
 End Property
 
@@ -106,7 +106,7 @@ Public Property Let Items(ByVal Values As Variant)
     
     pArrayType = getArrayType(localValues)
     If pArrayType = ArrayTypes.Undefined _
-                Or pArrayType = ArrayTypes.Unallocated Then
+       Or pArrayType = ArrayTypes.Unallocated Then
         Err.Raise 9
     Else
         If pArrayType = ArrayTypes.MultiDimension Then
@@ -176,7 +176,7 @@ End Property
 Public Function Push(ParamArray Args() As Variant) As Variant
     Dim Element As Variant
     If pArrayType = ArrayTypes.Unallocated Or _
-            pArrayType = ArrayTypes.Undefined Then
+       pArrayType = ArrayTypes.Undefined Then
         pArrayType = ArrayTypes.OneDimension
     End If
     For Each Element In Args
@@ -268,7 +268,7 @@ Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     localItems = getInternalItems()
     ArrayType = getArrayType(localItems)
     If Not ArrayType = ArrayTypes.Undefined And _
-            Not ArrayType = ArrayTypes.Unallocated Then
+       Not ArrayType = ArrayTypes.Unallocated Then
         If ArrayType = ArrayTypes.MultiDimension Then
             localItems = multiToJagged(localItems)
         End If
@@ -284,7 +284,7 @@ Public Function Sort(Optional ByVal SortColumn As Long) As Variant
     localItems = getInternalItems()
     ArrayType = getArrayType(localItems)
     If ArrayType = ArrayTypes.Unallocated Or _
-            ArrayType = ArrayTypes.Undefined Then
+       ArrayType = ArrayTypes.Undefined Then
         sortedItems = pEmptyArray
     Else
         If Me.Length > 0 Then
@@ -427,13 +427,12 @@ Public Function Keys() As Variant
     Keys = result
 End Function
 
-'TODO: finish & write docs
 Private Function Max(ParamArray Args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
     
-    If UBound(Args) < LBound(Args) Then 'Test if no args provided
+    If UBound(Args) < LBound(Args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
         arr = Args
@@ -463,13 +462,12 @@ Private Function Max(ParamArray Args() As Variant) As Variant
     Max = result
 End Function
 
-'TODO: finish & write docs
 Private Function Min(ParamArray Args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
     
-    If UBound(Args) < LBound(Args) Then 'Test if no args provided
+    If UBound(Args) < LBound(Args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
         arr = Args
@@ -499,7 +497,6 @@ Private Function Min(ParamArray Args() As Variant) As Variant
     Min = result
 End Function
 
-'TODO: finish & write docs
 Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant
     '@Ignore ShadowedDeclaration
     Dim localLength As Long, relativeStart As Long, relativeEnd As Long
@@ -537,7 +534,6 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Slice = result
 End Function
 
-'TODO: finish & write docs
 Public Function Reverse() As Variant
     Dim i As Long, localUpperBound As Long
     Dim arr() As Variant, result() As Variant
@@ -644,11 +640,11 @@ Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
 End Function
 
 Private Function isArrayAllocated(ByVal arr As Variant) As Boolean
-        On Error Resume Next
-        isArrayAllocated = IsArray(arr) And _
-                           Not IsError(LBound(arr, 1)) And _
-                           LBound(arr, 1) <= UBound(arr, 1)
-        On Error GoTo 0
+    On Error Resume Next
+    isArrayAllocated = IsArray(arr) And _
+                                    Not IsError(LBound(arr, 1)) And _
+                                    LBound(arr, 1) <= UBound(arr, 1)
+    On Error GoTo 0
 End Function
 
 Private Function isJaggedArray(ByVal arr As Variant) As Boolean
@@ -737,10 +733,10 @@ Private Function copyRange(ByRef newItems As Variant) As Variant
 End Function
 
 Private Function jaggedToMulti(ByVal arr As Variant, _
-            Optional ByVal depth As Long, _
-            Optional ByVal currentDepth As Long, _
-            Optional ByRef crumbs As Variant, _
-            Optional ByRef result As Variant) As Variant
+                               Optional ByVal depth As Long, _
+                               Optional ByVal currentDepth As Long, _
+                               Optional ByRef crumbs As Variant, _
+                               Optional ByRef result As Variant) As Variant
     Dim localBase As Long
     Dim localUpperBound As Long
     Dim localDepth As Long
@@ -891,62 +887,61 @@ Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
     getMultidimensionalArrayDepth = i - 1
 End Function
 
-
 Private Function getElementByBreadcrumb(ByVal arr As Variant, ByVal crumb As Variant) As Variant
     Dim result As Variant
     Select Case UBound(crumb)
-        Case 0
-            result = arr(crumb(0))
-        Case 1
-            result = arr(crumb(0), crumb(1))
-        Case 2
-            result = arr(crumb(0), crumb(1), crumb(2))
-        Case 3
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3))
-        Case 4
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4))
-        Case 5
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5))
-        Case 6
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6))
-        Case 7
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7))
-        Case 8
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8))
-        Case 9
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9))
-        Case 10
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10))
-        Case 11
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11))
-        Case 12
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12))
-        Case 13
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13))
-        Case 14
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14))
-        Case 15
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15))
-        Case 16
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16))
-        Case 17
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17))
-        Case 18
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18))
-        Case 19
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19))
-        Case 20
-            result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20))
+    Case 0
+        result = arr(crumb(0))
+    Case 1
+        result = arr(crumb(0), crumb(1))
+    Case 2
+        result = arr(crumb(0), crumb(1), crumb(2))
+    Case 3
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3))
+    Case 4
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4))
+    Case 5
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5))
+    Case 6
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6))
+    Case 7
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7))
+    Case 8
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8))
+    Case 9
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9))
+    Case 10
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10))
+    Case 11
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11))
+    Case 12
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12))
+    Case 13
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13))
+    Case 14
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14))
+    Case 15
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15))
+    Case 16
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16))
+    Case 17
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17))
+    Case 18
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18))
+    Case 19
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19))
+    Case 20
+        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20))
     End Select
     getElementByBreadcrumb = result
 End Function
@@ -954,113 +949,113 @@ End Function
 Private Function letElementByBreadcrumb(ByVal arr As Variant, ByVal crumb As Variant, ByVal Element As Variant) As Variant
     If IsObject(Element) Then
         Select Case UBound(crumb)
-            Case 0
-                Set arr(crumb(0)) = Element
-            Case 1
-                Set arr(crumb(0), crumb(1)) = Element
-            Case 2
-                Set arr(crumb(0), crumb(1), crumb(2)) = Element
-            Case 3
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
-            Case 4
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
-            Case 5
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
-            Case 6
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
-            Case 7
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
-            Case 8
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
-            Case 9
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
-            Case 10
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
-            Case 11
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11)) = Element
-            Case 12
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12)) = Element
-            Case 13
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13)) = Element
-            Case 14
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14)) = Element
-            Case 15
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
-            Case 16
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
-            Case 17
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
-            Case 18
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
-            Case 19
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
-            Case 20
-                Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
+        Case 0
+            Set arr(crumb(0)) = Element
+        Case 1
+            Set arr(crumb(0), crumb(1)) = Element
+        Case 2
+            Set arr(crumb(0), crumb(1), crumb(2)) = Element
+        Case 3
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
+        Case 4
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
+        Case 5
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
+        Case 6
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
+        Case 7
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
+        Case 8
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
+        Case 9
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
+        Case 10
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
+        Case 11
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11)) = Element
+        Case 12
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12)) = Element
+        Case 13
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13)) = Element
+        Case 14
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14)) = Element
+        Case 15
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
+        Case 16
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
+        Case 17
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
+        Case 18
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
+        Case 19
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
+        Case 20
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
         End Select
     Else
         Select Case UBound(crumb)
-            Case 0
-                arr(crumb(0)) = Element
-            Case 1
-                arr(crumb(0), crumb(1)) = Element
-            Case 2
-                arr(crumb(0), crumb(1), crumb(2)) = Element
-            Case 3
-                arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
-            Case 4
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
-            Case 5
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
-            Case 6
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
-            Case 7
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
-            Case 8
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
-            Case 9
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
-            Case 10
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
-            Case 11
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11)) = Element
-            Case 12
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12)) = Element
-            Case 13
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13)) = Element
-            Case 14
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14)) = Element
-            Case 15
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
-            Case 16
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
-            Case 17
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
-            Case 18
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
-            Case 19
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
-            Case 20
-                arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                        crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
+        Case 0
+            arr(crumb(0)) = Element
+        Case 1
+            arr(crumb(0), crumb(1)) = Element
+        Case 2
+            arr(crumb(0), crumb(1), crumb(2)) = Element
+        Case 3
+            arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
+        Case 4
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
+        Case 5
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
+        Case 6
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
+        Case 7
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
+        Case 8
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
+        Case 9
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
+        Case 10
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
+        Case 11
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11)) = Element
+        Case 12
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12)) = Element
+        Case 13
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13)) = Element
+        Case 14
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14)) = Element
+        Case 15
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
+        Case 16
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
+        Case 17
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
+        Case 18
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
+        Case 19
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
+        Case 20
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
         End Select
     End If
     letElementByBreadcrumb = arr
@@ -1069,171 +1064,95 @@ End Function
 Private Function createMultidimensionalArray(ByVal crumb As Variant) As Variant
     Dim result() As Variant
     Select Case UBound(crumb)
-        Case 0
-            ReDim result(crumb(0)(0) To crumb(0)(1))
-        Case 1
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1))
-        Case 2
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1))
-        Case 3
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1))
-        Case 4
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1))
-        Case 5
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1))
-        Case 6
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1))
-        Case 7
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1))
-        Case 8
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1))
-        Case 9
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1))
-        Case 10
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1))
-        Case 11
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1))
-        Case 12
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1))
-        Case 13
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1))
-        Case 14
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1))
-        Case 15
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1))
-        Case 16
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
-                crumb(16)(0) To crumb(16)(1))
-        Case 17
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
-                crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1))
-        Case 18
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
-                crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1))
-        Case 19
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
-                crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1))
-        Case 20
-            ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
-                crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
-                crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
-                crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
-                crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1), _
-                crumb(20)(0) To crumb(20)(1))
+    Case 0
+        ReDim result(crumb(0)(0) To crumb(0)(1))
+    Case 1
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1))
+    Case 2
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1))
+    Case 3
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1))
+    Case 4
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1))
+    Case 5
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1))
+    Case 6
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1))
+    Case 7
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1))
+    Case 8
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1))
+    Case 9
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1))
+    Case 10
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1))
+    Case 11
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1))
+    Case 12
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1))
+    Case 13
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1))
+    Case 14
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1))
+    Case 15
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1))
+    Case 16
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1))
+    Case 17
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1))
+    Case 18
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1))
+    Case 19
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1))
+    Case 20
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1), _
+                     crumb(20)(0) To crumb(20)(1))
     End Select
     createMultidimensionalArray = result
 End Function
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

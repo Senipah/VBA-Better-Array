@@ -174,7 +174,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Items")
-'does not use SequenceEquals due to Rubberduck Bug: https://github.com/rubberduck-vba/Rubberduck/issues/5161
+' NOTE: does not use SequenceEquals due to Rubberduck issue: https://github.com/rubberduck-vba/Rubberduck/issues/5161
 Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
@@ -183,7 +183,7 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     Dim SUT As DynamicArray
     Dim testArray As Variant
     Dim i As Long
-Dim j As Long
+    Dim j As Long
 
     Dim returnedItems As Variant
     Dim testResult As Boolean
