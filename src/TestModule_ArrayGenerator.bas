@@ -7,6 +7,7 @@ Option Private Module
 
 '@IgnoreModule ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
+'@IgnoreModule EmptyMethod
 
 Private Assert As Object
 Private Fakes As Object
@@ -63,13 +64,13 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Booleans, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If TypeName(v) <> "Boolean" Then testResult = False
+    For Each Element In returnedArray
+        If TypeName(Element) <> "Boolean" Then testResult = False
     Next
     
     'Assert:
@@ -152,13 +153,13 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Bytes, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If TypeName(v) <> "Byte" Then testResult = False
+    For Each Element In returnedArray
+        If TypeName(Element) <> "Byte" Then testResult = False
     Next
     
     'Assert:
@@ -242,13 +243,13 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Doubles, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If TypeName(v) <> "Double" Then testResult = False
+    For Each Element In returnedArray
+        If TypeName(Element) <> "Double" Then testResult = False
     Next
     
     'Assert:
@@ -331,13 +332,13 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Longs, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If TypeName(v) <> "Long" Then testResult = False
+    For Each Element In returnedArray
+        If TypeName(Element) <> "Long" Then testResult = False
     Next
     
     'Assert:
@@ -423,13 +424,13 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Objects, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If Not IsObject(v) Then testResult = False
+    For Each Element In returnedArray
+        If Not IsObject(Element) Then testResult = False
     Next
     
     'Assert:
@@ -515,13 +516,13 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     Set SUT = New ArrayGenerator
     Dim returnedArray As Variant
     Dim testResult As Boolean
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Strings, ArrayTypes.OneDimension)
     testResult = True
-    For Each v In returnedArray
-        If TypeName(v) <> "String" Then testResult = False
+    For Each Element In returnedArray
+        If TypeName(Element) <> "String" Then testResult = False
     Next
     
     'Assert:
@@ -607,13 +608,13 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     Dim returnedArray As Variant
     Dim testResult As Boolean
     Dim firstType As String
-    Dim v As Variant
+    Dim Element As Variant
     
     'Act:
     returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.Variants, ArrayTypes.OneDimension)
     firstType = TypeName(returnedArray(0))
-    For Each v In returnedArray
-        If TypeName(v) <> firstType Then
+    For Each Element In returnedArray
+        If TypeName(Element) <> firstType Then
             testResult = True
             Exit For
         End If
@@ -1196,7 +1197,7 @@ End Sub
 '    jagged
 
 
-Private Function getLength(arr() As Variant) As Long
+Private Function getLength(ByRef arr() As Variant) As Long
     getLength = UBound(arr) - LBound(arr)
 End Function
 

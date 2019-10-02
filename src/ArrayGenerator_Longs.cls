@@ -23,7 +23,7 @@ Private Function getRandomValue() As Long
     getRandomValue = rand(-1000, 1000)
 End Function
 
-Public Function IArrayGenerator_getOneDimensionalArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getOneDimensionalArray(ByVal Length As Long) As Variant()
     Dim arr() As Variant
     ReDim arr(Length)
     For i = 0 To Length
@@ -32,7 +32,7 @@ Public Function IArrayGenerator_getOneDimensionalArray(Length As Long) As Varian
     IArrayGenerator_getOneDimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getMultidimensionalArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getMultidimensionalArray(ByVal Length As Long) As Variant()
     Dim arr() As Variant
     ReDim arr(Length, Length)
     For i = 0 To Length
@@ -43,7 +43,7 @@ Public Function IArrayGenerator_getMultidimensionalArray(Length As Long) As Vari
     IArrayGenerator_getMultidimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getJaggedArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getJaggedArray(ByVal Length As Long) As Variant()
     Dim parentArray() As Variant
     Dim childArray() As Variant
     ReDim parentArray(Length)

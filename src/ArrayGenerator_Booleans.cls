@@ -12,13 +12,13 @@ Implements IArrayGenerator
 
 '@Folder("Tests.Dependencies.IArrayGenerator.Implementations")
 
-Private values(0 To 1) As Boolean
+Private Values(0 To 1) As Boolean
 Private i As Long
 Private j As Long
 
 Private Sub Class_Initialize()
-    values(0) = True
-    values(1) = False
+    Values(0) = True
+    Values(1) = False
 End Sub
 
 Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
@@ -26,10 +26,10 @@ Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
 End Function
 
 Private Function getRandomValue() As Boolean
-    getRandomValue = values(rand(LBound(values), UBound(values)))
+    getRandomValue = Values(rand(LBound(Values), UBound(Values)))
 End Function
 
-Public Function IArrayGenerator_getOneDimensionalArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getOneDimensionalArray(ByVal Length As Long) As Variant()
     Dim arr() As Variant
     ReDim arr(Length)
     For i = 0 To Length
@@ -38,7 +38,7 @@ Public Function IArrayGenerator_getOneDimensionalArray(Length As Long) As Varian
     IArrayGenerator_getOneDimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getMultidimensionalArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getMultidimensionalArray(ByVal Length As Long) As Variant()
     Dim arr() As Variant
     ReDim arr(Length, Length)
     For i = 0 To Length
@@ -49,7 +49,7 @@ Public Function IArrayGenerator_getMultidimensionalArray(Length As Long) As Vari
     IArrayGenerator_getMultidimensionalArray = arr
 End Function
 
-Public Function IArrayGenerator_getJaggedArray(Length As Long) As Variant()
+Public Function IArrayGenerator_getJaggedArray(ByVal Length As Long) As Variant()
     Dim parentArray() As Variant
     Dim childArray() As Variant
 

@@ -11,15 +11,15 @@ Option Explicit
 
 '@Folder("Tests.Dependencies.IArrayGenerator.Implementations")
 
-Public Function getOneDimensionalArray(Length As Long) As Variant()
+Public Function getOneDimensionalArray(ByVal Length As Long) As Variant()
 
 End Function
 
-Public Function getMultidimensionalArray(Length As Long) As Variant()
+Public Function getMultidimensionalArray(ByVal Length As Long) As Variant()
 
 End Function
 
-Public Function getJaggedArray(Length As Long) As Variant()
+Public Function getJaggedArray(ByVal Length As Long) As Variant()
 
 End Function
 

@@ -14,7 +14,7 @@ Current capacity of the internal array.
 ### Description
 Sets the capacity of the internal array.
 ### Arguments
-#### `value` (Long) 
+#### `Value` (Long) 
 The new size of the internal array.
 ### Returns
 None

@@ -12,7 +12,7 @@ The `Push()` method adds one or more elements to the end of an array, in the ord
 *Internal array capacity will be doubled automatically every time the length of the array equals or exceeds the capacity of the internal array.*
 
 ### Arguments
-#### ParamArray `args` (variant) 
+#### ParamArray `Args` (variant) 
 The element(s) to be added to the end of the array.
 
 ### Returns

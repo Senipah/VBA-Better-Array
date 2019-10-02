@@ -12,9 +12,9 @@ The `Filter()` method filters and returns the current array based on the specifi
 Provides ability to filter on variant arrays (not just with strings unlike the VBA version).
 
 ### Arguments
-#### `match` (Variant)
+#### `Match` (Variant)
 The value to compare against
-#### *Optional* `exclude` (Boolean)
+#### *Optional* `Exclude` (Boolean)
 Boolean value indicating whether to return values that include or exclude `match`. If include is True, `Filter` returns the subset of the array that contains `match`. If include is False, `Filter` returns the subset of the array that does not contain `match`.
 ### Returns
 #### (Variant)
