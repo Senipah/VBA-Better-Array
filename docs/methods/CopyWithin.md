@@ -13,10 +13,10 @@ The `CopyWithin()` method shallow copies part of an array to another location in
 #### `Target` (Long)
 The index at which to copy the sequence to. If negative, `Target` will be counted from the end.
 If `Target` is at or greater than the array's `Length` property, nothing will be copied. If `Target` is positioned after `StartIndex`, the copied sequence will be trimmed to fit the array's `Length` property.
-#### *Optional* `` (Long)
+#### *Optional* `StartIndex` (Long)
 The index at which to start copying elements from. If negative, `StartIndex` will be counted from the end.
 If `StartIndex` is omitted, `CopyWithin` will copy from the base index of the array. 
-#### *Optional* `` (Long)
+#### *Optional* `EndIndex` (Long)
 The index at which to end copying elements from. `CopyWithin` copies up to but not including `EndIndex`. If negative, `EndIndex` will be counted from the end.
 If `EndIndex` is omitted, `CopyWithin` will copy until the last index (default to the array's `Length` property).
 ### Returns
