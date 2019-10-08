@@ -2,21 +2,37 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ArrayGenerator_Strings"
+Attribute VB_Name = "ValuesList_Strings"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Implements IArrayGenerator
+Implements IValuesList
 
-'@Folder("Tests.Dependencies.IArrayGenerator.Implementations")
+'@Folder("Tests.Dependencies.IValuesList.Implementations")
 
-Private Values(0 To 4944) As String
-Private i As Long
-Private j As Long
+Private IsObjectType As Boolean
+Private Values(0 To 1235) As String
 
 Private Sub Class_Initialize()
+    populateValuesList
+    IsObjectType = False
+End Sub
+
+Public Property Get IValuesList_IsObjectType() As Boolean
+    IValuesList_IsObjectType = IsObjectType
+End Property
+
+Public Function IValuesList_GetRandomValue() As Variant
+    IValuesList_GetRandomValue = Values(rand(LBound(Values), UBound(Values)))
+End Function
+
+Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
+    Randomize: rand = Int(Rnd * (Max - Min) + 1) + Min
+End Function
+
+Private Sub populateValuesList()
     Values(0) = "Aarika"
     Values(1) = "Abbey"
     Values(2) = "Abbye"
@@ -1253,48 +1269,4 @@ Private Sub Class_Initialize()
     Values(1233) = "Zonda"
     Values(1234) = "Zorah"
     Values(1235) = "Zsa Zsa"
-
 End Sub
-
-Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
-    Randomize: rand = Int(Rnd * (Max - Min) + 1) + Min
-End Function
-
-Private Function getRandomValue() As String
-    getRandomValue = Values(rand(LBound(Values), UBound(Values)))
-End Function
-
-Public Function IArrayGenerator_getOneDimensionalArray(ByVal Length As Long) As Variant()
-    Dim arr() As Variant
-    ReDim arr(Length)
-    For i = 0 To Length
-        arr(i) = getRandomValue()
-    Next
-    IArrayGenerator_getOneDimensionalArray = arr
-End Function
-
-Public Function IArrayGenerator_getMultidimensionalArray(ByVal Length As Long) As Variant()
-    Dim arr() As Variant
-    ReDim arr(Length, Length)
-    For i = 0 To Length
-        For j = 0 To Length
-            arr(i, j) = getRandomValue()
-        Next
-    Next
-    IArrayGenerator_getMultidimensionalArray = arr
-End Function
-
-Public Function IArrayGenerator_getJaggedArray(ByVal Length As Long) As Variant()
-    Dim parentArray() As Variant
-    Dim childArray() As Variant
-    ReDim parentArray(Length)
-    ReDim childArray(Length)
-    For i = 0 To Length
-        For j = 0 To Length
-            childArray(j) = getRandomValue()
-        Next
-        parentArray(i) = childArray
-    Next
-    IArrayGenerator_getJaggedArray = parentArray
-End Function
-

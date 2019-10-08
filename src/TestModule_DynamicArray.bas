@@ -10,6 +10,7 @@ Option Private Module
 '@IgnoreModule EmptyMethod
 
 Private Assert As Object
+'@Ignore VariableNotUsed
 Private Fakes As Object
 
 Private Const TEST_ARRAY_LENGTH As Long = 10
@@ -130,7 +131,7 @@ Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray(
     Dim returnedItems As Variant
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(10, Variants, OneDimension)
+    testArray = gen.getArray(10, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -157,7 +158,7 @@ Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArra
     Dim returnedItems As Variant
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(10, Variants, MultiDimension)
+    testArray = gen.getArray(10, VariantVals, MultiDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -189,7 +190,7 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New DynamicArray
     
     'Act:
@@ -227,7 +228,7 @@ Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalA
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -254,7 +255,7 @@ Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOrigina
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, MultiDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -281,7 +282,7 @@ Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New DynamicArray
     
     'Act:
@@ -309,7 +310,7 @@ Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsO
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -336,7 +337,7 @@ Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -369,7 +370,7 @@ Dim newBase As Long
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     oldBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -405,7 +406,7 @@ Dim newBase As Long
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     oldBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -441,7 +442,7 @@ Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasSameLength()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     oldBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -479,7 +480,7 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -515,7 +516,7 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -553,7 +554,7 @@ Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedBase = LBound(testArray)
     Set SUT = New DynamicArray
     
@@ -587,7 +588,7 @@ Private Sub Item_GetScalarValue_ValueReturned()
     Dim testResult As Boolean
        
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -616,7 +617,7 @@ Private Sub Item_GetObject_SameObjectReturned()
     Dim returnedObject As Object
        
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Objects, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, ObjectVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -671,7 +672,7 @@ Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
     Set gen = New ArrayGenerator
     
     Element = "Hello World"
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     
     'Act:
     SUT.Items = testArray
@@ -704,7 +705,7 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     Set gen = New ArrayGenerator
     
     expected = "Hello World"
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, MultiDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     
     'Act:
     SUT.Items = testArray
@@ -739,8 +740,8 @@ Private Sub Push_AddToExistingJaggedArray_ItemAdded()
     Set SUT = New DynamicArray
     Set gen = New ArrayGenerator
     
-    expected = gen.getArray(TEST_ARRAY_LENGTH, Variants, OneDimension)
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Variants, jagged)
+    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     
     'Act:
     SUT.Items = testArray
@@ -795,7 +796,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     Dim actualBase As Long
     Dim expectedBase As Long
     
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Strings, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
 Dim actual As String
 
@@ -865,7 +866,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     Dim actualBase As Long
     Dim expectedBase As Long
     
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Strings, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 
@@ -933,7 +934,7 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     Dim actualBase As Long
     Dim expectedBase As Long
     
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, Strings, OneDimension)
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 

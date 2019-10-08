@@ -26,7 +26,7 @@ Private Enum ArrayTypes
     Unallocated
     OneDimension
     MultiDimension
-    jagged
+    Jagged
 End Enum
 
 ''''''''''
@@ -60,14 +60,14 @@ End Sub
 ' Public Properties '
 '''''''''''''''''''''
 
-Public Property Let Capacity(ByVal Value As Long)
-    If Value < 0 Then Err.Raise 9
-    If Value <> pCapacity Then
+Public Property Let Capacity(ByVal value As Long)
+    If value < 0 Then Err.Raise 9
+    If value <> pCapacity Then
         If pCapacity > 0 Then
-            If (UBound(pItems) - LBound(pItems) + 1) <> Value Then
+            If (UBound(pItems) - LBound(pItems) + 1) <> value Then
                 Dim newItems() As Variant
                 newItems = pItems
-                ReDim Preserve newItems(pBase To (Value + pBase - 1))
+                ReDim Preserve newItems(pBase To (value + pBase - 1))
                 pItems = newItems
             End If
         Else
@@ -82,11 +82,6 @@ Public Property Get Capacity() As Long
     Capacity = pCapacity
 End Property
 
-' Read Only
-'Public Property Let Length(value As Long)
-'    pLength = value
-'End Property
-
 Public Property Get Length() As Long
     Length = pLength
 End Property
@@ -95,7 +90,7 @@ Public Property Get Items()
     Dim result() As Variant
     result = getInternalItems()
     If pArrayType = ArrayTypes.MultiDimension And _
-       getArrayType(result) = ArrayTypes.jagged Then result = jaggedToMulti(result)
+       getArrayType(result) = ArrayTypes.Jagged Then result = jaggedToMulti(result)
     Items = result
 End Property
 
@@ -130,9 +125,9 @@ Public Property Get Base() As Long
     Base = pBase
 End Property
 
-Public Property Let Base(ByVal Value As Long)
-    If Value <> pBase And Value >= 0 Then
-        pBase = Value
+Public Property Let Base(ByVal value As Long)
+    If value <> pBase And value >= 0 Then
+        pBase = value
         Rebase
     End If
 End Property
@@ -181,7 +176,7 @@ Public Function Push(ParamArray Args() As Variant) As Variant
     End If
     For Each Element In Args
         If IsArray(Element) And pArrayType = ArrayTypes.OneDimension Then
-            pArrayType = ArrayTypes.jagged
+            pArrayType = ArrayTypes.Jagged
         End If
         If pLength = pCapacity Then
             EnsureCapacity pLength + 1
@@ -564,7 +559,7 @@ Private Function qsPartition(ByVal arr As Variant, ByVal low As Long, ByVal high
     Dim i As Long, j As Long
     Dim pivot As Variant, current As Variant
     
-    If ArrayType = jagged Then
+    If ArrayType = Jagged Then
         pivot = arr(high)(col)
     Else
         pivot = arr(high)
@@ -572,7 +567,7 @@ Private Function qsPartition(ByVal arr As Variant, ByVal low As Long, ByVal high
     
     i = low - 1
     For j = low To high - 1
-        If ArrayType = jagged Then
+        If ArrayType = Jagged Then
             current = arr(j)(col)
         Else
             current = arr(j)
@@ -631,7 +626,7 @@ Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
         If isMultidimensionalArray(arr) Then
             result = ArrayTypes.MultiDimension
         ElseIf isJaggedArray(arr) Then
-            result = ArrayTypes.jagged
+            result = ArrayTypes.Jagged
         Else
             result = ArrayTypes.OneDimension
         End If
@@ -667,6 +662,7 @@ End Function
 Private Function isMultidimensionalArray(ByVal arr As Variant) As Boolean
     If IsArray(arr) Then
         On Error GoTo errHandler
+        '@Ignore VariableNotUsed
         Dim localUpperBound As Long
         '@Ignore AssignmentNotUsed
         localUpperBound = UBound(arr, 2)
@@ -876,6 +872,7 @@ Private Function getArrayBounds(ByVal arr As Variant) As Variant
 End Function
 
 Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
+    '@Ignore VariableNotUsed
     Dim i As Long, void As Long
     On Error Resume Next
     Do
@@ -1154,5 +1151,7 @@ Private Function createMultidimensionalArray(ByVal crumb As Variant) As Variant
     End Select
     createMultidimensionalArray = result
 End Function
+
+
 
 
