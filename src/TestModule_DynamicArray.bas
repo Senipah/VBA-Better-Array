@@ -10,8 +10,13 @@ Option Private Module
 '@IgnoreModule EmptyMethod
 
 Private Assert As Object
+'Move to early bind
+' Private Assert As AssertClass
 '@Ignore VariableNotUsed
 Private Fakes As Object
+'Move to early bind
+'Private Fakes As FakesProvider
+
 
 Private Const TEST_ARRAY_LENGTH As Long = 10
 
@@ -20,6 +25,9 @@ Private Sub ModuleInitialize()
     'this method runs once per module.
     Set Assert = CreateObject("Rubberduck.AssertClass")
     Set Fakes = CreateObject("Rubberduck.FakesProvider")
+    ' Move to early binding
+'    Set Assert = New AssertClass
+'    Set Fakes = New FakesProvider
 End Sub
 
 '@ModuleCleanup
@@ -78,15 +86,17 @@ Private Sub DynamicArray_CreatesWithDefaultCapacity_CapacityIsFour()
     On Error GoTo TestFail
     
     'Arrange:
+    Const expected As Long = 4
     Dim SUT As DynamicArray
-    Dim returnedCapacity As Long
-    Dim testResult As Boolean
-    'Act:
+    Dim actual As Long
+    
     Set SUT = New DynamicArray
-    returnedCapacity = SUT.Capacity
-    testResult = (returnedCapacity = 4)
+    
+    'Act:
+    actual = SUT.Capacity
+    
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Default capacity incorrect"
 
 TestExit:
     Exit Sub
@@ -100,18 +110,18 @@ Private Sub Capacity_CanSetCapacity_ReturnedCapacityMatchesSetCapacity()
     On Error GoTo TestFail
     
     'Arrange:
-    Const DESIRED_CAPACITY As Long = 20
+    Const expected As Long = 20
     Dim SUT As DynamicArray
-    Dim returnedCapacity As Long
-    Dim testResult As Boolean
+    Dim actual As Long
+
     Set SUT = New DynamicArray
     
     'Act:
-    SUT.Capacity = DESIRED_CAPACITY
-    returnedCapacity = SUT.Capacity
-    testResult = (returnedCapacity = DESIRED_CAPACITY)
+    SUT.Capacity = expected
+    actual = SUT.Capacity
+
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Returned capacity does not equal set capacity"
 
 TestExit:
     Exit Sub
@@ -127,19 +137,19 @@ Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray(
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
-    Dim returnedItems As Variant
+    Dim expected As Variant
+    Dim actual As Variant
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(10, VariantVals, OneDimension)
+    expected = gen.getArray(10, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
-    SUT.Items = testArray
-    returnedItems = SUT.Items
+    SUT.Items = expected
+    actual = SUT.Items
 
     'Assert:
-    Assert.SequenceEquals testArray, returnedItems
+    Assert.SequenceEquals expected, actual, "Actual array does not match expected"
 
 TestExit:
     Exit Sub
@@ -154,19 +164,19 @@ Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArra
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
-    Dim returnedItems As Variant
+    Dim expected As Variant
+    Dim actual As Variant
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(10, VariantVals, MultiDimension)
+    expected = gen.getArray(10, VariantVals, MultiDimension)
     Set SUT = New DynamicArray
     
     'Act:
-    SUT.Items = testArray
-    returnedItems = SUT.Items
+    SUT.Items = expected
+    actual = SUT.Items
 
     'Assert:
-    Assert.SequenceEquals testArray, returnedItems
+    Assert.SequenceEquals expected, actual, "Actual array does not match expected"
 
 TestExit:
     Exit Sub
@@ -182,24 +192,23 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim expected As Variant
+    Dim actual As Variant
     Dim i As Long
     Dim j As Long
-
-    Dim returnedItems As Variant
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
+    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New DynamicArray
     
     'Act:
-    SUT.Items = testArray
-    returnedItems = SUT.Items
+    SUT.Items = expected
+    actual = SUT.Items
     testResult = True
-    For i = LBound(returnedItems) To UBound(returnedItems)
-        For j = LBound(returnedItems(i)) To UBound(returnedItems(i))
-            If returnedItems(i)(j) <> testArray(i)(j) Then
+    For i = LBound(actual) To UBound(actual)
+        For j = LBound(actual(i)) To UBound(actual(i))
+            If actual(i)(j) <> expected(i)(j) Then
                 testResult = False
                 Exit For
             End If
@@ -208,7 +217,7 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     Next
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.IsTrue testResult, "Contents of expected and actual do not match"
 
 TestExit:
     Exit Sub
@@ -225,18 +234,20 @@ Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalA
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim expected As Long
+    Dim actual As Long
     
     Set gen = New ArrayGenerator
+    expected = TEST_ARRAY_LENGTH
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
     SUT.Items = testArray
-    testResult = (SUT.Length = TEST_ARRAY_LENGTH)
+    actual = SUT.Length
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual length <> expected"
 
 TestExit:
     Exit Sub
@@ -252,18 +263,20 @@ Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOrigina
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim expected As Long
+    Dim actual As Long
     
     Set gen = New ArrayGenerator
+    expected = TEST_ARRAY_LENGTH
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     Set SUT = New DynamicArray
     
     'Act:
     SUT.Items = testArray
-    testResult = (SUT.Length = TEST_ARRAY_LENGTH)
-
+    actual = SUT.Length
+    
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual length <> expected"
 
 TestExit:
     Exit Sub
@@ -279,18 +292,21 @@ Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim expected As Long
+    Dim actual As Long
+    
     
     Set gen = New ArrayGenerator
+    expected = TEST_ARRAY_LENGTH
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New DynamicArray
     
     'Act:
     SUT.Items = testArray
-    testResult = (SUT.Length = TEST_ARRAY_LENGTH)
+    actual = SUT.Length
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual length <> expected"
 
 TestExit:
     Exit Sub
@@ -307,18 +323,20 @@ Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsO
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim expected As Long
+    Dim actual As Long
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    expected = UBound(testArray)
     Set SUT = New DynamicArray
     
     'Act:
     SUT.Items = testArray
-    testResult = (SUT.UpperBound = UBound(testArray))
+    actual = SUT.UpperBound
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual upperbound <> expected"
 
 TestExit:
     Exit Sub
@@ -334,18 +352,20 @@ Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim expected As Long
+    Dim actual As Long
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    expected = LBound(testArray)
     Set SUT = New DynamicArray
     
     'Act:
     SUT.Items = testArray
-    testResult = (SUT.Base = LBound(testArray))
+    actual = SUT.Base
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual base <> expected"
 
 TestExit:
     Exit Sub
@@ -363,11 +383,9 @@ Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewBase()
     Dim SUT As DynamicArray
     Dim testArray As Variant
     Dim returnedItems As Variant
-    Dim testResult As Boolean
-    
+    Dim expected As Long
+    Dim actual As Long
     Dim oldBase As Long
-Dim newBase As Long
-
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
@@ -376,87 +394,17 @@ Dim newBase As Long
     
     'Act:
     SUT.Items = testArray
-    newBase = oldBase + 1
-    SUT.Base = newBase
+    expected = oldBase + 1
+    SUT.Base = expected
     returnedItems = SUT.Items
-    testResult = (LBound(returnedItems) = newBase)
+    actual = LBound(returnedItems)
 
     'Assert:
-    Assert.IsTrue testResult
-
-TestExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
-End Sub
-
-'@TestMethod("DynamicArray_Base")
-Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewUpperBound()
-    On Error GoTo TestFail
-    
-    'Arrange:
-    Dim gen As ArrayGenerator
-    Dim SUT As DynamicArray
-    Dim testArray As Variant
-    Dim returnedItems As Variant
-    Dim testResult As Boolean
-    
-    Dim oldBase As Long
-Dim newBase As Long
-
-    
-    Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    oldBase = LBound(testArray)
-    Set SUT = New DynamicArray
-    
-    'Act:
-    SUT.Items = testArray
-    newBase = oldBase + 1
-    SUT.Base = newBase
-    returnedItems = SUT.Items
-    testResult = (UBound(returnedItems) = (UBound(testArray) + 1))
-
-    'Assert:
-    Assert.IsTrue testResult
-
-TestExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
-End Sub
-
-'@TestMethod("DynamicArray_Base")
-Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasSameLength()
-    On Error GoTo TestFail
-    
-    'Arrange:
-    Dim gen As ArrayGenerator
-    Dim SUT As DynamicArray
-    Dim testArray As Variant
-    Dim testResult As Boolean
-    
-    Dim oldBase As Long
-    Dim expectedBase As Long
-    Dim actualBase As Long
-
-    
-    Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    oldBase = LBound(testArray)
-    Set SUT = New DynamicArray
-    
-    'Act:
-    SUT.Items = testArray
-    expectedBase = oldBase + 1
-    SUT.Base = expectedBase
-    testResult = (SUT.Length = TEST_ARRAY_LENGTH)
-    actualBase = SUT.Base
-    
-    'Assert:
-    Assert.IsTrue testResult, "Test result fail"
-    Assert.IsTrue (actualBase = expectedBase), "Actual base does not equal expected"
-    
+    Assert.AreEqual expected, actual, "Actual base <> expected"
+    Assert.AreEqual SUT.Base, actual, "Actual base <> SUT.Base prop"
+    Assert.AreEqual UBound(testArray) + 1, UBound(returnedItems), "Actual upperbound <> expected"
+    Assert.AreEqual SUT.UpperBound, UBound(returnedItems), "Actual upperbound <> SUT.UpperBound prop"
+    Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length does not equal expected"
 
 TestExit:
     Exit Sub
@@ -469,12 +417,11 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
     On Error GoTo TestFail
     
     'Arrange:
-    Const TEST_VALUE As String = "Hello World"
+    Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
-    
+    Dim actual As Variant
     Dim actualBase As Long
     Dim expectedBase As Long
 
@@ -486,13 +433,13 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
     
     'Act:
     SUT.Items = testArray
-    SUT.Item(1) = TEST_VALUE
-    testResult = (SUT.Item(1) = TEST_VALUE)
+    SUT.Item(1) = expected
+    actual = SUT.Item(1)
     actualBase = SUT.Base
 
     'Assert:
-    Assert.IsTrue testResult, "Test result fail"
-    Assert.IsTrue (actualBase = expectedBase), "Actual base does not equal expected base"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedBase, actualBase, "Actual base does not equal expected base"
 
 TestExit:
     Exit Sub
@@ -505,15 +452,14 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     On Error GoTo TestFail
     
     'Arrange:
-    Const TEST_VALUE As String = "Hello World"
+    Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim actual As Variant
     
     Dim actualBase As Long
     Dim expectedBase As Long
-
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
@@ -522,15 +468,15 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     
     'Act:
     SUT.Items = testArray
-    SUT.Item(SUT.UpperBound + 1) = TEST_VALUE
-    testResult = (SUT.Item(SUT.UpperBound) = TEST_VALUE)
+    SUT.Item(SUT.UpperBound + 1) = expected
+    actual = SUT.Item(SUT.UpperBound)
     actualBase = SUT.Base
     
 
     'Assert:
-    Assert.IsTrue testResult, "Test result fail"
-    Assert.IsTrue (SUT.Length = TEST_ARRAY_LENGTH + 1), "Actual length does not match expected length"
-    Assert.IsTrue (actualBase = expectedBase), "Actual base does not match expected base"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Actual length does not match expected length"
+    Assert.AreEqual expectedBase, actualBase, "Actual base does not match expected base"
 
 TestExit:
     Exit Sub
@@ -543,11 +489,11 @@ Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
     On Error GoTo TestFail
     
     'Arrange:
-    Const TEST_VALUE As String = "Hello World"
+    Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim testResult As Boolean
+    Dim actual As Variant
     
     Dim expectedBase As Long
     Dim actualBase As Long
@@ -560,14 +506,14 @@ Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
     
     'Act:
     SUT.Items = testArray
-    SUT.Item(SUT.Base - 10) = TEST_VALUE
-    testResult = (SUT.Item(SUT.Base) = TEST_VALUE)
+    SUT.Item(SUT.Base - 10) = expected
+    actual = SUT.Item(SUT.Base)
     actualBase = SUT.Base
 
     'Assert:
-    Assert.IsTrue testResult, "Actual result does not match expected result"
-    Assert.IsTrue (SUT.Length = TEST_ARRAY_LENGTH + 1), "Actual length does not match expected length"
-    Assert.IsTrue (actualBase = expectedBase), "Actual base does not match expected base"
+    Assert.AreEqual expected, actual, "Actual result does not match expected result"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Actual length does not match expected length"
+    Assert.AreEqual expectedBase, actualBase, "Actual base does not match expected base"
 
 TestExit:
     Exit Sub
@@ -584,20 +530,20 @@ Private Sub Item_GetScalarValue_ValueReturned()
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim returnedItem As Variant
-    Dim testResult As Boolean
+    Dim expected As Variant
+    Dim actual As Variant
        
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    expected = testArray(1)
     
     'Act:
     SUT.Items = testArray
-    returnedItem = SUT.Item(1)
-    testResult = (returnedItem = testArray(1))
+    actual = SUT.Item(1)
 
     'Assert:
-    Assert.IsTrue testResult
+    Assert.AreEqual expected, actual, "Actual <> expected"
 
 TestExit:
     Exit Sub
@@ -614,18 +560,20 @@ Private Sub Item_GetObject_SameObjectReturned()
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
     Dim testArray As Variant
-    Dim returnedObject As Object
+    Dim expected As Object
+    Dim actual As Object
        
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, ObjectVals, OneDimension)
     Set SUT = New DynamicArray
+    Set expected = testArray(1)
     
     'Act:
     SUT.Items = testArray
-    Set returnedObject = SUT.Item(1)
+    Set actual = SUT.Item(1)
 
     'Assert:
-    Assert.AreSame returnedObject, testArray(1)
+    Assert.AreSame expected, actual, "Actual <> expected"
 
 TestExit:
     Exit Sub
@@ -639,18 +587,26 @@ Private Sub Push_AddToNewDynamicArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
+    Const expected As String = "Hello World"
+    Const expectedLength As Long = 1
+    Const expectedUpperBound As Long = 0
     Dim SUT As DynamicArray
+    Dim actual As String
+    Dim actualLength As Long
+    Dim actualUpperBound As Long
+    
     Set SUT = New DynamicArray
-    Dim Element As Variant
-    Element = "Hello World"
     
     'Act:
-    SUT.Push Element
+    SUT.Push expected
+    actual = SUT.Item(SUT.Base)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
 
     'Assert:
-    Assert.IsTrue (SUT.Item(SUT.Base) = Element), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = 1), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = 0), "Upperbound value incorrect"
+    Assert.AreEqual expected, actual, "actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
 TestExit:
     Exit Sub
@@ -663,24 +619,24 @@ Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
+    Const expected As String = "Hello World"
     Dim SUT As DynamicArray
-    Dim Element As Variant
     Dim testArray As Variant
     Dim gen As ArrayGenerator
+    Dim actual As String
     
     Set SUT = New DynamicArray
     Set gen = New ArrayGenerator
-    
-    Element = "Hello World"
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     
     'Act:
     SUT.Items = testArray
-    SUT.Push Element
+    SUT.Push expected
+    actual = SUT.Item(SUT.UpperBound)
 
     'Assert:
-    Assert.IsTrue (SUT.Item(SUT.UpperBound) = Element), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -714,8 +670,8 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     actual = returnedArray(UBound(returnedArray), UBound(returnedArray, 2))
 
     'Assert:
-    Assert.IsTrue (expected = actual), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -751,7 +707,7 @@ Private Sub Push_AddToExistingJaggedArray_ItemAdded()
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH + 1)), "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -765,16 +721,27 @@ Private Sub Push_AddMultipleToNewDynamicArray_ItemsAdded()
     On Error GoTo TestFail
     
     'Arrange:
+    Const expected As Long = 1
+    Const expectedLength As Long = 3
+    Const expectedUpperBound As Long = 2
     Dim SUT As DynamicArray
+    Dim actual As Long
+    Dim actualLength As Long
+    Dim actualUpperBound As Long
+    
     Set SUT = New DynamicArray
     
+    
     'Act:
-    SUT.Push 1, 2, 3
+    SUT.Push expected, 2, 3
+    actual = SUT.Item(SUT.Base)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
 
     'Assert:
-    Assert.IsTrue (SUT.Item(SUT.Base) = 1), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = 3), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = 2), "Upperbound value incorrect"
+    Assert.AreEqual expected, actual, "Element value incorrect"
+    Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
 TestExit:
     Exit Sub
@@ -798,7 +765,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     
     testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
-Dim actual As String
+    Dim actual As String
 
     expected = testArray(UBound(testArray))
     expectedBase = SUT.Base
@@ -809,10 +776,10 @@ Dim actual As String
     actualBase = SUT.Base
 
     'Assert:
-    Assert.IsTrue (actual = expected), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH - 1)), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = (UBound(testArray) - 1)), "Upperbound value incorrect"
-    Assert.IsTrue (actualBase = expectedBase), "Base value incorrect"
+    Assert.AreEqual expected, actual, "Element value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
+    Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
 
 TestExit:
     Exit Sub
@@ -828,23 +795,31 @@ Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     'Arrange:
     Dim SUT As DynamicArray
     Set SUT = New DynamicArray
-    Dim actualBase As Long
-    Dim expectedBase As Long
     Dim expected As Variant
+    Dim expectedBase As Long
+    Dim expectedLength As Long
+    Dim expectedUpperBound As Long
     Dim actual As Variant
+    Dim actualBase As Long
+    Dim actualLength As Long
+    Dim actualUpperBound As Long
     
-    expectedBase = SUT.Base
     expected = Empty
+    expectedBase = 0
+    expectedLength = 0
+    expectedUpperBound = 0
     
     'Act:
     actual = SUT.Pop
     actualBase = SUT.Base
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
 
     'Assert:
-    Assert.IsTrue (actual = expected), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = 0), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = 0), "Upperbound value incorrect"
-    Assert.IsTrue (actualBase = expectedBase), "Base value incorrect"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
 TestExit:
     Exit Sub
@@ -879,10 +854,10 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     actualBase = SUT.Base
 
     'Assert:
-    Assert.IsTrue (actual = expected), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH - 1)), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = (UBound(testArray) - 1)), "Upperbound value incorrect"
-    Assert.IsTrue (actualBase = expectedBase), "Base value incorrect"
+    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
+    Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
 
 TestExit:
     Exit Sub
@@ -895,25 +870,29 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
+    Const expected As Variant = Empty
+    Const expectedBase As Long = 0
+    Const expectedLength As Long = 0
+    Const expectedUpperBound As Long = 0
     Dim SUT As DynamicArray
-    Set SUT = New DynamicArray
-    Dim actualBase As Long
-    Dim expectedBase As Long
-    Dim expected As Variant
     Dim actual As Variant
+    Dim actualBase As Long
+    Dim actualLength As Long
+    Dim actualUpperBound As Long
     
-    expected = Empty
-    expectedBase = SUT.Base
+    Set SUT = New DynamicArray
     
     'Act:
     actual = SUT.Shift
     actualBase = SUT.Base
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
 
     'Assert:
-    Assert.IsTrue (actual = expected), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = 0), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = 0), "Upperbound value incorrect"
-    Assert.IsTrue (actualBase = expectedBase), "Base value incorrect"
+    Assert.AreEqual expected, actual, "Element value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
 TestExit:
     Exit Sub
@@ -927,30 +906,31 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     
     'Arrange:
     Dim SUT As DynamicArray
-    Set SUT = New DynamicArray
     Dim gen As ArrayGenerator
-    Set gen = New ArrayGenerator
     Dim testArray As Variant
-    Dim actualBase As Long
-    Dim expectedBase As Long
-    
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
-
-    expected = testArray(LBound(testArray))
+    Dim actualBase As Long
+    Dim expectedBase As Long
+    Dim testElement As String
+    
+    Set SUT = New DynamicArray
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
+    testElement = "Hello World"
     expectedBase = SUT.Base
+    expected = TEST_ARRAY_LENGTH + 1
     SUT.Items = testArray
     
     'Act:
-    actual = SUT.Shift
+    actual = SUT.Unshift(testElement)
     actualBase = SUT.Base
 
     'Assert:
-    Assert.IsTrue (actual = expected), "Element value incorrect"
-    Assert.IsTrue (SUT.Length = (TEST_ARRAY_LENGTH - 1)), "Length value incorrect"
-    Assert.IsTrue (SUT.UpperBound = (UBound(testArray) - 1)), "Upperbound value incorrect"
-    Assert.IsTrue (actualBase = expectedBase), "Base value incorrect"
+    Assert.AreEqual expected, actual, "Return value incorrect"
+    Assert.AreEqual (UBound(testArray) + 1), SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual testElement, SUT.Item(SUT.Base), "Element not inserted at correct position"
 
 TestExit:
     Exit Sub
@@ -961,5 +941,78 @@ End Sub
 
 '@TestMethod("DynamicArray_Unshift")
 Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const expected As Long = 1
+    Const expectedBase As Long = 0
+    Const expectedUpperBound As Long = 0
+    Const expectedElement As String = "Hello World"
+    Dim SUT As DynamicArray
+    Dim actual As Long
+    Dim actualBase As Long
+    Dim actualUpperBound As Long
+    Dim actualElement As String
 
+    Set SUT = New DynamicArray
+    
+    'Act:
+    actual = SUT.Unshift(expectedElement)
+    actualBase = SUT.Base
+    actualUpperBound = SUT.UpperBound
+    actualElement = SUT.Item(SUT.Base)
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual length <> expected length"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedElement, actualElement, "Actual element <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Unshift")
+Public Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const expected As Long = TEST_ARRAY_LENGTH + 1
+    Const expectedBase As Long = 0
+    Const expectedUpperBound As Long = TEST_ARRAY_LENGTH
+    Const expectedElement As String = "Hello World"
+    Dim SUT As DynamicArray
+    Dim gen As ArrayGenerator
+    Dim actual As Long
+    Dim actualBase As Long
+    Dim actualUpperBound As Long
+    Dim actualElement As String
+    Dim testArray As Variant
+    Dim returnedItems As Variant
+
+    Set SUT = New DynamicArray
+    Set gen = New ArrayGenerator
+    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
+    SUT.Items = testArray
+    
+    'Act:
+    actual = SUT.Unshift(expectedElement)
+    returnedItems = SUT.Items
+    actualBase = SUT.Base
+    actualUpperBound = SUT.UpperBound
+    actualElement = returnedItems(LBound(returnedItems), LBound(returnedItems, 2))
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual length <> expected length"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedElement, actualElement, "Actual element <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
