@@ -63,6 +63,11 @@ End Sub
 '    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 'End Sub
 
+
+'''''''''''''''''
+' Instantiation '
+'''''''''''''''''
+
 '@TestMethod("DynamicArrayConstructor")
 Private Sub DynamicArray_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
@@ -104,6 +109,9 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'''''''''''''''''''
+' Prop - Capacity '
+'''''''''''''''''''
 
 '@TestMethod("DynamicArray_Capacity")
 Private Sub Capacity_CanSetCapacity_ReturnedCapacityMatchesSetCapacity()
@@ -129,6 +137,10 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+
+''''''''''''''''
+' Prop - Items '
+''''''''''''''''
 
 '@TestMethod("DynamicArray_Items")
 Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
@@ -225,6 +237,9 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'''''''''''''''''
+' Prop - Length '
+'''''''''''''''''
 
 '@TestMethod("DynamicArray_Length")
 Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalArray()
@@ -344,6 +359,11 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'''''''''''''''
+' Prop - Base '
+'''''''''''''''
+
+
 '@TestMethod("DynamicArray_Base")
 Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray()
     On Error GoTo TestFail
@@ -411,6 +431,10 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
+
+'''''''''''''''
+' Prop - Item '
+'''''''''''''''
 
 '@TestMethod("DynamicArray_Item")
 Private Sub Item_ChangingExistingIndex_ItemIsChanged()
@@ -582,6 +606,10 @@ TestFail:
 End Sub
 
 
+'''''''''''''''''
+' Method - Push '
+'''''''''''''''''
+
 '@TestMethod("DynamicArray_Push")
 Private Sub Push_AddToNewDynamicArray_ItemAdded()
     On Error GoTo TestFail
@@ -750,6 +778,10 @@ TestFail:
 End Sub
 
 
+''''''''''''''''
+' Method - Pop '
+''''''''''''''''
+
 '@TestMethod("DynamicArray_Pop")
 Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     On Error GoTo TestFail
@@ -828,6 +860,10 @@ TestFail:
 End Sub
 
 
+''''''''''''''''''
+' Method - Shift '
+''''''''''''''''''
+
 '@TestMethod("DynamicArray_Shift")
 Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     On Error GoTo TestFail
@@ -899,6 +935,10 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
+
+''''''''''''''''''''
+' Method - Unshift '
+''''''''''''''''''''
 
 '@TestMethod("DynamicArray_Unshift")
 Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
@@ -1016,3 +1056,1481 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
+
+'''''''''''''''''''
+' Method - Concat '
+'''''''''''''''''''
+'TODO: Concat test cases
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Public Sub Concat_AddEmptyToEmpty_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'''''''''''''''''''''''''''''''
+' Method - CopyFromCollection '
+'''''''''''''''''''''''''''''''
+
+'TODO: CopyFromCollection test cases
+
+'@TestMethod("DynamicArray_CopyFromCollection")
+Public Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyFromCollection")
+Public Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWithCollectionValues()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'''''''''''''''''''''
+' Method - ToString '
+'''''''''''''''''''''
+
+'TODO: ToString test cases
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_ToString")
+Public Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'''''''''''''''''''''
+' Method - ToString '
+'''''''''''''''''''''
+
+'TODO: Sort test cases
+
+'@TestMethod("DynamicArray_Sort")
+Public Sub Sort_OneDimArray_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Sort")
+Public Sub Sort_MultiDimArray_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Sort")
+Public Sub Sort_JaggedArray_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'''''''''''''''''''''''
+' Method - CopyWithin '
+'''''''''''''''''''''''
+
+'TODO: CopyWithin test cases
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_CopyWithin")
+Public Sub CopyWithin_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'''''''''''''''''''
+' Method - Filter '
+'''''''''''''''''''
+
+'TODO: Filter test cases
+
+'@TestMethod("DynamicArray_Filter")
+Public Sub Filter_OneDimExclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Filter")
+Public Sub Filter_OneDimInclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Filter")
+Public Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Filter")
+Public Sub Filter_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'''''''''''''''''''''
+' Method - Includes '
+'''''''''''''''''''''
+
+'TODO: Includes test cases
+
+'@TestMethod("DynamicArray_Includes")
+Public Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Includes")
+Public Sub Includes_OneDimArrayDoesNotContainTarget_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Includes")
+Public Sub Includes_ArrayMoreThanOneDimension_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Includes")
+Public Sub Includes_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'''''''''''''''''
+' Method - Keys '
+'''''''''''''''''
+'TODO: Keys test cases
+
+
+'@TestMethod("DynamicArray_Keys")
+Public Sub Keys_OneDimArray_ReturnsCorrectKeys()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Keys")
+Public Sub Keys_MultiDimArray_ReturnsCorrectKeys()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Keys")
+Public Sub Keys_JaggedArray_ReturnsCorrectKeys()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Keys")
+Public Sub Keys_EmptyInternal_ReturnsCorrectKeys()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+''''''''''''''''
+' Method - Max '
+''''''''''''''''
+
+'TODO: Max test cases
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_OneDimArrayNumeric_ReturnsLargest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_OneDimArrayStrings_ReturnsLargest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_OneDimArrayVariants_ReturnsLargest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_OneDimArrayObjects_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_ParamArray_ReturnsLargest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_MoreThanOneDimension_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Max")
+Public Sub Max_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+''''''''''''''''
+' Method - Min '
+''''''''''''''''
+
+'TODO: Min test cases
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_OneDimArrayNumeric_ReturnsSmallest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_OneDimArrayStrings_ReturnsSmallest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_OneDimArrayVariants_ReturnsSmallest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_OneDimArrayObjects_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_ParamArray_ReturnsSmallest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_MoreThanOneDimension_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Min")
+Public Sub Min_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+''''''''''''''''''
+' Method - Slice '
+''''''''''''''''''
+
+'TODO: Slice test cases
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Slice")
+Public Sub Slice_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+
+''''''''''''''''''''
+' Method - Reverse '
+''''''''''''''''''''
+
+'TODO: Reverse test cases
+
+'@TestMethod("DynamicArray_Reverse")
+Public Sub Reverse_OneDimArray_ArrayIsReversed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Reverse")
+Public Sub Reverse_MultiDimArray_ArrayIsReversed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Reverse")
+Public Sub Reverse_JaggedArray_ArrayIsReversed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Reverse")
+Public Sub Reverse_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+
+''''''''''''''''''''
+' Method - Shuffle '
+''''''''''''''''''''
+
+'TODO: Shuffle test cases
+
+'@TestMethod("DynamicArray_Shuffle")
+Public Sub Shuffle_OneDimArray_ArrayIsShuffled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Shuffle")
+Public Sub Shuffle_MultiDimArray_ArrayIsShuffled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("DynamicArray_Shuffle")
+Public Sub Shuffle_JaggedArray_ArrayIsShuffled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Shuffle")
+Public Sub Shuffle_EmptyInternal_GracefulDegradation()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
