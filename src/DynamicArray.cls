@@ -311,7 +311,7 @@ End Function
 Public Function CopyWithin(ByVal Target As Long, Optional ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant
     Dim localLength As Long, relativeTarget As Long, relativeStart As Long, relativeEnd As Long
     Dim idx As Long, from As Long, final As Long, count As Long, direction As Long
-    Dim arr As Variant
+    Dim arr() As Variant
     
     arr = getInternalItems()
     localLength = Me.Length
@@ -547,6 +547,13 @@ Public Function Reverse() As Variant
     Me.Items = result
     Reverse = result
 End Function
+
+' TODO: Implement Shuffle method
+
+' TODO: Implement Flatten method
+
+' TODO: add algos from C++ STL https://en.cppreference.com/w/cpp/algorithm
+
 
 '''''''''''''''''''
 ' Private Methods '
@@ -890,7 +897,7 @@ Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
     getMultidimensionalArrayDepth = i - 1
 End Function
 
-Private Function getElementByBreadcrumb(ByVal arr As Variant, ByVal crumb As Variant) As Variant
+Private Function getElementByBreadcrumb(ByVal arr As Variant, ByRef crumb() As Variant) As Variant
     Dim result As Variant
     Select Case UBound(crumb)
     Case 0
