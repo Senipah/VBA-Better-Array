@@ -216,11 +216,17 @@ Public Function Shift() As Variant
 End Function
 
 Public Function Unshift(ParamArray Args() As Variant) As Long
-    Dim newItems() As Variant, oldItems() As Variant
+    Dim newItems() As Variant
+    Dim oldItems() As Variant
+    Dim oldType As ArrayTypes
     newItems = Args
-    oldItems = pItems
+    oldType = pArrayType
+    oldItems = getInternalItems()
     Me.Items = newItems
-    Me.Concat oldItems
+    If oldType <> Unallocated And oldType <> Undefined Then
+        Me.Concat oldItems
+        pArrayType = oldType
+    End If
     Unshift = Me.Length
 End Function
 
@@ -714,7 +720,7 @@ Private Sub EnsureCapacity(ByVal MinimumCapacity As Long)
     If Me.Capacity < MinimumCapacity Then
         Dim newCapacity As Long
         newCapacity = IIf(Me.Capacity = 0, DEFAULT_CAPACITY, Me.Capacity * 2)
-        If newCapacity > MAX_ARRAY_LENGTH Then newCapacity = MAX_ARRAY_LENGTH
+            If newCapacity > MAX_ARRAY_LENGTH Then newCapacity = MAX_ARRAY_LENGTH
         If newCapacity < MinimumCapacity Then newCapacity = MinimumCapacity
         Me.Capacity = newCapacity
     End If
