@@ -77,7 +77,7 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="0.16"
-     inkscape:cx="2147.0351"
+     inkscape:cx="2970.6622"
      inkscape:cy="946.9731"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
@@ -151,7 +151,9 @@
      xml:space="preserve"
      id="flowRoot6599"
      style="font-style:normal;font-weight:normal;font-size:40px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"
-     transform="matrix(5.4414536,0,0,3.0273049,-8261.6408,-557.5912)"><flowRegion
+     transform="matrix(5.4414536,0,0,3.0273049,-11186.145,-557.5912)"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96"><flowRegion
        id="flowRegion6601"
        style="line-height:1;fill:#ffffff;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"><rect
          id="rect6603"
@@ -171,7 +173,7 @@
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000"
    id="flowSpan6613">A</flowSpan>RRAY</flowPara></flowRoot>  <g
      id="g6802"
-     transform="translate(-2910.1241,-1104.9181)">
+     transform="translate(515.9048,-1104.9181)">
     <path
        d="m 3713.6722,1415.6787 v 483.2859 l 589.7221,-292.8175 v -483.2859 z"
        style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:24.94488335;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
