@@ -15,4 +15,4 @@ The elements to be added to the beginning of the array
 #### (Long) 
 New length of the array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

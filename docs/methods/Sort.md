@@ -11,4 +11,4 @@ The column in a two dimensional array to be used in the comparison.
 #### (Variant)
 The sorted array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

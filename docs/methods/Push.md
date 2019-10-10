@@ -19,4 +19,4 @@ The element(s) to be added to the end of the array.
 #### (Long) 
 New length of the array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

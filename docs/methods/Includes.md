@@ -15,4 +15,4 @@ The position in this array at which to begin searching for `SearchElement`; the 
 ### (Boolean)
 `True` if the array includes valueToFind, `False` if not.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

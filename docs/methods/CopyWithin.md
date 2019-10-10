@@ -23,4 +23,4 @@ If `EndIndex` is omitted, `CopyWithin` will copy until the last index (default t
 #### (Variant)
 The modified array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

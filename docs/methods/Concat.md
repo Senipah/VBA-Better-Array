@@ -15,4 +15,4 @@ The array(s) to be added to the end of the array
 #### (Variant) 
 The new array
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

@@ -19,4 +19,4 @@ The new size of the internal array.
 ### Returns
 None
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

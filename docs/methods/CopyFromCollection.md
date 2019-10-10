@@ -1,7 +1,7 @@
 # CopyFromCollection
 
 ### Description
-The `CopyFromCollection()` method writes the elements stored in a `Collection` object into a DynamicArray. Any items already stored in the DynamicArray will be lost.
+The `CopyFromCollection()` method writes the elements stored in a `Collection` object into a BetterArray. Any items already stored in the BetterArray will be lost.
 
 ### Arguments
 #### `SourceCollection` (Collection [Object]) 
@@ -11,4 +11,4 @@ The `Collection` of elements to be stored in the array
 #### (Variant) 
 The new array
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

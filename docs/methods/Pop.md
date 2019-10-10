@@ -14,4 +14,4 @@ None
 #### (Variant) 
 The last element from the array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

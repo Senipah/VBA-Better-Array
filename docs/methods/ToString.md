@@ -11,4 +11,4 @@ Set to true to format the returned string for easier viewing.
 #### (String) 
 A string representing the array structure and its elements.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

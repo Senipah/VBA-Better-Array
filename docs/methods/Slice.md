@@ -24,4 +24,4 @@ If end is greater than the length of the sequence, slice extracts through to the
 #### (Variant)
 A new array containing the extracted elements.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

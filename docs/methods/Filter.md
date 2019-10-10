@@ -20,4 +20,4 @@ Boolean value indicating whether to return values that include or exclude `Match
 #### (Variant)
 The modified array.
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

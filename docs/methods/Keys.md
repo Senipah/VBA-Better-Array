@@ -12,4 +12,4 @@ None
 #### (Variant)
 A new array containing the keys of all the elements in the array. 
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

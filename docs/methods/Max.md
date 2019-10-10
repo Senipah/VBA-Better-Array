@@ -21,4 +21,4 @@ A list of values or an array to compare. If no arguments are provided the `Max()
 #### (Variant)
 The largest value in the array. 
 
-# [Back to Docs](https://senipah.github.io/VBA-DynamicArray/)
+# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

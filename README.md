@@ -1,13 +1,13 @@
 # UNDER CONSTRUCTION
 
 
-# VBA-DynamicArray
+# VBA Better Array
 
 A VBA class providing a more modern and user-friendly Array.
 
 ## Documentation
 
-[Read The Docs](https://senipah.github.io/VBA-DynamicArray/)
+[Read The Docs](https://senipah.github.io/VBA-Better-Array/)
 
 ## Installation
 
