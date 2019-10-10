@@ -11,11 +11,16 @@ A VBA class providing a more modern and user-friendly Array.
 
 ## Installation
 
-Once you acquire the source by (either cloning this repo or downloading zip and extracting) simply import the [DynamicArray.cls](src/DynamicArray.cls) into your VBA project.
+Once you acquire the source by (either cloning this repo or downloading zip and extracting) simply import the [BetterArray.cls](src/BetterArray.cls) file into your VBA project.
 
-## Usage
+## Getting Started
 
-TBA
+Create an instance of the BetterArray class:
+
+```
+Dim ba as BetterArray
+Set ba = New BetterArray
+```
 
 ## Contributing
 
