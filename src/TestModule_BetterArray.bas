@@ -360,12 +360,12 @@ TestFail:
 End Sub
 
 '''''''''''''''
-' Prop - Base '
+' Prop - LowerBound '
 '''''''''''''''
 
 
-'@TestMethod("BetterArray_Base")
-Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray()
+'@TestMethod("BetterArray_LowerBound")
+Private Sub LowerBound_FromAssignedOneDimensionalArray_ReturnedLowerBoundEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -382,10 +382,10 @@ Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray
     
     'Act:
     SUT.Items = testArray
-    actual = SUT.Base
+    actual = SUT.LowerBound
 
     'Assert:
-    Assert.AreEqual expected, actual, "Actual base <> expected"
+    Assert.AreEqual expected, actual, "Actual LowerBound <> expected"
 
 TestExit:
     Exit Sub
@@ -394,8 +394,8 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Base")
-Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewBase()
+'@TestMethod("BetterArray_LowerBound")
+Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowerBound()
     On Error GoTo TestFail
     
     'Arrange:
@@ -405,23 +405,23 @@ Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewBase()
     Dim returnedItems As Variant
     Dim expected As Long
     Dim actual As Long
-    Dim oldBase As Long
+    Dim oldLowerBound As Long
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    oldBase = LBound(testArray)
+    oldLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
-    expected = oldBase + 1
-    SUT.Base = expected
+    expected = oldLowerBound + 1
+    SUT.LowerBound = expected
     returnedItems = SUT.Items
     actual = LBound(returnedItems)
 
     'Assert:
-    Assert.AreEqual expected, actual, "Actual base <> expected"
-    Assert.AreEqual SUT.Base, actual, "Actual base <> SUT.Base prop"
+    Assert.AreEqual expected, actual, "Actual LowerBound <> expected"
+    Assert.AreEqual SUT.LowerBound, actual, "Actual LowerBound <> SUT.LowerBound prop"
     Assert.AreEqual UBound(testArray) + 1, UBound(returnedItems), "Actual upperbound <> expected"
     Assert.AreEqual SUT.UpperBound, UBound(returnedItems), "Actual upperbound <> SUT.UpperBound prop"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length does not equal expected"
@@ -446,24 +446,24 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
     Dim SUT As BetterArray
     Dim testArray() As Variant
     Dim actual As Variant
-    Dim actualBase As Long
-    Dim expectedBase As Long
+    Dim actualLowerBound As Long
+    Dim expectedLowerBound As Long
 
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    expectedBase = LBound(testArray)
+    expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
     SUT.Item(1) = expected
     actual = SUT.Item(1)
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual expectedBase, actualBase, "Actual base does not equal expected base"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "Actual LowerBound does not equal expected LowerBound"
 
 TestExit:
     Exit Sub
@@ -482,25 +482,25 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     Dim testArray() As Variant
     Dim actual As Variant
     
-    Dim actualBase As Long
-    Dim expectedBase As Long
+    Dim actualLowerBound As Long
+    Dim expectedLowerBound As Long
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    expectedBase = LBound(testArray)
+    expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
     SUT.Item(SUT.UpperBound + 1) = expected
     actual = SUT.Item(SUT.UpperBound)
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
     
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
     Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Actual length does not match expected length"
-    Assert.AreEqual expectedBase, actualBase, "Actual base does not match expected base"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "Actual LowerBound does not match expected LowerBound"
 
 TestExit:
     Exit Sub
@@ -509,7 +509,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Item")
-Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
+Private Sub Item_ChangingIndexBelowLowerBound_ItemIsUnshifted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -519,25 +519,25 @@ Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
     Dim testArray() As Variant
     Dim actual As Variant
     
-    Dim expectedBase As Long
-    Dim actualBase As Long
+    Dim expectedLowerBound As Long
+    Dim actualLowerBound As Long
 
     
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    expectedBase = LBound(testArray)
+    expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
-    SUT.Item(SUT.Base - 10) = expected
-    actual = SUT.Item(SUT.Base)
-    actualBase = SUT.Base
+    SUT.Item(SUT.LowerBound - 10) = expected
+    actual = SUT.Item(SUT.LowerBound)
+    actualLowerBound = SUT.LowerBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual result does not match expected result"
     Assert.AreEqual TEST_ARRAY_LENGTH + 1, SUT.Length, "Actual length does not match expected length"
-    Assert.AreEqual expectedBase, actualBase, "Actual base does not match expected base"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "Actual LowerBound does not match expected LowerBound"
 
 TestExit:
     Exit Sub
@@ -627,7 +627,7 @@ Private Sub Push_AddToNewBetterArray_ItemAdded()
     
     'Act:
     SUT.Push expected
-    actual = SUT.Item(SUT.Base)
+    actual = SUT.Item(SUT.LowerBound)
     actualLength = SUT.Length
     actualUpperBound = SUT.UpperBound
 
@@ -762,7 +762,7 @@ Private Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
     
     'Act:
     SUT.Push expected, 2, 3
-    actual = SUT.Item(SUT.Base)
+    actual = SUT.Item(SUT.LowerBound)
     actualLength = SUT.Length
     actualUpperBound = SUT.UpperBound
 
@@ -792,26 +792,26 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     Dim gen As ArrayGenerator
     Set gen = New ArrayGenerator
     Dim testArray() As Variant
-    Dim actualBase As Long
-    Dim expectedBase As Long
+    Dim actualLowerBound As Long
+    Dim expectedLowerBound As Long
     
     testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 
     expected = testArray(UBound(testArray))
-    expectedBase = SUT.Base
+    expectedLowerBound = SUT.LowerBound
     SUT.Items = testArray
     
     'Act:
     actual = SUT.Pop
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
     Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -828,28 +828,28 @@ Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     Dim SUT As BetterArray
     Set SUT = New BetterArray
     Dim expected As Variant
-    Dim expectedBase As Long
+    Dim expectedLowerBound As Long
     Dim expectedLength As Long
     Dim expectedUpperBound As Long
     Dim actual As Variant
-    Dim actualBase As Long
+    Dim actualLowerBound As Long
     Dim actualLength As Long
     Dim actualUpperBound As Long
     
     expected = Empty
-    expectedBase = 0
+    expectedLowerBound = 0
     expectedLength = 0
     expectedUpperBound = 0
     
     'Act:
     actual = SUT.Pop
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
     actualLength = SUT.Length
     actualUpperBound = SUT.UpperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
     Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
@@ -874,26 +874,26 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     Dim gen As ArrayGenerator
     Set gen = New ArrayGenerator
     Dim testArray() As Variant
-    Dim actualBase As Long
-    Dim expectedBase As Long
+    Dim actualLowerBound As Long
+    Dim expectedLowerBound As Long
     
     testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 
     expected = testArray(LBound(testArray))
-    expectedBase = SUT.Base
+    expectedLowerBound = SUT.LowerBound
     SUT.Items = testArray
     
     'Act:
     actual = SUT.Shift
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
     Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -907,12 +907,12 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     
     'Arrange:
     Const expected As Variant = Empty
-    Const expectedBase As Long = 0
+    Const expectedLowerBound As Long = 0
     Const expectedLength As Long = 0
     Const expectedUpperBound As Long = 0
     Dim SUT As BetterArray
     Dim actual As Variant
-    Dim actualBase As Long
+    Dim actualLowerBound As Long
     Dim actualLength As Long
     Dim actualUpperBound As Long
     
@@ -920,13 +920,13 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     
     'Act:
     actual = SUT.Shift
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
     actualLength = SUT.Length
     actualUpperBound = SUT.UpperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual expectedLength, actualLength, "Length value incorrect"
     Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
 
@@ -950,27 +950,27 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     Dim testArray() As Variant
     Dim expected As String
     Dim actual As String
-    Dim actualBase As Long
-    Dim expectedBase As Long
+    Dim actualLowerBound As Long
+    Dim expectedLowerBound As Long
     Dim testElement As String
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
     testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     testElement = "Hello World"
-    expectedBase = SUT.Base
+    expectedLowerBound = SUT.LowerBound
     expected = TEST_ARRAY_LENGTH + 1
     SUT.Items = testArray
     
     'Act:
     actual = SUT.Unshift(testElement)
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Return value incorrect"
     Assert.AreEqual (UBound(testArray) + 1), SUT.UpperBound, "Upperbound value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
-    Assert.AreEqual testElement, SUT.Item(SUT.Base), "Element not inserted at correct position"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
+    Assert.AreEqual testElement, SUT.Item(SUT.LowerBound), "Element not inserted at correct position"
 
 TestExit:
     Exit Sub
@@ -985,12 +985,12 @@ Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
     
     'Arrange:
     Const expected As Long = 1
-    Const expectedBase As Long = 0
+    Const expectedLowerBound As Long = 0
     Const expectedUpperBound As Long = 0
     Const expectedElement As String = "Hello World"
     Dim SUT As BetterArray
     Dim actual As Long
-    Dim actualBase As Long
+    Dim actualLowerBound As Long
     Dim actualUpperBound As Long
     Dim actualElement As String
 
@@ -998,14 +998,14 @@ Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
     
     'Act:
     actual = SUT.Unshift(expectedElement)
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
     actualUpperBound = SUT.UpperBound
-    actualElement = SUT.Item(SUT.Base)
+    actualElement = SUT.Item(SUT.LowerBound)
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual length <> expected length"
     Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual expectedElement, actualElement, "Actual element <> expected"
 
 TestExit:
@@ -1021,13 +1021,13 @@ Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
     
     'Arrange:
     Const expected As Long = TEST_ARRAY_LENGTH + 1
-    Const expectedBase As Long = 0
+    Const expectedLowerBound As Long = 0
     Const expectedUpperBound As Long = TEST_ARRAY_LENGTH
     Const expectedElement As String = "Hello World"
     Dim SUT As BetterArray
     Dim gen As ArrayGenerator
     Dim actual As Long
-    Dim actualBase As Long
+    Dim actualLowerBound As Long
     Dim actualUpperBound As Long
     Dim actualElement As String
     Dim testArray() As Variant
@@ -1041,14 +1041,14 @@ Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
     'Act:
     actual = SUT.Unshift(expectedElement)
     returnedItems = SUT.Items
-    actualBase = SUT.Base
+    actualLowerBound = SUT.LowerBound
     actualUpperBound = SUT.UpperBound
     actualElement = returnedItems(LBound(returnedItems), LBound(returnedItems, 2))
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual length <> expected length"
     Assert.AreEqual expectedUpperBound, actualUpperBound, "Upperbound value incorrect"
-    Assert.AreEqual expectedBase, actualBase, "Base value incorrect"
+    Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual expectedElement, actualElement, "Actual element <> expected"
 
 TestExit:
@@ -1073,7 +1073,7 @@ Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1091,7 +1091,7 @@ Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 
 TestExit:
     Exit Sub
@@ -1110,7 +1110,7 @@ Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1128,7 +1128,7 @@ Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1147,7 +1147,7 @@ Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1165,7 +1165,7 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1183,7 +1183,7 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1201,7 +1201,7 @@ Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1219,7 +1219,7 @@ Private Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1237,7 +1237,7 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1255,7 +1255,7 @@ Private Sub Concat_AddEmptyToEmpty_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1280,7 +1280,7 @@ Private Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1298,7 +1298,7 @@ Private Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedW
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1323,7 +1323,7 @@ Private Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1341,7 +1341,7 @@ Private Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationRetur
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1359,7 +1359,7 @@ Private Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1377,7 +1377,7 @@ Private Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationRetur
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1396,7 +1396,7 @@ Private Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1414,7 +1414,7 @@ Private Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturn
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1439,7 +1439,7 @@ Private Sub Sort_OneDimArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1457,7 +1457,7 @@ Private Sub Sort_MultiDimArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1475,7 +1475,7 @@ Private Sub Sort_JaggedArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1499,7 +1499,7 @@ Private Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUncha
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1517,7 +1517,7 @@ Private Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLengt
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1535,7 +1535,7 @@ Private Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLengt
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1553,7 +1553,7 @@ Private Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1571,7 +1571,7 @@ Private Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1589,7 +1589,7 @@ Private Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1607,7 +1607,7 @@ Private Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUncha
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1625,7 +1625,7 @@ Private Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLengt
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1643,7 +1643,7 @@ Private Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLengt
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1661,7 +1661,7 @@ Private Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1679,7 +1679,7 @@ Private Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1697,7 +1697,7 @@ Private Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopie
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1715,7 +1715,7 @@ Private Sub CopyWithin_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1739,7 +1739,7 @@ Private Sub Filter_OneDimExclude_ReturnsFilteredArray()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1757,7 +1757,7 @@ Private Sub Filter_OneDimInclude_ReturnsFilteredArray()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1775,7 +1775,7 @@ Private Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1793,7 +1793,7 @@ Private Sub Filter_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1817,7 +1817,7 @@ Private Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1835,7 +1835,7 @@ Private Sub Includes_OneDimArrayDoesNotContainTarget_ReturnsFalse()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1853,7 +1853,7 @@ Private Sub Includes_ArrayMoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1871,7 +1871,7 @@ Private Sub Includes_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1895,7 +1895,7 @@ Private Sub Keys_OneDimArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1913,7 +1913,7 @@ Private Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1931,7 +1931,7 @@ Private Sub Keys_JaggedArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1949,7 +1949,7 @@ Private Sub Keys_EmptyInternal_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1974,7 +1974,7 @@ Private Sub Max_OneDimArrayNumeric_ReturnsLargest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1992,7 +1992,7 @@ Private Sub Max_OneDimArrayStrings_ReturnsLargest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2010,7 +2010,7 @@ Private Sub Max_OneDimArrayVariants_ReturnsLargest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2028,7 +2028,7 @@ Private Sub Max_OneDimArrayObjects_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2046,7 +2046,7 @@ Private Sub Max_ParamArray_ReturnsLargest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2064,7 +2064,7 @@ Private Sub Max_MoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2082,7 +2082,7 @@ Private Sub Max_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2107,7 +2107,7 @@ Private Sub Min_OneDimArrayNumeric_ReturnsSmallest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2125,7 +2125,7 @@ Private Sub Min_OneDimArrayStrings_ReturnsSmallest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2143,7 +2143,7 @@ Private Sub Min_OneDimArrayVariants_ReturnsSmallest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2161,7 +2161,7 @@ Private Sub Min_OneDimArrayObjects_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2179,7 +2179,7 @@ Private Sub Min_ParamArray_ReturnsSmallest()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2197,7 +2197,7 @@ Private Sub Min_MoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2215,7 +2215,7 @@ Private Sub Min_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2239,7 +2239,7 @@ Private Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2257,7 +2257,7 @@ Private Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2276,7 +2276,7 @@ Private Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2294,7 +2294,7 @@ Private Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2312,7 +2312,7 @@ Private Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2330,7 +2330,7 @@ Private Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2348,7 +2348,7 @@ Private Sub Slice_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2374,7 +2374,7 @@ Private Sub Reverse_OneDimArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2392,7 +2392,7 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2410,7 +2410,7 @@ Private Sub Reverse_JaggedArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2428,7 +2428,7 @@ Private Sub Reverse_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2454,7 +2454,7 @@ Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2472,7 +2472,7 @@ Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2491,7 +2491,7 @@ Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2509,7 +2509,7 @@ Private Sub Shuffle_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-    Assert.IsTrue (SUT.Base = 0)
+    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:

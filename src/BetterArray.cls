@@ -35,7 +35,7 @@ End Enum
 
 Private pCapacity As Long
 Private pLength As Long
-Private pBase As Long
+Private pLowerBound As Long
 Private pEmptyArray(0) As Variant
 Private pItems() As Variant
 Private pArrayType As ArrayTypes
@@ -67,13 +67,13 @@ Public Property Let Capacity(ByVal value As Long)
             If (UBound(pItems) - LBound(pItems) + 1) <> value Then
                 Dim newItems() As Variant
                 newItems = pItems
-                ReDim Preserve newItems(pBase To (value + pBase - 1))
+                ReDim Preserve newItems(pLowerBound To (value + pLowerBound - 1))
                 pItems = newItems
             End If
         Else
-            ReDim pItems(pBase To (DEFAULT_CAPACITY + pBase - 1))
+            ReDim pItems(pLowerBound To (DEFAULT_CAPACITY + pLowerBound - 1))
         End If
-        pCapacity = UBound(pItems) - pBase + 1
+        pCapacity = UBound(pItems) - pLowerBound + 1
     End If
 End Property
 
@@ -94,7 +94,7 @@ Public Property Get Items() As Variant
 End Property
 
 Public Property Let Items(ByVal Values As Variant)
-    Dim localBase As Long
+    Dim localLowerBound As Long
     Dim localValues() As Variant
     If IsArray(Values) Then
         localValues = Values
@@ -111,10 +111,10 @@ Public Property Let Items(ByVal Values As Variant)
         If pArrayType = ArrayTypes.MultiDimension Then
             localValues = multiToJagged(localValues)
         End If
-        localBase = LBound(localValues)
+        localLowerBound = LBound(localValues)
         pItems = localValues
         pLength = UBound(pItems) - LBound(pItems) + 1
-        If localBase <> pBase Then
+        If localLowerBound <> pLowerBound Then
             Rebase
         End If
         Me.Capacity = pLength
@@ -122,23 +122,23 @@ Public Property Let Items(ByVal Values As Variant)
 End Property
 
 Public Property Get UpperBound()
-    UpperBound = IIf(pLength = 0, pLength, pLength + pBase - 1)
+    UpperBound = IIf(pLength = 0, pLength, pLength + pLowerBound - 1)
 End Property
 
-Public Property Get Base() As Long
-    Base = pBase
+Public Property Get LowerBound() As Long
+    LowerBound = pLowerBound
 End Property
 
-Public Property Let Base(ByVal value As Long)
-    If value <> pBase And value >= 0 Then
-        pBase = value
+Public Property Let LowerBound(ByVal value As Long)
+    If value <> pLowerBound And value >= 0 Then
+        pLowerBound = value
         Rebase
     End If
 End Property
 
 Public Property Let Item(ByVal Index As Long, ByVal Element As Variant)
     If Me.UpperBound >= Index Then
-        If Index < Me.Base Then
+        If Index < Me.LowerBound Then
             Me.Unshift Element
         Else
             If IsObject(Element) Then
@@ -203,7 +203,7 @@ Public Function Pop() As Variant
     If pLength > 0 Then
         result = pItems(Me.UpperBound)
         pLength = pLength - 1
-        ReDim newItems(pBase To Me.UpperBound)
+        ReDim newItems(pLowerBound To Me.UpperBound)
         Me.Items = copyRange(newItems)
     End If
     Pop = result
@@ -213,8 +213,8 @@ Public Function Shift() As Variant
     Dim result As Variant
     Dim newItems() As Variant
     If pLength > 0 Then
-        result = pItems(pBase)
-        ReDim newItems((pBase + 1) To Me.UpperBound)
+        result = pItems(pLowerBound)
+        ReDim newItems((pLowerBound + 1) To Me.UpperBound)
         Me.Items = copyRange(newItems)
     End If
     Shift = result
@@ -260,9 +260,9 @@ Public Function CopyFromCollection(ByVal SourceCollection As Collection) As Vari
     If pLength = 0 Then
         newItems = pEmptyArray
     Else
-        ReDim newItems(pBase To (pLength - pBase - 1))
+        ReDim newItems(pLowerBound To (pLength - pLowerBound - 1))
         For i = 1 To pLength
-            newItems(i + pBase - 1) = SourceCollection.Item(i)
+            newItems(i + pLowerBound - 1) = SourceCollection.Item(i)
         Next
     End If
     Me.Items = newItems
@@ -394,14 +394,14 @@ Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean
     
     oldArr = getInternalItems()
     ReDim newArr(LBound(oldArr), UBound(oldArr))
-    i = Me.Base
+    i = Me.LowerBound
     For Each Element In oldArr
         If (Exclude And Element = Match) Or (Not Exclude And Element <> Match) Then
             newArr(i) = Element
             i = i + 1
         End If
     Next
-    ReDim Preserve newArr(Me.Base, i)
+    ReDim Preserve newArr(Me.LowerBound, i)
     Me.Items = newArr
     Filter = newArr
 End Function
@@ -419,11 +419,11 @@ Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromInde
         Exit Function
     End If
         
-    If FromIndex > Me.Base Then
+    If FromIndex > Me.LowerBound Then
         currentIndex = FromIndex
     ElseIf FromIndex = 0 Then
         'assume 0 val should always be from beginning - cover cases where val is missing
-        currentIndex = Me.Base
+        currentIndex = Me.LowerBound
     Else
         currentIndex = localLength + FromIndex
     End If
@@ -440,14 +440,14 @@ End Function
 
 Public Function Keys() As Variant()
     Dim i As Long
-    Dim localBase As Long
+    Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim result() As Variant
     
-    localBase = Me.Base
+    localLowerBound = Me.LowerBound
     localUpperBound = Me.UpperBound
-    ReDim result(localBase To localUpperBound)
-    For i = localBase To localUpperBound: result(i) = i: Next
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound: result(i) = i: Next
     Keys = result
 End Function
 
@@ -570,8 +570,8 @@ Public Function Reverse() As Variant
     Dim arr() As Variant, result() As Variant
     arr = getInternalItems()
     localUpperBound = Me.UpperBound
-    ReDim result(Me.Base To localUpperBound)
-    For i = localUpperBound To Me.Base Step -1
+    ReDim result(Me.LowerBound To localUpperBound)
+    For i = localUpperBound To Me.LowerBound Step -1
         result = arr(i)
     Next
     Me.Items = result
@@ -644,7 +644,7 @@ Private Function getInternalItems() As Variant()
     Dim result() As Variant
     result = pItems
     If Me.Capacity > pLength Then
-        If pLength > 0 Then ReDim Preserve result(pBase To Me.UpperBound)
+        If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.UpperBound)
     End If
     getInternalItems = result
 End Function
@@ -749,14 +749,14 @@ Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As
 End Function
 
 Private Function recursiveRebase(ByRef arr() As Variant, ByVal recurse As Boolean) As Variant()
-    Dim i As Long, localBase As Long, localUpperBound As Long, offset As Long
+    Dim i As Long, localLowerBound As Long, localUpperBound As Long, offset As Long
     Dim newItems() As Variant
     
-    localBase = LBound(arr)
+    localLowerBound = LBound(arr)
     localUpperBound = UBound(arr)
-    offset = pBase - localBase
-    ReDim newItems(pBase To localUpperBound + offset)
-    For i = localBase To localUpperBound
+    offset = pLowerBound - localLowerBound
+    ReDim newItems(pLowerBound To localUpperBound + offset)
+    For i = localLowerBound To localUpperBound
         If IsArray(arr(i)) And recurse Then
             Dim nested() As Variant
             nested = arr(i)
@@ -793,7 +793,7 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
                       Optional ByRef crumbs As Variant, _
                       Optional ByRef result As Variant) As Variant()
     Dim i As Long
-    Dim localBase As Long
+    Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim localDepth As Long
     Dim localCurrentDepth As Long
@@ -831,9 +831,9 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
         End If
         
         localCurrentDepth = localCurrentDepth + 1
-        localBase = LBound(arr)
+        localLowerBound = LBound(arr)
         localUpperBound = UBound(arr)
-        For i = localBase To localUpperBound
+        For i = localLowerBound To localUpperBound
             localCrumbs(localCurrentDepth - 1) = i
             If localCurrentDepth = localDepth Or Not IsArray(arr(i)) Then
                 localResult = letElementByBreadcrumb(localResult, localCrumbs, arr(i))
@@ -855,7 +855,7 @@ Private Function multiToJagged(ByRef arr() As Variant, _
                       Optional ByVal currentDepth As Long, _
                       Optional ByRef crumbs As Variant) As Variant()
     Dim i As Long
-    Dim localBase As Long
+    Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim localDepth As Long
     Dim localCurrentDepth As Long
@@ -884,10 +884,10 @@ Private Function multiToJagged(ByRef arr() As Variant, _
             localCrumbs = crumbs
         End If
         localCurrentDepth = localCurrentDepth + 1
-        localBase = LBound(arr, localCurrentDepth)
+        localLowerBound = LBound(arr, localCurrentDepth)
         localUpperBound = UBound(arr, localCurrentDepth)
-        ReDim result(localBase To localUpperBound)
-        For i = localBase To localUpperBound
+        ReDim result(localLowerBound To localUpperBound)
+        For i = localLowerBound To localUpperBound
             localCrumbs(localCurrentDepth - 1) = i
             If localCurrentDepth = localDepth Then
                 result(i) = getElementByBreadcrumb(arr, localCrumbs)
@@ -903,7 +903,7 @@ End Function
 
 Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
     Dim i As Long
-    Dim localBase As Long
+    Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim currentDepth As Long
     Dim maxDepth As Long
@@ -911,9 +911,9 @@ Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
     
     If IsArray(arr) Then
         depth = depth + 1
-        localBase = LBound(arr)
+        localLowerBound = LBound(arr)
         localUpperBound = UBound(arr)
-        For i = localBase To localUpperBound
+        For i = localLowerBound To localUpperBound
             If IsArray(arr(i)) Then
                 Dim nested() As Variant
                 nested = arr(i)

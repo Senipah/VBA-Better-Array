@@ -2,7 +2,7 @@
 
 ## Properties
 
-* [Base](properties/Base.md)  
+* [LowerBound](properties/LowerBound.md)  
 * [Capacity](properties/Capacity.md)  
 * [Item](properties/Item.md)  
 * [Items](properties/Items.md)  

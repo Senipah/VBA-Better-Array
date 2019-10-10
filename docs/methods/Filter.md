@@ -6,7 +6,7 @@
 * https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filter-function
 
 ### Description
-The `Filter()` method filters and returns the current array based on the specified filter criteria. 
+The `Filter()` method filters and returns the current array LowerBoundd on the specified filter criteria. 
 
 ### Note
 Provides ability to filter on variant arrays (not just with strings unlike the VBA version).
