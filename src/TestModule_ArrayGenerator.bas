@@ -63,7 +63,7 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -93,7 +93,7 @@ Private Sub GetArray_BooleansMultiDimension_ValuesAreBoolean()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -124,7 +124,7 @@ Private Sub GetArray_BooleansJagged_ValuesAreBoolean()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -152,7 +152,7 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -182,7 +182,7 @@ Private Sub GetArray_BytesMultiDimension_ValuesAreBytes()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -211,9 +211,9 @@ Private Sub GetArray_BytesJagged_ValuesAreBytes()
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
     Dim i As Long
-Dim j As Long
+    Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -242,7 +242,7 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -270,9 +270,9 @@ Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
     Dim i As Long
-Dim j As Long
+    Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -301,9 +301,9 @@ Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
     Dim i As Long
-Dim j As Long
+    Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -331,7 +331,7 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -361,7 +361,7 @@ Private Sub GetArray_LongsMultiDimension_ValuesAreLongs()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -392,7 +392,7 @@ Private Sub GetArray_LongsJagged_ValuesAreLongs()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -423,7 +423,7 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -453,7 +453,7 @@ Private Sub GetArray_ObjectsMultiDimension_ValuesAreObjects()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -484,7 +484,7 @@ Public Sub GetArray_ObjectsJagged_ValuesAreObjects()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -515,7 +515,7 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim Element As Variant
     
@@ -545,7 +545,7 @@ Private Sub GetArray_StringsMultiDimension_ValuesAreStrings()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -576,7 +576,7 @@ Private Sub GetArray_StringsJagged_ValuesAreStrings()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -606,7 +606,7 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim firstType As String
     Dim Element As Variant
@@ -640,7 +640,7 @@ Private Sub GetArray_VariantsMultiDimension_ValueTypesVary()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim firstType As String
     
@@ -675,7 +675,7 @@ Private Sub GetArray_VariantsJagged_ValueTypesVary()
     Dim i As Long
 Dim j As Long
 
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim firstType As String
     
@@ -708,7 +708,7 @@ Private Sub GetArray_BooleanOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -731,7 +731,7 @@ Private Sub GetArray_BooleanMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -754,7 +754,7 @@ Private Sub GetArray_BooleanJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -777,7 +777,7 @@ Private Sub GetArray_ByteOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -800,7 +800,7 @@ Private Sub GetArray_ByteMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -823,7 +823,7 @@ Private Sub GetArray_ByteJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -847,7 +847,7 @@ Private Sub GetArray_DoubleOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -870,7 +870,7 @@ Private Sub GetArray_DoubleMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -893,7 +893,7 @@ Private Sub GetArray_DoubleJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -916,7 +916,7 @@ Private Sub GetArray_LongOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -939,7 +939,7 @@ Private Sub GetArray_LongMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -962,7 +962,7 @@ Private Sub GetArray_LongJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -985,7 +985,7 @@ Private Sub GetArray_ObjectOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1008,7 +1008,7 @@ Private Sub GetArray_ObjectMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1031,7 +1031,7 @@ Private Sub GetArray_ObjectJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1054,7 +1054,7 @@ Private Sub GetArray_StringOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1077,7 +1077,7 @@ Private Sub GetArray_StringMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1100,7 +1100,7 @@ Private Sub GetArray_StringJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1123,7 +1123,7 @@ Private Sub GetArray_VariantOneDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1146,7 +1146,7 @@ Private Sub GetArray_VariantMultiDimension_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1169,7 +1169,7 @@ Private Sub GetArray_VariantJagged_ReturnsArray()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1209,7 +1209,7 @@ Private Sub GetArray_BooleanOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1232,7 +1232,7 @@ Private Sub GetArray_BooleanMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1255,7 +1255,7 @@ Private Sub GetArray_BooleanJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1278,7 +1278,7 @@ Private Sub GetArray_ByteOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1301,7 +1301,7 @@ Private Sub GetArray_ByteMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1324,7 +1324,7 @@ Private Sub GetArray_ByteJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1348,7 +1348,7 @@ Private Sub GetArray_DoubleOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1371,7 +1371,7 @@ Private Sub GetArray_DoubleMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1394,7 +1394,7 @@ Private Sub GetArray_DoubleJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1417,7 +1417,7 @@ Private Sub GetArray_LongOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1440,7 +1440,7 @@ Private Sub GetArray_LongMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1463,7 +1463,7 @@ Private Sub GetArray_LongJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1486,7 +1486,7 @@ Private Sub GetArray_ObjectOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1509,7 +1509,7 @@ Private Sub GetArray_ObjectMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1532,7 +1532,7 @@ Private Sub GetArray_ObjectJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1556,7 +1556,7 @@ Private Sub GetArray_StringOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1579,7 +1579,7 @@ Private Sub GetArray_StringMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1602,7 +1602,7 @@ Private Sub GetArray_StringJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1626,7 +1626,7 @@ Private Sub GetArray_VariantOneDimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1649,7 +1649,7 @@ Private Sub GetArray_VariantMultidimension_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:
@@ -1672,7 +1672,7 @@ Private Sub GetArray_VariantJagged_IsCorrectLength()
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
-    Dim returnedArray As Variant
+    Dim returnedArray() As Variant
     Dim testResult As Boolean
     
     'Act:

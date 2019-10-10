@@ -149,11 +149,11 @@ Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray(
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim expected As Variant
-    Dim actual As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
     Set gen = New ArrayGenerator
-    expected = gen.getArray(10, VariantVals, OneDimension)
+    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -170,17 +170,17 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Items")
-Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Public Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim expected As Variant
-    Dim actual As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
     Set gen = New ArrayGenerator
-    expected = gen.getArray(10, VariantVals, MultiDimension)
+    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     Set SUT = New DynamicArray
     
     'Act:
@@ -204,8 +204,8 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim expected As Variant
-    Dim actual As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     Dim i As Long
     Dim j As Long
     Dim testResult As Boolean
@@ -248,7 +248,7 @@ Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalA
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Long
     Dim actual As Long
     
@@ -277,7 +277,7 @@ Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOrigina
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Long
     Dim actual As Long
     
@@ -306,7 +306,7 @@ Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Long
     Dim actual As Long
     
@@ -337,7 +337,7 @@ Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsO
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Long
     Dim actual As Long
     
@@ -371,7 +371,7 @@ Private Sub Base_FromAssignedOneDimensionalArray_ReturnedBaseEqualsOriginalArray
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Long
     Dim actual As Long
     
@@ -401,7 +401,7 @@ Private Sub Base_ChangingBaseOfAssignedArray_ReturnedArrayHasNewBase()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim returnedItems As Variant
     Dim expected As Long
     Dim actual As Long
@@ -444,7 +444,7 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
     Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim actual As Variant
     Dim actualBase As Long
     Dim expectedBase As Long
@@ -479,7 +479,7 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim actual As Variant
     
     Dim actualBase As Long
@@ -516,7 +516,7 @@ Private Sub Item_ChangingIndexBelowBase_ItemIsUnshifted()
     Const expected As String = "Hello World"
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim actual As Variant
     
     Dim expectedBase As Long
@@ -553,7 +553,7 @@ Private Sub Item_GetScalarValue_ValueReturned()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Variant
     Dim actual As Variant
        
@@ -583,7 +583,7 @@ Private Sub Item_GetObject_SameObjectReturned()
     'Arrange:
     Dim gen As ArrayGenerator
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As Object
     Dim actual As Object
        
@@ -649,7 +649,7 @@ Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
     'Arrange:
     Const expected As String = "Hello World"
     Dim SUT As DynamicArray
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim gen As ArrayGenerator
     Dim actual As String
     
@@ -681,8 +681,8 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     Dim expected As Variant
     Dim actual As Variant
 
-    Dim testArray As Variant
-    Dim returnedArray As Variant
+    Dim testArray() As Variant
+    Dim returnedArray() As Variant
     Dim gen As ArrayGenerator
     
     Set SUT = New DynamicArray
@@ -695,7 +695,7 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     SUT.Items = testArray
     SUT.Push expected
     returnedArray = SUT.Items
-    actual = returnedArray(UBound(returnedArray), UBound(returnedArray, 2))
+    actual = returnedArray(UBound(returnedArray), LBound(returnedArray, 2))
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
@@ -717,8 +717,8 @@ Private Sub Push_AddToExistingJaggedArray_ItemAdded()
     Dim expected As Variant
     Dim actual As Variant
 
-    Dim testArray As Variant
-    Dim returnedArray As Variant
+    Dim testArray() As Variant
+    Dim returnedArray() As Variant
     Dim gen As ArrayGenerator
     
     Set SUT = New DynamicArray
@@ -791,7 +791,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     Set SUT = New DynamicArray
     Dim gen As ArrayGenerator
     Set gen = New ArrayGenerator
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim actualBase As Long
     Dim expectedBase As Long
     
@@ -873,7 +873,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     Set SUT = New DynamicArray
     Dim gen As ArrayGenerator
     Set gen = New ArrayGenerator
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim actualBase As Long
     Dim expectedBase As Long
     
@@ -947,7 +947,7 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     'Arrange:
     Dim SUT As DynamicArray
     Dim gen As ArrayGenerator
-    Dim testArray As Variant
+    Dim testArray() As Variant
     Dim expected As String
     Dim actual As String
     Dim actualBase As Long
@@ -1016,7 +1016,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_Unshift")
-Public Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
+Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1030,8 +1030,8 @@ Public Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
     Dim actualBase As Long
     Dim actualUpperBound As Long
     Dim actualElement As String
-    Dim testArray As Variant
-    Dim returnedItems As Variant
+    Dim testArray() As Variant
+    Dim returnedItems() As Variant
 
     Set SUT = New DynamicArray
     Set gen = New ArrayGenerator
@@ -1063,7 +1063,7 @@ End Sub
 'TODO: Concat test cases
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
+Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1073,6 +1073,25 @@ Public Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
+    Assert.IsTrue (SUT.Base = 0)
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("DynamicArray_Concat")
+Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As DynamicArray
+    Set SUT = New DynamicArray
+    
+    'Act:
+
+    'Assert:
+    Assert.IsTrue (SUT.Base = 0)
 
 TestExit:
     Exit Sub
@@ -1081,7 +1100,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
+Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1091,7 +1110,7 @@ Public Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1099,7 +1118,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
+Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1109,25 +1128,7 @@ Public Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
-
-TestExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
-End Sub
-
-'@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
-    On Error GoTo TestFail
-    
-    'Arrange:
-    Dim SUT As DynamicArray
-    Set SUT = New DynamicArray
-    
-    'Act:
-
-    'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1136,7 +1137,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
+Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1146,7 +1147,7 @@ Public Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1154,7 +1155,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
+Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1164,7 +1165,7 @@ Public Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1172,7 +1173,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
+Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1182,7 +1183,7 @@ Public Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1190,7 +1191,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
+Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1200,7 +1201,7 @@ Public Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1208,7 +1209,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
+Private Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1218,7 +1219,7 @@ Public Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1226,7 +1227,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
+Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1236,7 +1237,7 @@ Public Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1244,7 +1245,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Concat")
-Public Sub Concat_AddEmptyToEmpty_GracefulDegradation()
+Private Sub Concat_AddEmptyToEmpty_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1254,7 +1255,7 @@ Public Sub Concat_AddEmptyToEmpty_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1269,7 +1270,7 @@ End Sub
 'TODO: CopyFromCollection test cases
 
 '@TestMethod("DynamicArray_CopyFromCollection")
-Public Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
+Private Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1279,7 +1280,7 @@ Public Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1287,7 +1288,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyFromCollection")
-Public Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWithCollectionValues()
+Private Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWithCollectionValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1297,7 +1298,7 @@ Public Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWi
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1312,7 +1313,7 @@ End Sub
 'TODO: ToString test cases
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
+Private Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1322,7 +1323,7 @@ Public Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1330,7 +1331,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
+Private Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1340,7 +1341,7 @@ Public Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturn
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1348,7 +1349,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
+Private Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1358,7 +1359,7 @@ Public Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1366,7 +1367,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturned()
+Private Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1376,7 +1377,7 @@ Public Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturn
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1385,7 +1386,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
+Private Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1395,7 +1396,7 @@ Public Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1403,7 +1404,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_ToString")
-Public Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturned()
+Private Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1413,7 +1414,7 @@ Public Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturne
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1428,7 +1429,7 @@ End Sub
 'TODO: Sort test cases
 
 '@TestMethod("DynamicArray_Sort")
-Public Sub Sort_OneDimArray_ArrayIsSorted()
+Private Sub Sort_OneDimArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1438,7 +1439,7 @@ Public Sub Sort_OneDimArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1446,7 +1447,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Sort")
-Public Sub Sort_MultiDimArray_ArrayIsSorted()
+Private Sub Sort_MultiDimArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1456,7 +1457,7 @@ Public Sub Sort_MultiDimArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1464,7 +1465,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Sort")
-Public Sub Sort_JaggedArray_ArrayIsSorted()
+Private Sub Sort_JaggedArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1474,7 +1475,7 @@ Public Sub Sort_JaggedArray_ArrayIsSorted()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1488,7 +1489,7 @@ End Sub
 'TODO: CopyWithin test cases
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1498,7 +1499,7 @@ Public Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchan
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1506,7 +1507,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1516,7 +1517,7 @@ Public Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLength
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1524,7 +1525,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1534,7 +1535,7 @@ Public Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLength
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1542,7 +1543,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1552,7 +1553,7 @@ Public Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1560,7 +1561,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1570,7 +1571,7 @@ Public Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1578,7 +1579,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1588,7 +1589,7 @@ Public Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1596,7 +1597,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1606,7 +1607,7 @@ Public Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchan
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1614,7 +1615,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1624,7 +1625,7 @@ Public Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLength
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1632,7 +1633,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1642,7 +1643,7 @@ Public Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLength
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1650,7 +1651,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1660,7 +1661,7 @@ Public Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1668,7 +1669,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1678,7 +1679,7 @@ Public Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1686,7 +1687,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1696,7 +1697,7 @@ Public Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopied
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1704,7 +1705,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_CopyWithin")
-Public Sub CopyWithin_EmptyInternal_GracefulDegradation()
+Private Sub CopyWithin_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1714,7 +1715,7 @@ Public Sub CopyWithin_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1728,7 +1729,7 @@ End Sub
 'TODO: Filter test cases
 
 '@TestMethod("DynamicArray_Filter")
-Public Sub Filter_OneDimExclude_ReturnsFilteredArray()
+Private Sub Filter_OneDimExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1738,7 +1739,7 @@ Public Sub Filter_OneDimExclude_ReturnsFilteredArray()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1746,7 +1747,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Filter")
-Public Sub Filter_OneDimInclude_ReturnsFilteredArray()
+Private Sub Filter_OneDimInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1756,7 +1757,7 @@ Public Sub Filter_OneDimInclude_ReturnsFilteredArray()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1764,7 +1765,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Filter")
-Public Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
+Private Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1774,7 +1775,7 @@ Public Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1782,7 +1783,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Filter")
-Public Sub Filter_EmptyInternal_GracefulDegradation()
+Private Sub Filter_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1792,7 +1793,7 @@ Public Sub Filter_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1806,7 +1807,7 @@ End Sub
 'TODO: Includes test cases
 
 '@TestMethod("DynamicArray_Includes")
-Public Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
+Private Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1816,7 +1817,7 @@ Public Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1824,7 +1825,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Includes")
-Public Sub Includes_OneDimArrayDoesNotContainTarget_ReturnsFalse()
+Private Sub Includes_OneDimArrayDoesNotContainTarget_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1834,7 +1835,7 @@ Public Sub Includes_OneDimArrayDoesNotContainTarget_ReturnsFalse()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1842,7 +1843,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Includes")
-Public Sub Includes_ArrayMoreThanOneDimension_GracefulDegradation()
+Private Sub Includes_ArrayMoreThanOneDimension_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1852,7 +1853,7 @@ Public Sub Includes_ArrayMoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1860,7 +1861,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Includes")
-Public Sub Includes_EmptyInternal_GracefulDegradation()
+Private Sub Includes_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1870,7 +1871,7 @@ Public Sub Includes_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1884,7 +1885,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_Keys")
-Public Sub Keys_OneDimArray_ReturnsCorrectKeys()
+Private Sub Keys_OneDimArray_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1894,7 +1895,7 @@ Public Sub Keys_OneDimArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1902,7 +1903,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Keys")
-Public Sub Keys_MultiDimArray_ReturnsCorrectKeys()
+Private Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1912,7 +1913,7 @@ Public Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1920,7 +1921,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Keys")
-Public Sub Keys_JaggedArray_ReturnsCorrectKeys()
+Private Sub Keys_JaggedArray_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1930,7 +1931,7 @@ Public Sub Keys_JaggedArray_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1938,7 +1939,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Keys")
-Public Sub Keys_EmptyInternal_ReturnsCorrectKeys()
+Private Sub Keys_EmptyInternal_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1948,7 +1949,7 @@ Public Sub Keys_EmptyInternal_ReturnsCorrectKeys()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1963,7 +1964,7 @@ End Sub
 'TODO: Max test cases
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_OneDimArrayNumeric_ReturnsLargest()
+Private Sub Max_OneDimArrayNumeric_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1973,7 +1974,7 @@ Public Sub Max_OneDimArrayNumeric_ReturnsLargest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1981,7 +1982,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_OneDimArrayStrings_ReturnsLargest()
+Private Sub Max_OneDimArrayStrings_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1991,7 +1992,7 @@ Public Sub Max_OneDimArrayStrings_ReturnsLargest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1999,7 +2000,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_OneDimArrayVariants_ReturnsLargest()
+Private Sub Max_OneDimArrayVariants_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2009,7 +2010,7 @@ Public Sub Max_OneDimArrayVariants_ReturnsLargest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2017,7 +2018,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_OneDimArrayObjects_GracefulDegradation()
+Private Sub Max_OneDimArrayObjects_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2027,7 +2028,7 @@ Public Sub Max_OneDimArrayObjects_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2035,7 +2036,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_ParamArray_ReturnsLargest()
+Private Sub Max_ParamArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2045,7 +2046,7 @@ Public Sub Max_ParamArray_ReturnsLargest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2053,7 +2054,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_MoreThanOneDimension_GracefulDegradation()
+Private Sub Max_MoreThanOneDimension_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2063,7 +2064,7 @@ Public Sub Max_MoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2071,7 +2072,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Max")
-Public Sub Max_EmptyInternal_GracefulDegradation()
+Private Sub Max_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2081,7 +2082,7 @@ Public Sub Max_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2096,7 +2097,7 @@ End Sub
 'TODO: Min test cases
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_OneDimArrayNumeric_ReturnsSmallest()
+Private Sub Min_OneDimArrayNumeric_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2106,7 +2107,7 @@ Public Sub Min_OneDimArrayNumeric_ReturnsSmallest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2114,7 +2115,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_OneDimArrayStrings_ReturnsSmallest()
+Private Sub Min_OneDimArrayStrings_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2124,7 +2125,7 @@ Public Sub Min_OneDimArrayStrings_ReturnsSmallest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2132,7 +2133,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_OneDimArrayVariants_ReturnsSmallest()
+Private Sub Min_OneDimArrayVariants_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2142,7 +2143,7 @@ Public Sub Min_OneDimArrayVariants_ReturnsSmallest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2150,7 +2151,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_OneDimArrayObjects_GracefulDegradation()
+Private Sub Min_OneDimArrayObjects_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2160,7 +2161,7 @@ Public Sub Min_OneDimArrayObjects_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2168,7 +2169,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_ParamArray_ReturnsSmallest()
+Private Sub Min_ParamArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2178,7 +2179,7 @@ Public Sub Min_ParamArray_ReturnsSmallest()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2186,7 +2187,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_MoreThanOneDimension_GracefulDegradation()
+Private Sub Min_MoreThanOneDimension_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2196,7 +2197,7 @@ Public Sub Min_MoreThanOneDimension_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2204,7 +2205,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Min")
-Public Sub Min_EmptyInternal_GracefulDegradation()
+Private Sub Min_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2214,7 +2215,7 @@ Public Sub Min_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2228,7 +2229,7 @@ End Sub
 'TODO: Slice test cases
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2238,7 +2239,7 @@ Public Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2246,7 +2247,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2256,7 +2257,7 @@ Public Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2265,7 +2266,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2275,7 +2276,7 @@ Public Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2283,7 +2284,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2293,7 +2294,7 @@ Public Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2301,7 +2302,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2311,7 +2312,7 @@ Public Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2319,7 +2320,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2329,7 +2330,7 @@ Public Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2337,7 +2338,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Slice")
-Public Sub Slice_EmptyInternal_GracefulDegradation()
+Private Sub Slice_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2347,7 +2348,7 @@ Public Sub Slice_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2363,7 +2364,7 @@ End Sub
 'TODO: Reverse test cases
 
 '@TestMethod("DynamicArray_Reverse")
-Public Sub Reverse_OneDimArray_ArrayIsReversed()
+Private Sub Reverse_OneDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2373,7 +2374,7 @@ Public Sub Reverse_OneDimArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2381,7 +2382,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Reverse")
-Public Sub Reverse_MultiDimArray_ArrayIsReversed()
+Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2391,7 +2392,7 @@ Public Sub Reverse_MultiDimArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2399,7 +2400,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Reverse")
-Public Sub Reverse_JaggedArray_ArrayIsReversed()
+Private Sub Reverse_JaggedArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2409,7 +2410,7 @@ Public Sub Reverse_JaggedArray_ArrayIsReversed()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2417,7 +2418,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Reverse")
-Public Sub Reverse_EmptyInternal_GracefulDegradation()
+Private Sub Reverse_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2427,7 +2428,7 @@ Public Sub Reverse_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2443,7 +2444,7 @@ End Sub
 'TODO: Shuffle test cases
 
 '@TestMethod("DynamicArray_Shuffle")
-Public Sub Shuffle_OneDimArray_ArrayIsShuffled()
+Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2453,7 +2454,7 @@ Public Sub Shuffle_OneDimArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2461,7 +2462,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Shuffle")
-Public Sub Shuffle_MultiDimArray_ArrayIsShuffled()
+Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2471,7 +2472,7 @@ Public Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2480,7 +2481,7 @@ End Sub
 
 
 '@TestMethod("DynamicArray_Shuffle")
-Public Sub Shuffle_JaggedArray_ArrayIsShuffled()
+Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2490,7 +2491,7 @@ Public Sub Shuffle_JaggedArray_ArrayIsShuffled()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -2498,7 +2499,7 @@ TestFail:
 End Sub
 
 '@TestMethod("DynamicArray_Shuffle")
-Public Sub Shuffle_EmptyInternal_GracefulDegradation()
+Private Sub Shuffle_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2508,7 +2509,7 @@ Public Sub Shuffle_EmptyInternal_GracefulDegradation()
     'Act:
 
     'Assert:
-
+    Assert.IsTrue (SUT.Base = 0)
 TestExit:
     Exit Sub
 TestFail:

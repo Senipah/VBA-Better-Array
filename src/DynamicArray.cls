@@ -86,18 +86,22 @@ Public Property Get Length() As Long
     Length = pLength
 End Property
 
-Public Property Get Items()
+Public Property Get Items() As Variant
     Dim result() As Variant
     result = getInternalItems()
-    If pArrayType = ArrayTypes.MultiDimension And _
-       getArrayType(result) = ArrayTypes.Jagged Then result = jaggedToMulti(result)
+    If pArrayType = ArrayTypes.MultiDimension And isJaggedArray(result) Then result = jaggedToMulti(result)
     Items = result
 End Property
 
 Public Property Let Items(ByVal Values As Variant)
     Dim localBase As Long
-    Dim localValues As Variant
-    localValues = Values
+    Dim localValues() As Variant
+    If IsArray(Values) Then
+        localValues = Values
+    Else
+        'TODO: Error handle when not passed array
+        Exit Property
+    End If
     
     pArrayType = getArrayType(localValues)
     If pArrayType = ArrayTypes.Undefined _
@@ -170,6 +174,7 @@ End Property
 
 Public Function Push(ParamArray Args() As Variant) As Variant
     Dim Element As Variant
+    
     If pArrayType = ArrayTypes.Unallocated Or _
        pArrayType = ArrayTypes.Undefined Then
         pArrayType = ArrayTypes.OneDimension
@@ -219,6 +224,7 @@ Public Function Unshift(ParamArray Args() As Variant) As Long
     Dim newItems() As Variant
     Dim oldItems() As Variant
     Dim oldType As ArrayTypes
+    
     newItems = Args
     oldType = pArrayType
     oldItems = getInternalItems()
@@ -230,8 +236,10 @@ Public Function Unshift(ParamArray Args() As Variant) As Long
     Unshift = Me.Length
 End Function
 
-Public Function Concat(ParamArray Args() As Variant) As Variant
-    Dim arg As Variant, Element As Variant
+Public Function Concat(ParamArray Args() As Variant) As Variant()
+    Dim arg As Variant
+    Dim Element As Variant
+    
     For Each arg In Args
         If IsArray(arg) Then
             For Each Element In arg
@@ -244,7 +252,7 @@ Public Function Concat(ParamArray Args() As Variant) As Variant
     Concat = Me.Items
 End Function
 
-Public Function CopyFromCollection(ByVal SourceCollection As Collection) As Variant
+Public Function CopyFromCollection(ByVal SourceCollection As Collection) As Variant()
     If SourceCollection Is Nothing Then Err.Raise 448
     Dim i As Long
     Dim newItems() As Variant
@@ -264,7 +272,7 @@ End Function
 Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     Dim ArrayType As ArrayTypes
     Dim result As String
-    Dim localItems As Variant
+    Dim localItems() As Variant
     
     localItems = getInternalItems()
     ArrayType = getArrayType(localItems)
@@ -278,8 +286,9 @@ Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     ToString = result
 End Function
 
-Public Function Sort(Optional ByVal SortColumn As Long) As Variant
-    Dim localItems As Variant, sortedItems As Variant
+Public Function Sort(Optional ByVal SortColumn As Long) As Variant()
+    Dim localItems() As Variant
+    Dim sortedItems() As Variant
     Dim ArrayType As ArrayTypes
     
     localItems = getInternalItems()
@@ -308,9 +317,18 @@ Public Function Sort(Optional ByVal SortColumn As Long) As Variant
     Sort = sortedItems
 End Function
 
-Public Function CopyWithin(ByVal Target As Long, Optional ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant
-    Dim localLength As Long, relativeTarget As Long, relativeStart As Long, relativeEnd As Long
-    Dim idx As Long, from As Long, final As Long, count As Long, direction As Long
+Public Function CopyWithin(ByVal Target As Long, _
+                           Optional ByVal StartIndex As Long, _
+                           Optional ByVal EndIndex As Long) As Variant()
+    Dim localLength As Long
+    Dim relativeTarget As Long
+    Dim relativeStart As Long
+    Dim relativeEnd As Long
+    Dim idx As Long
+    Dim from As Long
+    Dim final As Long
+    Dim count As Long
+    Dim direction As Long
     Dim arr() As Variant
     
     arr = getInternalItems()
@@ -368,12 +386,14 @@ End Function
 
 '@Ignore ShadowedDeclaration
 ' TODO: add support for 2d arrays.
-Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As Variant
+Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As Variant()
     Dim Element As Variant
-    Dim oldArr() As Variant, newArr() As Variant
+    Dim oldArr() As Variant
+    Dim newArr() As Variant
+    Dim i As Long
+    
     oldArr = getInternalItems()
     ReDim newArr(LBound(oldArr), UBound(oldArr))
-    Dim i As Long
     i = Me.Base
     For Each Element In oldArr
         If (Exclude And Element = Match) Or (Not Exclude And Element <> Match) Then
@@ -389,8 +409,7 @@ End Function
 Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromIndex As Long) As Boolean
     Dim localLength As Long
     Dim currentIndex As Long
-    
-    Dim arr As Variant
+    Dim arr() As Variant
     
     arr = getInternalItems()
     localLength = Me.Length
@@ -419,11 +438,15 @@ Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromInde
     Includes = False
 End Function
 
-Public Function Keys() As Variant
-    Dim i As Long, localBase As Long, localUpperBound As Long
+Public Function Keys() As Variant()
+    Dim i As Long
+    Dim localBase As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    
     localBase = Me.Base
     localUpperBound = Me.UpperBound
-    Dim result() As Variant: ReDim result(localBase To localUpperBound)
+    ReDim result(localBase To localUpperBound)
     For i = localBase To localUpperBound: result(i) = i: Next
     Keys = result
 End Function
@@ -439,7 +462,7 @@ Private Function Max(ParamArray Args() As Variant) As Variant
         arr = Args
         If IsArray(arr) Then
             ' exit function if array is multi dimensional
-            If getArrayType(arr) = MultiDimension Then
+            If isMultidimensionalArray(arr) Then
                 Exit Function
             End If
         End If
@@ -474,7 +497,7 @@ Private Function Min(ParamArray Args() As Variant) As Variant
         arr = Args
         If IsArray(arr) Then
             ' exit function if array is multi dimensional
-            If getArrayType(arr) = MultiDimension Then
+            If isMultidimensionalArray(arr) Then
                 Exit Function
             End If
         End If
@@ -498,11 +521,18 @@ Private Function Min(ParamArray Args() As Variant) As Variant
     Min = result
 End Function
 
-Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant
+Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant()
     '@Ignore ShadowedDeclaration
-    Dim localLength As Long, relativeStart As Long, relativeEnd As Long
-    Dim oldIndex As Long, final As Long, count As Long, newIndex As Long
-    Dim arr() As Variant, result() As Variant
+    Dim localLength As Long
+    Dim relativeStart As Long
+    Dim relativeEnd As Long
+    Dim oldIndex As Long
+    Dim final As Long
+    Dim count As Long
+    Dim newIndex As Long
+    Dim arr() As Variant
+    Dim result() As Variant
+    
     arr = getInternalItems()
     localLength = Me.Length
     relativeStart = StartIndex
@@ -559,7 +589,11 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
-Private Sub quickSort(ByRef arr As Variant, ByVal low As Long, ByVal high As Long, ByVal ArrayType As ArrayTypes, Optional ByVal col As Long)
+Private Sub quickSort(ByRef arr() As Variant, _
+                      ByVal low As Long, _
+                      ByVal high As Long, _
+                      ByVal ArrayType As ArrayTypes, _
+                      Optional ByVal col As Long)
     Dim partitionIndex As Long
     If low < high Then
         partitionIndex = qsPartition(arr, low, high, ArrayType, col)
@@ -568,7 +602,11 @@ Private Sub quickSort(ByRef arr As Variant, ByVal low As Long, ByVal high As Lon
     End If
 End Sub
 
-Private Function qsPartition(ByVal arr As Variant, ByVal low As Long, ByVal high As Long, ByVal ArrayType As ArrayTypes, Optional ByVal col As Long) As Long
+Private Function qsPartition(ByRef arr() As Variant, _
+                             ByVal low As Long, _
+                             ByVal high As Long, _
+                             ByVal ArrayType As ArrayTypes, _
+                             Optional ByVal col As Long) As Long
     Dim i As Long, j As Long
     Dim pivot As Variant, current As Variant
     
@@ -588,21 +626,21 @@ Private Function qsPartition(ByVal arr As Variant, ByVal low As Long, ByVal high
     
         If current <= pivot Then
             i = i + 1
-            qsSwap arr, i, j
+            Swap arr, i, j
         End If
     Next
-    qsSwap arr, i + 1, high
+    Swap arr, i + 1, high
     qsPartition = i + 1
 End Function
 
-Private Sub qsSwap(ByVal arr As Variant, ByVal i As Long, ByVal j As Long)
+Private Sub Swap(ByRef arr() As Variant, ByVal i As Long, ByVal j As Long)
     Dim temporaryArray As Variant
     temporaryArray = arr(i)
     arr(i) = arr(j)
     arr(j) = temporaryArray
 End Sub
 
-Private Function getInternalItems() As Variant
+Private Function getInternalItems() As Variant()
     Dim result() As Variant
     result = pItems
     If Me.Capacity > pLength Then
@@ -611,16 +649,22 @@ Private Function getInternalItems() As Variant
     getInternalItems = result
 End Function
 
-Private Function recursiveToString(ByVal arr As Variant, ByVal PrettyPrint As Boolean, Optional ByVal tabs As Long = 1) As String
+Private Function recursiveToString(ByRef arr() As Variant, _
+                                   ByVal PrettyPrint As Boolean, _
+                                   Optional ByVal tabs As Long = 1) As String
     Const tabWidth As Long = 2
-    Dim result As String, sep As String
+    Dim result As String
+    Dim sep As String
     Dim i As Long
+
     result = "["
     For i = LBound(arr) To UBound(arr)
         sep = IIf(i = UBound(arr), "]", ", ")
         If IsArray(arr(i)) Then
+            Dim nested() As Variant
+            nested = arr(i)
             If PrettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
-            result = result & recursiveToString(arr(i), PrettyPrint, tabs + 1)
+            result = result & recursiveToString(nested, PrettyPrint, tabs + 1)
             result = result & IIf(i = UBound(arr) And PrettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
         ElseIf IsObject(arr(i)) Then
             result = result & "OBJECT" & sep
@@ -687,7 +731,7 @@ errHandler:
     Err.Clear
 End Function
 
-Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As Variant) As Variant
+Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As Variant) As Variant()
     Dim isMD As Boolean, applyToMe As Boolean
     Dim newItems() As Variant
     
@@ -704,7 +748,7 @@ Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As
     Rebase = newItems
 End Function
 
-Private Function recursiveRebase(ByVal arr As Variant, ByVal recurse As Boolean) As Variant
+Private Function recursiveRebase(ByRef arr() As Variant, ByVal recurse As Boolean) As Variant()
     Dim i As Long, localBase As Long, localUpperBound As Long, offset As Long
     Dim newItems() As Variant
     
@@ -714,7 +758,9 @@ Private Function recursiveRebase(ByVal arr As Variant, ByVal recurse As Boolean)
     ReDim newItems(pBase To localUpperBound + offset)
     For i = localBase To localUpperBound
         If IsArray(arr(i)) And recurse Then
-            newItems(i + offset) = recursiveRebase(arr(i), recurse)
+            Dim nested() As Variant
+            nested = arr(i)
+            newItems(i + offset) = recursiveRebase(nested, recurse)
         Else
             newItems(i + offset) = arr(i)
         End If
@@ -733,7 +779,7 @@ Private Sub EnsureCapacity(ByVal MinimumCapacity As Long)
     End If
 End Sub
 
-Private Function copyRange(ByRef newItems As Variant) As Variant
+Private Function copyRange(ByRef newItems() As Variant) As Variant()
     Dim i As Long
     For i = LBound(newItems) To UBound(newItems)
         newItems(i) = pItems(i)
@@ -741,19 +787,23 @@ Private Function copyRange(ByRef newItems As Variant) As Variant
     copyRange = newItems
 End Function
 
-Private Function jaggedToMulti(ByVal arr As Variant, _
-                               Optional ByVal depth As Long, _
-                               Optional ByVal currentDepth As Long, _
-                               Optional ByRef crumbs As Variant, _
-                               Optional ByRef result As Variant) As Variant
+Private Function jaggedToMulti(ByRef arr() As Variant, _
+                      Optional ByVal depth As Long, _
+                      Optional ByVal currentDepth As Long, _
+                      Optional ByRef crumbs As Variant, _
+                      Optional ByRef result As Variant) As Variant()
+    Dim i As Long
     Dim localBase As Long
     Dim localUpperBound As Long
     Dim localDepth As Long
     Dim localCurrentDepth As Long
-    Dim i As Long
+    Dim localCrumbs() As Variant
+    Dim localResult() As Variant
+    
     
     localDepth = depth
     localCurrentDepth = currentDepth
+    
     If localDepth = 0 Then
         If Not isJaggedArray(arr) Then
             Debug.Print "Argument passed to 'jaggedToMulti' not a jagged array"
@@ -767,34 +817,49 @@ Private Function jaggedToMulti(ByVal arr As Variant, _
         ' handle error
         Debug.Print "Cannot convert arrays with more than 20 dimensions to a multidimensional array!"
     ElseIf localDepth > 1 Then
-        If Not IsArray(crumbs) Then ReDim crumbs(localDepth - 1)
-        If Not IsArray(result) Then
-            result = createMultidimensionalArray(mapJaggedArray(arr))
+    
+        If IsMissing(crumbs) Then
+            ReDim localCrumbs(localDepth - 1)
+        Else
+            localCrumbs = crumbs
         End If
+        
+        If IsMissing(result) Then
+            localResult = createMultidimensionalArray(mapJaggedArray(arr, knownDepth:=localDepth))
+        Else
+            localResult = result
+        End If
+        
         localCurrentDepth = localCurrentDepth + 1
         localBase = LBound(arr)
         localUpperBound = UBound(arr)
         For i = localBase To localUpperBound
-            crumbs(localCurrentDepth - 1) = i
+            localCrumbs(localCurrentDepth - 1) = i
             If localCurrentDepth = localDepth Or Not IsArray(arr(i)) Then
-                result = letElementByBreadcrumb(result, crumbs, arr(i))
+                localResult = letElementByBreadcrumb(localResult, localCrumbs, arr(i))
             Else
-                result = jaggedToMulti(arr(i), localDepth, localCurrentDepth, crumbs, result)
+                Dim nested() As Variant
+                nested = arr(i)
+                localResult = jaggedToMulti(nested, localDepth, localCurrentDepth, localCrumbs, localResult)
             End If
         Next
     Else
-        result = arr
+        localResult = arr
     End If
     
-    jaggedToMulti = result
+    jaggedToMulti = localResult
 End Function
 
-Private Function multiToJagged(ByVal arr As Variant, Optional ByVal depth As Long, Optional ByVal currentDepth As Long, Optional ByRef crumbs As Variant) As Variant
+Private Function multiToJagged(ByRef arr() As Variant, _
+                      Optional ByVal depth As Long, _
+                      Optional ByVal currentDepth As Long, _
+                      Optional ByRef crumbs As Variant) As Variant()
+    Dim i As Long
     Dim localBase As Long
     Dim localUpperBound As Long
     Dim localDepth As Long
     Dim localCurrentDepth As Long
-    Dim i As Long
+    Dim localCrumbs() As Variant
     Dim result() As Variant
     
     localDepth = depth
@@ -813,17 +878,21 @@ Private Function multiToJagged(ByVal arr As Variant, Optional ByVal depth As Lon
         ' handle error
         Debug.Print "Cannot convert arrays with more than 20 dimensions to a jagged array!"
     ElseIf localDepth > 1 Then
-        If Not IsArray(crumbs) Then ReDim crumbs(localDepth - 1)
+        If IsMissing(crumbs) Then
+            ReDim localCrumbs(localDepth - 1)
+        Else
+            localCrumbs = crumbs
+        End If
         localCurrentDepth = localCurrentDepth + 1
         localBase = LBound(arr, localCurrentDepth)
         localUpperBound = UBound(arr, localCurrentDepth)
         ReDim result(localBase To localUpperBound)
         For i = localBase To localUpperBound
-            crumbs(localCurrentDepth - 1) = i
+            localCrumbs(localCurrentDepth - 1) = i
             If localCurrentDepth = localDepth Then
-                result(i) = getElementByBreadcrumb(arr, crumbs)
+                result(i) = getElementByBreadcrumb(arr, localCrumbs)
             Else
-                result(i) = multiToJagged(arr, localDepth, localCurrentDepth, crumbs)
+                result(i) = multiToJagged(arr, localDepth, localCurrentDepth, localCrumbs)
             End If
         Next
     Else
@@ -832,16 +901,23 @@ Private Function multiToJagged(ByVal arr As Variant, Optional ByVal depth As Lon
     multiToJagged = result
 End Function
 
-Private Function getJaggedArrayDepth(ByVal arr As Variant) As Variant
-    Dim i As Long, localBase As Long, localUpperBound As Long, currentDepth As Long, maxDepth As Long
+Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
+    Dim i As Long
+    Dim localBase As Long
+    Dim localUpperBound As Long
+    Dim currentDepth As Long
+    Dim maxDepth As Long
     Dim depth As Long
+    
     If IsArray(arr) Then
         depth = depth + 1
         localBase = LBound(arr)
         localUpperBound = UBound(arr)
         For i = localBase To localUpperBound
             If IsArray(arr(i)) Then
-                currentDepth = getJaggedArrayDepth(arr(i))
+                Dim nested() As Variant
+                nested = arr(i)
+                currentDepth = getJaggedArrayDepth(nested)
             End If
             If currentDepth > maxDepth Then maxDepth = currentDepth
         Next
@@ -850,32 +926,48 @@ Private Function getJaggedArrayDepth(ByVal arr As Variant) As Variant
     getJaggedArrayDepth = depth
 End Function
 
-Private Function mapJaggedArray(ByVal arr As Variant, Optional ByRef map As Variant, Optional ByVal currentIndex As Long) As Variant
+Private Function mapJaggedArray(ByRef arr() As Variant, _
+                       Optional ByRef map As Variant, _
+                       Optional ByVal currentIndex As Long, _
+                       Optional ByVal knownDepth As Long) As Variant()
     Dim i As Long
+    Dim localMap() As Variant
     Dim bounds() As Variant
     Dim Element As Variant
+    Dim localDepth As Long
     
     If Not IsArray(arr) Then Exit Function
-    If Not IsArray(map) Then
-        ReDim map(0 To getJaggedArrayDepth(arr) - 1)
-        For i = LBound(map) To UBound(map)
-            map(i) = Array(0, 0)
+    If IsMissing(map) Then
+        If knownDepth > 0 Then
+            localDepth = knownDepth
+        Else
+            localDepth = getJaggedArrayDepth(arr)
+        End If
+        ReDim localMap(0 To localDepth - 1)
+        For i = LBound(localMap) To UBound(localMap)
+            localMap(i) = Array(0, 0)
         Next
+    Else
+        localMap = map
     End If
     
     bounds = getArrayBounds(arr)
     
-    If bounds(0) < map(currentIndex)(0) Then map(currentIndex)(0) = bounds(0)
-    If bounds(1) > map(currentIndex)(1) Then map(currentIndex)(1) = bounds(1)
+    If bounds(0) < localMap(currentIndex)(0) Then localMap(currentIndex)(0) = bounds(0)
+    If bounds(1) > localMap(currentIndex)(1) Then localMap(currentIndex)(1) = bounds(1)
     
     For Each Element In arr
-        If IsArray(Element) Then mapJaggedArray Element, map, currentIndex + 1
+        If IsArray(Element) Then
+            Dim nested() As Variant
+            nested = Element
+            localMap = mapJaggedArray(nested, localMap, currentIndex + 1)
+        End If
     Next
     
-    mapJaggedArray = map
+    mapJaggedArray = localMap
 End Function
 
-Private Function getArrayBounds(ByVal arr As Variant) As Variant
+Private Function getArrayBounds(ByVal arr As Variant) As Variant()
     Dim result(0 To 1) As Variant
     If IsArray(arr) Then
         result(0) = LBound(arr)
@@ -897,7 +989,7 @@ Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
     getMultidimensionalArrayDepth = i - 1
 End Function
 
-Private Function getElementByBreadcrumb(ByVal arr As Variant, ByRef crumb() As Variant) As Variant
+Private Function getElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant) As Variant
     Dim result As Variant
     Select Case UBound(crumb)
     Case 0
@@ -956,7 +1048,7 @@ Private Function getElementByBreadcrumb(ByVal arr As Variant, ByRef crumb() As V
     getElementByBreadcrumb = result
 End Function
 
-Private Function letElementByBreadcrumb(ByVal arr As Variant, ByVal crumb As Variant, ByVal Element As Variant) As Variant
+Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant, ByVal Element As Variant) As Variant
     If IsObject(Element) Then
         Select Case UBound(crumb)
         Case 0
@@ -1071,7 +1163,7 @@ Private Function letElementByBreadcrumb(ByVal arr As Variant, ByVal crumb As Var
     letElementByBreadcrumb = arr
 End Function
 
-Private Function createMultidimensionalArray(ByVal crumb As Variant) As Variant
+Private Function createMultidimensionalArray(ByRef crumb() As Variant) As Variant()
     Dim result() As Variant
     Select Case UBound(crumb)
     Case 0
