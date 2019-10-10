@@ -11,9 +11,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
-   width="6309.144"
-   height="1658.7803"
-   viewBox="0 0 6309.144 1658.7802"
+   width="6889.8066"
+   height="1947.473"
+   viewBox="0 0 6889.8066 1947.4729"
    sodipodi:docname="logo.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    inkscape:export-filename="C:\Users\senipah\Documents\Code\office_projects\vba\BetterArray\docs\assets\logo.png"
@@ -27,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -35,32 +35,96 @@
      id="defs6">
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-5227.1051 : 2876.4771 : 0"
-       inkscape:vp_y="1.919114e-13 : 3134.2543 : 0"
-       inkscape:vp_z="10933.713 : 5428.9691 : 0"
-       inkscape:persp3d-origin="4269.0073 : 867.9849 : 1"
+       inkscape:vp_x="-5227.1051 : 2876.477 : 0"
+       inkscape:vp_y="1.919114e-13 : 3134.2542 : 0"
+       inkscape:vp_z="10933.713 : 5428.969 : 0"
+       inkscape:persp3d-origin="4269.0073 : 867.98488 : 1"
        id="perspective5248" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-5227.1051 : 2876.4771 : 0"
-       inkscape:vp_y="1.919114e-13 : 3134.2543 : 0"
-       inkscape:vp_z="10933.713 : 5428.9691 : 0"
+       inkscape:vp_x="-5227.1051 : 2876.477 : 0"
+       inkscape:vp_y="1.919114e-13 : 3134.2542 : 0"
+       inkscape:vp_z="10933.713 : 5428.969 : 0"
        inkscape:persp3d-origin="4853.1069 : 1104.1102 : 1"
        id="perspective5248-2" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-5227.1051 : 2876.4771 : 0"
-       inkscape:vp_y="1.919114e-13 : 3134.2543 : 0"
-       inkscape:vp_z="10933.713 : 5428.9691 : 0"
-       inkscape:persp3d-origin="3401.3283 : 920.70432 : 1"
+       inkscape:vp_x="-5227.1051 : 2876.477 : 0"
+       inkscape:vp_y="1.919114e-13 : 3134.2542 : 0"
+       inkscape:vp_z="10933.713 : 5428.969 : 0"
+       inkscape:persp3d-origin="3401.3283 : 920.7043 : 1"
        id="perspective5248-5" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-5227.1051 : 2876.4771 : 0"
-       inkscape:vp_y="1.919114e-13 : 3134.2543 : 0"
-       inkscape:vp_z="10933.713 : 5428.9691 : 0"
-       inkscape:persp3d-origin="4870.7846 : 874.30044 : 1"
+       inkscape:vp_x="-5227.1051 : 2876.477 : 0"
+       inkscape:vp_y="1.919114e-13 : 3134.2542 : 0"
+       inkscape:vp_z="10933.713 : 5428.969 : 0"
+       inkscape:persp3d-origin="4870.7846 : 874.30042 : 1"
        id="perspective5248-8" />
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter1342">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood1332" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite1334" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3"
+         result="blur"
+         id="feGaussianBlur1336" />
+      <feOffset
+         dx="6"
+         dy="6"
+         result="offset"
+         id="feOffset1338" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite1340" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter1406">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood1396" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite1398" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3"
+         result="blur"
+         id="feGaussianBlur1400" />
+      <feOffset
+         dx="6"
+         dy="6"
+         result="offset"
+         id="feOffset1402" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite1404" />
+    </filter>
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -77,8 +141,8 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="0.16"
-     inkscape:cx="2970.6622"
-     inkscape:cy="946.9731"
+     inkscape:cx="4126.6098"
+     inkscape:cy="994.03606"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
@@ -98,49 +162,49 @@
        id="path5364"
        style="fill:#353564;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="6"
-       d="m 8580.66,-2354.5584 v 2.7353 l 1.2158,-0.6037 v -2.7353 z"
-       points="8580.66,-2351.8231 8581.8758,-2352.4268 8581.8758,-2355.1621 8580.66,-2354.5584 " />
+       d="m 8580.66,-3131.5018 v 2.7352 l 1.2158,-0.6036 v -2.7353 z"
+       points="8580.66,-3128.7666 8581.8758,-3129.3702 8581.8758,-3132.1055 8580.66,-3131.5018 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5374"
        style="fill:#e9e9ff;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="11"
-       d="m 8581.8758,-2355.1621 0.7388,0.4066 v 2.7352 l -0.7388,-0.4065 z"
-       points="8582.6146,-2354.7555 8582.6146,-2352.0203 8581.8758,-2352.4268 8581.8758,-2355.1621 " />
+       d="m 8581.8758,-3132.1055 0.7388,0.4065 v 2.7353 l -0.7388,-0.4065 z"
+       points="8582.6146,-3131.699 8582.6146,-3128.9637 8581.8758,-3129.3702 8581.8758,-3132.1055 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5372"
        style="fill:#afafde;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="13"
-       d="m 8580.66,-2351.8231 0.7388,0.4065 1.2158,-0.6037 -0.7388,-0.4065 z"
-       points="8581.3988,-2351.4166 8582.6146,-2352.0203 8581.8758,-2352.4268 8580.66,-2351.8231 " />
+       d="m 8580.66,-3128.7666 0.7388,0.4066 1.2158,-0.6037 -0.7388,-0.4065 z"
+       points="8581.3988,-3128.36 8582.6146,-3128.9637 8581.8758,-3129.3702 8580.66,-3128.7666 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5366"
        style="fill:#4d4d9f;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="5"
-       d="m 8580.66,-2354.5584 0.7388,0.4066 1.2158,-0.6037 -0.7388,-0.4066 z"
-       points="8581.3988,-2354.1518 8582.6146,-2354.7555 8581.8758,-2355.1621 8580.66,-2354.5584 " />
+       d="m 8580.66,-3131.5018 0.7388,0.4065 1.2158,-0.6037 -0.7388,-0.4065 z"
+       points="8581.3988,-3131.0953 8582.6146,-3131.699 8581.8758,-3132.1055 8580.66,-3131.5018 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5370"
        style="fill:#d7d7ff;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="14"
-       d="m 8581.3988,-2354.1518 v 2.7352 l 1.2158,-0.6037 v -2.7352 z"
-       points="8581.3988,-2351.4166 8582.6146,-2352.0203 8582.6146,-2354.7555 8581.3988,-2354.1518 " />
+       d="m 8581.3988,-3131.0953 v 2.7353 l 1.2158,-0.6037 v -2.7353 z"
+       points="8581.3988,-3128.36 8582.6146,-3128.9637 8582.6146,-3131.699 8581.3988,-3131.0953 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5368"
        style="fill:#8686bf;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="3"
-       d="m 8580.66,-2354.5584 0.7388,0.4066 v 2.7352 l -0.7388,-0.4065 z"
-       points="8581.3988,-2354.1518 8581.3988,-2351.4166 8580.66,-2351.8231 8580.66,-2354.5584 " />
+       d="m 8580.66,-3131.5018 0.7388,0.4065 v 2.7353 l -0.7388,-0.4066 z"
+       points="8581.3988,-3131.0953 8581.3988,-3128.36 8580.66,-3128.7666 8580.66,-3131.5018 " />
   </g>
   <flowRoot
      xml:space="preserve"
      id="flowRoot6591"
      style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-     transform="translate(-2886.6113,3433.8831)"><flowRegion
+     transform="translate(-2305.9487,3578.2295)"><flowRegion
        id="flowRegion6593"><rect
          id="rect6595"
          width="3412.5"
@@ -150,30 +214,31 @@
        id="flowPara6597" /></flowRoot>  <flowRoot
      xml:space="preserve"
      id="flowRoot6599"
-     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"
-     transform="matrix(5.4414536,0,0,3.0273049,-11186.145,-557.5912)"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1342)"
+     transform="matrix(5.4414536,0,0,3.0273049,-10919.483,-325.53537)"
      inkscape:export-xdpi="96"
      inkscape:export-ydpi="96"><flowRegion
        id="flowRegion6601"
-       style="line-height:1;fill:#ffffff;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"><rect
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"><rect
          id="rect6603"
          width="753.125"
          height="671.875"
          x="2056.25"
          y="185.20483"
-         style="line-height:1;fill:#ffffff;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none" /></flowRegion><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none" /></flowRegion><flowPara
        id="flowPara6605"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;line-height:1;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;stroke:#000000;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">VBA</flowPara><flowPara
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;line-height:1;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ffffff;stroke:#000000;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;line-height:2.46385098px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:17.24695778px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">VBA</flowPara><flowPara
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="flowPara6609"><flowSpan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000"
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none"
    id="flowSpan6615">B</flowSpan>ETTER</flowPara><flowPara
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;line-height:1;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ffffff;stroke:#000000;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="flowPara6611"><flowSpan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:191.45706177px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000"
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none"
    id="flowSpan6613">A</flowSpan>RRAY</flowPara></flowRoot>  <g
      id="g6802"
-     transform="translate(515.9048,-1104.9181)">
+     transform="translate(838.62271,-960.57179)"
+     style="filter:url(#filter1406)">
     <path
        d="m 3713.6722,1415.6787 v 483.2859 l 589.7221,-292.8175 v -483.2859 z"
        style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:24.94488335;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
