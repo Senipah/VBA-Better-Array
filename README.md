@@ -1,8 +1,10 @@
-# UNDER CONSTRUCTION
-
 # ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/logo.png)
 
 A VBA class providing a more modern and user-friendly Array.
+
+# UNDER CONSTRUCTION
+
+This library is a work in progress.
 
 ## Documentation
 
@@ -23,7 +25,7 @@ Set ba = New BetterArray
 
 ## Contributing
 
-Accepting pull requests.
+Currently closed to pull requests.
 
 ## License
 
