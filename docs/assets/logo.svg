@@ -11,9 +11,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
-   width="6889.8066"
+   width="6951.8076"
    height="1947.473"
-   viewBox="0 0 6889.8066 1947.4729"
+   viewBox="0 0 6951.8076 1947.4729"
    sodipodi:docname="logo.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    inkscape:export-filename="C:\Users\senipah\Documents\Code\office_projects\vba\BetterArray\docs\assets\logo.png"
@@ -141,8 +141,8 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="0.16"
-     inkscape:cx="4126.6098"
-     inkscape:cy="994.03606"
+     inkscape:cx="2926.1106"
+     inkscape:cy="2994.0362"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
@@ -162,49 +162,49 @@
        id="path5364"
        style="fill:#353564;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="6"
-       d="m 8580.66,-3131.5018 v 2.7352 l 1.2158,-0.6036 v -2.7353 z"
-       points="8580.66,-3128.7666 8581.8758,-3129.3702 8581.8758,-3132.1055 8580.66,-3131.5018 " />
+       d="M 8580.66,0.60351968 V 3.3387835 l 1.2158,-0.6036858 V -1.6613151e-4 Z"
+       points="8580.66,3.3387835 8581.8758,2.7350977 8581.8758,-0.00016613151 8580.66,0.60351968 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5374"
        style="fill:#e9e9ff;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="11"
-       d="m 8581.8758,-3132.1055 0.7388,0.4065 v 2.7353 l -0.7388,-0.4065 z"
-       points="8582.6146,-3131.699 8582.6146,-3128.9637 8581.8758,-3129.3702 8581.8758,-3132.1055 " />
+       d="M 8581.8758,-1.6613151e-4 8582.6146,0.40639515 V 3.141659 l -0.7388,-0.4065613 z"
+       points="8582.6146,0.40639515 8582.6146,3.141659 8581.8758,2.7350977 8581.8758,-0.00016613151 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5372"
        style="fill:#afafde;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="13"
-       d="m 8580.66,-3128.7666 0.7388,0.4066 1.2158,-0.6037 -0.7388,-0.4065 z"
-       points="8581.3988,-3128.36 8582.6146,-3128.9637 8581.8758,-3129.3702 8580.66,-3128.7666 " />
+       d="m 8580.66,3.3387835 0.7388,0.4065613 1.2158,-0.6036858 -0.7388,-0.4065613 z"
+       points="8581.3988,3.7453448 8582.6146,3.141659 8581.8758,2.7350977 8580.66,3.3387835 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5366"
        style="fill:#4d4d9f;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="5"
-       d="m 8580.66,-3131.5018 0.7388,0.4065 1.2158,-0.6037 -0.7388,-0.4065 z"
-       points="8581.3988,-3131.0953 8582.6146,-3131.699 8581.8758,-3132.1055 8580.66,-3131.5018 " />
+       d="m 8580.66,0.60351968 0.7388,0.40656132 1.2158,-0.60368585 -0.7388,-0.40656128151 z"
+       points="8581.3988,1.010081 8582.6146,0.40639515 8581.8758,-0.00016613151 8580.66,0.60351968 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5370"
        style="fill:#d7d7ff;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="14"
-       d="m 8581.3988,-3131.0953 v 2.7353 l 1.2158,-0.6037 v -2.7353 z"
-       points="8581.3988,-3128.36 8582.6146,-3128.9637 8582.6146,-3131.699 8581.3988,-3131.0953 " />
+       d="m 8581.3988,1.010081 v 2.7352638 l 1.2158,-0.6036858 V 0.40639515 Z"
+       points="8581.3988,3.7453448 8582.6146,3.141659 8582.6146,0.40639515 8581.3988,1.010081 " />
     <path
        sodipodi:type="inkscape:box3dside"
        id="path5368"
        style="fill:#8686bf;fill-rule:evenodd;stroke:none;stroke-linejoin:round"
        inkscape:box3dsidetype="3"
-       d="m 8580.66,-3131.5018 0.7388,0.4065 v 2.7353 l -0.7388,-0.4066 z"
-       points="8581.3988,-3131.0953 8581.3988,-3128.36 8580.66,-3128.7666 8580.66,-3131.5018 " />
+       d="m 8580.66,0.60351968 0.7388,0.40656132 V 3.7453448 L 8580.66,3.3387835 Z"
+       points="8581.3988,1.010081 8581.3988,3.7453448 8580.66,3.3387835 8580.66,0.60351968 " />
   </g>
   <flowRoot
      xml:space="preserve"
      id="flowRoot6591"
      style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-     transform="translate(-2305.9487,3578.2295)"><flowRegion
+     transform="translate(-2243.9478,3578.2295)"><flowRegion
        id="flowRegion6593"><rect
          id="rect6595"
          width="3412.5"
@@ -214,31 +214,31 @@
        id="flowPara6597" /></flowRoot>  <flowRoot
      xml:space="preserve"
      id="flowRoot6599"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1342)"
-     transform="matrix(5.4414536,0,0,3.0273049,-10919.483,-325.53537)"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1342);opacity:1;"
+     transform="matrix(5.4414536,0,0,3.0273049,-10857.483,-325.53539)"
      inkscape:export-xdpi="96"
      inkscape:export-ydpi="96"><flowRegion
        id="flowRegion6601"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"><rect
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;"><rect
          id="rect6603"
          width="753.125"
          height="671.875"
          x="2056.25"
          y="185.20483"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none" /></flowRegion><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:164.25674438px;line-height:164.25674438px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;" /></flowRegion><flowPara
        id="flowPara6605"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;line-height:2.46385098px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:17.24695778px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">VBA</flowPara><flowPara
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;line-height:2.46385098px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:17.24695778px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;">VBA</flowPara><flowPara
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
        id="flowPara6609"><flowSpan
-   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none"
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none;"
    id="flowSpan6615">B</flowSpan>ETTER</flowPara><flowPara
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
        id="flowPara6611"><flowSpan
-   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none"
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:164.25674438px;font-family:Play;-inkscape-font-specification:'Play Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0.52726412px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;stroke:none;"
    id="flowSpan6613">A</flowSpan>RRAY</flowPara></flowRoot>  <g
      id="g6802"
-     transform="translate(838.62271,-960.57179)"
-     style="filter:url(#filter1406)">
+     transform="translate(900.62352,-960.57179)"
+     style="filter:url(#filter1406);opacity:1">
     <path
        d="m 3713.6722,1415.6787 v 483.2859 l 589.7221,-292.8175 v -483.2859 z"
        style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:24.94488335;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
@@ -356,7 +356,8 @@
        inkscape:connector-curvature="0" />
     <g
        transform="translate(-2776.1046,1198.819)"
-       id="g6641-1">
+       id="g6641-1"
+       style="">
       <path
          inkscape:connector-curvature="0"
          id="path6571-7"
