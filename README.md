@@ -1,7 +1,6 @@
 # UNDER CONSTRUCTION
 
-
-# VBA Better Array
+# ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/logo.png)
 
 A VBA class providing a more modern and user-friendly Array.
 
