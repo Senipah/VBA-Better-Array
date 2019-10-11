@@ -9,13 +9,14 @@ Option Private Module
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
 
-Private Assert As Object
+'Private Assert As Object
 'Move to early bind
-' Private Assert As AssertClass
+Private Assert As AssertClass
+
+'Private Fakes As Object
+'Move to early bind
 '@Ignore VariableNotUsed
-Private Fakes As Object
-'Move to early bind
-'Private Fakes As FakesProvider
+Private Fakes As FakesProvider
 
 
 Private Const TEST_ARRAY_LENGTH As Long = 10
@@ -23,11 +24,11 @@ Private Const TEST_ARRAY_LENGTH As Long = 10
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-    Set Assert = CreateObject("Rubberduck.AssertClass")
-    Set Fakes = CreateObject("Rubberduck.FakesProvider")
+'    Set Assert = CreateObject("Rubberduck.AssertClass")
+'    Set Fakes = CreateObject("Rubberduck.FakesProvider")
     ' Move to early binding
-'    Set Assert = New AssertClass
-'    Set Fakes = New FakesProvider
+    Set Assert = New AssertClass
+    Set Fakes = New FakesProvider
 End Sub
 
 '@ModuleCleanup
@@ -46,23 +47,6 @@ End Sub
 Private Sub TestCleanup()
     'this method runs after every test in the module.
 End Sub
-
-''@TestMethod("Uncategorized")
-'Private Sub MethodToTest_Scenario_ExpectedBehaviour()                        'Example
-'    On Error GoTo TestFail
-'
-'    'Arrange:
-'    'Act:
-'
-'    'Assert:
-'    Assert.Succeed
-'
-'TestExit:
-'    Exit Sub
-'TestFail:
-'    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
-'End Sub
-
 
 '''''''''''''''''
 ' Instantiation '
@@ -153,7 +137,7 @@ Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray(
     Dim actual() As Variant
     
     Set gen = New ArrayGenerator
-    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New BetterArray
     
     'Act:
@@ -170,7 +154,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Items")
-Public Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -180,7 +164,7 @@ Public Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray
     Dim actual() As Variant
     
     Set gen = New ArrayGenerator
-    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     Set SUT = New BetterArray
     
     'Act:
@@ -211,7 +195,7 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     Dim testResult As Boolean
     
     Set gen = New ArrayGenerator
-    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New BetterArray
     
     'Act:
@@ -254,7 +238,7 @@ Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalA
     
     Set gen = New ArrayGenerator
     expected = TEST_ARRAY_LENGTH
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     Set SUT = New BetterArray
     
     'Act:
@@ -283,7 +267,7 @@ Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOrigina
     
     Set gen = New ArrayGenerator
     expected = TEST_ARRAY_LENGTH
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     Set SUT = New BetterArray
     
     'Act:
@@ -313,7 +297,7 @@ Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
     
     Set gen = New ArrayGenerator
     expected = TEST_ARRAY_LENGTH
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     Set SUT = New BetterArray
     
     'Act:
@@ -342,13 +326,13 @@ Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsO
     Dim actual As Long
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expected = UBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
-    actual = SUT.UpperBound
+    actual = SUT.upperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual upperbound <> expected"
@@ -376,7 +360,7 @@ Private Sub LowerBound_FromAssignedOneDimensionalArray_ReturnedLowerBoundEqualsO
     Dim actual As Long
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expected = LBound(testArray)
     Set SUT = New BetterArray
     
@@ -408,7 +392,7 @@ Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowe
     Dim oldLowerBound As Long
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     oldLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
@@ -423,7 +407,7 @@ Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowe
     Assert.AreEqual expected, actual, "Actual LowerBound <> expected"
     Assert.AreEqual SUT.LowerBound, actual, "Actual LowerBound <> SUT.LowerBound prop"
     Assert.AreEqual UBound(testArray) + 1, UBound(returnedItems), "Actual upperbound <> expected"
-    Assert.AreEqual SUT.UpperBound, UBound(returnedItems), "Actual upperbound <> SUT.UpperBound prop"
+    Assert.AreEqual SUT.upperBound, UBound(returnedItems), "Actual upperbound <> SUT.UpperBound prop"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length does not equal expected"
 
 TestExit:
@@ -451,7 +435,7 @@ Private Sub Item_ChangingExistingIndex_ItemIsChanged()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
@@ -486,14 +470,14 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     Dim expectedLowerBound As Long
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
     'Act:
     SUT.Items = testArray
-    SUT.Item(SUT.UpperBound + 1) = expected
-    actual = SUT.Item(SUT.UpperBound)
+    SUT.Item(SUT.upperBound + 1) = expected
+    actual = SUT.Item(SUT.upperBound)
     actualLowerBound = SUT.LowerBound
     
 
@@ -524,7 +508,7 @@ Private Sub Item_ChangingIndexBelowLowerBound_ItemIsUnshifted()
 
     
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expectedLowerBound = LBound(testArray)
     Set SUT = New BetterArray
     
@@ -559,7 +543,7 @@ Private Sub Item_GetScalarValue_ValueReturned()
        
     Set gen = New ArrayGenerator
     Set SUT = New BetterArray
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     expected = testArray(1)
     
     'Act:
@@ -588,7 +572,7 @@ Private Sub Item_GetObject_SameObjectReturned()
     Dim actual As Object
        
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, ObjectVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, ObjectVals, OneDimension)
     Set SUT = New BetterArray
     Set expected = testArray(1)
     
@@ -629,7 +613,7 @@ Private Sub Push_AddToNewBetterArray_ItemAdded()
     SUT.Push expected
     actual = SUT.Item(SUT.LowerBound)
     actualLength = SUT.Length
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "actual <> expected"
@@ -655,12 +639,12 @@ Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
     
     'Act:
     SUT.Items = testArray
     SUT.Push expected
-    actual = SUT.Item(SUT.UpperBound)
+    actual = SUT.Item(SUT.upperBound)
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
@@ -689,7 +673,7 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     Set gen = New ArrayGenerator
     
     expected = "Hello World"
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     
     'Act:
     SUT.Items = testArray
@@ -724,8 +708,8 @@ Private Sub Push_AddToExistingJaggedArray_ItemAdded()
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
     
-    expected = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
     
     'Act:
     SUT.Items = testArray
@@ -764,7 +748,7 @@ Private Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
     SUT.Push expected, 2, 3
     actual = SUT.Item(SUT.LowerBound)
     actualLength = SUT.Length
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
@@ -795,7 +779,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     Dim actualLowerBound As Long
     Dim expectedLowerBound As Long
     
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 
@@ -810,7 +794,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
-    Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual UBound(testArray) - 1, SUT.upperBound, "Upperbound value incorrect"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
 TestExit:
@@ -845,7 +829,7 @@ Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     actual = SUT.Pop
     actualLowerBound = SUT.LowerBound
     actualLength = SUT.Length
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
@@ -877,7 +861,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     Dim actualLowerBound As Long
     Dim expectedLowerBound As Long
     
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     Dim expected As String
     Dim actual As String
 
@@ -892,7 +876,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
-    Assert.AreEqual UBound(testArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual UBound(testArray) - 1, SUT.upperBound, "Upperbound value incorrect"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
 TestExit:
@@ -922,7 +906,7 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     actual = SUT.Shift
     actualLowerBound = SUT.LowerBound
     actualLength = SUT.Length
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
 
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
@@ -956,7 +940,7 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, StringVals, OneDimension)
     testElement = "Hello World"
     expectedLowerBound = SUT.LowerBound
     expected = TEST_ARRAY_LENGTH + 1
@@ -968,7 +952,7 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
 
     'Assert:
     Assert.AreEqual expected, actual, "Return value incorrect"
-    Assert.AreEqual (UBound(testArray) + 1), SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual (UBound(testArray) + 1), SUT.upperBound, "Upperbound value incorrect"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual testElement, SUT.Item(SUT.LowerBound), "Element not inserted at correct position"
 
@@ -999,7 +983,7 @@ Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
     'Act:
     actual = SUT.Unshift(expectedElement)
     actualLowerBound = SUT.LowerBound
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
     actualElement = SUT.Item(SUT.LowerBound)
 
     'Assert:
@@ -1035,14 +1019,14 @@ Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
 
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    testArray = gen.getArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
+    testArray = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, MultiDimension)
     SUT.Items = testArray
     
     'Act:
     actual = SUT.Unshift(expectedElement)
     returnedItems = SUT.Items
     actualLowerBound = SUT.LowerBound
-    actualUpperBound = SUT.UpperBound
+    actualUpperBound = SUT.upperBound
     actualElement = returnedItems(LBound(returnedItems), LBound(returnedItems, 2))
 
     'Assert:
@@ -1068,12 +1052,74 @@ Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     
     'Arrange:
     Dim SUT As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim actualStoredArray() As Variant
+    
     Set SUT = New BetterArray
+    Set gen = New ArrayGenerator
+    expectedLength = TEST_ARRAY_LENGTH
+    expected = gen.GetArray(expectedLength)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    actual = SUT.Concat(expected)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.upperBound
+    actualStoredArray = SUT.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.SequenceEquals expected, actualStoredArray, "Internal <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Concat")
+Private Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As BetterArray
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim actualStoredArray() As Variant
+    
+    Dim firstAray() As Variant
+    Dim secondArray() As Variant
+    
+    firstAray = Array(1, 2, 3)
+    secondArray = Array(4, 5, 6)
+    expected = Array(1, 2, 3, 4, 5, 6)
+    
+    Set SUT = New BetterArray
+    expectedLength = 6
+    expectedUpperBound = UBound(expected)
+    
+    'Act:
+    actual = SUT.Concat(firstAray, secondArray)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.upperBound
+    actualStoredArray = SUT.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.SequenceEquals expected, actualStoredArray, "Internal <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1086,12 +1132,39 @@ Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     
     'Arrange:
     Dim SUT As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim actualStoredArray() As Variant
+    
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    
+    Set gen = New ArrayGenerator
+    firstArray = gen.GetArray()
+    secondArray = gen.GetArray()
+    expected = gen.ConcatArraysOfSameStructure(OneDimension, firstArray, secondArray)
+    
     Set SUT = New BetterArray
+    expectedLength = gen.GetArrayLength(expected)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.upperBound
+    actualStoredArray = SUT.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.SequenceEquals expected, actualStoredArray, "Internal <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 
 TestExit:
     Exit Sub
@@ -1105,12 +1178,32 @@ Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     
     'Arrange:
     Dim SUT As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim actualStoredArray() As Variant
+    
     Set SUT = New BetterArray
+    Set gen = New ArrayGenerator
+    expectedLength = TEST_ARRAY_LENGTH
+    expected = gen.GetArray(expectedLength, ArrayType:=MultiDimension)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    actual = SUT.Concat(expected)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.upperBound
+    actualStoredArray = SUT.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.SequenceEquals expected, actualStoredArray, "Internal <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1123,18 +1216,42 @@ Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     
     'Arrange:
     Dim SUT As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected() As Variant
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim actualStoredArray() As Variant
+    
     Set SUT = New BetterArray
+    Set gen = New ArrayGenerator
+    expectedLength = TEST_ARRAY_LENGTH * 2
+    firstArray = gen.GetArray(TEST_ARRAY_LENGTH, ArrayType:=MultiDimension)
+    secondArray = gen.GetArray(TEST_ARRAY_LENGTH, ArrayType:=MultiDimension)
+    expected = gen.ConcatArraysOfSameStructure(MultiDimension, firstArray, secondArray)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray)
+    actualLength = SUT.Length
+    actualUpperBound = SUT.upperBound
+    actualStoredArray = SUT.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.SequenceEquals expected, actualStoredArray, "Internal <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-
 
 '@TestMethod("BetterArray_Concat")
 Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
