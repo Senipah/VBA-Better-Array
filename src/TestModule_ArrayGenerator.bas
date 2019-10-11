@@ -9,17 +9,25 @@ Option Private Module
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
 
-Private Assert As Object
-'@Ignore VariableNotUsed
-Private Fakes As Object
+'Private Assert As Object
+'Move to early bind
+Private Assert As AssertClass
 
-Private Const ARRAY_LENGTH As Long = 10
+'Private Fakes As Object
+'Move to early bind
+'@Ignore VariableNotUsed
+Private Fakes As FakesProvider
+
+Private Const TEST_ARRAY_LENGTH As Long = 10
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-    Set Assert = CreateObject("Rubberduck.AssertClass")
-    Set Fakes = CreateObject("Rubberduck.FakesProvider")
+'    Set Assert = CreateObject("Rubberduck.AssertClass")
+'    Set Fakes = CreateObject("Rubberduck.FakesProvider")
+    ' Move to early binding
+    Set Assert = New AssertClass
+    Set Fakes = New FakesProvider
 End Sub
 
 '@ModuleCleanup
@@ -68,7 +76,7 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If TypeName(Element) <> "Boolean" Then testResult = False
@@ -97,7 +105,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -128,7 +136,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -157,7 +165,7 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If TypeName(Element) <> "Byte" Then testResult = False
@@ -186,7 +194,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -217,7 +225,7 @@ Private Sub GetArray_BytesJagged_ValuesAreBytes()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -247,7 +255,7 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If TypeName(Element) <> "Double" Then testResult = False
@@ -276,7 +284,7 @@ Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -307,7 +315,7 @@ Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -336,7 +344,7 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If TypeName(Element) <> "Long" Then testResult = False
@@ -365,7 +373,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -396,7 +404,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -428,7 +436,7 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If Not IsObject(Element) Then testResult = False
@@ -457,7 +465,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -475,7 +483,7 @@ TestFail:
 End Sub
 
 '@TestMethod("ObjectsArrays")
-Public Sub GetArray_ObjectsJagged_ValuesAreObjects()
+Private Sub GetArray_ObjectsJagged_ValuesAreObjects()
     On Error GoTo TestFail
 
     'Arrange:
@@ -488,7 +496,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -520,7 +528,7 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
     testResult = True
     For Each Element In returnedArray
         If TypeName(Element) <> "String" Then testResult = False
@@ -549,7 +557,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -580,7 +588,7 @@ Dim j As Long
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
     testResult = True
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -612,7 +620,7 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     Dim Element As Variant
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
     firstType = TypeName(returnedArray(0))
     For Each Element In returnedArray
         If TypeName(Element) <> firstType Then
@@ -645,7 +653,7 @@ Dim j As Long
     Dim firstType As String
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
     firstType = TypeName(returnedArray(0, 0))
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray, 2) To UBound(returnedArray, 2)
@@ -680,7 +688,7 @@ Dim j As Long
     Dim firstType As String
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
     firstType = TypeName(returnedArray(0)(0))
     For i = LBound(returnedArray) To UBound(returnedArray)
         For j = LBound(returnedArray(i)) To UBound(returnedArray(i))
@@ -712,7 +720,7 @@ Private Sub GetArray_BooleanOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -735,7 +743,7 @@ Private Sub GetArray_BooleanMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -758,7 +766,7 @@ Private Sub GetArray_BooleanJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -781,7 +789,7 @@ Private Sub GetArray_ByteOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -804,7 +812,7 @@ Private Sub GetArray_ByteMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -827,7 +835,7 @@ Private Sub GetArray_ByteJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -851,7 +859,7 @@ Private Sub GetArray_DoubleOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -874,7 +882,7 @@ Private Sub GetArray_DoubleMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -897,7 +905,7 @@ Private Sub GetArray_DoubleJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -920,7 +928,7 @@ Private Sub GetArray_LongOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -943,7 +951,7 @@ Private Sub GetArray_LongMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -966,7 +974,7 @@ Private Sub GetArray_LongJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -989,7 +997,7 @@ Private Sub GetArray_ObjectOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1012,7 +1020,7 @@ Private Sub GetArray_ObjectMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1035,7 +1043,7 @@ Private Sub GetArray_ObjectJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1058,7 +1066,7 @@ Private Sub GetArray_StringOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1081,7 +1089,7 @@ Private Sub GetArray_StringMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1104,7 +1112,7 @@ Private Sub GetArray_StringJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1127,7 +1135,7 @@ Private Sub GetArray_VariantOneDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1150,7 +1158,7 @@ Private Sub GetArray_VariantMultiDimension_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1173,7 +1181,7 @@ Private Sub GetArray_VariantJagged_ReturnsArray()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
     testResult = IsArray(returnedArray)
     
     'Assert:
@@ -1213,8 +1221,8 @@ Private Sub GetArray_BooleanOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1236,8 +1244,8 @@ Private Sub GetArray_BooleanMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1259,8 +1267,8 @@ Private Sub GetArray_BooleanJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.BooleanVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1282,8 +1290,8 @@ Private Sub GetArray_ByteOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1305,8 +1313,8 @@ Private Sub GetArray_ByteMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1328,8 +1336,8 @@ Private Sub GetArray_ByteJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ByteVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1352,8 +1360,8 @@ Private Sub GetArray_DoubleOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1375,8 +1383,8 @@ Private Sub GetArray_DoubleMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1398,8 +1406,8 @@ Private Sub GetArray_DoubleJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.DoubleVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1421,8 +1429,8 @@ Private Sub GetArray_LongOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1444,8 +1452,8 @@ Private Sub GetArray_LongMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1467,8 +1475,8 @@ Private Sub GetArray_LongJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.LongVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1490,8 +1498,8 @@ Private Sub GetArray_ObjectOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1513,8 +1521,8 @@ Private Sub GetArray_ObjectMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1536,8 +1544,8 @@ Private Sub GetArray_ObjectJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.ObjectVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1560,8 +1568,8 @@ Private Sub GetArray_StringOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1583,8 +1591,8 @@ Private Sub GetArray_StringMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1606,8 +1614,8 @@ Private Sub GetArray_StringJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.StringVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1630,8 +1638,8 @@ Private Sub GetArray_VariantOneDimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.OneDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1653,8 +1661,8 @@ Private Sub GetArray_VariantMultidimension_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.MultiDimension)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1676,8 +1684,8 @@ Private Sub GetArray_VariantJagged_IsCorrectLength()
     Dim testResult As Boolean
     
     'Act:
-    returnedArray = SUT.getArray(ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
-    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = ARRAY_LENGTH)
+    returnedArray = SUT.GetArray(TEST_ARRAY_LENGTH, ValueTypes.VariantVals, ArrayTypes.Jagged)
+    testResult = ((UBound(returnedArray) - LBound(returnedArray) + 1) = TEST_ARRAY_LENGTH)
     
     'Assert:
     Assert.IsTrue testResult
@@ -1690,3 +1698,270 @@ End Sub
 
 
 
+'@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
+Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray(1, 1) As Variant
+    Dim secondArray(1, 1) As Variant
+    Dim expected(3, 1) As Variant
+    Dim actual() As Variant
+    
+    firstArray(0, 0) = 0
+    firstArray(0, 1) = "A"
+    firstArray(1, 0) = 1
+    firstArray(1, 1) = "B"
+    secondArray(0, 0) = 2
+    secondArray(0, 1) = "C"
+    secondArray(1, 0) = 3
+    secondArray(1, 1) = "D"
+    
+    expected(0, 0) = 0
+    expected(0, 1) = "A"
+    expected(1, 0) = 1
+    expected(1, 1) = "B"
+    expected(2, 0) = 2
+    expected(2, 1) = "C"
+    expected(3, 0) = 3
+    expected(3, 1) = "D"
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(MultiDimension, firstArray, secondArray)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
+Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray(1, 1) As Variant
+    Dim secondArray(1, 1) As Variant
+    Dim thirdArray(1, 1) As Variant
+    Dim expected(5, 1) As Variant
+    Dim actual() As Variant
+    
+    firstArray(0, 0) = 0
+    firstArray(0, 1) = "A"
+    firstArray(1, 0) = 1
+    firstArray(1, 1) = "B"
+    secondArray(0, 0) = 2
+    secondArray(0, 1) = "C"
+    secondArray(1, 0) = 3
+    secondArray(1, 1) = "D"
+    thirdArray(0, 0) = 4
+    thirdArray(0, 1) = "E"
+    thirdArray(1, 0) = 5
+    thirdArray(1, 1) = "F"
+    
+    expected(0, 0) = 0
+    expected(0, 1) = "A"
+    expected(1, 0) = 1
+    expected(1, 1) = "B"
+    expected(2, 0) = 2
+    expected(2, 1) = "C"
+    expected(3, 0) = 3
+    expected(3, 1) = "D"
+    expected(4, 0) = 4
+    expected(4, 1) = "E"
+    expected(5, 0) = 5
+    expected(5, 1) = "F"
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(MultiDimension, firstArray, secondArray, thirdArray)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
+Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray(1) As Variant
+    Dim secondArray(1) As Variant
+    Dim expected(3) As Variant
+    Dim actual() As Variant
+    
+    firstArray(0) = 0
+    firstArray(1) = 1
+    secondArray(0) = 2
+    secondArray(1) = 3
+    
+    expected(0) = 0
+    expected(1) = 1
+    expected(2) = 2
+    expected(3) = 3
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(OneDimension, firstArray, secondArray)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
+Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray(1) As Variant
+    Dim secondArray(1) As Variant
+    Dim thirdArray(1) As Variant
+    Dim expected(5) As Variant
+    Dim actual() As Variant
+    
+    firstArray(0) = 0
+    firstArray(1) = 1
+    secondArray(0) = 2
+    secondArray(1) = 3
+    thirdArray(0) = 4
+    thirdArray(1) = 5
+    
+    expected(0) = 0
+    expected(1) = 1
+    expected(2) = 2
+    expected(3) = 3
+    expected(4) = 4
+    expected(5) = 5
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(OneDimension, firstArray, secondArray, thirdArray)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
+Private Sub ConcatArraysOfSameStructure_TwoJaggedArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim i As Long
+    
+    firstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
+    secondArray = Array(Array(6, 7, 8), Array(9, 10, 11))
+    expected = Array(Array(0, 1, 2), Array(3, 4, 5), Array(6, 7, 8), Array(9, 10, 11))
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(Jagged, firstArray, secondArray)
+    
+    'Assert:
+    For i = LBound(expected) To UBound(expected)
+        Assert.SequenceEquals expected(i), actual(i), "Actual <> Expected"
+    Next
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
+Private Sub ConcatArraysOfSameStructures_ThreeJaggedArrays_ConcatSuccess()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim thirdArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim i As Long
+    
+    firstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
+    secondArray = Array(Array(6, 7, 8), Array(9, 10, 11))
+    thirdArray = Array(Array(12, 13, 14), Array(15, 16, 17))
+    expected = Array(Array(0, 1, 2), Array(3, 4, 5), Array(6, 7, 8), _
+        Array(9, 10, 11), Array(12, 13, 14), Array(15, 16, 17))
+    
+    Set SUT = New ArrayGenerator
+    
+    'Act:
+    actual = SUT.ConcatArraysOfSameStructure(Jagged, firstArray, secondArray, thirdArray)
+    
+    'Assert:
+    For i = LBound(expected) To UBound(expected)
+        Assert.SequenceEquals expected(i), actual(i), "Actual <> Expected"
+    Next
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("ArrayGenerator_GetArrayLength")
+Private Sub GetArrayLength_OneDimArray_ReturnsCorrectLength()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim SUT As ArrayGenerator
+    Dim testArray() As Variant
+    Dim expected As Long
+    Dim actual As Long
+    
+    Set SUT = New ArrayGenerator
+    expected = TEST_ARRAY_LENGTH
+    
+    'Act:
+    testArray = SUT.GetArray(TEST_ARRAY_LENGTH)
+    actual = SUT.GetArrayLength(testArray)
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
