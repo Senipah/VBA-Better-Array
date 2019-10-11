@@ -121,8 +121,8 @@ Public Property Let Items(ByVal Values As Variant)
     End If
 End Property
 
-Public Property Get UpperBound()
-    UpperBound = IIf(pLength = 0, pLength, pLength + pLowerBound - 1)
+Public Property Get upperBound()
+    upperBound = IIf(pLength = 0, pLength, pLength + pLowerBound - 1)
 End Property
 
 Public Property Get LowerBound() As Long
@@ -137,7 +137,7 @@ Public Property Let LowerBound(ByVal value As Long)
 End Property
 
 Public Property Let Item(ByVal Index As Long, ByVal Element As Variant)
-    If Me.UpperBound >= Index Then
+    If Me.upperBound >= Index Then
         If Index < Me.LowerBound Then
             Me.Unshift Element
         Else
@@ -172,14 +172,14 @@ End Property
 ' Public Methods '
 ''''''''''''''''''
 
-Public Function Push(ParamArray Args() As Variant) As Variant
+Public Function Push(ParamArray args() As Variant) As Variant
     Dim Element As Variant
     
     If pArrayType = ArrayTypes.Unallocated Or _
        pArrayType = ArrayTypes.Undefined Then
         pArrayType = ArrayTypes.OneDimension
     End If
-    For Each Element In Args
+    For Each Element In args
         If IsArray(Element) And pArrayType = ArrayTypes.OneDimension Then
             pArrayType = ArrayTypes.Jagged
         End If
@@ -201,9 +201,9 @@ Public Function Pop() As Variant
     Dim result As Variant
 
     If pLength > 0 Then
-        result = pItems(Me.UpperBound)
+        result = pItems(Me.upperBound)
         pLength = pLength - 1
-        ReDim newItems(pLowerBound To Me.UpperBound)
+        ReDim newItems(pLowerBound To Me.upperBound)
         Me.Items = copyRange(newItems)
     End If
     Pop = result
@@ -214,18 +214,18 @@ Public Function Shift() As Variant
     Dim newItems() As Variant
     If pLength > 0 Then
         result = pItems(pLowerBound)
-        ReDim newItems((pLowerBound + 1) To Me.UpperBound)
+        ReDim newItems((pLowerBound + 1) To Me.upperBound)
         Me.Items = copyRange(newItems)
     End If
     Shift = result
 End Function
 
-Public Function Unshift(ParamArray Args() As Variant) As Long
+Public Function Unshift(ParamArray args() As Variant) As Long
     Dim newItems() As Variant
     Dim oldItems() As Variant
     Dim oldType As ArrayTypes
     
-    newItems = Args
+    newItems = args
     oldType = pArrayType
     oldItems = getInternalItems()
     Me.Items = newItems
@@ -236,13 +236,25 @@ Public Function Unshift(ParamArray Args() As Variant) As Long
     Unshift = Me.Length
 End Function
 
-Public Function Concat(ParamArray Args() As Variant) As Variant()
+Public Function Concat(ParamArray args() As Variant) As Variant()
     Dim arg As Variant
     Dim Element As Variant
+    Dim localArray() As Variant
+    Dim localType As ArrayTypes
     
-    For Each arg In Args
+    
+    For Each arg In args
         If IsArray(arg) Then
-            For Each Element In arg
+            localArray = arg
+            localType = getArrayType(localArray)
+            Select Case pArrayType
+                Case ArrayTypes.Unallocated, ArrayTypes.Undefined, ArrayTypes.OneDimension
+                    pArrayType = localType
+            End Select
+            If localType = MultiDimension Then
+                localArray = multiToJagged(localArray)
+            End If
+            For Each Element In localArray
                 Me.Push Element
             Next
         Else
@@ -445,21 +457,21 @@ Public Function Keys() As Variant()
     Dim result() As Variant
     
     localLowerBound = Me.LowerBound
-    localUpperBound = Me.UpperBound
+    localUpperBound = Me.upperBound
     ReDim result(localLowerBound To localUpperBound)
     For i = localLowerBound To localUpperBound: result(i) = i: Next
     Keys = result
 End Function
 
-Private Function Max(ParamArray Args() As Variant) As Variant
+Private Function Max(ParamArray args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
     
-    If UBound(Args) < LBound(Args) Then          'Test if no args provided
+    If UBound(args) < LBound(args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
-        arr = Args
+        arr = args
         If IsArray(arr) Then
             ' exit function if array is multi dimensional
             If isMultidimensionalArray(arr) Then
@@ -486,15 +498,15 @@ Private Function Max(ParamArray Args() As Variant) As Variant
     Max = result
 End Function
 
-Private Function Min(ParamArray Args() As Variant) As Variant
+Private Function Min(ParamArray args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
     
-    If UBound(Args) < LBound(Args) Then          'Test if no args provided
+    If UBound(args) < LBound(args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
-        arr = Args
+        arr = args
         If IsArray(arr) Then
             ' exit function if array is multi dimensional
             If isMultidimensionalArray(arr) Then
@@ -569,7 +581,7 @@ Public Function Reverse() As Variant
     Dim i As Long, localUpperBound As Long
     Dim arr() As Variant, result() As Variant
     arr = getInternalItems()
-    localUpperBound = Me.UpperBound
+    localUpperBound = Me.upperBound
     ReDim result(Me.LowerBound To localUpperBound)
     For i = localUpperBound To Me.LowerBound Step -1
         result = arr(i)
@@ -644,7 +656,7 @@ Private Function getInternalItems() As Variant()
     Dim result() As Variant
     result = pItems
     If Me.Capacity > pLength Then
-        If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.UpperBound)
+        If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.upperBound)
     End If
     getInternalItems = result
 End Function
