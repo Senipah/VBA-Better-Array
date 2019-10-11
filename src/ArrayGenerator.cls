@@ -29,7 +29,7 @@ Public Enum ArrayTypes
     Jagged
 End Enum
 
-Public Function getArray(Optional ByVal Length As Long, _
+Public Function GetArray(Optional ByVal Length As Long = 10, _
                          Optional ByVal ValueType As ValueTypes = ValueTypes.VariantVals, _
                          Optional ByVal ArrayType As ArrayTypes = ArrayTypes.OneDimension) As Variant
     Dim localLength As Long
@@ -55,7 +55,7 @@ Public Function getArray(Optional ByVal Length As Long, _
     Case ValueTypes.VariantVals
         Set vals = New ValuesList_Variants
     End Select
-    getArray = getArrayOfType(localLength, vals, ArrayType)
+    GetArray = getArrayOfType(localLength, vals, ArrayType)
 End Function
 
 Private Function getArrayOfType(ByVal Length As Long, ByVal vals As IValuesList, ByVal ArrayType As ArrayTypes) As Variant
@@ -123,4 +123,78 @@ Private Function getJaggedArray(ByVal Length As Long, ByVal vals As IValuesList)
     getJaggedArray = parentArray
 End Function
 
+Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, ParamArray args() As Variant) As Variant()
+    ' This method is exclusively for use as a test dependency and not for production use
+    ' (same disclaimer applies to all methods in this class)
+    Dim arg As Variant
+    Dim result() As Variant
+    Dim currentArray() As Variant
+    Dim upperBound As Long
+    Dim currentIndex As Long
+    
+    upperBound = -1
+    
+    If ArrayType = Unallocated Or ArrayType = Undefined Then
+        'Handle Exception
+    Else
+        For Each arg In args
+            If IsArray(arg) Then
+                currentArray = arg
+                upperBound = upperBound + GetArrayLength(currentArray)
+            End If
+        Next
+        
+        If ArrayType = MultiDimension Then
+            ReDim result(upperBound, UBound(currentArray, 2))
+            For Each arg In args
+                If IsArray(arg) Then
+                    currentArray = arg
+                    currentIndex = localMultiDimConcat(currentIndex, result, currentArray)
+                End If
+            Next
+        Else
+            ReDim result(upperBound)
+            For Each arg In args
+              If IsArray(arg) Then
+                  currentArray = arg
+                  currentIndex = localConcat(currentIndex, result, currentArray)
+              End If
+            Next
+        End If
+    End If
+    
+    ConcatArraysOfSameStructure = result
 
+End Function
+
+Private Function localMultiDimConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef source() As Variant) As Long
+    Dim i As Long
+    Dim j As Long
+    For i = LBound(source) To UBound(source)
+        For j = LBound(source, 2) To UBound(source, 2)
+            If IsObject(source(i, j)) Then
+                Set result(i + startingIndex, j) = source(i, j)
+            Else
+                result(i + startingIndex, j) = source(i, j)
+            End If
+        Next
+    Next
+    localMultiDimConcat = startingIndex + i
+End Function
+
+Private Function localConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef source() As Variant) As Long
+    Dim i As Long
+    For i = LBound(source) To UBound(source)
+        If IsObject(source(i)) Then
+            Set result(i + startingIndex) = source(i)
+        Else
+            result(i + startingIndex) = source(i)
+        End If
+    Next
+    localConcat = startingIndex + i
+End Function
+
+
+Public Function GetArrayLength(ByRef SourceArray() As Variant) As Long
+    GetArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
+End Function
