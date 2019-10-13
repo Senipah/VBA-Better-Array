@@ -36,7 +36,6 @@ End Enum
 Private pCapacity As Long
 Private pLength As Long
 Private pLowerBound As Long
-Private pEmptyArray(0) As Variant
 Private pItems() As Variant
 Private pArrayType As ArrayTypes
 
@@ -60,6 +59,11 @@ End Sub
 ' Public Properties '
 '''''''''''''''''''''
 
+Public Property Get Capacity() As Long
+    If IsEmpty(pCapacity) Then Me.Capacity = DEFAULT_CAPACITY
+    Capacity = pCapacity
+End Property
+
 Public Property Let Capacity(ByVal value As Long)
     If value < 0 Then Err.Raise 9
     If value <> pCapacity Then
@@ -77,13 +81,55 @@ Public Property Let Capacity(ByVal value As Long)
     End If
 End Property
 
-Public Property Get Capacity() As Long
-    If IsEmpty(pCapacity) Then Me.Capacity = DEFAULT_CAPACITY
-    Capacity = pCapacity
-End Property
-
 Public Property Get Length() As Long
     Length = pLength
+End Property
+
+Public Property Get UpperBound()
+    'UpperBound = IIf(pLength = 0, pLength, pLength + pLowerBound - 1)
+    UpperBound = pLength + pLowerBound - 1
+End Property
+
+Public Property Get LowerBound() As Long
+    LowerBound = pLowerBound
+End Property
+
+Public Property Let LowerBound(ByVal value As Long)
+    If value <> pLowerBound And value >= 0 Then
+        pLowerBound = value
+        Rebase
+    End If
+End Property
+
+'@DefaultMember
+Public Property Get Item(ByVal Index As Long)
+Attribute Item.VB_UserMemId = 0
+    If Index <= pLength Then
+        If IsObject(pItems(Index)) Then
+            Set Item = pItems(Index)
+        Else
+            Item = pItems(Index)
+        End If
+    Else
+        Err.Raise 9
+    End If
+End Property
+
+Public Property Let Item(ByVal Index As Long, ByVal element As Variant)
+
+    If Me.UpperBound >= Index Then
+        If Index < Me.LowerBound Then
+            Me.Unshift element
+        Else
+            If IsObject(element) Then
+                Set pItems(Index) = element
+            Else
+                pItems(Index) = element
+            End If
+        End If
+    Else
+        Me.Push element
+    End If
 End Property
 
 Public Property Get Items() As Variant
@@ -98,70 +144,28 @@ Public Property Let Items(ByVal Values As Variant)
     Dim localValues() As Variant
     If IsArray(Values) Then
         localValues = Values
-    Else
-        'TODO: Error handle when not passed array
-        Exit Property
-    End If
-    
-    pArrayType = getArrayType(localValues)
-    If pArrayType = ArrayTypes.Undefined _
-       Or pArrayType = ArrayTypes.Unallocated Then
-        Err.Raise 9
-    Else
-        If pArrayType = ArrayTypes.MultiDimension Then
-            localValues = multiToJagged(localValues)
-        End If
-        localLowerBound = LBound(localValues)
-        pItems = localValues
-        pLength = UBound(pItems) - LBound(pItems) + 1
-        If localLowerBound <> pLowerBound Then
-            Rebase
-        End If
-        Me.Capacity = pLength
-    End If
-End Property
-
-Public Property Get upperBound()
-    upperBound = IIf(pLength = 0, pLength, pLength + pLowerBound - 1)
-End Property
-
-Public Property Get LowerBound() As Long
-    LowerBound = pLowerBound
-End Property
-
-Public Property Let LowerBound(ByVal value As Long)
-    If value <> pLowerBound And value >= 0 Then
-        pLowerBound = value
-        Rebase
-    End If
-End Property
-
-Public Property Let Item(ByVal Index As Long, ByVal Element As Variant)
-    If Me.upperBound >= Index Then
-        If Index < Me.LowerBound Then
-            Me.Unshift Element
+        pArrayType = getArrayType(localValues)
+        If pArrayType = ArrayTypes.Undefined _
+           Or pArrayType = ArrayTypes.Unallocated Then
+            Err.Raise 9
         Else
-            If IsObject(Element) Then
-                Set pItems(Index) = Element
-            Else
-                pItems(Index) = Element
+            If pArrayType = ArrayTypes.MultiDimension Then
+                localValues = multiToJagged(localValues)
             End If
+            localLowerBound = LBound(localValues)
+            pItems = localValues
+            pLength = UBound(pItems) - LBound(pItems) + 1
+            If localLowerBound <> pLowerBound Then
+                Rebase
+            End If
+            Me.Capacity = pLength
         End If
     Else
-        Me.Push Element
+        ' If Values is not an array then clear our internal array and push the Values arg
+        ' TODO: Document and write tests
+        Me.Clear.Push Values
     End If
-End Property
 
-Public Property Get Item(ByVal Index As Long)
-    If Index <= pLength Then
-        If IsObject(pItems(Index)) Then
-            Set Item = pItems(Index)
-        Else
-            Item = pItems(Index)
-        End If
-    Else
-        Err.Raise 9
-    End If
 End Property
 
 ''''''''''''''''''''''
@@ -173,23 +177,24 @@ End Property
 ''''''''''''''''''
 
 Public Function Push(ParamArray args() As Variant) As Variant
-    Dim Element As Variant
-    
+    Dim element As Variant
+
     If pArrayType = ArrayTypes.Unallocated Or _
        pArrayType = ArrayTypes.Undefined Then
         pArrayType = ArrayTypes.OneDimension
     End If
-    For Each Element In args
-        If IsArray(Element) And pArrayType = ArrayTypes.OneDimension Then
+
+    For Each element In args
+        If IsArray(element) And pArrayType = ArrayTypes.OneDimension Then
             pArrayType = ArrayTypes.Jagged
         End If
         If pLength = pCapacity Then
             EnsureCapacity pLength + 1
         End If
-        If IsObject(Element) Then
-            Set pItems(pLength) = Element
+        If IsObject(element) Then
+            Set pItems(pLength) = element
         Else
-            pItems(pLength) = Element
+            pItems(pLength) = element
         End If
         pLength = pLength + 1
     Next
@@ -201,9 +206,9 @@ Public Function Pop() As Variant
     Dim result As Variant
 
     If pLength > 0 Then
-        result = pItems(Me.upperBound)
+        result = pItems(Me.UpperBound)
         pLength = pLength - 1
-        ReDim newItems(pLowerBound To Me.upperBound)
+        ReDim newItems(pLowerBound To Me.UpperBound)
         Me.Items = copyRange(newItems)
     End If
     Pop = result
@@ -214,7 +219,7 @@ Public Function Shift() As Variant
     Dim newItems() As Variant
     If pLength > 0 Then
         result = pItems(pLowerBound)
-        ReDim newItems((pLowerBound + 1) To Me.upperBound)
+        ReDim newItems((pLowerBound + 1) To Me.UpperBound)
         Me.Items = copyRange(newItems)
     End If
     Shift = result
@@ -236,51 +241,6 @@ Public Function Unshift(ParamArray args() As Variant) As Long
     Unshift = Me.Length
 End Function
 
-Public Function Concat(ParamArray args() As Variant) As Variant()
-    Dim arg As Variant
-    Dim Element As Variant
-    Dim localArray() As Variant
-    Dim localType As ArrayTypes
-    
-    
-    For Each arg In args
-        If IsArray(arg) Then
-            localArray = arg
-            localType = getArrayType(localArray)
-            Select Case pArrayType
-                Case ArrayTypes.Unallocated, ArrayTypes.Undefined, ArrayTypes.OneDimension
-                    pArrayType = localType
-            End Select
-            If localType = MultiDimension Then
-                localArray = multiToJagged(localArray)
-            End If
-            For Each Element In localArray
-                Me.Push Element
-            Next
-        Else
-            Me.Push arg
-        End If
-    Next
-    Concat = Me.Items
-End Function
-
-Public Function CopyFromCollection(ByVal SourceCollection As Collection) As Variant()
-    If SourceCollection Is Nothing Then Err.Raise 448
-    Dim i As Long
-    Dim newItems() As Variant
-    pLength = SourceCollection.count
-    If pLength = 0 Then
-        newItems = pEmptyArray
-    Else
-        ReDim newItems(pLowerBound To (pLength - pLowerBound - 1))
-        For i = 1 To pLength
-            newItems(i + pLowerBound - 1) = SourceCollection.Item(i)
-        Next
-    End If
-    Me.Items = newItems
-    CopyFromCollection = newItems
-End Function
-
 Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     Dim ArrayType As ArrayTypes
     Dim result As String
@@ -296,126 +256,6 @@ Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
         result = recursiveToString(localItems, PrettyPrint)
     End If
     ToString = result
-End Function
-
-Public Function Sort(Optional ByVal SortColumn As Long) As Variant()
-    Dim localItems() As Variant
-    Dim sortedItems() As Variant
-    Dim ArrayType As ArrayTypes
-    
-    localItems = getInternalItems()
-    ArrayType = getArrayType(localItems)
-    If ArrayType = ArrayTypes.Unallocated Or _
-       ArrayType = ArrayTypes.Undefined Then
-        sortedItems = pEmptyArray
-    Else
-        If Me.Length > 0 Then
-            If ArrayType <> OneDimension Then
-                If ArrayType = ArrayTypes.MultiDimension Then
-                    localItems = multiToJagged(localItems)
-                End If
-                Dim depth As Long
-                depth = getJaggedArrayDepth(localItems)
-                If depth > 2 Then
-                    Debug.Print "Cannot sort greater than 2 dimensions"
-                    Exit Function
-                End If
-            End If
-            quickSort localItems, LBound(localItems), UBound(localItems), ArrayType, SortColumn
-        End If
-        sortedItems = localItems
-    End If
-    Me.Items = sortedItems
-    Sort = sortedItems
-End Function
-
-Public Function CopyWithin(ByVal Target As Long, _
-                           Optional ByVal StartIndex As Long, _
-                           Optional ByVal EndIndex As Long) As Variant()
-    Dim localLength As Long
-    Dim relativeTarget As Long
-    Dim relativeStart As Long
-    Dim relativeEnd As Long
-    Dim idx As Long
-    Dim from As Long
-    Dim final As Long
-    Dim count As Long
-    Dim direction As Long
-    Dim arr() As Variant
-    
-    arr = getInternalItems()
-    localLength = Me.Length
-    relativeTarget = Target
-    
-    If relativeTarget < 0 Then
-        idx = Max((localLength + relativeTarget), 0)
-    Else
-        idx = Min(relativeTarget, localLength)
-    End If
-    
-    relativeStart = StartIndex
-    
-    If relativeStart < 0 Then
-        from = Max((localLength + relativeStart), 0)
-    Else
-        from = Min(relativeStart, localLength)
-    End If
-    
-    If EndIndex = 0 Then
-        relativeEnd = localLength
-    Else
-        relativeEnd = EndIndex
-    End If
-    
-    If relativeEnd < 0 Then
-        final = Max((localLength + relativeEnd), 0)
-    Else
-        final = Min(relativeEnd, localLength)
-    End If
-    
-    count = Min(final - from, localLength - idx)
-    
-    If from < idx And idx < from + count Then
-        direction = -1
-        from = from + count - 1
-        idx = idx + count - 1
-    Else
-        direction = 1
-    End If
-    
-    Do While count > 0
-        If from >= LBound(arr) And from <= UBound(arr) Then
-            arr(idx) = arr(from)
-        End If
-        from = from + direction
-        idx = idx + direction
-        count = count - 1
-    Loop
-    
-    Me.Items = arr
-    CopyWithin = arr
-End Function
-
-'@Ignore ShadowedDeclaration
-' TODO: add support for 2d arrays.
-Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As Variant()
-    Dim Element As Variant
-    Dim oldArr() As Variant
-    Dim newArr() As Variant
-    Dim i As Long
-    
-    oldArr = getInternalItems()
-    ReDim newArr(LBound(oldArr), UBound(oldArr))
-    i = Me.LowerBound
-    For Each Element In oldArr
-        If (Exclude And Element = Match) Or (Not Exclude And Element <> Match) Then
-            newArr(i) = Element
-            i = i + 1
-        End If
-    Next
-    ReDim Preserve newArr(Me.LowerBound, i)
-    Me.Items = newArr
-    Filter = newArr
 End Function
 
 Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromIndex As Long) As Boolean
@@ -457,7 +297,7 @@ Public Function Keys() As Variant()
     Dim result() As Variant
     
     localLowerBound = Me.LowerBound
-    localUpperBound = Me.upperBound
+    localUpperBound = Me.UpperBound
     ReDim result(localLowerBound To localUpperBound)
     For i = localLowerBound To localUpperBound: result(i) = i: Next
     Keys = result
@@ -577,17 +417,212 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Slice = result
 End Function
 
-Public Function Reverse() As Variant
+''''''''''''''''''''''''''''
+' Chainable Public Methods '
+''''''''''''''''''''''''''''
+
+' TODO: Document & Test - Clone
+Public Function Clone() As BetterArray
+    Dim result As BetterArray
+    Set result = New BetterArray
+    result.LowerBound = Me.LowerBound
+    result.Items = Me.Items
+    Set Clone = result
+End Function
+
+' TODO: Document & Test - ResetToDefault
+Public Function ResetToDefault() As BetterArray
+    pLowerBound = 0
+    pItems = getEmptyArray()
+    pLength = 0
+    Me.Capacity = DEFAULT_CAPACITY
+    Set ResetToDefault = Me
+End Function
+
+' TODO: Document & Test - ResetToDefault
+Public Function Clear() As BetterArray
+    pItems = getEmptyArray()
+    pLength = 0
+    Me.Capacity = pCapacity
+    Set Clear = Me
+End Function
+
+Public Function Concat(ParamArray args() As Variant) As BetterArray
+    Dim arg As Variant
+    Dim element As Variant
+    Dim localArray() As Variant
+    Dim localType As ArrayTypes
+    
+    
+    For Each arg In args
+        If IsArray(arg) Then
+            localArray = arg
+            localType = getArrayType(localArray)
+            Select Case pArrayType
+                Case ArrayTypes.Unallocated, ArrayTypes.Undefined, ArrayTypes.OneDimension
+                    pArrayType = localType
+            End Select
+            If localType = MultiDimension Then
+                localArray = multiToJagged(localArray)
+            End If
+            For Each element In localArray
+                Me.Push element
+            Next
+        Else
+            Me.Push arg
+        End If
+    Next
+    Set Concat = Me
+End Function
+
+Public Function CopyFromCollection(ByVal SourceCollection As Collection) As BetterArray
+    If SourceCollection Is Nothing Then Err.Raise 448
+    Dim i As Long
+    Dim newItems() As Variant
+    pLength = SourceCollection.count
+    If pLength = 0 Then
+        newItems = getEmptyArray
+    Else
+        ReDim newItems(pLowerBound To (pLength - pLowerBound - 1))
+        For i = 1 To pLength
+            newItems(i + pLowerBound - 1) = SourceCollection.Item(i)
+        Next
+    End If
+    Me.Items = newItems
+    Set CopyFromCollection = Me
+End Function
+
+Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
+    Dim localItems() As Variant
+    Dim sortedItems() As Variant
+    Dim ArrayType As ArrayTypes
+    
+    localItems = getInternalItems()
+    ArrayType = getArrayType(localItems)
+    If ArrayType = ArrayTypes.Unallocated Or _
+       ArrayType = ArrayTypes.Undefined Then
+        sortedItems = getEmptyArray
+    Else
+        If Me.Length > 0 Then
+            If ArrayType <> OneDimension Then
+                If ArrayType = ArrayTypes.MultiDimension Then
+                    localItems = multiToJagged(localItems)
+                End If
+                Dim depth As Long
+                depth = getJaggedArrayDepth(localItems)
+                If depth > 2 Then
+                    Debug.Print "Cannot sort greater than 2 dimensions"
+                    Exit Function
+                End If
+            End If
+            quickSort localItems, LBound(localItems), UBound(localItems), ArrayType, SortColumn
+        End If
+        sortedItems = localItems
+    End If
+    Me.Items = sortedItems
+    Set Sort = Me
+End Function
+
+Public Function CopyWithin(ByVal Target As Long, _
+                           Optional ByVal StartIndex As Long, _
+                           Optional ByVal EndIndex As Long) As BetterArray
+    Dim localLength As Long
+    Dim relativeTarget As Long
+    Dim relativeStart As Long
+    Dim relativeEnd As Long
+    Dim idx As Long
+    Dim from As Long
+    Dim final As Long
+    Dim count As Long
+    Dim direction As Long
+    Dim arr() As Variant
+    
+    arr = getInternalItems()
+    localLength = Me.Length
+    relativeTarget = Target
+    
+    If relativeTarget < 0 Then
+        idx = Max((localLength + relativeTarget), 0)
+    Else
+        idx = Min(relativeTarget, localLength)
+    End If
+    
+    relativeStart = StartIndex
+    
+    If relativeStart < 0 Then
+        from = Max((localLength + relativeStart), 0)
+    Else
+        from = Min(relativeStart, localLength)
+    End If
+    
+    If EndIndex = 0 Then
+        relativeEnd = localLength
+    Else
+        relativeEnd = EndIndex
+    End If
+    
+    If relativeEnd < 0 Then
+        final = Max((localLength + relativeEnd), 0)
+    Else
+        final = Min(relativeEnd, localLength)
+    End If
+    
+    count = Min(final - from, localLength - idx)
+    
+    If from < idx And idx < from + count Then
+        direction = -1
+        from = from + count - 1
+        idx = idx + count - 1
+    Else
+        direction = 1
+    End If
+    
+    Do While count > 0
+        If from >= LBound(arr) And from <= UBound(arr) Then
+            arr(idx) = arr(from)
+        End If
+        from = from + direction
+        idx = idx + direction
+        count = count - 1
+    Loop
+    
+    Me.Items = arr
+    Set CopyWithin = Me
+End Function
+
+'@Ignore ShadowedDeclaration
+' TODO: add support for 2d arrays.
+Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As BetterArray
+    Dim element As Variant
+    Dim oldArr() As Variant
+    Dim newArr() As Variant
+    Dim i As Long
+    
+    oldArr = getInternalItems()
+    ReDim newArr(LBound(oldArr), UBound(oldArr))
+    i = Me.LowerBound
+    For Each element In oldArr
+        If (Exclude And element = Match) Or (Not Exclude And element <> Match) Then
+            newArr(i) = element
+            i = i + 1
+        End If
+    Next
+    ReDim Preserve newArr(Me.LowerBound, i)
+    Me.Items = newArr
+    Set Filter = Me
+End Function
+
+Public Function Reverse() As BetterArray
     Dim i As Long, localUpperBound As Long
     Dim arr() As Variant, result() As Variant
     arr = getInternalItems()
-    localUpperBound = Me.upperBound
+    localUpperBound = Me.UpperBound
     ReDim result(Me.LowerBound To localUpperBound)
     For i = localUpperBound To Me.LowerBound Step -1
         result = arr(i)
     Next
     Me.Items = result
-    Reverse = result
+    Set Reverse = Me
 End Function
 
 ' TODO: Implement Shuffle method
@@ -600,6 +635,12 @@ End Function
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+Private Function getEmptyArray() As Variant()
+    Dim result() As Variant
+    ReDim result(pLowerBound)
+    getEmptyArray = result
+End Function
 
 Private Sub quickSort(ByRef arr() As Variant, _
                       ByVal low As Long, _
@@ -656,7 +697,7 @@ Private Function getInternalItems() As Variant()
     Dim result() As Variant
     result = pItems
     If Me.Capacity > pLength Then
-        If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.upperBound)
+        If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.UpperBound)
     End If
     getInternalItems = result
 End Function
@@ -714,9 +755,9 @@ End Function
 Private Function isJaggedArray(ByVal arr As Variant) As Boolean
     If IsArray(arr) Then
         On Error GoTo errHandler
-        Dim Element As Variant
-        For Each Element In arr
-            If IsArray(Element) Then
+        Dim element As Variant
+        For Each element In arr
+            If IsArray(element) Then
                 isJaggedArray = True
                 Exit Function
             End If
@@ -945,7 +986,7 @@ Private Function mapJaggedArray(ByRef arr() As Variant, _
     Dim i As Long
     Dim localMap() As Variant
     Dim bounds() As Variant
-    Dim Element As Variant
+    Dim element As Variant
     Dim localDepth As Long
     
     If Not IsArray(arr) Then Exit Function
@@ -968,10 +1009,10 @@ Private Function mapJaggedArray(ByRef arr() As Variant, _
     If bounds(0) < localMap(currentIndex)(0) Then localMap(currentIndex)(0) = bounds(0)
     If bounds(1) > localMap(currentIndex)(1) Then localMap(currentIndex)(1) = bounds(1)
     
-    For Each Element In arr
-        If IsArray(Element) Then
+    For Each element In arr
+        If IsArray(element) Then
             Dim nested() As Variant
-            nested = Element
+            nested = element
             localMap = mapJaggedArray(nested, localMap, currentIndex + 1)
         End If
     Next
@@ -1060,116 +1101,116 @@ Private Function getElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As
     getElementByBreadcrumb = result
 End Function
 
-Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant, ByVal Element As Variant) As Variant
-    If IsObject(Element) Then
+Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant, ByVal element As Variant) As Variant
+    If IsObject(element) Then
         Select Case UBound(crumb)
         Case 0
-            Set arr(crumb(0)) = Element
+            Set arr(crumb(0)) = element
         Case 1
-            Set arr(crumb(0), crumb(1)) = Element
+            Set arr(crumb(0), crumb(1)) = element
         Case 2
-            Set arr(crumb(0), crumb(1), crumb(2)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2)) = element
         Case 3
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3)) = element
         Case 4
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = element
         Case 5
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = element
         Case 6
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = element
         Case 7
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = element
         Case 8
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = element
         Case 9
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = element
         Case 10
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
+            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = element
         Case 11
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11)) = Element
+                    crumb(11)) = element
         Case 12
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12)) = Element
+                    crumb(11), crumb(12)) = element
         Case 13
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13)) = Element
+                    crumb(11), crumb(12), crumb(13)) = element
         Case 14
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14)) = element
         Case 15
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = element
         Case 16
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = element
         Case 17
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = element
         Case 18
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = element
         Case 19
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = element
         Case 20
             Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
+                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = element
         End Select
     Else
         Select Case UBound(crumb)
         Case 0
-            arr(crumb(0)) = Element
+            arr(crumb(0)) = element
         Case 1
-            arr(crumb(0), crumb(1)) = Element
+            arr(crumb(0), crumb(1)) = element
         Case 2
-            arr(crumb(0), crumb(1), crumb(2)) = Element
+            arr(crumb(0), crumb(1), crumb(2)) = element
         Case 3
-            arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3)) = element
         Case 4
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = element
         Case 5
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = element
         Case 6
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = element
         Case 7
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = element
         Case 8
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = element
         Case 9
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = element
         Case 10
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
+            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = element
         Case 11
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11)) = Element
+                crumb(11)) = element
         Case 12
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12)) = Element
+                crumb(11), crumb(12)) = element
         Case 13
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13)) = Element
+                crumb(11), crumb(12), crumb(13)) = element
         Case 14
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14)) = element
         Case 15
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = element
         Case 16
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = element
         Case 17
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = element
         Case 18
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = element
         Case 19
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = element
         Case 20
             arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
+                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = element
         End Select
     End If
     letElementByBreadcrumb = arr
