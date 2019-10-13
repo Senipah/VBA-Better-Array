@@ -129,10 +129,10 @@ Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, Param
     Dim arg As Variant
     Dim result() As Variant
     Dim currentArray() As Variant
-    Dim upperBound As Long
+    Dim UpperBound As Long
     Dim currentIndex As Long
     
-    upperBound = -1
+    UpperBound = -1
     
     If ArrayType = Unallocated Or ArrayType = Undefined Then
         'Handle Exception
@@ -140,12 +140,12 @@ Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, Param
         For Each arg In args
             If IsArray(arg) Then
                 currentArray = arg
-                upperBound = upperBound + GetArrayLength(currentArray)
+                UpperBound = UpperBound + GetArrayLength(currentArray)
             End If
         Next
         
         If ArrayType = MultiDimension Then
-            ReDim result(upperBound, UBound(currentArray, 2))
+            ReDim result(UpperBound, UBound(currentArray, 2))
             For Each arg In args
                 If IsArray(arg) Then
                     currentArray = arg
@@ -153,7 +153,7 @@ Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, Param
                 End If
             Next
         Else
-            ReDim result(upperBound)
+            ReDim result(UpperBound)
             For Each arg In args
               If IsArray(arg) Then
                   currentArray = arg
