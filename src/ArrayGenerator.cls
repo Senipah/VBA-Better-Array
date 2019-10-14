@@ -29,15 +29,29 @@ Public Enum ArrayTypes
     Jagged
 End Enum
 
+Private pLowerBound As Long
+
+Public Property Get LowerBound() As Long
+    LowerBound = pLowerBound
+End Property
+
+Public Property Let LowerBound(ByVal Value As Long)
+    pLowerBound = Value
+End Property
+
+
+Private Sub Class_Initialize()
+    ' Explicitly default to base 0
+    pLowerBound = 0
+End Sub
+
 Public Function GetArray(Optional ByVal Length As Long = 10, _
                          Optional ByVal ValueType As ValueTypes = ValueTypes.VariantVals, _
                          Optional ByVal ArrayType As ArrayTypes = ArrayTypes.OneDimension) As Variant
     Dim localLength As Long
     Dim vals As IValuesList
        
-    ' subtract 1 1 as arrays are base 0
-    localLength = Length - 1
-    If localLength <= 0 Then localLength = 1
+    localLength = IIf(Length <= 0, 1, Length)
     
     Select Case ValueType
     Case ValueTypes.BooleanVals
@@ -74,8 +88,8 @@ End Function
 Private Function getOneDimensionalArray(ByVal Length As Long, ByVal vals As IValuesList) As Variant()
     Dim i As Long
     Dim arr() As Variant
-    ReDim arr(Length)
-    For i = 0 To Length
+    ReDim arr(pLowerBound To UpperBound(Length))
+    For i = LBound(arr) To UBound(arr)
         If vals.IsObjectType Then
             Set arr(i) = vals.GetRandomValue()
         Else
@@ -89,9 +103,9 @@ Private Function getMultidimensionalArray(ByVal Length As Long, ByVal vals As IV
     Dim i As Long
     Dim j As Long
     Dim arr() As Variant
-    ReDim arr(Length, Length)
-    For i = 0 To Length
-        For j = 0 To Length
+    ReDim arr(pLowerBound To UpperBound(Length), pLowerBound To UpperBound(Length))
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        For j = LBound(arr, 2) To UBound(arr, 2)
             If vals.IsObjectType Then
                 Set arr(i, j) = vals.GetRandomValue()
             Else
@@ -108,10 +122,10 @@ Private Function getJaggedArray(ByVal Length As Long, ByVal vals As IValuesList)
     Dim parentArray() As Variant
     Dim childArray() As Variant
 
-    ReDim parentArray(Length)
-    ReDim childArray(Length)
-    For i = 0 To Length
-        For j = 0 To Length
+    ReDim parentArray(pLowerBound To UpperBound(Length))
+    ReDim childArray(pLowerBound To UpperBound(Length))
+    For i = LBound(parentArray) To UBound(parentArray)
+        For j = LBound(childArray) To UBound(childArray)
             If vals.IsObjectType Then
                 Set childArray(j) = vals.GetRandomValue()
             Else
@@ -194,7 +208,11 @@ Private Function localConcat(ByVal startingIndex As Long, ByRef result() As Vari
     localConcat = startingIndex + i
 End Function
 
-
-Public Function GetArrayLength(ByRef SourceArray() As Variant) As Long
-    GetArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
+Public Function GetArrayLength(ByRef sourceArray() As Variant) As Long
+    GetArrayLength = UBound(sourceArray) - LBound(sourceArray) + 1
 End Function
+
+Private Function UpperBound(ByVal Length As Long) As Long
+    UpperBound = Length + pLowerBound - 1
+End Function
+

@@ -11,10 +11,6 @@ Option Explicit
 
 '@Folder("BetterArray")
 
-'@IgnoreModule MultipleDeclarations
-'@IgnoreModule ProcedureNotUsed
-'@IgnoreModule FunctionReturnValueNotUsed
-
 '''''''''''''''''''
 ' Constant Fields '
 '''''''''''''''''''
@@ -29,6 +25,19 @@ Private Enum ArrayTypes
     Jagged
 End Enum
 
+Private Enum ErrorCodes
+    StartCode = vbObjectError + 512
+    ExpectedRangeObject
+    EndCode
+End Enum
+
+Private Type ErrorDefinition
+    number As Long
+    source As String
+    description As String
+End Type
+
+
 ''''''''''
 ' Fields '
 ''''''''''
@@ -38,6 +47,8 @@ Private pLength As Long
 Private pLowerBound As Long
 Private pItems() As Variant
 Private pArrayType As ArrayTypes
+Private ErrorDefinitions(ErrorCodes.StartCode To ErrorCodes.EndCode) As ErrorDefinition
+
 
 '''''''''''''''
 ' Constructor '
@@ -45,6 +56,7 @@ Private pArrayType As ArrayTypes
 
 Private Sub Class_Initialize()
     Me.Capacity = DEFAULT_CAPACITY
+    PopulateErrorDefinitions
 End Sub
 
 ''''''''''''''
@@ -64,14 +76,14 @@ Public Property Get Capacity() As Long
     Capacity = pCapacity
 End Property
 
-Public Property Let Capacity(ByVal value As Long)
-    If value < 0 Then Err.Raise 9
-    If value <> pCapacity Then
+Public Property Let Capacity(ByVal Value As Long)
+    If Value < 0 Then Err.Raise 9
+    If Value <> pCapacity Then
         If pCapacity > 0 Then
-            If (UBound(pItems) - LBound(pItems) + 1) <> value Then
+            If (UBound(pItems) - LBound(pItems) + 1) <> Value Then
                 Dim newItems() As Variant
                 newItems = pItems
-                ReDim Preserve newItems(pLowerBound To (value + pLowerBound - 1))
+                ReDim Preserve newItems(pLowerBound To (Value + pLowerBound - 1))
                 pItems = newItems
             End If
         Else
@@ -94,9 +106,9 @@ Public Property Get LowerBound() As Long
     LowerBound = pLowerBound
 End Property
 
-Public Property Let LowerBound(ByVal value As Long)
-    If value <> pLowerBound And value >= 0 Then
-        pLowerBound = value
+Public Property Let LowerBound(ByVal Value As Long)
+    If Value <> pLowerBound And Value >= 0 Then
+        pLowerBound = Value
         Rebase
     End If
 End Property
@@ -116,7 +128,7 @@ Attribute Item.VB_UserMemId = 0
 End Property
 
 Public Property Let Item(ByVal Index As Long, ByVal element As Variant)
-
+Attribute Item.VB_UserMemId = 0
     If Me.UpperBound >= Index Then
         If Index < Me.LowerBound Then
             Me.Unshift element
@@ -176,6 +188,7 @@ End Property
 ' Public Methods '
 ''''''''''''''''''
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Push(ParamArray args() As Variant) As Variant
     Dim element As Variant
 
@@ -201,6 +214,7 @@ Public Function Push(ParamArray args() As Variant) As Variant
     Push = pLength
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Pop() As Variant
     Dim newItems() As Variant
     Dim result As Variant
@@ -214,6 +228,7 @@ Public Function Pop() As Variant
     Pop = result
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Shift() As Variant
     Dim result As Variant
     Dim newItems() As Variant
@@ -225,6 +240,7 @@ Public Function Shift() As Variant
     Shift = result
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Unshift(ParamArray args() As Variant) As Long
     Dim newItems() As Variant
     Dim oldItems() As Variant
@@ -241,6 +257,7 @@ Public Function Unshift(ParamArray args() As Variant) As Long
     Unshift = Me.Length
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     Dim ArrayType As ArrayTypes
     Dim result As String
@@ -258,6 +275,7 @@ Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
     ToString = result
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromIndex As Long) As Boolean
     Dim localLength As Long
     Dim currentIndex As Long
@@ -290,6 +308,7 @@ Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromInde
     Includes = False
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Keys() As Variant()
     Dim i As Long
     Dim localLowerBound As Long
@@ -303,7 +322,8 @@ Public Function Keys() As Variant()
     Keys = result
 End Function
 
-Private Function Max(ParamArray args() As Variant) As Variant
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+Public Function Max(ParamArray args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
@@ -338,7 +358,8 @@ Private Function Max(ParamArray args() As Variant) As Variant
     Max = result
 End Function
 
-Private Function Min(ParamArray args() As Variant) As Variant
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+Public Function Min(ParamArray args() As Variant) As Variant
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
@@ -373,6 +394,7 @@ Private Function Min(ParamArray args() As Variant) As Variant
     Min = result
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant()
     '@Ignore ShadowedDeclaration
     Dim localLength As Long
@@ -417,11 +439,64 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Slice = result
 End Function
 
+' TODO: Implement, Document & Test ToRange method
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+Public Function ToExcelRange(ByRef destination As Object, Optional ByVal TransposeValues As Boolean) As Object
+    Dim localRange As Object
+    Dim localItems() As Variant
+    If TypeName(destination) <> "Range" Then
+        RaiseError ErrorCodes.ExpectedRangeObject, "ToExcelRange()", "destination"
+    Else
+        'localItems = Me.Items
+        localItems = getInternalItems()
+        Select Case pArrayType
+            Case ArrayTypes.OneDimension
+            'TODO: ensure no objects in array
+                If TransposeValues Then
+                    Set localRange = destination.Resize(RowSize:=Me.Length)
+                    localRange.Value = Transpose_1DArray(localItems)
+                Else
+                    Set localRange = destination.Resize(ColumnSize:=Me.Length)
+                    localRange.Value = localItems
+                End If
+            Case ArrayTypes.MultiDimension, ArrayTypes.Jagged
+                Dim depth As Long
+                depth = getJaggedArrayDepth(localItems)
+                If depth = 1 Then
+                ElseIf depth = 2 Then
+                    localItems = jaggedToMulti(localItems, depth)
+                    Dim lengthRows As Long
+                    Dim lengthColumns As Long
+                    If TransposeValues Then
+                        lengthRows = UBound(localItems, 2) - LBound(localItems, 2) + 1
+                        lengthColumns = UBound(localItems, 1) - LBound(localItems, 1) + 1
+                        localItems = Transpose_2DArray(localItems)
+                    Else
+                        lengthRows = UBound(localItems, 1) - LBound(localItems, 1) + 1
+                        lengthColumns = UBound(localItems, 2) - LBound(localItems, 2) + 1
+                    End If
+                    Set localRange = destination.Resize( _
+                        RowSize:=lengthRows, _
+                        ColumnSize:=lengthColumns _
+                    )
+                    localRange.Value = localItems
+                Else
+                    'handle error
+                End If
+                
+            Case Else
+            ' TODO - Handle multi & jagged
+        End Select
+    End If
+    Set ToExcelRange = localRange
+End Function
+
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
 
 ' TODO: Document & Test - Clone
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Clone() As BetterArray
     Dim result As BetterArray
     Set result = New BetterArray
@@ -431,6 +506,7 @@ Public Function Clone() As BetterArray
 End Function
 
 ' TODO: Document & Test - ResetToDefault
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function ResetToDefault() As BetterArray
     pLowerBound = 0
     pItems = getEmptyArray()
@@ -440,6 +516,7 @@ Public Function ResetToDefault() As BetterArray
 End Function
 
 ' TODO: Document & Test - ResetToDefault
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Clear() As BetterArray
     pItems = getEmptyArray()
     pLength = 0
@@ -447,6 +524,7 @@ Public Function Clear() As BetterArray
     Set Clear = Me
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Concat(ParamArray args() As Variant) As BetterArray
     Dim arg As Variant
     Dim element As Variant
@@ -475,6 +553,7 @@ Public Function Concat(ParamArray args() As Variant) As BetterArray
     Set Concat = Me
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function CopyFromCollection(ByVal SourceCollection As Collection) As BetterArray
     If SourceCollection Is Nothing Then Err.Raise 448
     Dim i As Long
@@ -492,6 +571,7 @@ Public Function CopyFromCollection(ByVal SourceCollection As Collection) As Bett
     Set CopyFromCollection = Me
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
     Dim localItems() As Variant
     Dim sortedItems() As Variant
@@ -523,6 +603,7 @@ Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
     Set Sort = Me
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function CopyWithin(ByVal Target As Long, _
                            Optional ByVal StartIndex As Long, _
                            Optional ByVal EndIndex As Long) As BetterArray
@@ -590,8 +671,9 @@ Public Function CopyWithin(ByVal Target As Long, _
     Set CopyWithin = Me
 End Function
 
-'@Ignore ShadowedDeclaration
 ' TODO: add support for 2d arrays.
+'@Ignore ShadowedDeclaration
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As BetterArray
     Dim element As Variant
     Dim oldArr() As Variant
@@ -612,9 +694,12 @@ Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean
     Set Filter = Me
 End Function
 
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 Public Function Reverse() As BetterArray
-    Dim i As Long, localUpperBound As Long
-    Dim arr() As Variant, result() As Variant
+    Dim i As Long
+    Dim localUpperBound As Long
+    Dim arr() As Variant
+    Dim result() As Variant
     arr = getInternalItems()
     localUpperBound = Me.UpperBound
     ReDim result(Me.LowerBound To localUpperBound)
@@ -625,16 +710,129 @@ Public Function Reverse() As BetterArray
     Set Reverse = Me
 End Function
 
-' TODO: Implement Shuffle method
 
-' TODO: Implement Flatten method
+
+' TODO: Implement, Document & Test Shuffle method
+
+' TODO: Implement, Document & Test Flatten method
 
 ' TODO: add algos from C++ STL https://en.cppreference.com/w/cpp/algorithm
 
+' TODO: Implement remove method to delete entry by index
 
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+Private Sub PopulateErrorDefinitions()
+    Dim source As String
+    source = TypeName(Me)
+    ErrorDefinitions(ErrorCodes.ExpectedRangeObject) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.ExpectedRangeObject, _
+        source:=source, _
+        description:="Range Object Expected" _
+    )
+End Sub
+
+Private Function ErrorDefinitionFactory(ByVal number As Long, ByVal source As String, ByVal description As String) As ErrorDefinition
+    Dim result As ErrorDefinition
+    result.number = number
+    result.source = source
+    result.description = description
+    ErrorDefinitionFactory = result
+End Function
+
+Private Sub RaiseError(ByVal ErrorCode As ErrorCodes, ByVal Caller As String, Optional ByVal ArgName As String)
+    Dim currentError As ErrorDefinition
+    Dim localArgName As String
+    If ArgName <> vbNullString Then localArgName = "Variable " & ArgName & ": "
+    currentError = ErrorDefinitions(ErrorCode)
+    Err.Raise currentError.number, _
+              currentError.source & "." & Caller, _
+              localArgName & currentError.description
+End Sub
+
+' Used by ToExcelRange()
+Private Function Transpose_1DArray(ByRef arr() As Variant) As Variant()
+    'TODO: need check to ensure 1d?
+    Dim i As Long
+    Dim j As Long
+    Dim localUpperBound As Long
+    Dim localLowerBound As Long
+    Dim result() As Variant
+    localUpperBound = UBound(arr)
+    localLowerBound = LBound(arr)
+    ReDim result(localLowerBound To (localUpperBound - localLowerBound + 1), _
+                 localLowerBound To localLowerBound)
+    j = localLowerBound
+    For i = localLowerBound To localUpperBound
+        result(j, localLowerBound) = arr(i)
+        j = j + 1
+    Next
+    Transpose_1DArray = result
+End Function
+
+' Used by ToExcelRange()
+Private Function Transpose_2DArray(ByRef sourceArray() As Variant) As Variant()
+    Dim currentRow As Long
+    Dim LowerBoundRow As Long
+    Dim UpperBoundRow As Long
+    Dim currentColumn As Long
+    Dim LowerBoundCol As Long
+    Dim UpperBoundCol As Long
+    Dim result() As Variant
+    
+    LowerBoundCol = LBound(sourceArray, 1)
+    UpperBoundCol = UBound(sourceArray, 1)
+    LowerBoundRow = LBound(sourceArray, 2)
+    UpperBoundRow = UBound(sourceArray, 2)
+    ReDim result(LowerBoundRow To UpperBoundRow, LowerBoundCol To UpperBoundCol)
+    For currentRow = LowerBoundRow To UpperBoundRow
+        For currentColumn = LowerBoundCol To UpperBoundRow
+            result(currentRow, currentColumn) = sourceArray(currentColumn, currentRow)
+        Next
+    Next
+    Transpose_2DArray = result
+End Function
+
+' TODO: Use or remove
+Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
+    Dim currentRow As Long
+    Dim LowerBoundRow As Long
+    Dim UpperBoundRow As Long
+    Dim currentColumn As Long
+    Dim LowerBoundCol As Long
+    Dim UpperBoundCol As Long
+    Dim result() As Variant
+    
+    LowerBoundCol = LBound(sourceArray)
+    UpperBoundCol = UBound(sourceArray)
+    LowerBoundRow = LBound(sourceArray(LowerBoundCol))
+    UpperBoundRow = UBound(sourceArray(LowerBoundCol))
+    ReDim result(LowerBoundRow To UpperBoundRow, LowerBoundCol To UpperBoundCol)
+    For currentRow = LowerBoundRow To UpperBoundRow
+        For currentColumn = LowerBoundCol To UpperBoundCol
+            result(currentRow, currentColumn) = sourceArray(currentColumn)(currentRow)
+        Next
+    Next
+    Transpose_ArrayOfArrays = result
+End Function
+
+' TODO: Use or remove
+Private Function ExtractColumnFromMultiDimensionalArray(ByRef sourceArray() As Variant, Optional ByVal col As Long = 1) As Variant()
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    
+    localLowerBound = LBound(sourceArray)
+    localUpperBound = UBound(sourceArray)
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound
+        result(i) = sourceArray(i, col)
+    Next
+    ExtractColumnFromMultiDimensionalArray = result
+End Function
 
 Private Function getEmptyArray() As Variant()
     Dim result() As Variant
@@ -660,8 +858,10 @@ Private Function qsPartition(ByRef arr() As Variant, _
                              ByVal high As Long, _
                              ByVal ArrayType As ArrayTypes, _
                              Optional ByVal col As Long) As Long
-    Dim i As Long, j As Long
-    Dim pivot As Variant, current As Variant
+    Dim i As Long
+    Dim j As Long
+    Dim pivot As Variant
+    Dim current As Variant
     
     If ArrayType = Jagged Then
         pivot = arr(high)(col)
@@ -784,8 +984,10 @@ errHandler:
     Err.Clear
 End Function
 
+'@Ignore FunctionReturnValueNotUsed
 Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As Variant) As Variant()
-    Dim isMD As Boolean, applyToMe As Boolean
+    Dim isMD As Boolean
+    Dim applyToMe As Boolean
     Dim newItems() As Variant
     
     If IsMissing(arr) Or Not IsArray(arr) Then applyToMe = True
@@ -802,7 +1004,10 @@ Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As
 End Function
 
 Private Function recursiveRebase(ByRef arr() As Variant, ByVal recurse As Boolean) As Variant()
-    Dim i As Long, localLowerBound As Long, localUpperBound As Long, offset As Long
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim offset As Long
     Dim newItems() As Variant
     
     localLowerBound = LBound(arr)
@@ -1030,13 +1235,15 @@ Private Function getArrayBounds(ByVal arr As Variant) As Variant()
 End Function
 
 Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
+    Dim i As Long
     '@Ignore VariableNotUsed
-    Dim i As Long, void As Long
+    Dim void As Long
+    
     On Error Resume Next
     Do
         i = i + 1
         void = UBound(arr, i)
-    Loop Until Err.Number <> 0
+    Loop Until Err.number <> 0
     Err.Clear
     On Error GoTo 0
     getMultidimensionalArrayDepth = i - 1
@@ -1309,6 +1516,9 @@ Private Function createMultidimensionalArray(ByRef crumb() As Variant) As Varian
     End Select
     createMultidimensionalArray = result
 End Function
+
+
+
 
 
 

@@ -61,7 +61,7 @@ Private Sub CanInstantiate_SUTNotNothing()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -88,7 +88,7 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -119,7 +119,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -150,7 +150,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -177,7 +177,7 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -208,7 +208,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -239,7 +239,7 @@ Private Sub GetArray_BytesJagged_ValuesAreBytes()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -267,7 +267,7 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoublesArrays")
@@ -298,7 +298,7 @@ Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoublesArrays")
@@ -329,7 +329,7 @@ Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongsArrays")
@@ -356,7 +356,7 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongsArrays")
@@ -387,7 +387,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongsArrays")
@@ -418,7 +418,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -448,7 +448,7 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectsArrays")
@@ -479,7 +479,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectsArrays")
@@ -510,7 +510,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 'Strings
@@ -540,7 +540,7 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringsArrays")
@@ -571,7 +571,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringsArrays")
@@ -602,7 +602,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 'Variants
@@ -635,7 +635,7 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantsArrays")
@@ -670,7 +670,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantsArrays")
@@ -705,7 +705,7 @@ Dim j As Long
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -729,7 +729,7 @@ Private Sub GetArray_BooleanOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -752,7 +752,7 @@ Private Sub GetArray_BooleanMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -775,7 +775,7 @@ Private Sub GetArray_BooleanJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -798,7 +798,7 @@ Private Sub GetArray_ByteOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -821,7 +821,7 @@ Private Sub GetArray_ByteMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -844,7 +844,7 @@ Private Sub GetArray_ByteJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -868,7 +868,7 @@ Private Sub GetArray_DoubleOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoubleArrays")
@@ -891,7 +891,7 @@ Private Sub GetArray_DoubleMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoubleArrays")
@@ -914,7 +914,7 @@ Private Sub GetArray_DoubleJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -937,7 +937,7 @@ Private Sub GetArray_LongOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -960,7 +960,7 @@ Private Sub GetArray_LongMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -983,7 +983,7 @@ Private Sub GetArray_LongJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1006,7 +1006,7 @@ Private Sub GetArray_ObjectOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1029,7 +1029,7 @@ Private Sub GetArray_ObjectMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1052,7 +1052,7 @@ Private Sub GetArray_ObjectJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringArrays")
@@ -1075,7 +1075,7 @@ Private Sub GetArray_StringOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringArrays")
@@ -1098,7 +1098,7 @@ Private Sub GetArray_StringMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringArrays")
@@ -1121,7 +1121,7 @@ Private Sub GetArray_StringJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantArrays")
@@ -1144,7 +1144,7 @@ Private Sub GetArray_VariantOneDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantArrays")
@@ -1167,7 +1167,7 @@ Private Sub GetArray_VariantMultiDimension_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantArrays")
@@ -1190,7 +1190,7 @@ Private Sub GetArray_VariantJagged_ReturnsArray()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '    Booleans
@@ -1230,7 +1230,7 @@ Private Sub GetArray_BooleanOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -1253,7 +1253,7 @@ Private Sub GetArray_BooleanMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("BooleanArrays")
@@ -1276,7 +1276,7 @@ Private Sub GetArray_BooleanJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -1299,7 +1299,7 @@ Private Sub GetArray_ByteOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -1322,7 +1322,7 @@ Private Sub GetArray_ByteMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ByteArrays")
@@ -1345,7 +1345,7 @@ Private Sub GetArray_ByteJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1369,7 +1369,7 @@ Private Sub GetArray_DoubleOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoubleArrays")
@@ -1392,7 +1392,7 @@ Private Sub GetArray_DoubleMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("DoubleArrays")
@@ -1415,7 +1415,7 @@ Private Sub GetArray_DoubleJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -1438,7 +1438,7 @@ Private Sub GetArray_LongOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -1461,7 +1461,7 @@ Private Sub GetArray_LongMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("LongArrays")
@@ -1484,7 +1484,7 @@ Private Sub GetArray_LongJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1507,7 +1507,7 @@ Private Sub GetArray_ObjectOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1530,7 +1530,7 @@ Private Sub GetArray_ObjectMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ObjectArrays")
@@ -1553,7 +1553,7 @@ Private Sub GetArray_ObjectJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1577,7 +1577,7 @@ Private Sub GetArray_StringOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringArrays")
@@ -1600,7 +1600,7 @@ Private Sub GetArray_StringMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("StringArrays")
@@ -1623,7 +1623,7 @@ Private Sub GetArray_StringJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1647,7 +1647,7 @@ Private Sub GetArray_VariantOneDimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantArrays")
@@ -1670,7 +1670,7 @@ Private Sub GetArray_VariantMultidimension_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("VariantArrays")
@@ -1693,7 +1693,7 @@ Private Sub GetArray_VariantJagged_IsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1738,7 +1738,7 @@ Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1791,7 +1791,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 '@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
@@ -1826,7 +1826,7 @@ Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1867,7 +1867,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1900,7 +1900,7 @@ Private Sub ConcatArraysOfSameStructure_TwoJaggedArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1936,7 +1936,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeJaggedArrays_ConcatSuccess()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
 
@@ -1963,5 +1963,5 @@ Private Sub GetArrayLength_OneDimArray_ReturnsCorrectLength()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
