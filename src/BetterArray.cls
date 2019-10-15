@@ -28,6 +28,7 @@ End Enum
 Private Enum ErrorCodes
     StartCode = vbObjectError + 512
     ExpectedRangeObject
+    MaxDimensionsLimit
     EndCode
 End Enum
 
@@ -93,8 +94,8 @@ Public Property Let Capacity(ByVal Value As Long)
     End If
 End Property
 
-Public Property Get Length() As Long
-    Length = pLength
+Public Property Get length() As Long
+    length = pLength
 End Property
 
 Public Property Get UpperBound()
@@ -159,6 +160,7 @@ Public Property Let Items(ByVal Values As Variant)
         pArrayType = getArrayType(localValues)
         If pArrayType = ArrayTypes.Undefined _
            Or pArrayType = ArrayTypes.Unallocated Then
+            ' TOD: Define custom error
             Err.Raise 9
         Else
             If pArrayType = ArrayTypes.MultiDimension Then
@@ -254,7 +256,7 @@ Public Function Unshift(ParamArray args() As Variant) As Long
         Me.Concat oldItems
         pArrayType = oldType
     End If
-    Unshift = Me.Length
+    Unshift = Me.length
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -282,7 +284,7 @@ Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromInde
     Dim arr() As Variant
     
     arr = getInternalItems()
-    localLength = Me.Length
+    localLength = Me.length
     
     If localLength = 0 Then
         Includes = False
@@ -408,7 +410,7 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Dim result() As Variant
     
     arr = getInternalItems()
-    localLength = Me.Length
+    localLength = Me.length
     relativeStart = StartIndex
     If relativeStart < 0 Then
         oldIndex = Max((localLength + relativeStart), 0)
@@ -444,50 +446,52 @@ End Function
 Public Function ToExcelRange(ByRef destination As Object, Optional ByVal TransposeValues As Boolean) As Object
     Dim localRange As Object
     Dim localItems() As Variant
-    If TypeName(destination) <> "Range" Then
-        RaiseError ErrorCodes.ExpectedRangeObject, "ToExcelRange()", "destination"
-    Else
-        'localItems = Me.Items
+    Dim depth As Long
+    Dim lengthRows As Long
+    Dim lengthColumns As Long
+    
+    lengthRows = 1 'default
+    lengthColumns = 1 'default
+    
+    If TypeName(destination) = "Range" Then
         localItems = getInternalItems()
-        Select Case pArrayType
-            Case ArrayTypes.OneDimension
-            'TODO: ensure no objects in array
+        depth = getJaggedArrayDepth(localItems)
+        If depth > 0 Then 'check array is allocated
+            If depth = 1 Then
+                '1d array
+                localItems = ensureScalar1DArray(localItems)
                 If TransposeValues Then
-                    Set localRange = destination.Resize(RowSize:=Me.Length)
-                    localRange.Value = Transpose_1DArray(localItems)
+                    lengthRows = Me.length
+                    localItems = Transpose_1DArray(localItems)
                 Else
-                    Set localRange = destination.Resize(ColumnSize:=Me.Length)
-                    localRange.Value = localItems
+                    lengthColumns = Me.length
                 End If
-            Case ArrayTypes.MultiDimension, ArrayTypes.Jagged
-                Dim depth As Long
-                depth = getJaggedArrayDepth(localItems)
-                If depth = 1 Then
-                ElseIf depth = 2 Then
-                    localItems = jaggedToMulti(localItems, depth)
-                    Dim lengthRows As Long
-                    Dim lengthColumns As Long
-                    If TransposeValues Then
-                        lengthRows = UBound(localItems, 2) - LBound(localItems, 2) + 1
-                        lengthColumns = UBound(localItems, 1) - LBound(localItems, 1) + 1
-                        localItems = Transpose_2DArray(localItems)
-                    Else
-                        lengthRows = UBound(localItems, 1) - LBound(localItems, 1) + 1
-                        lengthColumns = UBound(localItems, 2) - LBound(localItems, 2) + 1
-                    End If
-                    Set localRange = destination.Resize( _
-                        RowSize:=lengthRows, _
-                        ColumnSize:=lengthColumns _
-                    )
-                    localRange.Value = localItems
+            ElseIf depth > 1 Then
+                'jagged array - multidim arrays should also be stored as jagged internally
+                Const outputDepth As Long = 2 'need 2 dimensions for tabular representation output
+                localItems = jaggedToMulti(localItems, outputDepth, EnsureScalar:=True)
+                If TransposeValues Then
+                    lengthRows = UBound(localItems, 2) - LBound(localItems, 2) + 1
+                    lengthColumns = UBound(localItems, 1) - LBound(localItems, 1) + 1
+                    localItems = Transpose_2DArray(localItems)
                 Else
-                    'handle error
+                    lengthRows = UBound(localItems, 1) - LBound(localItems, 1) + 1
+                    lengthColumns = UBound(localItems, 2) - LBound(localItems, 2) + 1
                 End If
-                
-            Case Else
-            ' TODO - Handle multi & jagged
-        End Select
+            End If
+            Set localRange = destination.Resize( _
+                RowSize:=lengthRows, _
+                ColumnSize:=lengthColumns _
+            )
+            localRange.Value = localItems
+        Else
+            'array must be unalloc
+            'do nothing(?)
+        End If
+    Else
+        RaiseError ErrorCodes.ExpectedRangeObject, "ToExcelRange()", "destination"
     End If
+    
     Set ToExcelRange = localRange
 End Function
 
@@ -583,7 +587,7 @@ Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
        ArrayType = ArrayTypes.Undefined Then
         sortedItems = getEmptyArray
     Else
-        If Me.Length > 0 Then
+        If Me.length > 0 Then
             If ArrayType <> OneDimension Then
                 If ArrayType = ArrayTypes.MultiDimension Then
                     localItems = multiToJagged(localItems)
@@ -619,7 +623,7 @@ Public Function CopyWithin(ByVal Target As Long, _
     Dim arr() As Variant
     
     arr = getInternalItems()
-    localLength = Me.Length
+    localLength = Me.length
     relativeTarget = Target
     
     If relativeTarget < 0 Then
@@ -732,6 +736,11 @@ Private Sub PopulateErrorDefinitions()
         source:=source, _
         description:="Range Object Expected" _
     )
+    ErrorDefinitions(ErrorCodes.MaxDimensionsLimit) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.MaxDimensionsLimit, _
+        source:=source, _
+        description:="Cannot convert arrays with more than 20 dimensions to a multidimensional array!" _
+    )
 End Sub
 
 Private Function ErrorDefinitionFactory(ByVal number As Long, ByVal source As String, ByVal description As String) As ErrorDefinition
@@ -752,7 +761,39 @@ Private Sub RaiseError(ByVal ErrorCode As ErrorCodes, ByVal Caller As String, Op
               localArgName & currentError.description
 End Sub
 
-' Used by ToExcelRange()
+'Used by ToExcelRange
+Private Function ensureScalar1DArray(ByRef arr() As Variant) As Variant()
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    
+    localLowerBound = LBound(arr)
+    localUpperBound = UBound(arr)
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound
+        result(i) = getScalarRepresentation(arr(i))
+    Next
+    ensureScalar1DArray = result
+End Function
+
+' TODO: Use or remove
+Private Function OneDimArrayToJagged(ByRef arr() As Variant) As Variant()
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    
+    localLowerBound = LBound(arr)
+    localUpperBound = UBound(arr)
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound
+        result(i) = Array(arr(i))
+    Next
+    OneDimArrayToJagged = result
+End Function
+
+' TODO: Use or remove
 Private Function Transpose_1DArray(ByRef arr() As Variant) As Variant()
     'TODO: need check to ensure 1d?
     Dim i As Long
@@ -794,6 +835,7 @@ Private Function Transpose_2DArray(ByRef sourceArray() As Variant) As Variant()
     Next
     Transpose_2DArray = result
 End Function
+
 
 ' TODO: Use or remove
 Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
@@ -919,13 +961,38 @@ Private Function recursiveToString(ByRef arr() As Variant, _
             If PrettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
             result = result & recursiveToString(nested, PrettyPrint, tabs + 1)
             result = result & IIf(i = UBound(arr) And PrettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
-        ElseIf IsObject(arr(i)) Then
-            result = result & "OBJECT" & sep
         Else
-            result = result & Replace(CStr(arr(i)), ",", vbNullString) & sep
+            result = result & Replace( _
+                    CStr(getScalarRepresentation(arr(i))), _
+                    ",", _
+                    vbNullString _
+                ) & sep
         End If
     Next
     recursiveToString = result
+End Function
+
+Private Function getScalarRepresentation(ByRef element As Variant) As Variant
+    Dim result As Variant
+    If IsObject(element) Then
+        On Error Resume Next
+        'Try to retrieve default member
+        result = element
+        On Error GoTo 0
+        ' if there is no default member or it returns an object result = Empty
+        If IsEmpty(result) Then
+            result = "OBJECT"
+        End If
+    Else
+        result = element
+    End If
+    ' if the element is array or default member returns an array then convert tostring
+    If IsArray(result) And Not IsEmpty(result) Then
+        Dim passThruArray() As Variant
+        passThruArray = element
+        result = recursiveToString(passThruArray, False)
+    End If
+    getScalarRepresentation = result
 End Function
 
 Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
@@ -1045,11 +1112,13 @@ Private Function copyRange(ByRef newItems() As Variant) As Variant()
     copyRange = newItems
 End Function
 
+
 Private Function jaggedToMulti(ByRef arr() As Variant, _
                       Optional ByVal depth As Long, _
                       Optional ByVal currentDepth As Long, _
                       Optional ByRef crumbs As Variant, _
-                      Optional ByRef result As Variant) As Variant()
+                      Optional ByRef result As Variant, _
+                      Optional ByVal EnsureScalar As Boolean) As Variant()
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1072,8 +1141,7 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
     
     If localDepth > 20 Then
         ' too many dimensions to be handled by getElementByBreadcrumb
-        ' handle error
-        Debug.Print "Cannot convert arrays with more than 20 dimensions to a multidimensional array!"
+        RaiseError MaxDimensionsLimit, "jaggedToMulti()", "arr()"
     ElseIf localDepth > 1 Then
     
         If IsMissing(crumbs) Then
@@ -1093,12 +1161,23 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
         localUpperBound = UBound(arr)
         For i = localLowerBound To localUpperBound
             localCrumbs(localCurrentDepth - 1) = i
-            If localCurrentDepth = localDepth Or Not IsArray(arr(i)) Then
-                localResult = letElementByBreadcrumb(localResult, localCrumbs, arr(i))
+            If localCurrentDepth = localDepth Or (Not IsArray(arr(i)) And Not EnsureScalar) Then
+                If EnsureScalar Then
+                    localResult = letElementByBreadcrumb(localResult, localCrumbs, getScalarRepresentation(arr(i)))
+                Else
+                    localResult = letElementByBreadcrumb(localResult, localCrumbs, arr(i))
+                End If
             Else
                 Dim nested() As Variant
                 nested = arr(i)
-                localResult = jaggedToMulti(nested, localDepth, localCurrentDepth, localCrumbs, localResult)
+                localResult = jaggedToMulti( _
+                    arr:=nested, _
+                    depth:=localDepth, _
+                    currentDepth:=localCurrentDepth, _
+                    crumbs:=localCrumbs, _
+                    result:=localResult, _
+                    EnsureScalar:=EnsureScalar _
+                )
             End If
         Next
     Else
@@ -1214,13 +1293,15 @@ Private Function mapJaggedArray(ByRef arr() As Variant, _
     If bounds(0) < localMap(currentIndex)(0) Then localMap(currentIndex)(0) = bounds(0)
     If bounds(1) > localMap(currentIndex)(1) Then localMap(currentIndex)(1) = bounds(1)
     
-    For Each element In arr
-        If IsArray(element) Then
-            Dim nested() As Variant
-            nested = element
-            localMap = mapJaggedArray(nested, localMap, currentIndex + 1)
-        End If
-    Next
+    If currentIndex < localDepth Then
+        For Each element In arr
+            If IsArray(element) Then
+                Dim nested() As Variant
+                nested = element
+                localMap = mapJaggedArray(nested, localMap, currentIndex + 1)
+            End If
+        Next
+    End If
     
     mapJaggedArray = localMap
 End Function
