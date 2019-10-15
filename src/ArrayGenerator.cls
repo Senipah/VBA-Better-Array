@@ -45,13 +45,14 @@ Private Sub Class_Initialize()
     pLowerBound = 0
 End Sub
 
-Public Function GetArray(Optional ByVal Length As Long = 10, _
+Public Function GetArray(Optional ByVal length As Long = 10, _
                          Optional ByVal ValueType As ValueTypes = ValueTypes.VariantVals, _
-                         Optional ByVal ArrayType As ArrayTypes = ArrayTypes.OneDimension) As Variant
+                         Optional ByVal ArrayType As ArrayTypes = ArrayTypes.OneDimension, _
+                         Optional ByVal depth As Long) As Variant
     Dim localLength As Long
     Dim vals As IValuesList
        
-    localLength = IIf(Length <= 0, 1, Length)
+    localLength = IIf(length <= 0, 1, length)
     
     Select Case ValueType
     Case ValueTypes.BooleanVals
@@ -69,26 +70,29 @@ Public Function GetArray(Optional ByVal Length As Long = 10, _
     Case ValueTypes.VariantVals
         Set vals = New ValuesList_Variants
     End Select
-    GetArray = getArrayOfType(localLength, vals, ArrayType)
+    GetArray = getArrayOfType(localLength, vals, ArrayType, depth)
 End Function
 
-Private Function getArrayOfType(ByVal Length As Long, ByVal vals As IValuesList, ByVal ArrayType As ArrayTypes) As Variant
+Private Function getArrayOfType(ByVal length As Long, _
+                                ByVal vals As IValuesList, _
+                                ByVal ArrayType As ArrayTypes, _
+                                Optional ByVal depth As Long) As Variant
     Dim result As Variant
     Select Case ArrayType
     Case ArrayTypes.Jagged
-        result = getJaggedArray(Length, vals)
+        result = getJaggedArray(length, vals, depth)
     Case ArrayTypes.MultiDimension
-        result = getMultidimensionalArray(Length, vals)
+        result = getMultidimensionalArray(length, vals)
     Case ArrayTypes.OneDimension
-        result = getOneDimensionalArray(Length, vals)
+        result = getOneDimensionalArray(length, vals)
     End Select
     getArrayOfType = result
 End Function
 
-Private Function getOneDimensionalArray(ByVal Length As Long, ByVal vals As IValuesList) As Variant()
+Private Function getOneDimensionalArray(ByVal length As Long, ByVal vals As IValuesList) As Variant()
     Dim i As Long
     Dim arr() As Variant
-    ReDim arr(pLowerBound To UpperBound(Length))
+    ReDim arr(pLowerBound To getUpperBound(length))
     For i = LBound(arr) To UBound(arr)
         If vals.IsObjectType Then
             Set arr(i) = vals.GetRandomValue()
@@ -99,11 +103,11 @@ Private Function getOneDimensionalArray(ByVal Length As Long, ByVal vals As IVal
     getOneDimensionalArray = arr
 End Function
 
-Private Function getMultidimensionalArray(ByVal Length As Long, ByVal vals As IValuesList) As Variant()
+Private Function getMultidimensionalArray(ByVal length As Long, ByVal vals As IValuesList) As Variant()
     Dim i As Long
     Dim j As Long
     Dim arr() As Variant
-    ReDim arr(pLowerBound To UpperBound(Length), pLowerBound To UpperBound(Length))
+    ReDim arr(pLowerBound To getUpperBound(length), pLowerBound To getUpperBound(length))
     For i = LBound(arr, 1) To UBound(arr, 1)
         For j = LBound(arr, 2) To UBound(arr, 2)
             If vals.IsObjectType Then
@@ -116,25 +120,27 @@ Private Function getMultidimensionalArray(ByVal Length As Long, ByVal vals As IV
     getMultidimensionalArray = arr
 End Function
 
-Private Function getJaggedArray(ByVal Length As Long, ByVal vals As IValuesList) As Variant()
+Private Function getJaggedArray(ByVal length As Long, _
+                                ByVal vals As IValuesList, _
+                                ByVal depth As Long, _
+                                Optional ByVal currentDepth As Long) As Variant()
     Dim i As Long
-    Dim j As Long
-    Dim parentArray() As Variant
-    Dim childArray() As Variant
-
-    ReDim parentArray(pLowerBound To UpperBound(Length))
-    ReDim childArray(pLowerBound To UpperBound(Length))
-    For i = LBound(parentArray) To UBound(parentArray)
-        For j = LBound(childArray) To UBound(childArray)
-            If vals.IsObjectType Then
-                Set childArray(j) = vals.GetRandomValue()
-            Else
-                childArray(j) = vals.GetRandomValue()
-            End If
-        Next
-        parentArray(i) = childArray
+    Dim localDepth As Long
+    Dim localCurrentDepth As Long
+    Dim result() As Variant
+    
+    'default to depth of 2
+    localDepth = IIf(depth > 0, depth, 2)
+    localCurrentDepth = currentDepth + 1
+    ReDim result(pLowerBound To getUpperBound(length))
+    For i = LBound(result) To UBound(result)
+        If localCurrentDepth >= (localDepth - 1) Then
+            result(i) = getOneDimensionalArray(length, vals)
+        Else
+            result(i) = getJaggedArray(length, vals, localDepth, localCurrentDepth)
+        End If
     Next
-    getJaggedArray = parentArray
+    getJaggedArray = result
 End Function
 
 Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, ParamArray args() As Variant) As Variant()
@@ -212,7 +218,7 @@ Public Function GetArrayLength(ByRef sourceArray() As Variant) As Long
     GetArrayLength = UBound(sourceArray) - LBound(sourceArray) + 1
 End Function
 
-Private Function UpperBound(ByVal Length As Long) As Long
-    UpperBound = Length + pLowerBound - 1
+Private Function getUpperBound(ByVal length As Long) As Long
+    getUpperBound = length + pLowerBound - 1
 End Function
 

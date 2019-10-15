@@ -123,14 +123,14 @@ TestFail:
 End Sub
 
 '@TestMethod("BooleanArrays")
-Private Sub GetArray_BooleansJagged_ValuesAreBoolean()
+Public Sub GetArray_BooleansJagged_ValuesAreBoolean()
     On Error GoTo TestFail
 
     'Arrange:
     Dim SUT As ArrayGenerator
     Set SUT = New ArrayGenerator
     Dim i As Long
-Dim j As Long
+    Dim j As Long
 
     Dim returnedArray() As Variant
     Dim testResult As Boolean
@@ -1257,7 +1257,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BooleanArrays")
-Private Sub GetArray_BooleanJagged_IsCorrectLength()
+Public Sub GetArray_BooleanJagged_IsCorrectLength()
     On Error GoTo TestFail
 
     'Arrange:
