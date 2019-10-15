@@ -94,8 +94,8 @@ Public Property Let Capacity(ByVal Value As Long)
     End If
 End Property
 
-Public Property Get length() As Long
-    length = pLength
+Public Property Get Length() As Long
+    Length = pLength
 End Property
 
 Public Property Get UpperBound()
@@ -114,9 +114,10 @@ Public Property Let LowerBound(ByVal Value As Long)
     End If
 End Property
 
-'@DefaultMember
+' For releases ensure to set the DefaultMember annotation & attribute.
+' Disable on dev branch as it breaks code inspections:
+' https://github.com/rubberduck-vba/Rubberduck/issues/5222
 Public Property Get Item(ByVal Index As Long)
-Attribute Item.VB_UserMemId = 0
     If Index <= pLength Then
         If IsObject(pItems(Index)) Then
             Set Item = pItems(Index)
@@ -129,7 +130,6 @@ Attribute Item.VB_UserMemId = 0
 End Property
 
 Public Property Let Item(ByVal Index As Long, ByVal element As Variant)
-Attribute Item.VB_UserMemId = 0
     If Me.UpperBound >= Index Then
         If Index < Me.LowerBound Then
             Me.Unshift element
@@ -256,7 +256,179 @@ Public Function Unshift(ParamArray args() As Variant) As Long
         Me.Concat oldItems
         pArrayType = oldType
     End If
-    Unshift = Me.length
+    Unshift = Me.Length
+End Function
+
+' TODO: Add ParseFromString method - compliment from ToString
+'@Ignore FunctionReturnValueNotUsed
+Public Function ParseFromString(ByVal SourceString As String, _
+                                Optional ByVal ValueSeparator As String = ",", _
+                                Optional ByVal ArrayOpenDelimiter As String, _
+                                Optional ByVal ArrayClosingDelimiter As String) As BetterArray
+    Dim opener As String
+    Dim closer As String
+    Dim arrayCount As Long
+    Dim ArraysAreDelimited As Boolean
+    Dim result() As Variant
+    Dim tempStringArray() As String
+    
+    If Len(SourceString) > 0 Then
+        If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
+            ' no array delimiters supplied
+            ' see if the diff in ascii values are for first and last chars are less than 3
+            ' this covers () [] {} <>
+            Dim firstChar As String
+            Dim lastChar As String
+            firstChar = Left$(SourceString, 1)
+            lastChar = Right$(SourceString, 1)
+            If Asc(lastChar) - Asc(firstChar) < 3 Then
+                opener = firstChar
+                closer = lastChar
+                ArraysAreDelimited = True
+            End If
+        Else
+            ' array delimiters supplied
+            opener = ArrayOpenDelimiter
+            closer = ArrayClosingDelimiter
+            ArraysAreDelimited = True
+        End If
+        
+        If ArraysAreDelimited Then
+            arrayCount = Len(SourceString) - Len(Replace(SourceString, opener, vbNullString))
+            If arrayCount = 1 Then
+                tempStringArray = Split(Mid$(SourceString, 2, Len(SourceString) - 2), ValueSeparator)
+                result = duckTypeStringArray(tempStringArray)
+            ElseIf arrayCount > 1 Then
+                'nested array
+                result = extractNestedArrays(SourceString, ValueSeparator, opener, closer)
+            Else
+                ' handle arrayCount of 0
+                ' NOTE: is this possible??
+            End If
+        Else
+            tempStringArray = Split(SourceString, ValueSeparator)
+            result = duckTypeStringArray(tempStringArray)
+        End If
+    Else
+        ' nullstring passed
+        'handle exception
+    End If
+    Me.Items = result
+    Set ParseFromString = Me
+End Function
+
+Private Function extractNestedArrays(ByVal SourceString As String, _
+                              ByVal ValueSeparator As String, _
+                              ByVal opener As String, _
+                              ByVal closer As String, _
+                              Optional ByRef cursor As Long = 2) As Variant()
+    Dim localResult() As Variant
+    Dim i As Long
+    
+    ' default cursor to 2 because we know the first character will be an array delimiter
+    
+    Do While cursor < Len(SourceString) And cursor <> 0
+        If Mid$(SourceString, cursor + 1, 1) = opener Then
+            If i > 0 Then
+                ReDim Preserve localResult(i)
+            Else
+                ReDim localResult(i)
+            End If
+            cursor = cursor + 1
+            localResult(i) = extractNestedArrays( _
+                    SourceString, _
+                    ValueSeparator, _
+                    opener, _
+                    closer, _
+                    cursor _
+                )
+            i = i + 1
+        Else
+            Do Until cursor = 0
+                If i > 0 Then
+                    ReDim Preserve localResult(i)
+                Else
+                    ReDim localResult(i)
+                End If
+                localResult(i) = extractArraysAtSameDimension( _
+                    SourceString, _
+                    ValueSeparator, _
+                    opener, _
+                    closer, _
+                    cursor _
+                )
+                i = i + 1
+                If cursor < 0 Then
+                    cursor = Abs(cursor)
+                    Exit Do
+                End If
+            Loop
+        End If
+    Loop
+    
+    
+    extractNestedArrays = localResult
+End Function
+
+Private Function extractArraysAtSameDimension(ByVal SourceString As String, _
+                                              ByVal ValueSeparator As String, _
+                                              ByVal opener As String, _
+                                              ByVal closer As String, _
+                                              ByRef cursor As Long) As Variant()
+    Dim localResult() As Variant
+    Dim segment() As String
+    Dim segmentEnd As Long
+    
+    ' NOTE: didn't want to use regex so as to aviod external dependencies
+    
+    Do While Mid$(SourceString, cursor + 1, 1) = opener And cursor < Len(SourceString)
+        cursor = cursor + 1
+    Loop
+    
+    segmentEnd = cursor
+    Do While Mid$(SourceString, segmentEnd + 1, 1) <> closer And segmentEnd <= Len(SourceString)
+        segmentEnd = segmentEnd + 1
+    Loop
+    
+    segment = Split(Mid$(SourceString, cursor + 1, segmentEnd - cursor), ValueSeparator)
+    localResult = duckTypeStringArray(segment)
+    
+    cursor = segmentEnd + 1
+    Do While Mid$(SourceString, cursor + 1, 1) <> opener And cursor <= Len(SourceString)
+        cursor = cursor + 1
+        If Mid$(SourceString, cursor, 1) = closer Then
+            'invert cursor if last array at current dimension
+            cursor = cursor * -1
+            Exit Do
+        End If
+    Loop
+    
+    If cursor >= Len(SourceString) Then cursor = 0
+    
+    extractArraysAtSameDimension = localResult
+End Function
+
+Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    Dim element As String
+    
+    localLowerBound = LBound(arr)
+    localUpperBound = UBound(arr)
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound
+        element = arr(i)
+        If UCase$(element) = "TRUE" Or UCase$(element) = "FALSE" Then
+            result(i) = CBool(element)
+        ElseIf IsNumeric(element) Then
+            result(i) = Val(element)
+        Else
+            result(i) = Trim$(element)
+        End If
+    Next
+    duckTypeStringArray = result
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -284,7 +456,7 @@ Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromInde
     Dim arr() As Variant
     
     arr = getInternalItems()
-    localLength = Me.length
+    localLength = Me.Length
     
     If localLength = 0 Then
         Includes = False
@@ -410,7 +582,7 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Dim result() As Variant
     
     arr = getInternalItems()
-    localLength = Me.length
+    localLength = Me.Length
     relativeStart = StartIndex
     If relativeStart < 0 Then
         oldIndex = Max((localLength + relativeStart), 0)
@@ -461,10 +633,10 @@ Public Function ToExcelRange(ByRef destination As Object, Optional ByVal Transpo
                 '1d array
                 localItems = ensureScalar1DArray(localItems)
                 If TransposeValues Then
-                    lengthRows = Me.length
+                    lengthRows = Me.Length
                     localItems = Transpose_1DArray(localItems)
                 Else
-                    lengthColumns = Me.length
+                    lengthColumns = Me.Length
                 End If
             ElseIf depth > 1 Then
                 'jagged array - multidim arrays should also be stored as jagged internally
@@ -587,7 +759,7 @@ Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
        ArrayType = ArrayTypes.Undefined Then
         sortedItems = getEmptyArray
     Else
-        If Me.length > 0 Then
+        If Me.Length > 0 Then
             If ArrayType <> OneDimension Then
                 If ArrayType = ArrayTypes.MultiDimension Then
                     localItems = multiToJagged(localItems)
@@ -623,7 +795,7 @@ Public Function CopyWithin(ByVal Target As Long, _
     Dim arr() As Variant
     
     arr = getInternalItems()
-    localLength = Me.length
+    localLength = Me.Length
     relativeTarget = Target
     
     If relativeTarget < 0 Then
@@ -1597,6 +1769,9 @@ Private Function createMultidimensionalArray(ByRef crumb() As Variant) As Varian
     End Select
     createMultidimensionalArray = result
 End Function
+
+
+
 
 
 
