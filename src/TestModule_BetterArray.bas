@@ -2961,7 +2961,7 @@ End Sub
 
 
 '@TestMethod("BetterArray_ParseFromString")
-Public Sub ParseFromString_JaggedArrayFromToString_ReturnsCorrectValues()
+Public Sub ParseFromString_Jagged2DeepArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2979,7 +2979,7 @@ Public Sub ParseFromString_JaggedArrayFromToString_ReturnsCorrectValues()
     Set tempBetterArray = New BetterArray
     Set gen = New ArrayGenerator
     
-    expected = gen.GetArray(TEST_ARRAY_LENGTH, VariantVals, Jagged)
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, ByteVals, Jagged)
     tempBetterArray.Items = expected
     SourceString = tempBetterArray.ToString()
     
@@ -3006,5 +3006,86 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
+'@TestMethod("BetterArray_ParseFromString")
+Public Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As BetterArray
+    Dim tempBetterArray As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim SourceString As String
+    Dim testResult As Boolean
+    Dim i As Long
+    Dim j As Long
+    Dim k As Long
+    
+    Set SUT = New BetterArray
+    Set tempBetterArray = New BetterArray
+    Set gen = New ArrayGenerator
+    
+    expected = gen.GetArray(TEST_ARRAY_LENGTH, ByteVals, Jagged, 3)
+    tempBetterArray.Items = expected
+    SourceString = tempBetterArray.ToString()
+    
+    'Act:
+    actual = SUT.ParseFromString(SourceString).Items
+    
+    testResult = True
+    
+    For i = LBound(expected) To UBound(expected)
+        For j = LBound(expected(i)) To UBound(expected(i))
+            For k = LBound(expected(i)(j)) To UBound(expected(i)(j))
+                If Not valuesAreEqual(expected(i)(j)(k), actual(i)(j)(k)) Then
+                    testResult = False
+                    Exit For
+                End If
+            Next
+        Next
+    Next
+    
+    'Assert:
+    ' can't use sequence equals due to type comparison c# - actual will have
+    ' numeric values all typed as double
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ParseFromString")
+Public Sub ParseFromString_Jagged5DeepArrayFromToString_ReturnsCorrectValues()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim SUT As BetterArray
+    Dim tempBetterArray As BetterArray
+    Dim gen As ArrayGenerator
+    Dim expected As String
+    Dim actual As String
+    
+    Set SUT = New BetterArray
+    Set tempBetterArray = New BetterArray
+    Set gen = New ArrayGenerator
+    
+    tempBetterArray.Items = gen.GetArray(TEST_ARRAY_LENGTH, ByteVals, Jagged, 5)
+    expected = tempBetterArray.ToString()
+    
+    'Act:
+    actual = SUT.ParseFromString(expected).ToString
+        
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
 
 
