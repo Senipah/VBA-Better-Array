@@ -259,7 +259,7 @@ Public Function Unshift(ParamArray args() As Variant) As Long
     Unshift = Me.Length
 End Function
 
-' TODO: Add ParseFromString method - compliment from ToString
+' TODO: Document
 '@Ignore FunctionReturnValueNotUsed
 Public Function ParseFromString(ByVal SourceString As String, _
                                 Optional ByVal ValueSeparator As String = ",", _
@@ -267,21 +267,27 @@ Public Function ParseFromString(ByVal SourceString As String, _
                                 Optional ByVal ArrayClosingDelimiter As String) As BetterArray
     Dim opener As String
     Dim closer As String
-    Dim arrayCount As Long
     Dim ArraysAreDelimited As Boolean
     Dim result() As Variant
-    Dim tempStringArray() As String
+    Dim st As Single
+    st = Timer
     
     If Len(SourceString) > 0 Then
         If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
-            ' no array delimiters supplied
-            ' see if the diff in ascii values are for first and last chars are less than 3
-            ' this covers () [] {} <>
             Dim firstChar As String
             Dim lastChar As String
             firstChar = Left$(SourceString, 1)
             lastChar = Right$(SourceString, 1)
-            If Asc(lastChar) - Asc(firstChar) < 3 Then
+            ' no array delimiters supplied
+            ' see if the diff in ascii values are for first and last chars are less than 3
+            ' this covers () [] {} <>
+            ' escape numbers incase array is "1,2,3"
+            ' escape ucase letters incase array is "A,B,C"
+            ' escape lcase letters incase array is "a,b,c"
+            If (Asc(lastChar) - Asc(firstChar) < 3) And _
+                    (Asc(firstChar) < 65 Or Asc(firstChar) > 90) And _
+                    (Asc(firstChar) < 97 Or Asc(firstChar) > 122) And _
+                    Not IsNumeric(firstChar) Then
                 opener = firstChar
                 closer = lastChar
                 ArraysAreDelimited = True
@@ -294,141 +300,18 @@ Public Function ParseFromString(ByVal SourceString As String, _
         End If
         
         If ArraysAreDelimited Then
-            arrayCount = Len(SourceString) - Len(Replace(SourceString, opener, vbNullString))
-            If arrayCount = 1 Then
-                tempStringArray = Split(Mid$(SourceString, 2, Len(SourceString) - 2), ValueSeparator)
-                result = duckTypeStringArray(tempStringArray)
-            ElseIf arrayCount > 1 Then
-                'nested array
-                result = extractNestedArrays(SourceString, ValueSeparator, opener, closer)
-            Else
-                ' handle arrayCount of 0
-                ' NOTE: is this possible??
-            End If
+            result = ParseDelimitedArrayString(SourceString, ValueSeparator, opener, closer)
         Else
-            tempStringArray = Split(SourceString, ValueSeparator)
-            result = duckTypeStringArray(tempStringArray)
+            result = ParseArraySegmentFromString(SourceString, 1, 0, ValueSeparator)
         End If
     Else
         ' nullstring passed
-        'handle exception
+        ' handle exception
     End If
+    
+    Debug.Print Int(Timer - st)
     Me.Items = result
     Set ParseFromString = Me
-End Function
-
-Private Function extractNestedArrays(ByVal SourceString As String, _
-                              ByVal ValueSeparator As String, _
-                              ByVal opener As String, _
-                              ByVal closer As String, _
-                              Optional ByRef cursor As Long = 2) As Variant()
-    Dim localResult() As Variant
-    Dim i As Long
-    
-    ' default cursor to 2 because we know the first character will be an array delimiter
-    
-    Do While cursor < Len(SourceString) And cursor <> 0
-        If Mid$(SourceString, cursor + 1, 1) = opener Then
-            If i > 0 Then
-                ReDim Preserve localResult(i)
-            Else
-                ReDim localResult(i)
-            End If
-            cursor = cursor + 1
-            localResult(i) = extractNestedArrays( _
-                    SourceString, _
-                    ValueSeparator, _
-                    opener, _
-                    closer, _
-                    cursor _
-                )
-            i = i + 1
-        Else
-            Do Until cursor = 0
-                If i > 0 Then
-                    ReDim Preserve localResult(i)
-                Else
-                    ReDim localResult(i)
-                End If
-                localResult(i) = extractArraysAtSameDimension( _
-                    SourceString, _
-                    ValueSeparator, _
-                    opener, _
-                    closer, _
-                    cursor _
-                )
-                i = i + 1
-                If cursor < 0 Then
-                    cursor = Abs(cursor)
-                    Exit Do
-                End If
-            Loop
-        End If
-    Loop
-    
-    
-    extractNestedArrays = localResult
-End Function
-
-Private Function extractArraysAtSameDimension(ByVal SourceString As String, _
-                                              ByVal ValueSeparator As String, _
-                                              ByVal opener As String, _
-                                              ByVal closer As String, _
-                                              ByRef cursor As Long) As Variant()
-    Dim localResult() As Variant
-    Dim segment() As String
-    Dim segmentEnd As Long
-    
-    ' NOTE: didn't want to use regex so as to aviod external dependencies
-    
-    Do While Mid$(SourceString, cursor + 1, 1) = opener And cursor < Len(SourceString)
-        cursor = cursor + 1
-    Loop
-    
-    segmentEnd = cursor
-    Do While Mid$(SourceString, segmentEnd + 1, 1) <> closer And segmentEnd <= Len(SourceString)
-        segmentEnd = segmentEnd + 1
-    Loop
-    
-    segment = Split(Mid$(SourceString, cursor + 1, segmentEnd - cursor), ValueSeparator)
-    localResult = duckTypeStringArray(segment)
-    
-    cursor = segmentEnd + 1
-    Do While Mid$(SourceString, cursor + 1, 1) <> opener And cursor <= Len(SourceString)
-        cursor = cursor + 1
-        If Mid$(SourceString, cursor, 1) = closer Then
-            'invert cursor if last array at current dimension
-            cursor = cursor * -1
-            Exit Do
-        End If
-    Loop
-    
-    If cursor >= Len(SourceString) Then cursor = 0
-    
-    extractArraysAtSameDimension = localResult
-End Function
-
-Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
-    Dim i As Long
-    Dim localLowerBound As Long
-    Dim localUpperBound As Long
-    Dim result() As Variant
-    Dim element As String
-    
-    localLowerBound = LBound(arr)
-    localUpperBound = UBound(arr)
-    ReDim result(localLowerBound To localUpperBound)
-    For i = localLowerBound To localUpperBound
-        element = arr(i)
-        If UCase$(element) = "TRUE" Or UCase$(element) = "FALSE" Then
-            result(i) = CBool(element)
-        ElseIf IsNumeric(element) Then
-            result(i) = Val(element)
-        Else
-            result(i) = Trim$(element)
-        End If
-    Next
-    duckTypeStringArray = result
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -767,6 +650,7 @@ Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
                 Dim depth As Long
                 depth = getJaggedArrayDepth(localItems)
                 If depth > 2 Then
+                    ' TODO: Raise custom err
                     Debug.Print "Cannot sort greater than 2 dimensions"
                     Exit Function
                 End If
@@ -899,6 +783,97 @@ End Function
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+' TODO: Refactor to remove recursion
+Private Function ParseDelimitedArrayString(ByVal SourceString As String, _
+                              ByVal ValueSeparator As String, _
+                              ByVal opener As String, _
+                              ByVal closer As String, _
+                              Optional ByRef cursor As Long = 2) As Variant()
+    Dim currentChar As String
+    Dim localResult() As Variant
+    Dim i As Long
+    Dim breakLoop As Boolean
+    Dim nextOpener As Long
+    Dim nextCloser As Long
+    
+    currentChar = Mid$(SourceString, cursor, 1)
+    nextOpener = InStr(cursor, SourceString, opener)
+    nextCloser = InStr(cursor, SourceString, closer)
+    
+    ' wer're inside an array to be parsed
+    If currentChar <> opener And (nextCloser < nextOpener Or nextOpener = 0) Then
+        ParseDelimitedArrayString = ParseArraySegmentFromString(SourceString, cursor, nextCloser, ValueSeparator)
+        Exit Function
+    End If
+        
+    ' traverse nested arrays
+    Do
+        If currentChar = opener Then
+            If i > 0 Then
+                ReDim Preserve localResult(i)
+            Else
+                ReDim localResult(i)
+            End If
+            cursor = cursor + 1
+            localResult(i) = ParseDelimitedArrayString( _
+                            SourceString, _
+                            ValueSeparator, _
+                            opener, _
+                            closer, _
+                            cursor _
+                            )
+            i = i + 1
+        End If
+        currentChar = Mid$(SourceString, cursor, 1)
+        Do Until currentChar = opener
+            cursor = cursor + 1
+            currentChar = Mid$(SourceString, cursor, 1)
+            If currentChar = closer Or cursor >= Len(SourceString) Then
+                breakLoop = True
+                Exit Do
+            End If
+        Loop
+    Loop Until breakLoop
+    
+    ParseDelimitedArrayString = localResult
+End Function
+
+Private Function ParseArraySegmentFromString(ByVal SourceString As String, _
+                              ByRef cursor As Long, _
+                              ByVal nextCloser As Long, _
+                              ByVal ValueSeparator As String) As Variant()
+    Dim segmentLength As Long
+    Dim segment() As String
+    segmentLength = IIf(nextCloser = 0, Len(SourceString), nextCloser - cursor)
+    segment = Split(Mid$(SourceString, cursor, segmentLength), ValueSeparator)
+    cursor = nextCloser
+    ParseArraySegmentFromString = duckTypeStringArray(segment)
+End Function
+
+Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim result() As Variant
+    Dim element As String
+    
+    localLowerBound = LBound(arr)
+    localUpperBound = UBound(arr)
+    ReDim result(localLowerBound To localUpperBound)
+    For i = localLowerBound To localUpperBound
+        element = arr(i)
+        If UCase$(element) = "TRUE" Or UCase$(element) = "FALSE" Then
+            result(i) = CBool(element)
+        ElseIf IsNumeric(element) Then
+            result(i) = Val(element)
+        Else
+            result(i) = Trim$(element)
+        End If
+    Next
+    duckTypeStringArray = result
+End Function
+
 
 Private Sub PopulateErrorDefinitions()
     Dim source As String
@@ -1124,9 +1099,9 @@ Private Function recursiveToString(ByRef arr() As Variant, _
     Dim sep As String
     Dim i As Long
 
-    result = "["
+    result = "{"
     For i = LBound(arr) To UBound(arr)
-        sep = IIf(i = UBound(arr), "]", ", ")
+        sep = IIf(i = UBound(arr), "}", IIf(PrettyPrint, ", ", ","))
         If IsArray(arr(i)) Then
             Dim nested() As Variant
             nested = arr(i)
@@ -1305,6 +1280,7 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
     
     If localDepth = 0 Then
         If Not isJaggedArray(arr) Then
+            ' TODO: raise custom err
             Debug.Print "Argument passed to 'jaggedToMulti' not a jagged array"
             Exit Function
         End If
@@ -1376,6 +1352,7 @@ Private Function multiToJagged(ByRef arr() As Variant, _
     
     If localDepth = 0 Then
         If Not isMultidimensionalArray(arr) Then
+            ' TODO: raise custom err
             Debug.Print "Argument passed to 'multiToJagged' not a multidimensional array"
             Exit Function
         End If
@@ -1385,6 +1362,7 @@ Private Function multiToJagged(ByRef arr() As Variant, _
     If localDepth > 20 Then
         ' too many dimensions to be handled by getElementByBreadcrumb
         ' handle error
+        ' TODO: raise custom err
         Debug.Print "Cannot convert arrays with more than 20 dimensions to a jagged array!"
     ElseIf localDepth > 1 Then
         If IsMissing(crumbs) Then
