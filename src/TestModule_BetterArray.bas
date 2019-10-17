@@ -2675,7 +2675,7 @@ Public Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim SUT As BetterArray
     Dim gen As ArrayGenerator
-    Dim destination As Range
+    Dim Destination As Range
     Dim returnedRange As Range
     Dim OutputSheet As Worksheet
     
@@ -2686,14 +2686,14 @@ Public Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     Set gen = New ArrayGenerator
     Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
     OutputSheet.Cells.Clear
-    Set destination = OutputSheet.Range("A1")
+    Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = gen.GetArray(TEST_ARRAY_LENGTH, DoubleVals)
     SUT.Items = expected
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(destination)
+    Set returnedRange = SUT.ToExcelRange(Destination)
     Dim i As Long
     For i = 1 To returnedRange.Columns.count
         actual(i - 1) = returnedRange.Cells.Item(1, i).Value
@@ -2714,7 +2714,7 @@ Public Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim SUT As BetterArray
     Dim gen As ArrayGenerator
-    Dim destination As Range
+    Dim Destination As Range
     Dim returnedRange As Range
     Dim OutputSheet As Worksheet
     
@@ -2725,14 +2725,14 @@ Public Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     Set gen = New ArrayGenerator
     Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
     OutputSheet.Cells.Clear
-    Set destination = OutputSheet.Range("A1")
+    Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = gen.GetArray(TEST_ARRAY_LENGTH, DoubleVals)
     SUT.Items = expected
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(destination, True)
+    Set returnedRange = SUT.ToExcelRange(Destination, True)
     Dim i As Long
     For i = 1 To returnedRange.Rows.count
         actual(i - 1) = returnedRange.Cells.Item(i, 1).Value
@@ -2755,7 +2755,7 @@ Public Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim SUT As BetterArray
     Dim gen As ArrayGenerator
-    Dim destination As Range
+    Dim Destination As Range
     Dim returnedRange As Range
     Dim OutputSheet As Worksheet
     
@@ -2766,14 +2766,14 @@ Public Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     Set gen = New ArrayGenerator
     Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
     OutputSheet.Cells.Clear
-    Set destination = OutputSheet.Range("A1")
+    Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = gen.GetArray(TEST_ARRAY_LENGTH, DoubleVals, MultiDimension)
     SUT.Items = expected
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(destination)
+    Set returnedRange = SUT.ToExcelRange(Destination)
     Dim i As Long
     Dim j As Long
     For i = 1 To returnedRange.Rows.count
@@ -2797,7 +2797,7 @@ Public Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim SUT As BetterArray
     Dim gen As ArrayGenerator
-    Dim destination As Range
+    Dim Destination As Range
     Dim returnedRange As Range
     Dim OutputSheet As Worksheet
     
@@ -2808,14 +2808,14 @@ Public Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     Set gen = New ArrayGenerator
     Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
     OutputSheet.Cells.Clear
-    Set destination = OutputSheet.Range("A1")
+    Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = gen.GetArray(TEST_ARRAY_LENGTH, DoubleVals, MultiDimension)
     SUT.Items = expected
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(destination, True)
+    Set returnedRange = SUT.ToExcelRange(Destination, True)
     Dim i As Long
     Dim j As Long
     For i = 1 To returnedRange.Rows.count
@@ -2840,7 +2840,7 @@ Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDime
     Dim SUT As BetterArray
     Dim tempBetterArray As BetterArray
     Dim gen As ArrayGenerator
-    Dim destination As Range
+    Dim Destination As Range
     Dim returnedRange As Range
     Dim OutputSheet As Worksheet
     Dim i As Long
@@ -2854,7 +2854,7 @@ Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDime
     Set gen = New ArrayGenerator
     Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
     OutputSheet.Cells.Clear
-    Set destination = OutputSheet.Range("A1")
+    Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     sourceArray = gen.GetArray(TEST_ARRAY_LENGTH, DoubleVals, Jagged, 3)
@@ -2871,7 +2871,7 @@ Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDime
     SUT.Items = sourceArray
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(destination)
+    Set returnedRange = SUT.ToExcelRange(Destination)
     
     For i = 1 To returnedRange.Rows.count
         For j = 1 To returnedRange.Columns.count
