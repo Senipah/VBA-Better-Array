@@ -269,8 +269,6 @@ Public Function ParseFromString(ByVal SourceString As String, _
     Dim closer As String
     Dim ArraysAreDelimited As Boolean
     Dim result() As Variant
-    Dim st As Single
-    st = Timer
     
     If Len(SourceString) > 0 Then
         If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
@@ -309,13 +307,13 @@ Public Function ParseFromString(ByVal SourceString As String, _
         ' handle exception
     End If
     
-    Debug.Print Int(Timer - st)
     Me.Items = result
     Set ParseFromString = Me
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
+Public Function ToString(Optional ByVal PrettyPrint As Boolean, _
+                         Optional ByVal DelimitStrings As Boolean) As String
     Dim ArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
@@ -327,7 +325,7 @@ Public Function ToString(Optional ByVal PrettyPrint As Boolean) As String
         If ArrayType = ArrayTypes.MultiDimension Then
             localItems = multiToJagged(localItems)
         End If
-        result = recursiveToString(localItems, PrettyPrint)
+        result = recursiveToString(localItems, PrettyPrint, DelimitStrings:=DelimitStrings)
     End If
     ToString = result
 End Function
@@ -496,9 +494,125 @@ Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long)
     Slice = result
 End Function
 
-' TODO: Implement, Document & Test ToRange method
+' TODO: Implement, Document & Test FromExcelRange method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-Public Function ToExcelRange(ByRef destination As Object, Optional ByVal TransposeValues As Boolean) As Object
+Public Function FromExcelRange(ByRef FromRange As Object, _
+                               Optional ByVal ColumnNumber As Long, _
+                               Optional ByVal RowNumber As Long) As BetterArray
+    Dim localColumnNumber As Long
+    Dim localRowNumber As Long
+    Dim result() As Variant
+    
+    If TypeName(FromRange) = "Range" Then
+    
+        If FromRange.Columns.count = 1 Then
+            localColumnNumber = 1
+        Else
+            localColumnNumber = ColumnNumber
+        End If
+        
+        If FromRange.Rows.count = 1 Then
+            localRowNumber = 1
+        Else
+            localRowNumber = RowNumber
+        End If
+        
+        Me.Items = FromRange.Value
+    
+        If localColumnNumber > 0 Then
+            'Extract 1d array based on column number
+            Me.ExtractColumn localColumnNumber
+        ElseIf localRowNumber > 0 Then
+            'Extract 1d array based on row number
+            Me.ExtractRow localRowNumber
+        End If
+    
+    Else
+        RaiseError ErrorCodes.ExpectedRangeObject, "FromExcelRange()", "FromRange"
+    End If
+    
+    Set FromExcelRange = Me
+End Function
+
+' TODO: Use or remove
+Public Function ExtractColumn(Optional ByVal ColumnNumber As Long) As BetterArray
+    Dim i As Long
+    Dim localColumnNumber As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim sourceArray() As Variant
+    Dim result() As Variant
+    
+    If pArrayType = ArrayTypes.MultiDimension Or pArrayType = ArrayTypes.Jagged Then
+        sourceArray = getInternalItems()
+        'get bounds at second dimension
+        Dim bounds() As Variant
+        bounds = getMaxBoundsAtDimension(sourceArray, 2)
+        localLowerBound = bounds(0)
+        localUpperBound = bounds(1)
+        ReDim result(localLowerBound To localUpperBound)
+        
+        If ColumnNumber >= localLowerBound And ColumnNumber <= localUpperBound Then
+            localColumnNumber = ColumnNumber
+        Else
+            localColumnNumber = Me.LowerBound
+        End If
+        
+        For i = localLowerBound To localUpperBound
+            If IsObject(sourceArray(i)(localColumnNumber)) Then
+                Set result(i) = sourceArray(i)(localColumnNumber)
+            Else
+                result(i) = sourceArray(i)(localColumnNumber)
+            End If
+        Next
+        
+        Me.Items = result
+    Else
+        ' can't extract from 1d or empty - return unchanged list
+    End If
+    
+    Set ExtractColumn = Me
+End Function
+
+' TODO: Use or remove
+Public Function ExtractRow(Optional ByVal RowNumber As Long) As BetterArray
+    Dim i As Long
+    Dim localRowNumber As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim sourceArray() As Variant
+    Dim result() As Variant
+
+    If pArrayType = ArrayTypes.MultiDimension Or pArrayType = ArrayTypes.Jagged Then
+        sourceArray = getInternalItems()
+        localLowerBound = LBound(sourceArray)
+        localUpperBound = UBound(sourceArray)
+        ReDim result(localLowerBound To localUpperBound)
+
+        If RowNumber >= localLowerBound And RowNumber <= localUpperBound Then
+            localColumnNumber = RowNumber
+        Else
+            localColumnNumber = Me.LowerBound
+        End If
+        
+        If IsObject(sourceArray(RowNumber)) Then
+            ' Should never be true as sourceArray should not be 1d but just in case ...
+            Set result = sourceArray(RowNumber)
+        Else
+            result = sourceArray(RowNumber)
+        End If
+        
+        Me.Items = result
+    Else
+        ' can't extract from 1d or empty - return
+    End If
+
+    Set ExtractRow = Me
+End Function
+
+' TODO: Implement, Document & Test ToExcelRange method
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+Public Function ToExcelRange(ByRef Destination As Object, Optional ByVal TransposeValues As Boolean) As Object
     Dim localRange As Object
     Dim localItems() As Variant
     Dim depth As Long
@@ -508,7 +622,7 @@ Public Function ToExcelRange(ByRef destination As Object, Optional ByVal Transpo
     lengthRows = 1 'default
     lengthColumns = 1 'default
     
-    If TypeName(destination) = "Range" Then
+    If TypeName(Destination) = "Range" Then
         localItems = getInternalItems()
         depth = getJaggedArrayDepth(localItems)
         If depth > 0 Then 'check array is allocated
@@ -534,7 +648,7 @@ Public Function ToExcelRange(ByRef destination As Object, Optional ByVal Transpo
                     lengthColumns = UBound(localItems, 2) - LBound(localItems, 2) + 1
                 End If
             End If
-            Set localRange = destination.Resize( _
+            Set localRange = Destination.Resize( _
                 RowSize:=lengthRows, _
                 ColumnSize:=lengthColumns _
             )
@@ -544,7 +658,7 @@ Public Function ToExcelRange(ByRef destination As Object, Optional ByVal Transpo
             'do nothing(?)
         End If
     Else
-        RaiseError ErrorCodes.ExpectedRangeObject, "ToExcelRange()", "destination"
+        RaiseError ErrorCodes.ExpectedRangeObject, "ToExcelRange()", "Destination"
     End If
     
     Set ToExcelRange = localRange
@@ -801,28 +915,29 @@ Private Function ParseDelimitedArrayString(ByVal SourceString As String, _
     nextOpener = InStr(cursor, SourceString, opener)
     nextCloser = InStr(cursor, SourceString, closer)
     
-    ' wer're inside an array to be parsed
     If currentChar <> opener And (nextCloser < nextOpener Or nextOpener = 0) Then
+        ' we're inside an array to be parsed
         ParseDelimitedArrayString = ParseArraySegmentFromString(SourceString, cursor, nextCloser, ValueSeparator)
         Exit Function
     End If
         
     ' traverse nested arrays
+    i = pLowerBound
     Do
         If currentChar = opener Then
-            If i > 0 Then
+            If i > pLowerBound Then
                 ReDim Preserve localResult(i)
             Else
-                ReDim localResult(i)
+                localResult = getEmptyArray
             End If
             cursor = cursor + 1
             localResult(i) = ParseDelimitedArrayString( _
-                            SourceString, _
-                            ValueSeparator, _
-                            opener, _
-                            closer, _
-                            cursor _
-                            )
+                SourceString, _
+                ValueSeparator, _
+                opener, _
+                closer, _
+                cursor _
+            )
             i = i + 1
         End If
         currentChar = Mid$(SourceString, cursor, 1)
@@ -868,6 +983,10 @@ Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
         ElseIf IsNumeric(element) Then
             result(i) = Val(element)
         Else
+            If Left$(element, 1) = Chr$(34) And Right$(element, 1) = Chr$(34) Then
+                'trim string delimiters
+                element = Mid$(element, 2, Len(element) - 2)
+            End If
             result(i) = Trim$(element)
         End If
     Next
@@ -1007,21 +1126,6 @@ Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Vari
     Transpose_ArrayOfArrays = result
 End Function
 
-' TODO: Use or remove
-Private Function ExtractColumnFromMultiDimensionalArray(ByRef sourceArray() As Variant, Optional ByVal col As Long = 1) As Variant()
-    Dim i As Long
-    Dim localLowerBound As Long
-    Dim localUpperBound As Long
-    Dim result() As Variant
-    
-    localLowerBound = LBound(sourceArray)
-    localUpperBound = UBound(sourceArray)
-    ReDim result(localLowerBound To localUpperBound)
-    For i = localLowerBound To localUpperBound
-        result(i) = sourceArray(i, col)
-    Next
-    ExtractColumnFromMultiDimensionalArray = result
-End Function
 
 Private Function getEmptyArray() As Variant()
     Dim result() As Variant
@@ -1091,9 +1195,11 @@ Private Function getInternalItems() As Variant()
     getInternalItems = result
 End Function
 
+'TODO: option to encase strings in ""
 Private Function recursiveToString(ByRef arr() As Variant, _
                                    ByVal PrettyPrint As Boolean, _
-                                   Optional ByVal tabs As Long = 1) As String
+                                   Optional ByVal tabs As Long = 1, _
+                                   Optional ByVal DelimitStrings As Boolean) As String
     Const tabWidth As Long = 2
     Dim result As String
     Dim sep As String
@@ -1106,11 +1212,11 @@ Private Function recursiveToString(ByRef arr() As Variant, _
             Dim nested() As Variant
             nested = arr(i)
             If PrettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
-            result = result & recursiveToString(nested, PrettyPrint, tabs + 1)
+            result = result & recursiveToString(nested, PrettyPrint, tabs + 1, DelimitStrings)
             result = result & IIf(i = UBound(arr) And PrettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
         Else
             result = result & Replace( _
-                    CStr(getScalarRepresentation(arr(i))), _
+                    CStr(getScalarRepresentation(arr(i), DelimitStrings)), _
                     ",", _
                     vbNullString _
                 ) & sep
@@ -1119,7 +1225,8 @@ Private Function recursiveToString(ByRef arr() As Variant, _
     recursiveToString = result
 End Function
 
-Private Function getScalarRepresentation(ByRef element As Variant) As Variant
+Private Function getScalarRepresentation(ByRef element As Variant, _
+                                         Optional ByVal DelimitStrings As Boolean) As Variant
     Dim result As Variant
     If IsObject(element) Then
         On Error Resume Next
@@ -1136,10 +1243,15 @@ Private Function getScalarRepresentation(ByRef element As Variant) As Variant
     ' if the element is array or default member returns an array then convert tostring
     If IsArray(result) And Not IsEmpty(result) Then
         Dim passThruArray() As Variant
-        passThruArray = element
-        result = recursiveToString(passThruArray, False)
+        passThruArray = result
+        result = recursiveToString(passThruArray, False, DelimitStrings:=DelimitStrings)
     End If
-    getScalarRepresentation = result
+    If Not IsNumeric(result) And DelimitStrings Then
+        getScalarRepresentation = Chr$(34) & result & Chr$(34)
+    Else
+        getScalarRepresentation = result
+    End If
+    
 End Function
 
 Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
@@ -1413,46 +1525,60 @@ Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
     getJaggedArrayDepth = depth
 End Function
 
-Private Function mapJaggedArray(ByRef arr() As Variant, _
-                       Optional ByRef map As Variant, _
-                       Optional ByVal currentIndex As Long, _
+Private Function getMaxBoundsAtDimension(ByRef sourceArray() As Variant, _
+                                         Optional ByVal Dimension As Long = 1, _
+                                         Optional ByVal currentDimension As Long = 1) As Variant()
+    Dim maxBounds() As Variant
+    
+    If currentDimension < Dimension Then
+        Dim i As Long
+        Dim currentBounds() As Variant
+        Dim localLowerBound As Long
+        Dim localUpperBound As Long
+        
+        localLowerBound = LBound(sourceArray)
+        localUpperBound = UBound(sourceArray)
+        For i = localLowerBound To localUpperBound
+            If IsArray(sourceArray(i)) Then
+                Dim nested() As Variant
+                nested = sourceArray(i)
+                currentBounds = getMaxBoundsAtDimension(nested, Dimension, currentDimension + 1)
+                If Not isArrayAllocated(maxBounds) Then
+                    maxBounds = currentBounds
+                Else
+                    If currentBounds(0) < maxBounds(0) Then maxBounds(0) = currentBounds(0)
+                    If currentBounds(1) > maxBounds(1) Then maxBounds(1) = currentBounds(1)
+                End If
+            End If
+        Next
+    Else
+        maxBounds = getArrayBounds(sourceArray)
+    End If
+    
+    getMaxBoundsAtDimension = maxBounds
+End Function
+
+Private Function mapJaggedArray(ByRef sourceArray() As Variant, _
                        Optional ByVal knownDepth As Long) As Variant()
     Dim i As Long
     Dim localMap() As Variant
-    Dim bounds() As Variant
-    Dim element As Variant
     Dim localDepth As Long
-    
-    If Not IsArray(arr) Then Exit Function
-    If IsMissing(map) Then
-        If knownDepth > 0 Then
-            localDepth = knownDepth
-        Else
-            localDepth = getJaggedArrayDepth(arr)
-        End If
-        ReDim localMap(0 To localDepth - 1)
-        For i = LBound(localMap) To UBound(localMap)
-            localMap(i) = Array(0, 0)
-        Next
+
+    If Not IsArray(sourceArray) Then Exit Function
+
+    If knownDepth > 0 Then
+        localDepth = knownDepth
     Else
-        localMap = map
+        localDepth = getJaggedArrayDepth(sourceArray)
     End If
-    
-    bounds = getArrayBounds(arr)
-    
-    If bounds(0) < localMap(currentIndex)(0) Then localMap(currentIndex)(0) = bounds(0)
-    If bounds(1) > localMap(currentIndex)(1) Then localMap(currentIndex)(1) = bounds(1)
-    
-    If currentIndex < localDepth Then
-        For Each element In arr
-            If IsArray(element) Then
-                Dim nested() As Variant
-                nested = element
-                localMap = mapJaggedArray(nested, localMap, currentIndex + 1)
-            End If
-        Next
-    End If
-    
+
+    ' crumbs are base 0
+    ReDim localMap(0 To localDepth - 1)
+
+    For i = LBound(localMap) To UBound(localMap)
+        localMap(i) = getMaxBoundsAtDimension(sourceArray, i + 1)
+    Next
+
     mapJaggedArray = localMap
 End Function
 
