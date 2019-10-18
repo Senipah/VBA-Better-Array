@@ -48,7 +48,7 @@ Private Sub TestCleanup()
 End Sub
 
 '@TestMethod("ArrayGeneratorConstructor")
-Private Sub CanInstantiate_SUTNotNothing()
+Private Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
