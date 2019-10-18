@@ -4,6 +4,7 @@ Option Private Module
 
 '@TestModule
 '@Folder("Tests")
+'@ModuleDescription("Unit Tests for 'BetterArray.cls'")
 
 '@IgnoreModule ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
@@ -101,38 +102,36 @@ End Sub
 ' Attribute - DefaultMember - Item '
 ''''''''''''''''''''''''''''''''''''
 
-' TODO - enable test for relase
-' disale on dev due to RD bug - https://github.com/rubberduck-vba/Rubberduck/issues/5222
 '@TestMethod("BetterArray_Items")
-'Public Sub Items_DefaultMember_DefaultMemberAccessReturnsItems()
-'    On Error GoTo TestFail
-'
-'    'Arrange:
-'    Dim gen As ArrayGenerator
-'    Dim SUT As BetterArray
-'    Dim expected() As Variant
-'    Dim actual() As Variant
-'    Dim i As Long
-'
-'    Set gen = New ArrayGenerator
-'    expected = gen.GetArray(TEST_ARRAY_LENGTH)
-'    Set SUT = New BetterArray
-'
-'    'Act:
-'    For i = LBound(expected) To UBound(expected)
-'        '@Ignore IndexedDefaultMemberAccess
-'        SUT(i) = expected(i)
-'    Next
-'    actual = SUT.Items
-'
-'    'Assert:
-'    Assert.SequenceEquals expected, actual, "Actual array does not match expected"
-'
-'TestExit:
-'    Exit Sub
-'TestFail:
-'    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
-'End Sub
+Public Sub Items_DefaultMember_DefaultMemberAccessReturnsItems()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim gen As ArrayGenerator
+    Dim SUT As BetterArray
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim i As Long
+
+    Set gen = New ArrayGenerator
+    expected = gen.GetArray(TEST_ARRAY_LENGTH)
+    Set SUT = New BetterArray
+
+    'Act:
+    For i = LBound(expected) To UBound(expected)
+        '@Ignore IndexedDefaultMemberAccess
+        SUT(i) = expected(i)
+    Next
+    actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual array does not match expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 
 '''''''''''''''''''

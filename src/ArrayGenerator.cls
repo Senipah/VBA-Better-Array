@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '@Folder("Tests.Dependencies.ArrayGenerator")
+'@ModuleDescription("Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'")
 
 Public Enum ValueTypes
     BooleanVals

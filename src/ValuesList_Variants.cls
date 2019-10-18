@@ -11,6 +11,7 @@ Option Explicit
 Implements IValuesList
 
 '@Folder("Tests.Dependencies.IValuesList.Implementations")
+'@ModuleDescription("IValuesList implementation for random value generation. Dependency of 'ArrayGenerator'")
 
 Private IsObjectType As Boolean
 Private Const VALUE_COUNT As Long = 100

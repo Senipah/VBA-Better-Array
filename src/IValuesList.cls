@@ -10,6 +10,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '@Folder("Tests.Dependencies.IValuesList.Implementations")
+'@ModuleDescription("Interface definition for random value generation. Dependency of 'ArrayGenerator'")
+
 
 Public Property Get IsObjectType() As Boolean
 
