@@ -57,8 +57,8 @@ End Sub
 ' Instantiation '
 '''''''''''''''''
 
-'@TestMethod("BetterArrayConstructor")
-Private Sub BetterArray_CanInstantiate_SUTNotNothing()
+'@TestMethod("BetterArray_Constructor")
+Private Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
@@ -75,8 +75,8 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArrayConstructor")
-Private Sub BetterArray_CreatesWithDefaultCapacity_CapacityIsFour()
+'@TestMethod("BetterArray_Constructor")
+Private Sub Constructor_CreatesWithDefaultCapacity_CapacityIsFour()
     On Error GoTo TestFail
 
     'Arrange:
@@ -2677,15 +2677,16 @@ Public Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     Dim gen As ArrayGenerator
     Dim Destination As Range
     Dim returnedRange As Range
-    Dim OutputSheet As Worksheet
+    Dim OutputSheet As Object
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
     
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1) As Variant
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
-    OutputSheet.Cells.Clear
+    Set OutputSheet = ExcelApp.CurrentWorksheet
     Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
@@ -2716,15 +2717,16 @@ Public Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     Dim gen As ArrayGenerator
     Dim Destination As Range
     Dim returnedRange As Range
-    Dim OutputSheet As Worksheet
+    Dim OutputSheet As Object
+    Dim ExcelApp As ExcelProvider
     
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1) As Variant
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
-    OutputSheet.Cells.Clear
+    Set ExcelApp = New ExcelProvider
+    Set OutputSheet = ExcelApp.CurrentWorksheet
     Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
@@ -2757,15 +2759,16 @@ Public Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     Dim gen As ArrayGenerator
     Dim Destination As Range
     Dim returnedRange As Range
-    Dim OutputSheet As Worksheet
+    Dim OutputSheet As Object
+    Dim ExcelApp As ExcelProvider
     
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1, TEST_ARRAY_LENGTH - 1) As Variant
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
-    OutputSheet.Cells.Clear
+    Set ExcelApp = New ExcelProvider
+    Set OutputSheet = ExcelApp.CurrentWorksheet
     Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
@@ -2799,15 +2802,16 @@ Public Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     Dim gen As ArrayGenerator
     Dim Destination As Range
     Dim returnedRange As Range
-    Dim OutputSheet As Worksheet
+    Dim OutputSheet As Object
+    Dim ExcelApp As ExcelProvider
     
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1, TEST_ARRAY_LENGTH - 1) As Variant
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
-    OutputSheet.Cells.Clear
+    Set ExcelApp = New ExcelProvider
+    Set OutputSheet = ExcelApp.CurrentWorksheet
     Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
@@ -2842,7 +2846,8 @@ Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDime
     Dim gen As ArrayGenerator
     Dim Destination As Range
     Dim returnedRange As Range
-    Dim OutputSheet As Worksheet
+    Dim OutputSheet As Object
+    Dim ExcelApp As ExcelProvider
     Dim i As Long
     Dim j As Long
     
@@ -2852,8 +2857,8 @@ Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDime
     
     Set SUT = New BetterArray
     Set gen = New ArrayGenerator
-    Set OutputSheet = ThisWorkbook.Sheets("TestOutput")
-    OutputSheet.Cells.Clear
+    Set ExcelApp = New ExcelProvider
+    Set OutputSheet = ExcelApp.CurrentWorksheet
     Set Destination = OutputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
