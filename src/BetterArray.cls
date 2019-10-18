@@ -1159,9 +1159,9 @@ End Function
 
 
 ' TODO: Use or remove
-'@Description("Transposes the values in a jagged array with a depth of 2. _
-    & "Rows become columns, columns become rows.")
+'@Description("Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows.")
 Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
+Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long
@@ -1251,7 +1251,9 @@ Attribute Swap.VB_Description = "Swaps the location of two elements in an array.
     letOrSetElement arr(j), Element
 End Sub
 
+'@Description("Sets or lets the value of a variable by reference depending on the type of the element to be assigned")
 Private Sub letOrSetElement(ByRef Destination As Variant, ByRef Source As Variant)
+Attribute letOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
     If IsObject(Source) Then
         Set Destination = Source
     Else
@@ -1259,7 +1261,9 @@ Private Sub letOrSetElement(ByRef Destination As Variant, ByRef Source As Varian
     End If
 End Sub
 
+'@Description("Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi).")
 Private Function getInternalItems() As Variant()
+Attribute getInternalItems.VB_Description = "Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi)."
     Dim result() As Variant
     If pArrayType <> Unallocated And pArrayType <> Undefined Then
         result = pItems
@@ -1272,11 +1276,12 @@ Private Function getInternalItems() As Variant()
     getInternalItems = result
 End Function
 
-'TODO: option to encase strings in ""
+'@Description("Recursively parses an array to a string representation.")
 Private Function recursiveToString(ByRef arr() As Variant, _
                                    ByVal PrettyPrint As Boolean, _
                                    Optional ByVal tabs As Long = 1, _
                                    Optional ByVal DelimitStrings As Boolean) As String
+Attribute recursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim result As String
     Dim sep As String
@@ -1302,8 +1307,10 @@ Private Function recursiveToString(ByRef arr() As Variant, _
     recursiveToString = result
 End Function
 
+'@Description("Returns scalar values as is or appropriate representation if not scalar.")
 Private Function getScalarRepresentation(ByRef Element As Variant, _
                                          Optional ByVal DelimitStrings As Boolean) As Variant
+Attribute getScalarRepresentation.VB_Description = "Returns scalar values as is or appropriate representation if not scalar."
     Dim result As Variant
     If IsObject(Element) Then
         On Error Resume Next
@@ -1331,7 +1338,9 @@ Private Function getScalarRepresentation(ByRef Element As Variant, _
     
 End Function
 
+'@Description("Returns the type of a passed array.")
 Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
+Attribute getArrayType.VB_Description = "Returns the type of a passed array."
     Dim result As ArrayTypes
     If Not isArrayAllocated(arr) Then
         result = ArrayTypes.Unallocated
@@ -1347,7 +1356,9 @@ Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
     getArrayType = result
 End Function
 
+'@Description("Tests if an array has been allocated.")
 Private Function isArrayAllocated(ByVal arr As Variant) As Boolean
+Attribute isArrayAllocated.VB_Description = "Tests if an array has been allocated."
     On Error Resume Next
     isArrayAllocated = IsArray(arr) And _
                                     Not IsError(LBound(arr, 1)) And _
@@ -1355,7 +1366,9 @@ Private Function isArrayAllocated(ByVal arr As Variant) As Boolean
     On Error GoTo 0
 End Function
 
+'@Description("Tests if an array is jagged.")
 Private Function isJaggedArray(ByVal arr As Variant) As Boolean
+Attribute isJaggedArray.VB_Description = "Tests if an array is jagged."
     If IsArray(arr) Then
         On Error GoTo ErrHandler
         Dim Element As Variant
@@ -1372,7 +1385,9 @@ ErrHandler:
     Err.Clear
 End Function
 
+'@Description("Tests if an array is multidimensioned.")
 Private Function isMultidimensionalArray(ByVal arr As Variant) As Boolean
+Attribute isMultidimensionalArray.VB_Description = "Tests if an array is multidimensioned."
     If IsArray(arr) Then
         On Error GoTo ErrHandler
         '@Ignore VariableNotUsed
@@ -1388,7 +1403,9 @@ ErrHandler:
 End Function
 
 '@Ignore FunctionReturnValueNotUsed
+'@Description("re-indexes array to conform to new bounds. Does not change length.")
 Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As Variant) As Variant()
+Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Does not change length."
     Dim isMD As Boolean
     Dim applyToMe As Boolean
     Dim newItems() As Variant
@@ -1406,6 +1423,7 @@ Private Function Rebase(Optional ByRef recurse As Boolean, Optional ByVal arr As
     Rebase = newItems
 End Function
 
+'@Description("re-indexes nested arrays to conform to new bounds. Child function of Rebase)
 Private Function recursiveRebase(ByRef arr() As Variant, ByVal recurse As Boolean) As Variant()
     Dim i As Long
     Dim localLowerBound As Long
@@ -1430,7 +1448,9 @@ Private Function recursiveRebase(ByRef arr() As Variant, ByVal recurse As Boolea
     recursiveRebase = newItems
 End Function
 
+'@Description("Increases capacity of internal array if required.")
 Private Sub EnsureCapacity(ByVal MinimumCapacity As Long)
+Attribute EnsureCapacity.VB_Description = "Increases capacity of internal array if required."
     If Me.Capacity < MinimumCapacity Then
         Dim newCapacity As Long
         newCapacity = IIf(Me.Capacity = 0, DEFAULT_CAPACITY, Me.Capacity * 2)
@@ -1440,7 +1460,9 @@ Private Sub EnsureCapacity(ByVal MinimumCapacity As Long)
     End If
 End Sub
 
+'@Description("Fills the newItems arg by ref with the values stored in the internal array at the corresponding index.")
 Private Function copyRange(ByRef newItems() As Variant) As Variant()
+Attribute copyRange.VB_Description = "Fills the newItems arg by ref with the values stored in the internal array at the corresponding index."
     Dim i As Long
     For i = LBound(newItems) To UBound(newItems)
         newItems(i) = pItems(i)
@@ -1448,13 +1470,14 @@ Private Function copyRange(ByRef newItems() As Variant) As Variant()
     copyRange = newItems
 End Function
 
-
+'@Description("Converts jagged arrays to multidimension arrays")
 Private Function jaggedToMulti(ByRef arr() As Variant, _
                       Optional ByVal depth As Long, _
                       Optional ByVal currentDepth As Long, _
                       Optional ByRef crumbs As Variant, _
                       Optional ByRef result As Variant, _
                       Optional ByVal EnsureScalar As Boolean) As Variant()
+Attribute jaggedToMulti.VB_Description = "Converts jagged arrays to multidimension arrays"
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1524,10 +1547,12 @@ Private Function jaggedToMulti(ByRef arr() As Variant, _
     jaggedToMulti = localResult
 End Function
 
+'@Description("Converts multidimension arrays to jagged arrays.")
 Private Function multiToJagged(ByRef arr() As Variant, _
                       Optional ByVal depth As Long, _
                       Optional ByVal currentDepth As Long, _
                       Optional ByRef crumbs As Variant) As Variant()
+Attribute multiToJagged.VB_Description = "Converts multidimension arrays to jagged arrays."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1577,7 +1602,9 @@ Private Function multiToJagged(ByRef arr() As Variant, _
     multiToJagged = result
 End Function
 
+'@Description("Returns a number representing how many levels of nested arrays are contained in array.")
 Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
+Attribute getJaggedArrayDepth.VB_Description = "Returns a number representing how many levels of nested arrays are contained in array."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1602,9 +1629,11 @@ Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
     getJaggedArrayDepth = depth
 End Function
 
+'@Description("Gets the maximium bound values for a specified dimension of a jagged array.")
 Private Function getMaxBoundsAtDimension(ByRef sourceArray() As Variant, _
                                          Optional ByVal Dimension As Long = 1, _
                                          Optional ByVal currentDimension As Long = 1) As Variant()
+Attribute getMaxBoundsAtDimension.VB_Description = "Gets the maximium bound values for a specified dimension of a jagged array."
     Dim maxBounds() As Variant
     
     If currentDimension < Dimension Then
@@ -1635,8 +1664,10 @@ Private Function getMaxBoundsAtDimension(ByRef sourceArray() As Variant, _
     getMaxBoundsAtDimension = maxBounds
 End Function
 
+'@Description("Returns an array representing the structure of a jagged array")
 Private Function mapJaggedArray(ByRef sourceArray() As Variant, _
                        Optional ByVal knownDepth As Long) As Variant()
+Attribute mapJaggedArray.VB_Description = "Returns an array representing the structure of a jagged array"
     Dim i As Long
     Dim localMap() As Variant
     Dim localDepth As Long
@@ -1659,7 +1690,9 @@ Private Function mapJaggedArray(ByRef sourceArray() As Variant, _
     mapJaggedArray = localMap
 End Function
 
+'@Description("Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound.")
 Private Function getArrayBounds(ByVal arr As Variant) As Variant()
+Attribute getArrayBounds.VB_Description = "Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound."
     Dim result(0 To 1) As Variant
     If IsArray(arr) Then
         result(0) = LBound(arr)
@@ -1668,7 +1701,9 @@ Private Function getArrayBounds(ByVal arr As Variant) As Variant()
     getArrayBounds = result
 End Function
 
+'@Description("Returns a number representing the total number of dimensions of a multidimension array.")
 Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
+Attribute getMultidimensionalArrayDepth.VB_Description = "Returns a number representing the total number of dimensions of a multidimension array."
     Dim i As Long
     '@Ignore VariableNotUsed
     Dim void As Long
@@ -1683,7 +1718,9 @@ Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
     getMultidimensionalArrayDepth = i - 1
 End Function
 
+'@Description("Returns the element stored in an array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
 Private Function getElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant) As Variant
+Attribute getElementByBreadcrumb.VB_Description = "Returns the element stored in an array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
     Dim result As Variant
     Select Case UBound(crumb)
     Case 0
@@ -1745,7 +1782,9 @@ Private Function getElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As
     getElementByBreadcrumb = result
 End Function
 
+'@Description("Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
 Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant, ByVal Element As Variant) As Variant
+Attribute letElementByBreadcrumb.VB_Description = "Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
     Select Case UBound(crumb)
     Case 0
         letOrSetElement arr(crumb(0)), Element
@@ -1807,7 +1846,9 @@ Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As
     letElementByBreadcrumb = arr
 End Function
 
+'@Description("Returns an empty multidimensional array with the dimensions specified in the crumb argument. A crumb is an array representing the structure of the multidimension array.")
 Private Function createMultidimensionalArray(ByRef crumb() As Variant) As Variant()
+Attribute createMultidimensionalArray.VB_Description = "Returns an empty multidimensional array with the dimensions specified in the crumb argument. A crumb is an array representing the structure of the multidimension array."
     Dim result() As Variant
     Select Case UBound(crumb)
     Case 0
