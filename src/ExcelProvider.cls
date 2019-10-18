@@ -13,11 +13,13 @@ Option Explicit
 '@Folder("Tests.Dependencies.ExcelProvider")
 '@ModuleDescription("An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'")
 
+Private Const DEV As Boolean = True ' Determines if application is visible
+Private Const ErrCode As Long = vbObjectError + 513
+
 Private pExcelApplication As Object
 Private pCurrentWorkbook As Object
 Private pCurrentWorksheet As Object
-Private pCurrentRange As Object
-Private Const ErrCode As Long = vbObjectError + 513
+
 
 '@Description("Constructor")
 Private Sub Class_Initialize()
@@ -26,6 +28,8 @@ Attribute Class_Initialize.VB_Description = "Constructor"
     Set pExcelApplication = CreateObject("Excel.Application")
     Set pCurrentWorkbook = pExcelApplication.Workbooks.Add
     Set pCurrentWorksheet = pCurrentWorkbook.Worksheets.Add
+    pCurrentWorksheet.Name = TypeName(Me)
+    pExcelApplication.Visible = DEV
     On Error GoTo 0
     Exit Sub
 ErrHandler:
@@ -70,26 +74,8 @@ Attribute CurrentWorkbook.VB_Description = "Returns the Excel workbook object"
     Set CurrentWorkbook = pCurrentWorkbook
 End Property
 
-'@Description("Returns the active Range object")
-Public Property Get CurrentRange() As Object
-Attribute CurrentRange.VB_Description = "Returns the active Range object"
-    If pCurrentRange Is Nothing Then
-        Set pCurrentRange = pCurrentWorksheet.Range("A1")
-    End If
-    Set CurrentRange = pCurrentRange
-End Property
-
-'@Description("Sets the active Range object")
-Public Property Set CurrentRange(ByRef NewRange As Object)
-Attribute CurrentRange.VB_Description = "Sets the active Range object"
-    On Error GoTo ErrHandler
-    If TypeName(NewRange) <> "Range" Then GoTo ErrHandler
-    If Not NewRange.Parent Is pCurrentWorksheet Then GoTo ErrHandler
-    Set pCurrentRange = NewRange
-    On Error GoTo 0
-    Exit Property
-ErrHandler:
-    Err.Raise ErrCode, TypeName(Me), "Could not set the CurrentRange to the specified Object." _
-        & vbCrLf & "Ensure the NewRange argument is a Range Object and belongs to the CurrentWorksheet."
-    On Error GoTo 0
+'@Description("Returns the Excel workbook object")
+Public Property Get CurrentWorksheet() As Object
+Attribute CurrentWorksheet.VB_Description = "Returns the Excel workbook object"
+    Set CurrentWorksheet = pCurrentWorksheet
 End Property
