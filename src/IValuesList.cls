@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Interface definition for random value generation. Dependency of 'ArrayGenerator'"
 Option Explicit
 
 '@Folder("Tests.Dependencies.IValuesList.Implementations")

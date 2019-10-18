@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'"
 Option Explicit
 
 '@Folder("Tests.Dependencies.ExcelProvider")
@@ -20,6 +21,7 @@ Private Const ErrCode As Long = vbObjectError + 513
 
 '@Description("Constructor")
 Private Sub Class_Initialize()
+Attribute Class_Initialize.VB_Description = "Constructor"
     On Error GoTo ErrHandler
     Set pExcelApplication = CreateObject("Excel.Application")
     Set pCurrentWorkbook = pExcelApplication.Workbooks.Add
@@ -35,15 +37,16 @@ End Sub
 
 '@Description("Destructor")
 Private Sub Class_Terminate()
+Attribute Class_Terminate.VB_Description = "Destructor"
     On Error GoTo ErrHandler
-    If Not pWorkbook Is Nothing Then
-        pWorkbook.Close SaveChanges:=False
+    If Not pCurrentWorkbook Is Nothing Then
+        pCurrentWorkbook.Close SaveChanges:=False
     End If
-    If Not pExcelApplicaton Is Nothing Then
-        pExcelApplicaton.Quit
+    If Not pExcelApplication Is Nothing Then
+        pExcelApplication.Quit
     End If
-    If Not pExcelApplicaton Is Nothing Then
-        Set pExcelApplicaton = Nothing
+    If Not pExcelApplication Is Nothing Then
+        Set pExcelApplication = Nothing
     End If
     On Error GoTo 0
     Exit Sub
@@ -57,16 +60,19 @@ End Sub
 
 '@Description("Returns the acquired Excel Application object")
 Public Property Get ExcelApplication() As Object
+Attribute ExcelApplication.VB_Description = "Returns the acquired Excel Application object"
     Set ExcelApplication = pExcelApplication
 End Property
 
 '@Description("Returns the Excel workbook object")
 Public Property Get CurrentWorkbook() As Object
+Attribute CurrentWorkbook.VB_Description = "Returns the Excel workbook object"
     Set CurrentWorkbook = pCurrentWorkbook
 End Property
 
 '@Description("Returns the active Range object")
 Public Property Get CurrentRange() As Object
+Attribute CurrentRange.VB_Description = "Returns the active Range object"
     If pCurrentRange Is Nothing Then
         Set pCurrentRange = pCurrentWorksheet.Range("A1")
     End If
@@ -74,7 +80,8 @@ Public Property Get CurrentRange() As Object
 End Property
 
 '@Description("Sets the active Range object")
-Public Property Set CurrentRange(NewRange As Object)
+Public Property Set CurrentRange(ByRef NewRange As Object)
+Attribute CurrentRange.VB_Description = "Sets the active Range object"
     On Error GoTo ErrHandler
     If TypeName(NewRange) <> "Range" Then GoTo ErrHandler
     If Not NewRange.Parent Is pCurrentWorksheet Then GoTo ErrHandler

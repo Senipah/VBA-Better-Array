@@ -1,4 +1,5 @@
 Attribute VB_Name = "TestModule_BetterArray"
+Attribute VB_Description = "Unit Tests for 'BetterArray.cls'"
 Option Explicit
 Option Private Module
 

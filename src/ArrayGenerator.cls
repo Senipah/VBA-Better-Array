@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'"
 Option Explicit
 
 '@Folder("Tests.Dependencies.ArrayGenerator")
@@ -188,28 +189,28 @@ Public Function ConcatArraysOfSameStructure(ByVal ArrayType As ArrayTypes, Param
 
 End Function
 
-Private Function localMultiDimConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef source() As Variant) As Long
+Private Function localMultiDimConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef Source() As Variant) As Long
     Dim i As Long
     Dim j As Long
-    For i = LBound(source) To UBound(source)
-        For j = LBound(source, 2) To UBound(source, 2)
-            If IsObject(source(i, j)) Then
-                Set result(i + startingIndex, j) = source(i, j)
+    For i = LBound(Source) To UBound(Source)
+        For j = LBound(Source, 2) To UBound(Source, 2)
+            If IsObject(Source(i, j)) Then
+                Set result(i + startingIndex, j) = Source(i, j)
             Else
-                result(i + startingIndex, j) = source(i, j)
+                result(i + startingIndex, j) = Source(i, j)
             End If
         Next
     Next
     localMultiDimConcat = startingIndex + i
 End Function
 
-Private Function localConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef source() As Variant) As Long
+Private Function localConcat(ByVal startingIndex As Long, ByRef result() As Variant, ByRef Source() As Variant) As Long
     Dim i As Long
-    For i = LBound(source) To UBound(source)
-        If IsObject(source(i)) Then
-            Set result(i + startingIndex) = source(i)
+    For i = LBound(Source) To UBound(Source)
+        If IsObject(Source(i)) Then
+            Set result(i + startingIndex) = Source(i)
         Else
-            result(i + startingIndex) = source(i)
+            result(i + startingIndex) = Source(i)
         End If
     Next
     localConcat = startingIndex + i
