@@ -7,10 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Attribute VB_Description = "An array class for VBA providing features found in more modern languages "
 Option Explicit
 
 '@Folder("BetterArray")
-'@Exposed
 '@ModuleDescription("An array class for VBA providing features found in more modern languages ")
 
 '''''''''''''''''''
@@ -36,7 +36,7 @@ End Enum
 
 Private Type ErrorDefinition
     number As Long
-    source As String
+    Source As String
     description As String
 End Type
 
@@ -54,6 +54,7 @@ Private ErrorDefinitions(ErrorCodes.StartCode To ErrorCodes.EndCode) As ErrorDef
 
 '@Description("Constructor")
 Private Sub Class_Initialize()
+Attribute Class_Initialize.VB_Description = "Constructor"
     Me.Capacity = DEFAULT_CAPACITY
     PopulateErrorDefinitions
 End Sub
@@ -62,6 +63,7 @@ End Sub
 '@Ignore EmptyMethod
 '@Description("Destructor")
 Private Sub Class_Terminate()
+Attribute Class_Terminate.VB_Description = "Destructor"
 
 End Sub
 
@@ -71,12 +73,14 @@ End Sub
 
 '@Description("Returns the capacity of the internal array.")
 Public Property Get Capacity() As Long
+Attribute Capacity.VB_Description = "Returns the capacity of the internal array."
     If IsEmpty(pCapacity) Then Me.Capacity = DEFAULT_CAPACITY
     Capacity = pCapacity
 End Property
 
 '@Description("Sets the capacity of the internal array.")
 Public Property Let Capacity(ByVal Value As Long)
+Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
     If Value < 0 Then Err.Raise 9
     If Value <> pCapacity Then
         If pCapacity > 0 Then
@@ -95,22 +99,25 @@ End Property
 
 '@Description("Returns the number of entries stored in the array.")
 Public Property Get Length() As Long
+Attribute Length.VB_Description = "Returns the number of entries stored in the array."
     Length = pLength
 End Property
 
 '@Description("Returns largest used index in the array.")
 Public Property Get UpperBound()
+Attribute UpperBound.VB_Description = "Returns largest used index in the array."
     UpperBound = pLength + pLowerBound - 1
 End Property
 
 '@Description("Returns smallest used index in the array.")
 Public Property Get LowerBound() As Long
+Attribute LowerBound.VB_Description = "Returns smallest used index in the array."
     LowerBound = pLowerBound
 End Property
 
-'@Description("Sets the starting index of the array." _
-    & "If an array is already stored then it will be re-indexed to match the new value")
+'@Description("Sets the starting index of the array. If an array is already stored then it will be re-indexed to match the new value")
 Public Property Let LowerBound(ByVal Value As Long)
+Attribute LowerBound.VB_Description = "Sets the starting index of the array. If an array is already stored then it will be re-indexed to match the new value"
     If Value <> pLowerBound And Value >= 0 Then
         pLowerBound = Value
         Rebase
@@ -120,7 +127,10 @@ End Property
 '@DefaultMember
 '@Description("Returns the element in the array stored at the specified index.")
 Public Property Get Item(ByVal index As Long)
+Attribute Item.VB_Description = "Returns the element in the array stored at the specified index."
+Attribute Item.VB_UserMemId = 0
     If index <= pLength Then
+        ' not using letOrSetElement here as it might try to access the Items letter
         If IsObject(pItems(index)) Then
             Set Item = pItems(index)
         Else
@@ -133,15 +143,12 @@ End Property
 
 '@Description("Assigns the passed element to the array at the specified index.")
 Public Property Let Item(ByVal index As Long, ByVal Element As Variant)
+Attribute Item.VB_Description = "Assigns the passed element to the array at the specified index."
     If Me.UpperBound >= index Then
         If index < Me.LowerBound Then
             Me.Unshift Element
         Else
-            If IsObject(Element) Then
-                Set pItems(index) = Element
-            Else
-                pItems(index) = Element
-            End If
+            letOrSetElement pItems(index), Element
         End If
     Else
         Me.Push Element
@@ -150,6 +157,7 @@ End Property
 
 '@Description("Returns the stored array.")
 Public Property Get Items() As Variant
+Attribute Items.VB_Description = "Returns the stored array."
     Dim result() As Variant
     result = getInternalItems()
     If pArrayType = ArrayTypes.MultiDimension And isJaggedArray(result) Then result = jaggedToMulti(result)
@@ -158,6 +166,7 @@ End Property
 
 '@Description("Stores the passed array.")
 Public Property Let Items(ByVal Values As Variant)
+Attribute Items.VB_Description = "Stores the passed array."
     Dim localLowerBound As Long
     Dim localValues() As Variant
     If IsArray(Values) Then
@@ -198,6 +207,7 @@ End Property
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Adds the provided argments to the array at the next available index.")
 Public Function Push(ParamArray args() As Variant) As Variant
+Attribute Push.VB_Description = "Adds the provided argments to the array at the next available index."
     Dim Element As Variant
 
     If pArrayType = ArrayTypes.Unallocated Or _
@@ -212,11 +222,7 @@ Public Function Push(ParamArray args() As Variant) As Variant
         If pLength = pCapacity Then
             EnsureCapacity pLength + 1
         End If
-        If IsObject(Element) Then
-            Set pItems(pLength) = Element
-        Else
-            pItems(pLength) = Element
-        End If
+        letOrSetElement pItems(pLength), Element
         pLength = pLength + 1
     Next
     Push = pLength
@@ -225,6 +231,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Removes the last element from the array and returns that element.")
 Public Function Pop() As Variant
+Attribute Pop.VB_Description = "Removes the last element from the array and returns that element."
     Dim newItems() As Variant
     Dim result As Variant
 
@@ -240,6 +247,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Removes the first element from the array and returns that element.")
 Public Function Shift() As Variant
+Attribute Shift.VB_Description = "Removes the first element from the array and returns that element."
     Dim result As Variant
     Dim newItems() As Variant
     If pLength > 0 Then
@@ -251,9 +259,9 @@ Public Function Shift() As Variant
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Adds one or more elements to the beginning of an array." _
-    & "Returns the new length of the array.")
+'@Description("Adds one or more elements to the beginning of an array. Returns the new length of the array.")
 Public Function Unshift(ParamArray args() As Variant) As Long
+Attribute Unshift.VB_Description = "Adds one or more elements to the beginning of an array. Returns the new length of the array."
     Dim newItems() As Variant
     Dim oldItems() As Variant
     Dim oldType As ArrayTypes
@@ -276,6 +284,7 @@ Public Function ParseFromString(ByVal SourceString As String, _
                                 Optional ByVal ValueSeparator As String = ",", _
                                 Optional ByVal ArrayOpenDelimiter As String, _
                                 Optional ByVal ArrayClosingDelimiter As String) As BetterArray
+Attribute ParseFromString.VB_Description = "Parses a string representing an array and stores the outcome."
     Dim opener As String
     Dim closer As String
     Dim ArraysAreDelimited As Boolean
@@ -326,6 +335,7 @@ End Function
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString(Optional ByVal PrettyPrint As Boolean, _
                          Optional ByVal DelimitStrings As Boolean) As String
+Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
     Dim ArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
@@ -345,6 +355,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes(ByVal SearchElement As Variant, Optional ByVal FromIndex As Long) As Boolean
+Attribute Includes.VB_Description = "Determines whether the array includes a certain value among its entries."
     Dim localLength As Long
     Dim currentIndex As Long
     Dim arr() As Variant
@@ -379,6 +390,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array that contains the keys for each index in the array.")
 Public Function Keys() As Variant()
+Attribute Keys.VB_Description = "Returns a new array that contains the keys for each index in the array."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -392,10 +404,9 @@ Public Function Keys() As Variant()
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Returns the largest value in a list of values." _
-    & "If arguments are provided it will return the largest argument." _
-    & "If no arguments are provided it will return the largest element in the stored array")
+'@Description("Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array")
 Public Function Max(ParamArray args() As Variant) As Variant
+Attribute Max.VB_Description = "Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array"
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
@@ -431,10 +442,9 @@ Public Function Max(ParamArray args() As Variant) As Variant
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Returns the smallest value in a list of values." _
-    & "If arguments are provided it will return the smallest argument." _
-    & "If no arguments are provided it will return the smallest element in the stored array")
+'@Description("Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array")
 Public Function Min(ParamArray args() As Variant) As Variant
+Attribute Min.VB_Description = "Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array"
     Dim i As Long
     Dim arr() As Variant
     Dim result As Variant
@@ -472,6 +482,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array containing the portion of the stored array between the StartIndex and EndIndex")
 Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant()
+Attribute Slice.VB_Description = "Returns a new array containing the portion of the stored array between the StartIndex and EndIndex"
     Dim localLength As Long
     Dim relativeStart As Long
     Dim relativeEnd As Long
@@ -520,6 +531,7 @@ End Function
 Public Function FromExcelRange(ByRef FromRange As Object, _
                                Optional ByVal ColumnNumber As Long, _
                                Optional ByVal RowNumber As Long) As BetterArray
+Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
     Dim localColumnNumber As Long
     Dim localRowNumber As Long
     
@@ -554,6 +566,7 @@ End Function
 
 '@Description("Extracts the specified column of a multidimensional/jagged array as a new array.")
 Public Function ExtractColumn(Optional ByVal ColumnNumber As Long) As Variant()
+Attribute ExtractColumn.VB_Description = "Extracts the specified column of a multidimensional/jagged array as a new array."
     Dim i As Long
     Dim localColumnNumber As Long
     Dim localLowerBound As Long
@@ -574,11 +587,7 @@ Public Function ExtractColumn(Optional ByVal ColumnNumber As Long) As Variant()
         End If
         
         For i = localLowerBound To localUpperBound
-            If IsObject(sourceArray(i)(localColumnNumber)) Then
-                Set result(i) = sourceArray(i)(localColumnNumber)
-            Else
-                result(i) = sourceArray(i)(localColumnNumber)
-            End If
+            letOrSetElement result(i), sourceArray(i)(localColumnNumber)
         Next
     Else
         ' can't extract from 1d or empty - return unchanged list
@@ -590,7 +599,7 @@ End Function
 
 '@Description("Extracts the specified row of a multidimensional/jagged array as a new array.")
 Public Function ExtractRow(Optional ByVal RowNumber As Long) As Variant()
-    Dim i As Long
+Attribute ExtractRow.VB_Description = "Extracts the specified row of a multidimensional/jagged array as a new array."
     Dim localRowNumber As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -604,17 +613,11 @@ Public Function ExtractRow(Optional ByVal RowNumber As Long) As Variant()
         ReDim result(localLowerBound To localUpperBound)
 
         If RowNumber >= localLowerBound And RowNumber <= localUpperBound Then
-            localColumnNumber = RowNumber
+            localRowNumber = RowNumber
         Else
-            localColumnNumber = Me.LowerBound
+            localRowNumber = Me.LowerBound
         End If
-        
-        If IsObject(sourceArray(RowNumber)) Then
-            ' Should never be true as sourceArray should not be 1d but just in case ...
-            Set result = sourceArray(RowNumber)
-        Else
-            result = sourceArray(RowNumber)
-        End If
+        letOrSetElement result, sourceArray(localRowNumber)
     Else
         ' can't extract from 1d or empty - return
         result = sourceArray
@@ -626,6 +629,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes the values stored in the array to an excel worksheet starting at the specified range.")
 Public Function ToExcelRange(ByRef Destination As Object, Optional ByVal TransposeValues As Boolean) As Object
+Attribute ToExcelRange.VB_Description = "Writes the values stored in the array to an excel worksheet starting at the specified range."
     Dim localRange As Object
     Dim localItems() As Variant
     Dim depth As Long
@@ -685,6 +689,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new BetterArray instance containing the same values as the current instance.")
 Public Function Clone() As BetterArray
+Attribute Clone.VB_Description = "Returns a new BetterArray instance containing the same values as the current instance."
     Dim result As BetterArray
     Set result = New BetterArray
     result.LowerBound = Me.LowerBound
@@ -694,18 +699,21 @@ End Function
 
 ' TODO: Document & Test - ResetToDefault
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Resets the current instance by setting self to a new instance.")
+'@Description("Clears the current array and resets capacity to default value")
 Public Function ResetToDefault() As BetterArray
-    Dim newArray As BetterArray
-    Set newArray = New BetterArray
-    Set Me = newArray
+Attribute ResetToDefault.VB_Description = "Clears the current array and resets capacity to default value"
+    pLowerBound = 0
+    pItems = getEmptyArray()
+    pLength = 0
+    Me.Capacity = DEFAULT_CAPACITY
     Set ResetToDefault = Me
 End Function
 
 ' TODO: Document & Test - ResetToDefault
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Clears all entries in the current array. Retains the same internal capacity")
+'@Description("Clears all entries in the current array but retains the same internal capacity")
 Public Function Clear() As BetterArray
+Attribute Clear.VB_Description = "Clears all entries in the current array but retains the same internal capacity"
     pItems = getEmptyArray()
     pLength = 0
     Me.Capacity = pCapacity
@@ -715,6 +723,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Joins one or more arrays onto the end of the current array.")
 Public Function Concat(ParamArray args() As Variant) As BetterArray
+Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the current array."
     Dim arg As Variant
     Dim Element As Variant
     Dim localArray() As Variant
@@ -745,6 +754,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes all of the elements in a Collection objet to the internal array.")
 Public Function CopyFromCollection(ByVal SourceCollection As Collection) As BetterArray
+Attribute CopyFromCollection.VB_Description = "Writes all of the elements in a Collection objet to the internal array."
     If SourceCollection Is Nothing Then Err.Raise 448
     Dim i As Long
     Dim newItems() As Variant
@@ -764,6 +774,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Sorts the stored array in ascending order.")
 Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
+Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim localItems() As Variant
     Dim sortedItems() As Variant
     Dim ArrayType As ArrayTypes
@@ -800,6 +811,7 @@ End Function
 Public Function CopyWithin(ByVal Target As Long, _
                            Optional ByVal StartIndex As Long, _
                            Optional ByVal EndIndex As Long) As BetterArray
+Attribute CopyWithin.VB_Description = "Copies a section of the stored array to another location in the same array."
     Dim localLength As Long
     Dim relativeTarget As Long
     Dim relativeStart As Long
@@ -869,6 +881,7 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
 Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As BetterArray
+Attribute Filter.VB_Description = "Filters the stored array to include only values that meet the specified criteria."
     Dim Element As Variant
     Dim oldArr() As Variant
     Dim newArr() As Variant
@@ -890,9 +903,9 @@ End Function
 
 ' TODO: Check implementation against spec
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Reverses the order of elements in the array." _
-    & "The first array element becomes the last, and the last array element becomes the first.")
+'@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
 Public Function Reverse() As BetterArray
+Attribute Reverse.VB_Description = "Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first."
     Dim i As Long
     Dim localUpperBound As Long
     Dim arr() As Variant
@@ -928,6 +941,7 @@ Private Function ParseDelimitedArrayString(ByVal SourceString As String, _
                               ByVal opener As String, _
                               ByVal closer As String, _
                               Optional ByRef cursor As Long = 2) As Variant()
+Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested arrays from a string."
     Dim currentChar As String
     Dim localResult() As Variant
     Dim i As Long
@@ -983,6 +997,7 @@ Private Function ParseArraySegmentFromString(ByVal SourceString As String, _
                               ByRef cursor As Long, _
                               ByVal nextCloser As Long, _
                               ByVal ValueSeparator As String) As Variant()
+Attribute ParseArraySegmentFromString.VB_Description = "Returns an array from a delimited string"
     Dim segmentLength As Long
     Dim segment() As String
     segmentLength = IIf(nextCloser = 0, Len(SourceString), nextCloser - cursor)
@@ -993,6 +1008,7 @@ End Function
 
 '@Description("Takes a string array. Returns a Variant array with the elements converted to an appropriate type")
 Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
+Attribute duckTypeStringArray.VB_Description = "Takes a string array. Returns a Variant array with the elements converted to an appropriate type"
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1021,43 +1037,47 @@ End Function
 
 '@Description("Populates the ErrorDefinitions array.")
 Private Sub PopulateErrorDefinitions()
-    Dim source As String
-    source = TypeName(Me)
+Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefinitions array."
+    Dim Source As String
+    Source = TypeName(Me)
     ErrorDefinitions(ErrorCodes.ExpectedRangeObject) = ErrorDefinitionFactory( _
         number:=ErrorCodes.ExpectedRangeObject, _
-        source:=source, _
+        Source:=Source, _
         description:="Range Object Expected" _
     )
     ErrorDefinitions(ErrorCodes.MaxDimensionsLimit) = ErrorDefinitionFactory( _
         number:=ErrorCodes.MaxDimensionsLimit, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot convert arrays with more than 20 dimensions to a multidimensional array!" _
     )
 End Sub
 
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
-Private Function ErrorDefinitionFactory(ByVal number As Long, ByVal source As String, ByVal description As String) As ErrorDefinition
+Private Function ErrorDefinitionFactory(ByVal number As Long, ByVal Source As String, ByVal description As String) As ErrorDefinition
+Attribute ErrorDefinitionFactory.VB_Description = "Returns an ErrorDefinition Type populated with the provided arguments."
     Dim result As ErrorDefinition
     result.number = number
-    result.source = source
+    result.Source = Source
     result.description = description
     ErrorDefinitionFactory = result
 End Function
 
 '@Description("Raises an application error based on the passed ErrorCode and the definitions defined in ErrorDefinitions.")
 Private Sub RaiseError(ByVal ErrorCode As ErrorCodes, ByVal Caller As String, Optional ByVal ArgName As String)
+Attribute RaiseError.VB_Description = "Raises an application error based on the passed ErrorCode and the definitions defined in ErrorDefinitions."
     Dim currentError As ErrorDefinition
     Dim localArgName As String
     If ArgName <> vbNullString Then localArgName = "Variable " & ArgName & ": "
     currentError = ErrorDefinitions(ErrorCode)
     Err.Raise currentError.number, _
-              currentError.source & "." & Caller, _
+              currentError.Source & "." & Caller, _
               localArgName & currentError.description
 End Sub
 
 'Used by ToExcelRange
 '@Description("Ensures each element of passed array can be represented as a scalar value.")
 Private Function ensureScalar1DArray(ByRef arr() As Variant) As Variant()
+Attribute ensureScalar1DArray.VB_Description = "Ensures each element of passed array can be represented as a scalar value."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1075,6 +1095,7 @@ End Function
 ' TODO: Use or remove
 '@Description("Nests each element of a 1d array inside it's own array and returns the new jagged array.")
 Private Function OneDimArrayToJagged(ByRef arr() As Variant) As Variant()
+Attribute OneDimArrayToJagged.VB_Description = "Nests each element of a 1d array inside it's own array and returns the new jagged array."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1092,6 +1113,7 @@ End Function
 ' TODO: Use or remove
 '@Description("Converts a 1d array to a 1 column wide 2d array.")
 Private Function Transpose_1DArray(ByRef arr() As Variant) As Variant()
+Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column wide 2d array."
     'TODO: need check to ensure 1d?
     Dim i As Long
     Dim j As Long
@@ -1113,6 +1135,7 @@ End Function
 ' Used by ToExcelRange()
 '@Description("Transposes the values in a 2d array. Rows become columns, columns become rows.")
 Private Function Transpose_2DArray(ByRef sourceArray() As Variant) As Variant()
+Attribute Transpose_2DArray.VB_Description = "Transposes the values in a 2d array. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long
@@ -1162,6 +1185,7 @@ End Function
 
 '@Description("Returns an empty 1d array with 1 slot.")
 Private Function getEmptyArray() As Variant()
+Attribute getEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot."
     Dim result() As Variant
     ReDim result(pLowerBound)
     getEmptyArray = result
@@ -1173,6 +1197,7 @@ Private Sub quickSort(ByRef arr() As Variant, _
                       ByVal high As Long, _
                       ByVal ArrayType As ArrayTypes, _
                       Optional ByVal col As Long)
+Attribute quickSort.VB_Description = "Sorts in place a passed array using the QuickSort algorithm."
     Dim partitionIndex As Long
     If low < high Then
         partitionIndex = qsPartition(arr, low, high, ArrayType, col)
@@ -1187,6 +1212,7 @@ Private Function qsPartition(ByRef arr() As Variant, _
                              ByVal high As Long, _
                              ByVal ArrayType As ArrayTypes, _
                              Optional ByVal col As Long) As Long
+Attribute qsPartition.VB_Description = "Child function of quickSort. Returns the next partition index."
     Dim i As Long
     Dim j As Long
     Dim pivot As Variant
@@ -1217,27 +1243,20 @@ End Function
 
 '@Description("Swaps the location of two elements in an array.")
 Private Sub Swap(ByRef arr() As Variant, ByVal i As Long, ByVal j As Long)
+Attribute Swap.VB_Description = "Swaps the location of two elements in an array."
     Dim Element As Variant
-    getElementFromArray arr, i, Element
-    letElementInArray arr, i, arr(j)
-    letElementInArray arr, j, Element
+    letOrSetElement Element, arr(i)
+    letOrSetElement arr(i), arr(j)
+    '@Ignore UnassignedVariableUsage
+    letOrSetElement arr(j), Element
 End Sub
 
-Private Sub letElementInArray(ByRef arr() As Variant, ByVal index As Long, ByRef Element As Variant)
-    If IsObject(Element) Then
-        Set arr(index) = Element
+Private Sub letOrSetElement(ByRef Destination As Variant, ByRef Source As Variant)
+    If IsObject(Source) Then
+        Set Destination = Source
     Else
-        arr(i) = Element
+        Destination = Source
     End If
-End Sub
-
-Private Sub getElementFromArray(ByRef arr() As Variant, ByVal index As Long, Element As Variant)
-    If IsObject(arr(index)) Then
-        Set Element = arr(index)
-    Else
-        Element = arr(index)
-    End If
-    
 End Sub
 
 Private Function getInternalItems() As Variant()
@@ -1668,173 +1687,123 @@ Private Function getElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As
     Dim result As Variant
     Select Case UBound(crumb)
     Case 0
-        result = arr(crumb(0))
+        letOrSetElement result, arr(crumb(0))
     Case 1
-        result = arr(crumb(0), crumb(1))
+        letOrSetElement result, arr(crumb(0), crumb(1))
     Case 2
-        result = arr(crumb(0), crumb(1), crumb(2))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2))
     Case 3
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3))
     Case 4
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4))
     Case 5
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5))
     Case 6
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6))
     Case 7
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7))
     Case 8
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8))
     Case 9
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9))
     Case 10
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10))
     Case 11
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11))
     Case 12
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12))
     Case 13
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13))
     Case 14
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14))
     Case 15
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15))
     Case 16
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16))
     Case 17
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17))
     Case 18
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18))
     Case 19
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19))
     Case 20
-        result = arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                     crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20))
+        letOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20))
     End Select
+    '@Ignore UnassignedVariableUsage
     getElementByBreadcrumb = result
 End Function
 
 Private Function letElementByBreadcrumb(ByRef arr() As Variant, ByRef crumb() As Variant, ByVal Element As Variant) As Variant
-    If IsObject(Element) Then
-        Select Case UBound(crumb)
-        Case 0
-            Set arr(crumb(0)) = Element
-        Case 1
-            Set arr(crumb(0), crumb(1)) = Element
-        Case 2
-            Set arr(crumb(0), crumb(1), crumb(2)) = Element
-        Case 3
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
-        Case 4
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
-        Case 5
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
-        Case 6
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
-        Case 7
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
-        Case 8
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
-        Case 9
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
-        Case 10
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
-        Case 11
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11)) = Element
-        Case 12
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12)) = Element
-        Case 13
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13)) = Element
-        Case 14
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14)) = Element
-        Case 15
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
-        Case 16
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
-        Case 17
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
-        Case 18
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
-        Case 19
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
-        Case 20
-            Set arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                    crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
-        End Select
-    Else
-        Select Case UBound(crumb)
-        Case 0
-            arr(crumb(0)) = Element
-        Case 1
-            arr(crumb(0), crumb(1)) = Element
-        Case 2
-            arr(crumb(0), crumb(1), crumb(2)) = Element
-        Case 3
-            arr(crumb(0), crumb(1), crumb(2), crumb(3)) = Element
-        Case 4
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)) = Element
-        Case 5
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)) = Element
-        Case 6
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)) = Element
-        Case 7
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)) = Element
-        Case 8
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)) = Element
-        Case 9
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)) = Element
-        Case 10
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10)) = Element
-        Case 11
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11)) = Element
-        Case 12
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12)) = Element
-        Case 13
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13)) = Element
-        Case 14
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14)) = Element
-        Case 15
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)) = Element
-        Case 16
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)) = Element
-        Case 17
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)) = Element
-        Case 18
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)) = Element
-        Case 19
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)) = Element
-        Case 20
-            arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), crumb(10), _
-                crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)) = Element
-        End Select
-    End If
+    Select Case UBound(crumb)
+    Case 0
+        letOrSetElement arr(crumb(0)), Element
+    Case 1
+        letOrSetElement arr(crumb(0), crumb(1)), Element
+    Case 2
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2)), Element
+    Case 3
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3)), Element
+    Case 4
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)), Element
+    Case 5
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)), Element
+    Case 6
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)), Element
+    Case 7
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)), Element
+    Case 8
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)), Element
+    Case 9
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)), _
+            Element
+    Case 10
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10)), Element
+    Case 11
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11)), Element
+    Case 12
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12)), Element
+    Case 13
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13)), Element
+    Case 14
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14)), Element
+    Case 15
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)), Element
+    Case 16
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)), Element
+    Case 17
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)), Element
+    Case 18
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)), Element
+    Case 19
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)), Element
+    Case 20
+        letOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)), _
+        Element
+    End Select
+
     letElementByBreadcrumb = arr
 End Function
 
@@ -1931,6 +1900,9 @@ Private Function createMultidimensionalArray(ByRef crumb() As Variant) As Varian
     End Select
     createMultidimensionalArray = result
 End Function
+
+
+
 
 
 
