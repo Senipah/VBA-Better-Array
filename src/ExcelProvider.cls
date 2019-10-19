@@ -8,10 +8,10 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'"
-Option Explicit
-
 '@Folder("Tests.Dependencies.ExcelProvider")
 '@ModuleDescription("An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'")
+
+Option Explicit
 
 Private Const DEV As Boolean = True ' Determines if application is visible
 Private Const ErrCode As Long = vbObjectError + 513

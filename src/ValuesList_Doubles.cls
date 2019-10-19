@@ -8,11 +8,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "IValuesList implementation for random value generation. Dependency of 'ArrayGenerator'"
-Option Explicit
-Implements IValuesList
-
 '@Folder("Tests.Dependencies.IValuesList.Implementations")
 '@ModuleDescription("IValuesList implementation for random value generation. Dependency of 'ArrayGenerator'")
+
+Option Explicit
+Implements IValuesList
 
 Private IsObjectType As Boolean
 

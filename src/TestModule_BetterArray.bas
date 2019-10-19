@@ -2749,17 +2749,17 @@ Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Varia
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater thn machine epsilon
     Const Epsilon As Double = 0.0000000000001
-    Dim Result As Boolean
+    Dim result As Boolean
     Dim diff As Double
     If IsNumeric(expected) Then
         diff = Abs(expected - actual)
         If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
-            Result = True
+            result = True
         End If
     ElseIf expected = actual Then
-        Result = True
+        result = True
     End If
-    valuesAreEqual = Result
+    valuesAreEqual = result
 End Function
 
 '@TestMethod("BetterArray_ParseFromString")
