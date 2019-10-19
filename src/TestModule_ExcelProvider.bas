@@ -18,6 +18,9 @@ Private Assert As AssertClass
 '@Ignore VariableNotUsed
 Private Fakes As FakesProvider
 
+' Module level declaration of system under test
+Private SUT As ExcelProvider
+
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
@@ -38,11 +41,13 @@ End Sub
 '@TestInitialize
 Private Sub TestInitialize()
     'this method runs before every test in the module.
+    Set SUT = New ExcelProvider
 End Sub
 
 '@TestCleanup
 Private Sub TestCleanup()
     'this method runs after every test in the module.
+    Set SUT = Nothing
 End Sub
 
 '@TestMethod("ExcelProvider_Constructor")
@@ -50,9 +55,9 @@ Private Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
+
     'Act:
-    Set SUT = New ExcelProvider
+
     'Assert:
     Assert.IsNotNothing SUT
 
@@ -67,9 +72,6 @@ Private Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
-    Set SUT = New ExcelProvider
-    
     Dim expected As String
     Dim actual As String
     expected = "Microsoft Excel"
@@ -92,15 +94,16 @@ Private Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
-    Set SUT = New ExcelProvider
     Dim returned As Object
     Dim expected As String
     Dim actual As String
+    
     expected = "Workbook"
+    
     'Act:
     Set returned = SUT.CurrentWorkbook
     actual = TypeName(returned)
+    
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
 
@@ -115,17 +118,16 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_ReturnsTypeWorksheet()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
-    Set SUT = New ExcelProvider
-    
     Dim expected As String
     Dim actual As String
     Dim returned As Object
+    
     expected = "Worksheet"
     
     'Act:
     Set returned = SUT.CurrentWorksheet
     actual = TypeName(returned)
+    
     'Assert:
     Assert.AreEqual expected, actual, "actual has incorrect type"
 TestExit:
@@ -139,9 +141,6 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook(
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
-    Set SUT = New ExcelProvider
-    
     Dim expected As Object
     Dim actual As Object
     
@@ -162,18 +161,17 @@ Private Sub CurrentWorksheet_CanSetRangeValue_ReturnsCorrectValue()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim SUT As ExcelProvider
-    Set SUT = New ExcelProvider
-    
     Dim address As String
     Dim expected As String
     Dim actual As String
     
     address = "A1"
     expected = "Hello World"
+    
     'Act:
     SUT.CurrentWorksheet.Range(address) = expected
     actual = SUT.CurrentWorksheet.Range(address)
+    
     'Assert:
     Assert.AreEqual actual, expected, "actual <> expected"
 TestExit:
