@@ -13,7 +13,7 @@ Attribute VB_Description = "An RAII container providing access to an Excel appli
 
 Option Explicit
 
-Private Const DEV As Boolean = True ' Determines if application is visible
+Private Const DEV As Boolean = False ' Determines if application is visible
 Private Const ErrCode As Long = vbObjectError + 513
 
 Private pExcelApplication As Object
