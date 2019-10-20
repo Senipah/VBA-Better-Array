@@ -20,13 +20,14 @@ Private Assert As AssertClass
 '@Ignore VariableNotUsed
 Private Fakes As FakesProvider
 
-
-Private Const TEST_ARRAY_LENGTH As Long = 10
-
 ' Module level declaration of system under test
 Private SUT As BetterArray
 ' Module level declaration of ArrayGenerator as used by most tests
 Private Gen As ArrayGenerator
+
+Private Const TEST_ARRAY_LENGTH As Long = 10
+Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an ExcelProvider instance had failed." & _
+        " Once resolved ensure to end any orphan Excel processes running on this system."
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -58,6 +59,88 @@ Private Sub TestCleanup()
     Set SUT = Nothing
     Set Gen = Nothing
 End Sub
+
+''''''''''''''''''''
+' Helper Functions '
+''''''''''''''''''''
+
+Private Function SequenceEquals_JaggedArray( _
+        ByRef expected() As Variant, _
+        ByRef actual() As Variant _
+    ) As Boolean
+    Dim i As Long
+    On Error GoTo ErrHandler
+    For i = LBound(expected) To UBound(expected)
+        If IsArray(expected(i)) Then
+            Dim expectedChild() As Variant
+            Dim actualChild() As Variant
+            expectedChild = expected(i)
+            actualChild = actual(i)
+            If Not SequenceEquals_JaggedArray(expectedChild, actualChild) Then
+                GoTo ErrHandler
+            End If
+        Else
+            If Not valuesAreEqual(expected(i), actual(i)) Then
+                GoTo ErrHandler
+            End If
+        End If
+    Next
+    On Error GoTo 0
+    SequenceEquals_JaggedArray = True
+    Exit Function
+ErrHandler:
+    On Error GoTo 0
+End Function
+
+
+Private Function SequenceEquals_JaggedArrayVsRange( _
+        ByRef expected() As Variant, _
+        ByRef actual As Object, _
+        Optional ByVal transposed As Boolean _
+    ) As Boolean
+    Dim i As Long
+    Dim j As Long
+    
+    On Error GoTo ErrHandler
+    
+    If TypeName(actual) <> "Range" Or actual Is Nothing Then
+        GoTo ErrHandler
+    End If
+    
+    For i = 1 To actual.Rows.count
+        For j = 1 To actual.Columns.count
+            If Not valuesAreEqual( _
+                expected(IIf(transposed, j - 1, i - 1), IIf(transposed, i - 1, j - 1)), _
+                actual.Cells.Item(i, j).Value _
+            ) Then
+                GoTo ErrHandler
+            End If
+        Next
+    Next
+    On Error GoTo 0
+    SequenceEquals_JaggedArrayVsRange = True
+    Exit Function
+ErrHandler:
+    On Error GoTo 0
+End Function
+
+
+Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
+    ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
+    ' some roundings in type conversions cause greater thn machine epsilon
+    Const Epsilon As Double = 0.0000000000001
+    Dim Result As Boolean
+    Dim diff As Double
+    If IsNumeric(expected) Then
+        diff = Abs(expected - actual)
+        If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
+            Result = True
+        End If
+    ElseIf expected = actual Then
+        Result = True
+    End If
+    valuesAreEqual = Result
+End Function
 
 '''''''''''''''''
 ' Instantiation '
@@ -217,8 +300,6 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     'Arrange:
     Dim expected() As Variant
     Dim actual() As Variant
-    Dim i As Long
-    Dim j As Long
     Dim testResult As Boolean
 
     expected = Gen.GetArray(AG_VARIANT, AG_JAGGED)
@@ -226,16 +307,8 @@ Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     'Act:
     SUT.Items = expected
     actual = SUT.Items
-    testResult = True
-    For i = LBound(actual) To UBound(actual)
-        For j = LBound(actual(i)) To UBound(actual(i))
-            If actual(i)(j) <> expected(i)(j) Then
-                testResult = False
-                Exit For
-            End If
-        Next
-        If testResult = False Then Exit For
-    Next
+    
+    testResult = SequenceEquals_JaggedArray(expected, actual)
 
     'Assert:
     Assert.IsTrue testResult, "Contents of expected and actual do not match"
@@ -1153,13 +1226,28 @@ Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim testResult As Boolean
+    
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expectedLength = Gen.GetArrayLength(expected)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    actual = SUT.Concat(expected).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2542,14 +2630,12 @@ Private Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim Destination As Object
     Dim returnedRange As Object
-    Dim OutputSheet As Object
     Dim ExcelApp As ExcelProvider
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1) As Variant
     
     Set ExcelApp = New ExcelProvider
-    Set OutputSheet = ExcelApp.CurrentWorksheet
-    Set Destination = OutputSheet.Range("A1")
+    Set Destination = ExcelApp.CurrentWorksheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = Gen.GetArray(AG_DOUBLE)
@@ -2567,6 +2653,7 @@ Private Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
 TestExit:
     Exit Sub
 TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
@@ -2577,14 +2664,12 @@ Private Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     'Arrange:
     Dim Destination As Object
     Dim returnedRange As Object
-    Dim OutputSheet As Object
     Dim ExcelApp As ExcelProvider
     Dim expected() As Variant
     Dim actual(TEST_ARRAY_LENGTH - 1) As Variant
 
     Set ExcelApp = New ExcelProvider
-    Set OutputSheet = ExcelApp.CurrentWorksheet
-    Set Destination = OutputSheet.Range("A1")
+    Set Destination = ExcelApp.CurrentWorksheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     expected = Gen.GetArray(AG_DOUBLE)
@@ -2603,6 +2688,7 @@ Private Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
 TestExit:
     Exit Sub
 TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
@@ -2613,35 +2699,29 @@ Private Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     
     'Arrange:
     Dim Destination As Object
-    Dim returnedRange As Object
-    Dim OutputSheet As Object
     Dim ExcelApp As ExcelProvider
     Dim expected() As Variant
-    Dim actual(TEST_ARRAY_LENGTH - 1, TEST_ARRAY_LENGTH - 1) As Variant
+    Dim actual As Object
+    Dim testResult As Boolean
+    Dim transposed As Boolean
 
     Set ExcelApp = New ExcelProvider
-    Set OutputSheet = ExcelApp.CurrentWorksheet
-    Set Destination = OutputSheet.Range("A1")
+    Set Destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    ' Use Array of Doubles as all values returned from an Excel range are of type Double
-    expected = Gen.GetArray(AG_DOUBLE, AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
+    transposed = False
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(Destination)
-    Dim i As Long
-    Dim j As Long
-    For i = 1 To returnedRange.Rows.count
-        For j = 1 To returnedRange.Columns.count
-            actual(i - 1, j - 1) = returnedRange.Cells.Item(i, j).Value
-        Next
-    Next
-
+    Set actual = SUT.ToExcelRange(Destination, transposed)
+    testResult = SequenceEquals_JaggedArrayVsRange(expected, actual, transposed)
+    
     'Assert:
-    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
@@ -2651,35 +2731,29 @@ Private Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     
     'Arrange:
     Dim Destination As Object
-    Dim returnedRange As Object
-    Dim OutputSheet As Object
     Dim ExcelApp As ExcelProvider
     Dim expected() As Variant
-    Dim actual(TEST_ARRAY_LENGTH - 1, TEST_ARRAY_LENGTH - 1) As Variant
-    
+    Dim actual As Object
+    Dim testResult As Boolean
+    Dim transposed As Boolean
+
     Set ExcelApp = New ExcelProvider
-    Set OutputSheet = ExcelApp.CurrentWorksheet
-    Set Destination = OutputSheet.Range("A1")
+    Set Destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    ' Use Array of Doubles as all values returned from an Excel range are of type Double
-    expected = Gen.GetArray(AG_DOUBLE, AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
+    transposed = True
     
     'Act:
-    Set returnedRange = SUT.ToExcelRange(Destination, True)
-    Dim i As Long
-    Dim j As Long
-    For i = 1 To returnedRange.Rows.count
-        For j = 1 To returnedRange.Columns.count
-            actual(j - 1, i - 1) = returnedRange.Cells.Item(i, j).Value
-        Next
-    Next
-
+    Set actual = SUT.ToExcelRange(Destination, transposed)
+    testResult = SequenceEquals_JaggedArrayVsRange(expected, actual, transposed)
+    
     'Assert:
-    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
@@ -2731,6 +2805,7 @@ Private Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDim
 TestExit:
     Exit Sub
 TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
@@ -2743,25 +2818,6 @@ End Sub
 
 'TODO: add more test cases for ParseFromString
 
-
-' helper function for values generated by ParseFromString
-Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
-    ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
-    ' some roundings in type conversions cause greater thn machine epsilon
-    Const Epsilon As Double = 0.0000000000001
-    Dim Result As Boolean
-    Dim diff As Double
-    If IsNumeric(expected) Then
-        diff = Abs(expected - actual)
-        If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
-            Result = True
-        End If
-    ElseIf expected = actual Then
-        Result = True
-    End If
-    valuesAreEqual = Result
-End Function
-
 '@TestMethod("BetterArray_ParseFromString")
 Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
@@ -2772,7 +2828,6 @@ Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
     Dim actual() As Variant
     Dim SourceString As String
     Dim testResult As Boolean
-    Dim i As Long
 
     Set tempBetterArray = New BetterArray
     expected = Gen.GetArray()
@@ -2782,18 +2837,10 @@ Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
     'Act:
     actual = SUT.ParseFromString(SourceString).Items
     
-    testResult = True
-    
-    For i = LBound(expected) To UBound(expected)
-        If Not valuesAreEqual(expected(i), actual(i)) Then
-            testResult = False
-            Exit For
-        End If
-    Next
+    ' can't use Assert.SequenceEquals due to type comparison - Bytes Will be Long in actual
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     
     'Assert:
-    ' can't use sequence equals due to type comparison c# - actual will have
-    ' numeric values all typed as double
     Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
@@ -2812,8 +2859,6 @@ Private Sub ParseFromString_Jagged2DeepArrayFromToString_ReturnsCorrectValues()
     Dim actual() As Variant
     Dim SourceString As String
     Dim testResult As Boolean
-    Dim i As Long
-    Dim j As Long
     
     Set tempBetterArray = New BetterArray
     
@@ -2824,20 +2869,10 @@ Private Sub ParseFromString_Jagged2DeepArrayFromToString_ReturnsCorrectValues()
     'Act:
     actual = SUT.ParseFromString(SourceString).Items
     
-    testResult = True
-    
-    For i = LBound(expected) To UBound(expected)
-        For j = LBound(expected(i)) To UBound(expected(i))
-            If Not valuesAreEqual(expected(i)(j), actual(i)(j)) Then
-                testResult = False
-                Exit For
-            End If
-        Next
-    Next
+    ' can't use Assert.SequenceEquals due to type comparison - Bytes Will be Long in actual
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     
     'Assert:
-    ' can't use sequence equals due to type comparison c# - actual will have
-    ' numeric values all typed as double
     Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
@@ -2855,9 +2890,6 @@ Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     Dim actual() As Variant
     Dim SourceString As String
     Dim testResult As Boolean
-    Dim i As Long
-    Dim j As Long
-    Dim k As Long
     
     Set tempBetterArray = New BetterArray
     expected = Gen.GetArray(AG_BYTE, AG_JAGGED, Depth:=3)
@@ -2867,22 +2899,12 @@ Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     'Act:
     actual = SUT.ParseFromString(SourceString).Items
     
-    testResult = True
+    ' can't use Assert.SequenceEquals due to type comparison - Bytes Will be Long in actual
+    ' also, Assert.SeqenceEquals doesn't support jagged arrays: https://github.com/rubberduck-vba/Rubberduck/issues/5161
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     
-    For i = LBound(expected) To UBound(expected)
-        For j = LBound(expected(i)) To UBound(expected(i))
-            For k = LBound(expected(i)(j)) To UBound(expected(i)(j))
-                If Not valuesAreEqual(expected(i)(j)(k), actual(i)(j)(k)) Then
-                    testResult = False
-                    Exit For
-                End If
-            Next
-        Next
-    Next
     
     'Assert:
-    ' can't use sequence equals due to type comparison c# - actual will have
-    ' numeric values all typed as double
     Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
