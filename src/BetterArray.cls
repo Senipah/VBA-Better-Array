@@ -765,9 +765,9 @@ End Function
 Public Function Concat(ParamArray Args() As Variant) As BetterArray
 Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the current array."
     Dim arg As Variant
-    Dim Element As Variant
     Dim localArray() As Variant
     Dim localType As ArrayTypes
+    Dim i As Long
     
     
     For Each arg In Args
@@ -781,8 +781,8 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
             If localType = BA_MULTIDIMENSION Then
                 localArray = multiToJagged(localArray)
             End If
-            For Each Element In localArray
-                Me.Push Element
+            For i = LBound(localArray) To UBound(localArray)
+                Me.Push localArray(i)
             Next
         Else
             Me.Push arg
