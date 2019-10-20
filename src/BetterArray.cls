@@ -35,6 +35,7 @@ Private Enum ErrorCodes
     EC_EXCEEDS_MAX_SORT_DEPTH
     EC_EXPECTED_JAGGED_ARRAY
     EC_EXPECTED_MULTIDIMENSION_ARRAY
+    EC_EXPECTED_ARRAY
     EC_END
 End Enum
 
@@ -1068,7 +1069,7 @@ Attribute duckTypeStringArray.VB_Description = "Takes a string array. Returns a 
         If UCase$(Element) = "TRUE" Or UCase$(Element) = "FALSE" Then
             Result(i) = CBool(Element)
         ElseIf IsNumeric(Element) Then
-            Const Epsilon = 2 ^ -52
+            Const Epsilon As Double = 2 ^ -52
             Dim diff As Double
             ' check if integer
             diff = Abs(Fix(Element) - Element)
@@ -1122,6 +1123,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         number:=ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY, _
         Source:=Source, _
         description:="Expected multidimension array." _
+    )
+    ErrorDefinitions(ErrorCodes.EC_EXPECTED_ARRAY) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_EXPECTED_ARRAY, _
+        Source:=Source, _
+        description:="Expected array." _
     )
     
 End Sub
@@ -1410,15 +1416,23 @@ End Function
 Private Function getArrayType(ByVal Arr As Variant) As ArrayTypes
 Attribute getArrayType.VB_Description = "Returns the type of a passed array."
     Dim Result As ArrayTypes
-    If Not isArrayAllocated(Arr) Then
-        Result = ArrayTypes.BA_UNALLOCATED
-    Else
-        If isMultidimensionalArray(Arr) Then
-            Result = ArrayTypes.BA_MULTIDIMENSION
-        ElseIf isJaggedArray(Arr) Then
-            Result = ArrayTypes.BA_JAGGED
+    If IsArray(Arr) Then
+        If Not isArrayAllocated(Arr) Then
+            Result = BA_UNALLOCATED
         Else
-            Result = ArrayTypes.BA_ONEDIMENSION
+            If isMultidimensionalArray(Arr) Then
+                Result = BA_MULTIDIMENSION
+            ElseIf isJaggedArray(Arr) Then
+                Result = BA_JAGGED
+            Else
+                Result = BA_ONEDIMENSION
+            End If
+        End If
+    Else
+        If IsEmpty(Arr) Then
+            Result = BA_UNDEFINED
+        Else
+            RaiseError EC_EXPECTED_ARRAY, "getArrayType", "Arr"
         End If
     End If
     getArrayType = Result
