@@ -1480,17 +1480,20 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddEmptyToEmpty_GracefulDegradation()
+Private Sub Concat_AddEmptyToEmpty_ReturnsEmptyArrayWith1Slot()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
     
     'Act:
-
+    SUT.Concat expected
+    ReDim expected(SUT.LowerBound)
+    actual = SUT.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
@@ -1509,13 +1512,22 @@ Private Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testCollection As Collection
+    Dim i As Long
+    
+    expected = Gen.GetArray
+    Set testCollection = New Collection
+    For i = LBound(expected) To UBound(expected)
+        testCollection.Add expected(i)
+    Next
     
     'Act:
-
+    actual = SUT.CopyFromCollection(testCollection).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1527,13 +1539,25 @@ Private Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedW
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim initialArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testCollection As Collection
+    Dim i As Long
     
+    initialArray = Gen.GetArray
+    expected = Gen.GetArray
+    Set testCollection = New Collection
+    For i = LBound(expected) To UBound(expected)
+        testCollection.Add expected(i)
+    Next
+    SUT.Items = initialArray
     'Act:
-
+    actual = SUT.CopyFromCollection(testCollection).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1552,13 +1576,16 @@ Private Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    Const expected As String = "{1,2,3}"
+    Dim actual As String
+    Dim testArray() As Variant
+    testArray = Array(1, 2, 3)
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString()
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1569,14 +1596,16 @@ End Sub
 Private Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
-    'Arrange:
-
-
-    
+    Const expected As String = "{1, 2, 3}"
+    Dim actual As String
+    Dim testArray() As Variant
+    testArray = Array(1, 2, 3)
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString(PrettyPrint:=True)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1584,17 +1613,41 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_ToString")
+Private Sub ToString_FromOneDimArrayCustomDelimiters_CorrectStringRepresentationReturned()
+    On Error GoTo TestFail
+    
+    Const expected As String = "[1,2,3]"
+    Dim actual As String
+    Dim testArray() As Variant
+    testArray = Array(1, 2, 3)
+    'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString(OpeningDelimiter:="[", ClosingDelimiter:="]")
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_ToString")
 Private Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Const expected As String = "{{1,2},{3,4}}"
+    Dim actual As String
+    Dim testArray() As Variant
     
+    testArray = Array(Array(1, 2), Array(3, 4))
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString()
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1606,13 +1659,20 @@ Private Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationRetur
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Const expected As String = "{" & vbCrLf _
+                             & "  {1, 2}, " & vbCrLf _
+                             & "  {3, 4}" & vbCrLf _
+                             & "}"
+    Dim actual As String
+    Dim testArray() As Variant
     
+    testArray = Array(Array(1, 2), Array(3, 4))
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString(True)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1625,13 +1685,16 @@ Private Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Const expected As String = "{}"
+    Dim actual As String
+    Dim testArray() As Variant
     
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString()
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1643,13 +1706,118 @@ Private Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturn
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Const expected As String = "{}"
+    Dim actual As String
+    Dim testArray() As Variant
     
     'Act:
+    SUT.Items = testArray
+    actual = SUT.ToString()
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'''''''''''''''''''''
+' Method - IsSorted '
+'''''''''''''''''''''
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_SortedOneDimArray_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    expected = True
+    testArray = Array(1, 2, 3)
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_UnsortedOneDimArray_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    expected = False
+    testArray = Array(2, 1, 3)
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_SortedMultiDimArray_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray(0 To 1, 0 To 1) As Variant
+    
+    expected = False
+    testArray(0, 0) = "Foo"
+    testArray(0, 1) = 1
+    testArray(1, 0) = "Bar"
+    testArray(1, 1) = 2
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_UnsortedMultiDimArray_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray(0 To 1, 0 To 1) As Variant
+    
+    expected = False
+    testArray(0, 0) = "Foo"
+    testArray(0, 1) = 2
+    testArray(1, 0) = "Bar"
+    testArray(1, 1) = 1
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1657,9 +1825,103 @@ TestFail:
 End Sub
 
 
-'''''''''''''''''''''
-' Method - ToString '
-'''''''''''''''''''''
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_SortedJaggedArray_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    expected = True
+    testArray = Array(Array("Foo", 1), Array("Bar", 1))
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted(1)
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_UnsortedJaggedArray_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    expected = False
+    testArray = Array(Array("Foo", 2), Array("Bar", 1))
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.IsSorted(1)
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Private Sub IsSorted_EmptyArray_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Boolean
+    Dim actual As Boolean
+    
+    expected = True
+    'Act:
+    actual = SUT.IsSorted
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IsSorted")
+Public Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
+    Const ExpectedError As Long = ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH
+    On Error GoTo TestFail
+
+    'Arrange
+    Dim testArray() As Variant
+    '@Ignore VariableNotUsed
+    Dim actual As Boolean
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED, Depth:=3)
+    SUT.Items = testArray
+    'Act
+    actual = SUT.IsSorted
+
+Assert:
+    Assert.Fail "Expected error was not raised"
+
+TestExit:
+    Exit Sub
+TestFail:
+    If Err.number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
+End Sub
+
+
+'''''''''''''''''
+' Method - Sort '
+'''''''''''''''''
 
 'TODO: Sort test cases
 
@@ -1668,13 +1930,17 @@ Private Sub Sort_OneDimArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim actual As Boolean
+    Dim testArray() As Variant
     
+    testArray = Gen.GetArray()
+    SUT.Items = testArray
     'Act:
-
+    SUT.Sort
+    actual = SUT.IsSorted
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue actual, "Array not sorted"
 TestExit:
     Exit Sub
 TestFail:
@@ -1686,13 +1952,15 @@ Private Sub Sort_MultiDimArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
     'Act:
-
+    SUT.Sort
+    actual = SUT.IsSorted()
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue actual, "Array not sorted"
 TestExit:
     Exit Sub
 TestFail:
@@ -1704,13 +1972,15 @@ Private Sub Sort_JaggedArray_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
     'Act:
-
+    SUT.Sort
+    actual = SUT.IsSorted()
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue actual, "Array not sorted"
 TestExit:
     Exit Sub
 TestFail:
@@ -3070,6 +3340,9 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
+
+
 
 
 
