@@ -27,7 +27,8 @@ Private Enum ArrayTypes
     BA_JAGGED
 End Enum
 
-Private Enum ErrorCodes
+' Public scope as used in unit tests
+Public Enum ErrorCodes
     EC_START = vbObjectError + 512
     EC_EXPECTED_RANGE_OBJECT
     EC_EXPECTED_COLLECTION_OBJECT
@@ -303,7 +304,9 @@ End Function
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString( _
         Optional ByVal PrettyPrint As Boolean, _
-        Optional ByVal DelimitStrings As Boolean _
+        Optional ByVal DelimitStrings As Boolean, _
+        Optional ByVal OpeningDelimiter As String, _
+        Optional ByVal ClosingDelimiter As String _
     ) As String
 Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
     Dim ArrayType As ArrayTypes
@@ -317,7 +320,13 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
         If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
             localItems = multiToJagged(localItems)
         End If
-        Result = recursiveToString(localItems, PrettyPrint, DelimitStrings:=DelimitStrings)
+        Result = recursiveToString( _
+            Arr:=localItems, _
+            PrettyPrint:=PrettyPrint, _
+            DelimitStrings:=DelimitStrings, _
+            OpeningDelimiter:=OpeningDelimiter, _
+            ClosingDelimiter:=ClosingDelimiter _
+        )
     End If
     ToString = Result
 End Function
@@ -659,6 +668,72 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     Set ToExcelRange = localRange
 End Function
 
+Public Function IsSorted(Optional ByVal ColumnIndex As Variant) As Boolean
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim localColumnIndex As Long
+    Dim Depth As Long
+    Dim Result As Boolean
+    Dim localArray() As Variant
+    Dim storedType As ArrayTypes
+    
+    Result = True
+    
+    localArray = getInternalItems()
+    localLowerBound = LBound(localArray)
+    localUpperBound = UBound(localArray)
+    storedType = getArrayType(localArray)
+    If storedType <> BA_UNDEFINED And storedType <> BA_UNALLOCATED Then
+        Select Case storedType
+        Case BA_ONEDIMENSION
+            For i = localLowerBound To localUpperBound - 1
+                If localArray(i) > localArray(i + 1) Then
+                    Result = False
+                    Exit For
+                End If
+            Next
+        Case BA_MULTIDIMENSION
+            ' should never be true as all md arrays stored as jagged internally
+            If IsMissing(ColumnIndex) Or Not IsNumeric(ColumnIndex) Then
+                localColumnIndex = LBound(localArray, 2)
+            Else
+                localColumnIndex = CLng(ColumnIndex)
+            End If
+            For i = localLowerBound To localUpperBound - 1
+                If i = localLowerBound Then
+                End If
+                If localArray(i, localColumnIndex) > localArray(i + 1, localColumnIndex) Then
+                    Result = False
+                    Exit For
+                End If
+            Next
+        Case BA_JAGGED
+            Depth = getJaggedArrayDepth(localArray)
+            If Depth > 2 Then
+                IsSorted = False
+                RaiseError EC_EXCEEDS_MAX_SORT_DEPTH, "IsSorted"
+            Else
+                For i = localLowerBound To localUpperBound - 1
+                    If i = localLowerBound Then
+                        If IsMissing(ColumnIndex) Or Not IsNumeric(ColumnIndex) Then
+                            localColumnIndex = LBound(localArray(i))
+                        Else
+                            localColumnIndex = CLng(ColumnIndex)
+                        End If
+                    End If
+                    If localArray(i)(localColumnIndex) > localArray(i + 1)(localColumnIndex) Then
+                        Result = False
+                        Exit For
+                    End If
+                Next
+            End If
+        End Select
+    End If
+    IsSorted = Result
+End Function
+
+
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
@@ -672,8 +747,8 @@ Public Function ParseFromString( _
         Optional ByVal ArrayClosingDelimiter As String _
     ) As BetterArray
 Attribute ParseFromString.VB_Description = "Parses a string representing an array and stores the outcome."
-    Dim Opener As String
-    Dim Closer As String
+    Dim opener As String
+    Dim closer As String
     Dim ArraysAreDelimited As Boolean
     Dim Result() As Variant
     
@@ -693,19 +768,19 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
                     (Asc(firstChar) < 65 Or Asc(firstChar) > 90) And _
                     (Asc(firstChar) < 97 Or Asc(firstChar) > 122) And _
                     Not IsNumeric(firstChar) Then
-                Opener = firstChar
-                Closer = lastChar
+                opener = firstChar
+                closer = lastChar
                 ArraysAreDelimited = True
             End If
         Else
             ' array delimiters supplied
-            Opener = ArrayOpenDelimiter
-            Closer = ArrayClosingDelimiter
+            opener = ArrayOpenDelimiter
+            closer = ArrayClosingDelimiter
             ArraysAreDelimited = True
         End If
         
         If ArraysAreDelimited Then
-            Result = ParseDelimitedArrayString(SourceString, ValueSeparator, Opener, Closer)
+            Result = ParseDelimitedArrayString(SourceString, ValueSeparator, opener, closer)
         Else
             Result = ParseArraySegmentFromString(SourceString, 1, 0, ValueSeparator)
         End If
@@ -790,39 +865,44 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
     For Each arg In Args
         If IsArray(arg) Then
             localArray = arg
+            ' should never return BA_UNDEFINED as we've already checked it's an array
             localType = getArrayType(localArray)
-            Select Case pArrayType
-                Case BA_UNALLOCATED, BA_UNDEFINED
+            Select Case localType
+            Case BA_UNALLOCATED
+                localArray = getEmptyArray()
+                pArrayType = localType
+            Case BA_ONEDIMENSION
+                ' if adding a multi to a one d then we need to next all existing elements
+                If localType = BA_MULTIDIMENSION Then
+                    storedElements = getInternalItems()
+                    For i = LBound(storedElements) To UBound(storedElements)
+                        If Not IsArray(storedElements(i)) Then
+                            ReDim arrayWrapper(pLowerBound To pLowerBound)
+                            arrayWrapper(pLowerBound) = storedElements(i)
+                            storedElements(i) = arrayWrapper
+                        End If
+                    Next
+                    Me.Items = storedElements
                     pArrayType = localType
-                Case BA_ONEDIMENSION
-                    ' if adding a multi to a one d then we need to next all existing elements
-                    If localType = BA_MULTIDIMENSION Then
-                        storedElements = getInternalItems()
-                        For i = LBound(storedElements) To UBound(storedElements)
-                            If Not IsArray(storedElements(i)) Then
-                                ReDim arrayWrapper(pLowerBound To pLowerBound)
-                                arrayWrapper(pLowerBound) = storedElements(i)
-                                storedElements(i) = arrayWrapper
-                            End If
-                        Next
-                        Me.Items = storedElements
-                        pArrayType = localType
-                    End If
-                Case BA_MULTIDIMENSION
-                    ' ensure all elements are nested is pushing to MD array
-                    If localType = BA_JAGGED Or localType = BA_ONEDIMENSION Then
-                        For i = LBound(localArray) To UBound(localArray)
-                            If Not IsArray(localArray(i)) Then
-                                ReDim arrayWrapper(pLowerBound To pLowerBound)
-                                arrayWrapper(pLowerBound) = localArray(i)
-                                localArray(i) = arrayWrapper
-                            End If
-                        Next
-                    End If
-            End Select
-            If localType = BA_MULTIDIMENSION Then
+                End If
+            Case BA_MULTIDIMENSION
+                ' ensure all elements are nested is pushing to MD array
+                If localType = BA_JAGGED Or localType = BA_ONEDIMENSION Then
+                    For i = LBound(localArray) To UBound(localArray)
+                        If Not IsArray(localArray(i)) Then
+                            ReDim arrayWrapper(pLowerBound To pLowerBound)
+                            arrayWrapper(pLowerBound) = localArray(i)
+                            localArray(i) = arrayWrapper
+                        End If
+                    Next
+                End If
                 localArray = multiToJagged(localArray)
-            End If
+                ' if the stored array is not already a jagged array and
+                ' the passed array is a MD array then set our array type to MD
+                If pArrayType <> BA_JAGGED Then
+                    pArrayType = BA_MULTIDIMENSION
+                End If
+            End Select
             For i = LBound(localArray) To UBound(localArray)
                 Me.Push localArray(i)
             Next
@@ -1023,8 +1103,8 @@ End Function
 Private Function ParseDelimitedArrayString( _
         ByVal SourceString As String, _
         ByVal ValueSeparator As String, _
-        ByVal Opener As String, _
-        ByVal Closer As String, _
+        ByVal opener As String, _
+        ByVal closer As String, _
         Optional ByRef Cursor As Long = 2 _
     ) As Variant()
 Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested arrays from a string."
@@ -1036,10 +1116,10 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
     Dim NextCloser As Long
     
     currentChar = Mid$(SourceString, Cursor, 1)
-    nextOpener = InStr(Cursor, SourceString, Opener)
-    NextCloser = InStr(Cursor, SourceString, Closer)
+    nextOpener = InStr(Cursor, SourceString, opener)
+    NextCloser = InStr(Cursor, SourceString, closer)
     
-    If currentChar <> Opener And (NextCloser < nextOpener Or nextOpener = 0) Then
+    If currentChar <> opener And (NextCloser < nextOpener Or nextOpener = 0) Then
         ' we're inside an array to be parsed
         ParseDelimitedArrayString = ParseArraySegmentFromString(SourceString, Cursor, NextCloser, ValueSeparator)
         Exit Function
@@ -1048,7 +1128,7 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
     ' traverse nested arrays
     i = pLowerBound
     Do
-        If currentChar = Opener Then
+        If currentChar = opener Then
             If i > pLowerBound Then
                 ReDim Preserve localResult(i)
             Else
@@ -1058,17 +1138,17 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
             localResult(i) = ParseDelimitedArrayString( _
                 SourceString, _
                 ValueSeparator, _
-                Opener, _
-                Closer, _
+                opener, _
+                closer, _
                 Cursor _
             )
             i = i + 1
         End If
         currentChar = Mid$(SourceString, Cursor, 1)
-        Do Until currentChar = Opener
+        Do Until currentChar = opener
             Cursor = Cursor + 1
             currentChar = Mid$(SourceString, Cursor, 1)
-            If currentChar = Closer Or Cursor >= Len(SourceString) Then
+            If currentChar = closer Or Cursor >= Len(SourceString) Then
                 breakLoop = True
                 Exit Do
             End If
@@ -1397,22 +1477,29 @@ Private Function recursiveToString( _
         ByRef Arr() As Variant, _
         ByVal PrettyPrint As Boolean, _
         Optional ByVal Tabs As Long = 1, _
-        Optional ByVal DelimitStrings As Boolean _
+        Optional ByVal DelimitStrings As Boolean, _
+        Optional ByVal OpeningDelimiter As String, _
+        Optional ByVal ClosingDelimiter As String _
     ) As String
 Attribute recursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim Result As String
     Dim sep As String
     Dim i As Long
-
-    Result = "{"
+    Dim opener As String
+    Dim closer As String
+    
+    opener = IIf(OpeningDelimiter = vbNullString, "{", OpeningDelimiter)
+    closer = IIf(ClosingDelimiter = vbNullString, "}", ClosingDelimiter)
+    
+    Result = opener
     For i = LBound(Arr) To UBound(Arr)
-        sep = IIf(i = UBound(Arr), "}", IIf(PrettyPrint, ", ", ","))
+        sep = IIf(i = UBound(Arr), closer, IIf(PrettyPrint, ", ", ","))
         If IsArray(Arr(i)) Then
             Dim nested() As Variant
             nested = Arr(i)
             If PrettyPrint Then Result = Result & vbCrLf & Space(tabWidth * Tabs)
-            Result = Result & recursiveToString(nested, PrettyPrint, Tabs + 1, DelimitStrings)
+            Result = Result & recursiveToString(nested, PrettyPrint, Tabs + 1, DelimitStrings, opener, closer)
             Result = Result & IIf(i = UBound(Arr) And PrettyPrint, vbCrLf & Space(tabWidth * (Tabs - 1)) & sep, sep)
         Else
             Result = Result & Replace( _
