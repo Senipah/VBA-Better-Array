@@ -38,6 +38,7 @@ Public Enum ErrorCodes
     EC_EXPECTED_MULTIDIMENSION_ARRAY
     EC_EXPECTED_ARRAY
     EC_NULL_STRING
+    EC_UNALLOCATED_ARRAY
     EC_END
 End Enum
 
@@ -99,6 +100,7 @@ Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
             End If
         Else
             ReDim pItems(pLowerBound To (DEFAULT_CAPACITY + pLowerBound - 1))
+            pArrayType = BA_UNALLOCATED
         End If
         pCapacity = UBound(pItems) - pLowerBound + 1
     End If
@@ -335,7 +337,7 @@ End Function
 '@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes( _
         ByVal SearchElement As Variant, _
-        Optional ByVal FromIndex As Long _
+        Optional ByVal fromIndex As Long _
     ) As Boolean
 Attribute Includes.VB_Description = "Determines whether the array includes a certain value among its entries."
     Dim localLength As Long
@@ -350,13 +352,13 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
         Exit Function
     End If
         
-    If FromIndex > Me.LowerBound Then
-        currentIndex = FromIndex
-    ElseIf FromIndex = 0 Then
+    If fromIndex > Me.LowerBound Then
+        currentIndex = fromIndex
+    ElseIf fromIndex = 0 Then
         'assume 0 val should always be from beginning - cover cases where val is missing
         currentIndex = Me.LowerBound
     Else
-        currentIndex = localLength + FromIndex
+        currentIndex = localLength + fromIndex
     End If
     
     Do While currentIndex < localLength
@@ -453,7 +455,7 @@ Attribute Min.VB_Description = "Returns the smallest value in a list of values. 
             If IsEmpty(Result) Then
                 Result = Arr(i)
             Else
-                If Arr(i) > Result Then Result = Arr(i)
+                If Arr(i) < Result Then Result = Arr(i)
             End If
         End If
     Next
@@ -980,88 +982,95 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Dim relativeTarget As Long
     Dim relativeStart As Long
     Dim relativeEnd As Long
-    Dim idx As Long
-    Dim from As Long
+    Dim toIndex As Long
+    Dim fromIndex As Long
     Dim final As Long
     Dim count As Long
     Dim direction As Long
-    Dim Arr() As Variant
+    Dim localArray() As Variant
     
-    Arr = getInternalItems()
-    localLength = Me.Length
-    relativeTarget = Target
-    
-    If relativeTarget < 0 Then
-        idx = Max((localLength + relativeTarget), 0)
-    Else
-        idx = Min(relativeTarget, localLength)
-    End If
-    
-    relativeStart = StartIndex
-    
-    If relativeStart < 0 Then
-        from = Max((localLength + relativeStart), 0)
-    Else
-        from = Min(relativeStart, localLength)
-    End If
-    
-    If EndIndex = 0 Then
-        relativeEnd = localLength
-    Else
-        relativeEnd = EndIndex
-    End If
-    
-    If relativeEnd < 0 Then
-        final = Max((localLength + relativeEnd), 0)
-    Else
-        final = Min(relativeEnd, localLength)
-    End If
-    
-    count = Min(final - from, localLength - idx)
-    
-    If from < idx And idx < from + count Then
-        direction = -1
-        from = from + count - 1
-        idx = idx + count - 1
-    Else
-        direction = 1
-    End If
-    
-    Do While count > 0
-        If from >= LBound(Arr) And from <= UBound(Arr) Then
-            Arr(idx) = Arr(from)
+    Select Case pArrayType
+    Case ArrayTypes.BA_UNDEFINED
+        RaiseError EC_EXPECTED_ARRAY, "CopyWithin"
+    Case ArrayTypes.BA_UNALLOCATED
+        RaiseError EC_UNALLOCATED_ARRAY, "CopyWithin"
+    Case Else
+        localArray = getInternalItems()
+        localLength = Me.Length
+        relativeTarget = Target
+        
+        If relativeTarget < 0 Then
+            toIndex = Max((localLength + relativeTarget), 0)
+        Else
+            toIndex = Min(relativeTarget, localLength)
         End If
-        from = from + direction
-        idx = idx + direction
-        count = count - 1
-    Loop
+        
+        relativeStart = StartIndex
+        
+        If relativeStart < 0 Then
+            fromIndex = Max((localLength + relativeStart), 0)
+        Else
+            fromIndex = Min(relativeStart, localLength)
+        End If
+        
+        If EndIndex = 0 Then
+            relativeEnd = localLength
+        Else
+            relativeEnd = EndIndex
+        End If
+        
+        If relativeEnd < 0 Then
+            final = Max((localLength + relativeEnd), 0)
+        Else
+            final = Min(relativeEnd, localLength)
+        End If
+        
+        count = Min(final - fromIndex, localLength - toIndex)
+        
+        If fromIndex < toIndex And toIndex < fromIndex + count Then
+            direction = -1
+            fromIndex = fromIndex + count - 1
+            toIndex = toIndex + count - 1
+        Else
+            direction = 1
+        End If
+        
+        Do While count > 0
+            If fromIndex >= LBound(localArray) And fromIndex <= UBound(localArray) Then
+                localArray(toIndex) = localArray(fromIndex)
+            End If
+            fromIndex = fromIndex + direction
+            toIndex = toIndex + direction
+            count = count - 1
+        Loop
+        
+        Me.Items = localArray
+    End Select
     
-    Me.Items = Arr
     Set CopyWithin = Me
+
 End Function
 
 ' TODO: add support for 2d arrays. Consider rename?
 '@Ignore ShadowedDeclaration
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
-Public Function Filter(ByVal Match As Variant, Optional ByVal Exclude As Boolean) As BetterArray
+Public Function Filter(ByVal Match As Variant, Optional ByVal Include As Boolean) As BetterArray
 Attribute Filter.VB_Description = "Filters the stored array to include only values that meet the specified criteria."
-    Dim Element As Variant
-    Dim oldArr() As Variant
-    Dim newArr() As Variant
-    Dim i As Long
-    
-    oldArr = getInternalItems()
-    ReDim newArr(LBound(oldArr), UBound(oldArr))
-    i = Me.LowerBound
-    For Each Element In oldArr
-        If (Exclude And Element = Match) Or (Not Exclude And Element <> Match) Then
-            newArr(i) = Element
-            i = i + 1
-        End If
-    Next
-    ReDim Preserve newArr(Me.LowerBound, i)
-    Me.Items = newArr
+    Dim Result() As Variant
+    Dim localArray() As Variant
+    If pArrayType = BA_UNDEFINED Then
+    ElseIf pArrayType = BA_UNALLOCATED Then
+    Else
+        localArray = getInternalItems
+        Result = recursiveFilter( _
+            localArray, _
+            Match, _
+            Include, _
+            True _
+        )
+    End If
+    Me.Items = Result
     Set Filter = Me
 End Function
 
@@ -1097,6 +1106,67 @@ End Function
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+Private Function recursiveFilter( _
+        ByRef SourceArray() As Variant, _
+        ByVal Match As Variant, _
+        ByVal Include As Boolean, _
+        ByVal Recurse As Boolean _
+    ) As Variant()
+    Dim Result As BetterArray
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim i As Long
+    
+    localLowerBound = LBound(SourceArray)
+    localUpperBound = UBound(SourceArray)
+    Set Result = New BetterArray
+    For i = localLowerBound To localUpperBound
+        If IsArray(SourceArray(i)) Then
+            If isArrayAllocated(SourceArray(i)) Then
+                If Recurse Then
+                    Dim passThruArray() As Variant
+                    passThruArray = SourceArray(i)
+                    Result.Push recursiveFilter( _
+                        passThruArray, _
+                        Match, _
+                        Include, _
+                        Recurse _
+                    )
+                Else
+                    If Not Include Then Result.Push SourceArray(i)
+                End If
+            Else
+                Result.Push getEmptyArray()
+            End If
+        ElseIf IsObject(SourceArray(i)) Then
+            If Not Include Then Result.Push SourceArray(i)
+        Else
+            If (Include And valuesAreEqual(Match, SourceArray(i))) Or _
+                    (Not Include And Not valuesAreEqual(Match, SourceArray(i))) Then
+                Result.Push SourceArray(i)
+            End If
+        End If
+    Next
+    recursiveFilter = Result.Items
+End Function
+
+Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
+    ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
+    ' some roundings in type conversions cause greater diffs than machine epsilon
+    Const Epsilon As Double = 0.0000000000001
+    Dim Result As Boolean
+    Dim diff As Double
+    If IsNumeric(expected) Then
+        diff = Abs(expected - actual)
+        If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
+            Result = True
+        End If
+    ElseIf expected = actual Then
+        Result = True
+    End If
+    valuesAreEqual = Result
+End Function
 
 ' TODO: Refactor to remove recursion
 '@Description("Recursively parses nested arrays from a string.")
@@ -1255,6 +1325,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         number:=ErrorCodes.EC_NULL_STRING, _
         Source:=Source, _
         description:="Cannot parse from a null string. Expected string with length greater than 0." _
+    )
+    ErrorDefinitions(ErrorCodes.EC_UNALLOCATED_ARRAY) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
+        Source:=Source, _
+        description:="Cannot operate on unallocated array." _
     )
 End Sub
 
@@ -2174,6 +2249,8 @@ Attribute createMultidimensionalArray.VB_Description = "Returns an empty multidi
     End Select
     createMultidimensionalArray = Result
 End Function
+
+
 
 
 
