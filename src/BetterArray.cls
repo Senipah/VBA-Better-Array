@@ -36,6 +36,7 @@ Private Enum ErrorCodes
     EC_EXPECTED_JAGGED_ARRAY
     EC_EXPECTED_MULTIDIMENSION_ARRAY
     EC_EXPECTED_ARRAY
+    EC_NULL_STRING
     EC_END
 End Enum
 
@@ -177,14 +178,21 @@ Attribute Items.VB_Description = "Stores the passed array."
     If IsArray(Values) Then
         localValues = Values
         pArrayType = getArrayType(localValues)
-        If pArrayType = ArrayTypes.BA_UNDEFINED _
-           Or pArrayType = ArrayTypes.BA_UNALLOCATED Then
-            ' TOD: Define custom error
-            Err.Raise 9
+        If pArrayType = ArrayTypes.BA_UNDEFINED Then
+            RaiseError EC_EXPECTED_ARRAY, "Items", "Values"
         Else
-            If pArrayType = ArrayTypes.BA_MULTIDIMENSION Then
+            Select Case pArrayType
+            Case ArrayTypes.BA_UNALLOCATED
+                localValues = getEmptyArray()
+            Case ArrayTypes.BA_MULTIDIMENSION
                 localValues = multiToJagged(localValues)
-            End If
+                ' ensure all nested arrays hve the correct base
+                ' if they don't and additional arrays are added via  concat the resulting
+                ' md array from jaggedToMulti will have unexpected bounds
+                ' NOTE: This may need to be applied to jagged too for consistency
+                localValues = recursiveRebase(localValues, True)
+            End Select
+
             localLowerBound = LBound(localValues)
             pItems = localValues
             pLength = UBound(pItems) - LBound(pItems) + 1
@@ -227,7 +235,16 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
         If pLength = pCapacity Then
             EnsureCapacity pLength + 1
         End If
-        letOrSetElement pItems(pLength), Element
+        If IsArray(Element) Then
+            Dim ArrayElement() As Variant
+            ArrayElement = Element
+            If LBound(ArrayElement) <> pLowerBound Then
+                ArrayElement = recursiveRebase(ArrayElement, True)
+            End If
+            letOrSetElement pItems(pLength), ArrayElement
+        Else
+            letOrSetElement pItems(pLength), Element
+        End If
         pLength = pLength + 1
     Next
     Push = pLength
@@ -280,62 +297,6 @@ Attribute Unshift.VB_Description = "Adds one or more elements to the beginning o
         pArrayType = oldType
     End If
     Unshift = Me.Length
-End Function
-
-' TODO: Document
-'@Ignore FunctionReturnValueNotUsed
-'@Description("Parses a string representing an array and stores the outcome.")
-Public Function ParseFromString( _
-        ByVal SourceString As String, _
-        Optional ByVal ValueSeparator As String = ",", _
-        Optional ByVal ArrayOpenDelimiter As String, _
-        Optional ByVal ArrayClosingDelimiter As String _
-    ) As BetterArray
-Attribute ParseFromString.VB_Description = "Parses a string representing an array and stores the outcome."
-    Dim Opener As String
-    Dim Closer As String
-    Dim ArraysAreDelimited As Boolean
-    Dim Result() As Variant
-    
-    If Len(SourceString) > 0 Then
-        If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
-            Dim firstChar As String
-            Dim lastChar As String
-            firstChar = Left$(SourceString, 1)
-            lastChar = Right$(SourceString, 1)
-            ' no array delimiters supplied
-            ' see if the diff in ascii values are for first and last chars are less than 3
-            ' this covers () [] {} <>
-            ' escape numbers incase array is "1,2,3"
-            ' escape ucase letters incase array is "A,B,C"
-            ' escape lcase letters incase array is "a,b,c"
-            If (Asc(lastChar) - Asc(firstChar) < 3) And _
-                    (Asc(firstChar) < 65 Or Asc(firstChar) > 90) And _
-                    (Asc(firstChar) < 97 Or Asc(firstChar) > 122) And _
-                    Not IsNumeric(firstChar) Then
-                Opener = firstChar
-                Closer = lastChar
-                ArraysAreDelimited = True
-            End If
-        Else
-            ' array delimiters supplied
-            Opener = ArrayOpenDelimiter
-            Closer = ArrayClosingDelimiter
-            ArraysAreDelimited = True
-        End If
-        
-        If ArraysAreDelimited Then
-            Result = ParseDelimitedArrayString(SourceString, ValueSeparator, Opener, Closer)
-        Else
-            Result = ParseArraySegmentFromString(SourceString, 1, 0, ValueSeparator)
-        End If
-    Else
-        ' nullstring passed
-        ' handle exception
-    End If
-    
-    Me.Items = Result
-    Set ParseFromString = Me
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -701,6 +662,61 @@ End Function
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
+' TODO: Document
+'@Ignore FunctionReturnValueNotUsed
+'@Description("Parses a string representing an array and stores the outcome.")
+Public Function ParseFromString( _
+        ByVal SourceString As String, _
+        Optional ByVal ValueSeparator As String = ",", _
+        Optional ByVal ArrayOpenDelimiter As String, _
+        Optional ByVal ArrayClosingDelimiter As String _
+    ) As BetterArray
+Attribute ParseFromString.VB_Description = "Parses a string representing an array and stores the outcome."
+    Dim Opener As String
+    Dim Closer As String
+    Dim ArraysAreDelimited As Boolean
+    Dim Result() As Variant
+    
+    If Len(SourceString) > 0 Then
+        If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
+            Dim firstChar As String
+            Dim lastChar As String
+            firstChar = Left$(SourceString, 1)
+            lastChar = Right$(SourceString, 1)
+            ' no array delimiters supplied
+            ' see if the diff in ascii values are for first and last chars are less than 3
+            ' this covers () [] {} <>
+            ' escape numbers incase array is "1,2,3"
+            ' escape ucase letters incase array is "A,B,C"
+            ' escape lcase letters incase array is "a,b,c"
+            If (Asc(lastChar) - Asc(firstChar) < 3) And _
+                    (Asc(firstChar) < 65 Or Asc(firstChar) > 90) And _
+                    (Asc(firstChar) < 97 Or Asc(firstChar) > 122) And _
+                    Not IsNumeric(firstChar) Then
+                Opener = firstChar
+                Closer = lastChar
+                ArraysAreDelimited = True
+            End If
+        Else
+            ' array delimiters supplied
+            Opener = ArrayOpenDelimiter
+            Closer = ArrayClosingDelimiter
+            ArraysAreDelimited = True
+        End If
+        
+        If ArraysAreDelimited Then
+            Result = ParseDelimitedArrayString(SourceString, ValueSeparator, Opener, Closer)
+        Else
+            Result = ParseArraySegmentFromString(SourceString, 1, 0, ValueSeparator)
+        End If
+    Else
+        RaiseError EC_NULL_STRING, "ParseFromString", "SourceString"
+    End If
+    
+    Me.Items = Result
+    Set ParseFromString = Me
+End Function
+
 ' TODO: Document & Test
 '@Ignore ProcedureNotUsed
 Public Function Transpose() As BetterArray
@@ -768,15 +784,41 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
     Dim localArray() As Variant
     Dim localType As ArrayTypes
     Dim i As Long
-    
+    Dim storedElements() As Variant
+    Dim arrayWrapper() As Variant
     
     For Each arg In Args
         If IsArray(arg) Then
             localArray = arg
             localType = getArrayType(localArray)
             Select Case pArrayType
-                Case BA_UNALLOCATED, BA_UNDEFINED, BA_ONEDIMENSION
+                Case BA_UNALLOCATED, BA_UNDEFINED
                     pArrayType = localType
+                Case BA_ONEDIMENSION
+                    ' if adding a multi to a one d then we need to next all existing elements
+                    If localType = BA_MULTIDIMENSION Then
+                        storedElements = getInternalItems()
+                        For i = LBound(storedElements) To UBound(storedElements)
+                            If Not IsArray(storedElements(i)) Then
+                                ReDim arrayWrapper(pLowerBound To pLowerBound)
+                                arrayWrapper(pLowerBound) = storedElements(i)
+                                storedElements(i) = arrayWrapper
+                            End If
+                        Next
+                        Me.Items = storedElements
+                        pArrayType = localType
+                    End If
+                Case BA_MULTIDIMENSION
+                    ' ensure all elements are nested is pushing to MD array
+                    If localType = BA_JAGGED Or localType = BA_ONEDIMENSION Then
+                        For i = LBound(localArray) To UBound(localArray)
+                            If Not IsArray(localArray(i)) Then
+                                ReDim arrayWrapper(pLowerBound To pLowerBound)
+                                arrayWrapper(pLowerBound) = localArray(i)
+                                localArray(i) = arrayWrapper
+                            End If
+                        Next
+                    End If
             End Select
             If localType = BA_MULTIDIMENSION Then
                 localArray = multiToJagged(localArray)
@@ -1129,7 +1171,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         Source:=Source, _
         description:="Expected array." _
     )
-    
+    ErrorDefinitions(ErrorCodes.EC_NULL_STRING) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_NULL_STRING, _
+        Source:=Source, _
+        description:="Cannot parse from a null string. Expected string with length greater than 0." _
+    )
 End Sub
 
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
@@ -1526,7 +1572,7 @@ Private Function recursiveRebase( _
     offset = pLowerBound - localLowerBound
     ReDim newItems(pLowerBound To localUpperBound + offset)
     For i = localLowerBound To localUpperBound
-        If IsArray(Arr(i)) And Recurse Then
+        If IsArray(Arr(i)) And Recurse And offset <> 0 Then
             Dim nested() As Variant
             nested = Arr(i)
             newItems(i + offset) = recursiveRebase(nested, Recurse)
