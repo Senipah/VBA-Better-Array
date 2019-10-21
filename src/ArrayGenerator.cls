@@ -33,6 +33,15 @@ End Enum
 
 Private pLowerBound As Long
 
+Private Sub Class_Initialize()
+    ' Explicitly default to base 0
+    pLowerBound = 0
+End Sub
+
+'''''''''''''''''''''
+' Public Properties '
+'''''''''''''''''''''
+
 Public Property Get LowerBound() As Long
     LowerBound = pLowerBound
 End Property
@@ -41,11 +50,9 @@ Public Property Let LowerBound(ByVal Value As Long)
     pLowerBound = Value
 End Property
 
-
-Private Sub Class_Initialize()
-    ' Explicitly default to base 0
-    pLowerBound = 0
-End Sub
+'''''''''''''''''''
+' Public Methods '
+'''''''''''''''''''
 
 Public Function GetArray( _
         Optional ByVal ValueType As ValueTypes = ValueTypes.AG_VARIANT, _
@@ -76,6 +83,57 @@ Public Function GetArray( _
     End Select
     GetArray = getArrayOfType(localLength, Vals, ArrayType, Depth)
 End Function
+
+Public Function ConcatArraysOfSameStructure( _
+        ByVal ArrayType As ArrayTypes, _
+        ParamArray Args() As Variant _
+    ) As Variant()
+    ' This method is exclusively for use as a test dependency and not for production use
+    ' (same disclaimer applies to all methods in this class)
+    Dim arg As Variant
+    Dim Result() As Variant
+    Dim currentArray() As Variant
+    Dim UpperBound As Long
+    Dim currentIndex As Long
+    
+    UpperBound = -1
+    
+    If ArrayType = AG_UNALLOCATED Or ArrayType = AG_UNDEFINED Then
+        'Handle Exception
+    Else
+        For Each arg In Args
+            If IsArray(arg) Then
+                currentArray = arg
+                UpperBound = UpperBound + GetArrayLength(currentArray)
+            End If
+        Next
+        
+        If ArrayType = AG_MULTIDIMENSION Then
+            ReDim Result(UpperBound, UBound(currentArray, 2))
+            For Each arg In Args
+                If IsArray(arg) Then
+                    currentArray = arg
+                    currentIndex = localMultiDimConcat(currentIndex, Result, currentArray)
+                End If
+            Next
+        Else
+            ReDim Result(UpperBound)
+            For Each arg In Args
+              If IsArray(arg) Then
+                  currentArray = arg
+                  currentIndex = localConcat(currentIndex, Result, currentArray)
+              End If
+            Next
+        End If
+    End If
+    
+    ConcatArraysOfSameStructure = Result
+
+End Function
+
+'''''''''''''''''''
+' Private Methods '
+'''''''''''''''''''
 
 Private Function getArrayOfType( _
         ByVal Length As Long, _
@@ -153,53 +211,6 @@ Private Function getJaggedArray( _
         End If
     Next
     getJaggedArray = Result
-End Function
-
-Public Function ConcatArraysOfSameStructure( _
-        ByVal ArrayType As ArrayTypes, _
-        ParamArray Args() As Variant _
-    ) As Variant()
-    ' This method is exclusively for use as a test dependency and not for production use
-    ' (same disclaimer applies to all methods in this class)
-    Dim arg As Variant
-    Dim Result() As Variant
-    Dim currentArray() As Variant
-    Dim UpperBound As Long
-    Dim currentIndex As Long
-    
-    UpperBound = -1
-    
-    If ArrayType = AG_UNALLOCATED Or ArrayType = AG_UNDEFINED Then
-        'Handle Exception
-    Else
-        For Each arg In Args
-            If IsArray(arg) Then
-                currentArray = arg
-                UpperBound = UpperBound + GetArrayLength(currentArray)
-            End If
-        Next
-        
-        If ArrayType = AG_MULTIDIMENSION Then
-            ReDim Result(UpperBound, UBound(currentArray, 2))
-            For Each arg In Args
-                If IsArray(arg) Then
-                    currentArray = arg
-                    currentIndex = localMultiDimConcat(currentIndex, Result, currentArray)
-                End If
-            Next
-        Else
-            ReDim Result(UpperBound)
-            For Each arg In Args
-              If IsArray(arg) Then
-                  currentArray = arg
-                  currentIndex = localConcat(currentIndex, Result, currentArray)
-              End If
-            Next
-        End If
-    End If
-    
-    ConcatArraysOfSameStructure = Result
-
 End Function
 
 Private Function localMultiDimConcat( _
