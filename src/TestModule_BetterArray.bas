@@ -1994,17 +1994,22 @@ End Sub
 'TODO: CopyWithin test cases
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("d", "b", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, 3, 4).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2012,17 +2017,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayElements3ToEndToIndex1_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("a", "d", "e", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(1, 3).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2030,17 +2040,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayFirstTwoElementsToLastTwoElements_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    expected = Array("Banana", "Orange", "Banana", "Orange")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(2, 0).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2048,17 +2063,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNoStartNoEnd_NothingChanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("a", "b", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2066,17 +2086,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("d", "e", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, 3).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2084,17 +2109,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("d", "e", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, -2).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2102,17 +2132,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayNoStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("c", "b", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, 2, 3).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2120,17 +2155,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayPositiveStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("c", "d", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, 2, -1).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2138,17 +2178,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayNegativeStartNoEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("a", "b", "c", "d", "e")
+    expected = Array("c", "b", "c", "d", "e")
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, -3, -2).Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2156,17 +2201,24 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayPositiveStartPositiveEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_JaggedArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
     
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = testArray
+    expected(0) = expected(3)
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.CopyWithin(0, 3, 4).Items
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2174,57 +2226,26 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayPositiveStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
+Private Sub CopyWithin_EmptyInternal_RaisesError()
+    Const ExpectedError As Long = ErrorCodes.EC_UNALLOCATED_ARRAY
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    '@Ignore VariableNotUsed
+    Dim actual() As Variant
     'Act:
+    actual = SUT.CopyWithin(0, 3, 4).Items
+Assert:
+    Assert.Fail "Expected error was not raised"
 
-    'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
-End Sub
-
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayNegativeStartNegativeEnd_SelectionShallowCopiedLengthUnchanged()
-    On Error GoTo TestFail
-    
-    'Arrange:
-
-
-    
-    'Act:
-
-    'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
-TestExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
-End Sub
-
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_EmptyInternal_GracefulDegradation()
-    On Error GoTo TestFail
-    
-    'Arrange:
-
-
-    
-    'Act:
-
-    'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
-TestExit:
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    If Err.number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
 End Sub
 
 '''''''''''''''''''
@@ -2238,13 +2259,18 @@ Private Sub Filter_OneDimExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
     
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Foo", "Fizz", "Buzz")
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Filter("Bar").Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2734,7 +2760,7 @@ End Sub
 'TODO: Slice test cases
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_OneDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2752,7 +2778,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_OneDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2771,7 +2797,7 @@ End Sub
 
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_MultiDimNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_MultiDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2789,7 +2815,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_MultiDimWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_MultiDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2807,7 +2833,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_JaggedNoEndArg_ReturnsShallowCopy()
+Private Sub Slice_JaggedNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2825,7 +2851,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Slice")
-Private Sub Slice_JaggedWithEndArg_ReturnsShallowCopy()
+Private Sub Slice_JaggedWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3340,6 +3366,7 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
 
 
 
