@@ -1259,13 +1259,34 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim testResult As Boolean
+    
+    firstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    
+    expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
+    expectedLength = Gen.GetArrayLength(expected)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1277,13 +1298,34 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim testResult As Boolean
+    
+    firstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
+    
+    expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
+    expectedLength = Gen.GetArrayLength(expected)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1294,18 +1336,56 @@ End Sub
 Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     On Error GoTo TestFail
     
+     On Error GoTo TestFail
+    
     'Arrange:
-
-
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    
+    ReDim firstArray(1 To 2, 1 To 2)
+    firstArray(1, 1) = "Foo"
+    firstArray(1, 2) = "Bar"
+    firstArray(2, 1) = "Fizz"
+    firstArray(2, 2) = "Buzz"
+    
+    secondArray = Array(1, 2, 3)
+    
+    ReDim expected(0 To 4, 0 To 1)
+    expected(0, 0) = firstArray(1, 1)
+    expected(0, 1) = firstArray(1, 2)
+    expected(1, 0) = firstArray(2, 1)
+    expected(1, 1) = firstArray(2, 2)
+    expected(2, 0) = secondArray(0)
+    expected(2, 1) = Empty
+    expected(3, 0) = secondArray(1)
+    expected(3, 1) = Empty
+    expected(4, 0) = secondArray(2)
+    expected(4, 1) = Empty
+    
+    expectedLength = 5
+    expectedUpperBound = 4
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    
 End Sub
 
 '@TestMethod("BetterArray_Concat")
@@ -1313,13 +1393,47 @@ Private Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    
+    firstArray = Array(1, 2, 3)
+    ReDim secondArray(1 To 2, 1 To 2)
+    secondArray(1, 1) = "Foo"
+    secondArray(1, 2) = "Bar"
+    secondArray(2, 1) = "Fizz"
+    secondArray(2, 2) = "Buzz"
+    
+    ReDim expected(0 To 4, 0 To 1)
+    expected(0, 0) = firstArray(0)
+    expected(0, 1) = Empty
+    expected(1, 0) = firstArray(1)
+    expected(1, 1) = Empty
+    expected(2, 0) = firstArray(2)
+    expected(2, 1) = Empty
+    expected(3, 0) = secondArray(1, 1)
+    expected(3, 1) = secondArray(1, 2)
+    expected(4, 0) = secondArray(2, 1)
+    expected(4, 1) = secondArray(2, 2)
+    
+    expectedLength = 5
+    expectedUpperBound = 4
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -1331,13 +1445,34 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim firstArray() As Variant
+    Dim secondArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    Dim expectedUpperBound As Long
+    Dim actualUpperBound As Long
+    Dim testResult As Boolean
+    
+    firstArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
+    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    
+    expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
+    expectedLength = Gen.GetArrayLength(expected)
+    expectedUpperBound = UBound(expected)
     
     'Act:
-
+    SUT.Items = firstArray
+    actual = SUT.Concat(secondArray).Items
+    actualLength = SUT.Length
+    actualUpperBound = SUT.UpperBound
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> Expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+    Assert.AreEqual expectedUpperBound, actualUpperBound, "Actual UpperBound <> Expected"
 TestExit:
     Exit Sub
 TestFail:
