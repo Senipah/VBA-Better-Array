@@ -129,11 +129,13 @@ End Function
 
 Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
-    ' some roundings in type conversions cause greater thn machine epsilon
+    ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
     Dim result As Boolean
     Dim diff As Double
-    If IsNumeric(expected) Then
+    If IsEmpty(expected) Then
+        If IsEmpty(actual) Then result = True
+    ElseIf IsNumeric(expected) Then
         diff = Abs(expected - actual)
         If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
             result = True
@@ -143,6 +145,7 @@ Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Varia
     End If
     valuesAreEqual = result
 End Function
+
 
 '''''''''''''''''
 ' Instantiation '
@@ -1356,20 +1359,20 @@ Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     
     secondArray = Array(1, 2, 3)
     
-    ReDim expected(0 To 4, 0 To 1)
-    expected(0, 0) = firstArray(1, 1)
-    expected(0, 1) = firstArray(1, 2)
-    expected(1, 0) = firstArray(2, 1)
-    expected(1, 1) = firstArray(2, 2)
-    expected(2, 0) = secondArray(0)
-    expected(2, 1) = Empty
-    expected(3, 0) = secondArray(1)
-    expected(3, 1) = Empty
-    expected(4, 0) = secondArray(2)
-    expected(4, 1) = Empty
+    ReDim expected(1 To 5, 1 To 2)
+    expected(1, 1) = firstArray(1, 1)
+    expected(1, 2) = firstArray(1, 2)
+    expected(2, 1) = firstArray(2, 1)
+    expected(2, 2) = firstArray(2, 2)
+    expected(3, 1) = secondArray(0)
+    expected(3, 2) = Empty
+    expected(4, 1) = secondArray(1)
+    expected(4, 2) = Empty
+    expected(5, 1) = secondArray(2)
+    expected(5, 2) = Empty
     
     expectedLength = 5
-    expectedUpperBound = 4
+    expectedUpperBound = 5
     
     'Act:
     SUT.Items = firstArray
@@ -2281,8 +2284,6 @@ End Sub
 Private Sub Filter_OneDimInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
-    On Error GoTo TestFail
-    
     'Arrange:
     Dim testArray() As Variant
     Dim expected() As Variant
@@ -2303,17 +2304,23 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Filter")
-Private Sub Filter_ArrayMoreThanOneDimension_GracefulDegradation()
+Private Sub Filter_JaggedArrayExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
-    
+
     'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
 
-
-    
+    testArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    expected = Array(Array("Foo"), Array("Fizz", "Buzz"))
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Filter("Bar", False).Items
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2321,17 +2328,86 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Filter")
-Private Sub Filter_EmptyInternal_GracefulDegradation()
+Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArrayn()
     On Error GoTo TestFail
-    
+
     'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
 
+    testArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    expected = Array(Array("Bar"))
 
-    
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Filter("Bar", True).Items
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    'Assert:
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayExclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+
+    ReDim expected(1 To 2, 1 To 2)
+    expected(1, 1) = "Foo"
+    expected(2, 1) = "Fizz"
+    expected(2, 2) = "Buzz"
+
+    SUT.Items = testArray
+    'Act:
+    SUT.Filter "Bar", False
+    actual = SUT.Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayInclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+
+    ReDim expected(1 To 1, 1 To 1)
+    expected(1, 1) = "Bar"
+
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.Filter("Bar", True).Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2341,6 +2417,7 @@ End Sub
 '''''''''''''''''''''
 ' Method - Includes '
 '''''''''''''''''''''
+' TODO: add method IncludesType
 
 'TODO: Includes test cases
 
