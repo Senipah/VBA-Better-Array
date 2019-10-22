@@ -572,7 +572,7 @@ Attribute ExtractColumn.VB_Description = "Extracts the specified column of a mul
         ReDim result(localLowerBound To localUpperBound)
         
         If ColumnNumber >= localLowerBound And ColumnNumber <= localUpperBound Then
-            localColumnNumber = ColumnNumber
+            localColumnNumber = ColumnNumber + Me.LowerBound - 1
         Else
             localColumnNumber = Me.LowerBound
         End If
@@ -604,7 +604,7 @@ Attribute ExtractRow.VB_Description = "Extracts the specified row of a multidime
         ReDim result(localLowerBound To localUpperBound)
 
         If RowNumber >= localLowerBound And RowNumber <= localUpperBound Then
-            localRowNumber = RowNumber
+            localRowNumber = RowNumber + Me.LowerBound - 1
         Else
             localRowNumber = Me.LowerBound
         End If
@@ -1065,9 +1065,11 @@ Attribute Filter.VB_Description = "Filters the stored array to include only valu
     Dim result() As Variant
     Dim localArray() As Variant
     If pArrayType = BA_UNDEFINED Then
+        RaiseError EC_EXPECTED_ARRAY, "Filter"
     ElseIf pArrayType = BA_UNALLOCATED Then
+        result = getEmptyArray()
     Else
-        localArray = getInternalItems
+        localArray = getInternalItems()
         result = recursiveFilter( _
             localArray, _
             Match, _
