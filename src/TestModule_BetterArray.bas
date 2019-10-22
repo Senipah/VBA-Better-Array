@@ -1338,8 +1338,6 @@ End Sub
 Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     On Error GoTo TestFail
     
-     On Error GoTo TestFail
-    
     'Arrange:
     Dim firstArray() As Variant
     Dim secondArray() As Variant
@@ -2283,14 +2281,21 @@ End Sub
 Private Sub Filter_OneDimInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
-    'Arrange:
-
-
+    On Error GoTo TestFail
     
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Bar")
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Filter("Bar", True).Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
