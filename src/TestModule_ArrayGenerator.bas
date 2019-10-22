@@ -74,13 +74,13 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_BOOLEAN, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If TypeName(Element) <> "Boolean" Then testResult = False
+    For Each element In returnedArray
+        If TypeName(element) <> "Boolean" Then testResult = False
     Next
     
     'Assert:
@@ -155,13 +155,13 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_BYTE, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If TypeName(Element) <> "Byte" Then testResult = False
+    For Each element In returnedArray
+        If TypeName(element) <> "Byte" Then testResult = False
     Next
     
     'Assert:
@@ -238,13 +238,13 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_DOUBLE, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If TypeName(Element) <> "Double" Then testResult = False
+    For Each element In returnedArray
+        If TypeName(element) <> "Double" Then testResult = False
     Next
     
     'Assert:
@@ -319,13 +319,13 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_LONG, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If TypeName(Element) <> "Long" Then testResult = False
+    For Each element In returnedArray
+        If TypeName(element) <> "Long" Then testResult = False
     Next
     
     'Assert:
@@ -404,13 +404,13 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_OBJECT, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If Not IsObject(Element) Then testResult = False
+    For Each element In returnedArray
+        If Not IsObject(element) Then testResult = False
     Next
     
     'Assert:
@@ -488,13 +488,13 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     'Arrange:
     Dim returnedArray() As Variant
     Dim testResult As Boolean
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_STRING, ArrayTypes.AG_ONEDIMENSION)
     testResult = True
-    For Each Element In returnedArray
-        If TypeName(Element) <> "String" Then testResult = False
+    For Each element In returnedArray
+        If TypeName(element) <> "String" Then testResult = False
     Next
     
     'Assert:
@@ -572,13 +572,13 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     Dim returnedArray() As Variant
     Dim testResult As Boolean
     Dim firstType As String
-    Dim Element As Variant
+    Dim element As Variant
     
     'Act:
     returnedArray = SUT.GetArray(ValueTypes.AG_VARIANT, ArrayTypes.AG_ONEDIMENSION)
     firstType = TypeName(returnedArray(0))
-    For Each Element In returnedArray
-        If TypeName(Element) <> firstType Then
+    For Each element In returnedArray
+        If TypeName(element) <> firstType Then
             testResult = True
             Exit For
         End If

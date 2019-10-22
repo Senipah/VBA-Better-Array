@@ -158,34 +158,34 @@ Private Function getOneDimensionalArray( _
         ByVal Vals As IValuesList _
     ) As Variant()
     Dim i As Long
-    Dim Arr() As Variant
-    ReDim Arr(pLowerBound To getUpperBound(Length))
-    For i = LBound(Arr) To UBound(Arr)
+    Dim arr() As Variant
+    ReDim arr(pLowerBound To getUpperBound(Length))
+    For i = LBound(arr) To UBound(arr)
         If Vals.IsObjectType Then
-            Set Arr(i) = Vals.GetRandomValue()
+            Set arr(i) = Vals.GetRandomValue()
         Else
-            Arr(i) = Vals.GetRandomValue()
+            arr(i) = Vals.GetRandomValue()
         End If
     Next
-    getOneDimensionalArray = Arr
+    getOneDimensionalArray = arr
 End Function
 
 Private Function getMultidimensionalArray( _
         ByVal Length As Long, ByVal Vals As IValuesList) As Variant()
     Dim i As Long
     Dim j As Long
-    Dim Arr() As Variant
-    ReDim Arr(pLowerBound To getUpperBound(Length), pLowerBound To getUpperBound(Length))
-    For i = LBound(Arr, 1) To UBound(Arr, 1)
-        For j = LBound(Arr, 2) To UBound(Arr, 2)
+    Dim arr() As Variant
+    ReDim arr(pLowerBound To getUpperBound(Length), pLowerBound To getUpperBound(Length))
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        For j = LBound(arr, 2) To UBound(arr, 2)
             If Vals.IsObjectType Then
-                Set Arr(i, j) = Vals.GetRandomValue()
+                Set arr(i, j) = Vals.GetRandomValue()
             Else
-                Arr(i, j) = Vals.GetRandomValue()
+                arr(i, j) = Vals.GetRandomValue()
             End If
         Next
     Next
-    getMultidimensionalArray = Arr
+    getMultidimensionalArray = arr
 End Function
 
 Private Function getJaggedArray( _
