@@ -19,6 +19,7 @@ Option Explicit
 
 Private Const DEFAULT_CAPACITY As Long = 4
 Private Const MAX_ARRAY_LENGTH = &H7FEFFFFF
+Private Const OBJECT_REPR As String = "OBJECT"
 Private Enum ArrayTypes
     BA_UNDEFINED
     BA_UNALLOCATED
@@ -40,6 +41,7 @@ Public Enum ErrorCodes
     EC_NULL_STRING
     EC_UNALLOCATED_ARRAY
     EC_UNDEFINED_ARRAY
+    EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION
     EC_END
 End Enum
 
@@ -246,12 +248,12 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
             EnsureCapacity pLength + 1
         End If
         If IsArray(element) Then
-            Dim ArrayElement() As Variant
+            Dim arrayElement() As Variant
             Dim ArrayElementType As ArrayTypes
-            ArrayElement = element
-            ArrayElementType = getArrayType(ArrayElement)
+            arrayElement = element
+            ArrayElementType = getArrayType(arrayElement)
             If ArrayElementType = BA_UNALLOCATED Then
-                ArrayElement = getEmptyArray()
+                arrayElement = getEmptyArray()
             Else
                 If pArrayType = ArrayTypes.BA_ONEDIMENSION Then
                     If ArrayElementType = BA_MULTIDIMENSION Then
@@ -260,11 +262,11 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
                         pArrayType = ArrayTypes.BA_JAGGED
                     End If
                 End If
-                If LBound(ArrayElement) <> pLowerBound Then
-                    ArrayElement = Rebase(ArrayElement, ArrayElementType)
+                If LBound(arrayElement) <> pLowerBound Then
+                    arrayElement = Rebase(arrayElement, ArrayElementType)
                 End If
             End If
-            letOrSetElement pItems(pLength + pLowerBound), ArrayElement
+            letOrSetElement pItems(pLength + pLowerBound), arrayElement
         Else
             letOrSetElement pItems(pLength + pLowerBound), element
         End If
@@ -408,76 +410,30 @@ End Function
 '@Description("Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array")
 Public Function Max(ParamArray Args() As Variant) As Variant
 Attribute Max.VB_Description = "Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array"
-    Dim i As Long
     Dim arr() As Variant
-    Dim result As Variant
     
     If UBound(Args) < LBound(Args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
         arr = Args
-        If IsArray(arr) Then
-            ' exit function if array is multi dimensional
-            If isMultidimensionalArray(arr) Then
-                Exit Function
-            End If
-        End If
     End If
     
-    ' extract first array if argument(s) are arrays
-    Do While IsArray(arr(0))
-        arr = arr(0)
-    Loop
-    
-    For i = LBound(arr) To UBound(arr)
-        If Not IsArray(arr(i)) And Not IsObject(arr(i)) Then
-            If IsEmpty(result) Then
-                result = arr(i)
-            Else
-                If arr(i) > result Then result = arr(i)
-            End If
-        End If
-    Next
-    
-    Max = result
+    Max = recursiveMax(arr)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array")
 Public Function Min(ParamArray Args() As Variant) As Variant
 Attribute Min.VB_Description = "Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array"
-    Dim i As Long
     Dim arr() As Variant
-    Dim result As Variant
     
     If UBound(Args) < LBound(Args) Then          'Test if no args provided
         arr = getInternalItems()
     Else
         arr = Args
-        If IsArray(arr) Then
-            ' exit function if array is multi dimensional
-            If isMultidimensionalArray(arr) Then
-                Exit Function
-            End If
-        End If
     End If
     
-    ' extract first array if argument(s) are arrays
-    Do While IsArray(arr(0))
-        arr = arr(0)
-    Loop
-        
-    For i = LBound(arr) To UBound(arr)
-        If Not IsArray(arr(i)) And Not IsObject(arr(i)) Then
-            If IsEmpty(result) Then
-                result = arr(i)
-            Else
-                If arr(i) < result Then result = arr(i)
-            End If
-        End If
-    Next
-    
-    Min = result
+    Min = recursiveMin(arr)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -1138,6 +1094,89 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
+' TODO: use or lose
+Private Function flatten(arr(), Optional ByRef results As BetterArray) As Variant
+    Dim element As Variant
+    If results Is Nothing Then Set results = New BetterArray
+    For Each element In arr
+        If IsArray(element) Then
+            Dim arrayElement() As Variant
+            arrayElement = element
+            flatten arrayElement, results
+        Else
+            results.Push element
+        End If
+    Next
+    flatten = results.Items
+End Function
+
+Private Function recursiveMax(ByRef arr() As Variant) As Variant
+    Dim i As Long
+    Dim result As Variant
+    
+    If isMultidimensionalArray(arr) Then
+        RaiseError EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, "Max", "Args"
+    Else
+        For i = LBound(arr) To UBound(arr)
+            If IsArray(arr(i)) Then
+                Dim nestedArray() As Variant
+                Dim nestedResult As Variant
+                nestedArray = arr(i)
+                nestedResult = recursiveMax(nestedArray)
+                If IsEmpty(result) Then
+                    result = nestedResult
+                Else
+                    If nestedResult > result Then result = nestedResult
+                End If
+            Else
+                Dim currentValue As Variant
+                currentValue = getScalarRepresentation(arr(i))
+                If currentValue <> OBJECT_REPR Then
+                    If IsEmpty(result) Then
+                        result = currentValue
+                    Else
+                        If currentValue > result Then result = currentValue
+                    End If
+                End If
+            End If
+        Next
+    End If
+    recursiveMax = result
+End Function
+
+Private Function recursiveMin(ByRef arr() As Variant) As Variant
+    Dim i As Long
+    Dim result As Variant
+    
+    If isMultidimensionalArray(arr) Then
+        RaiseError EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, "Max", "Args"
+    Else
+        For i = LBound(arr) To UBound(arr)
+            If IsArray(arr(i)) Then
+                Dim nestedArray() As Variant
+                Dim nestedResult As Variant
+                nestedArray = arr(i)
+                nestedResult = recursiveMin(nestedArray)
+                If IsEmpty(result) Then
+                    result = nestedResult
+                Else
+                    If nestedResult < result Then result = nestedResult
+                End If
+            Else
+                Dim currentValue As Variant
+                currentValue = getScalarRepresentation(arr(i))
+                If currentValue <> OBJECT_REPR Then
+                    If IsEmpty(result) Then
+                        result = currentValue
+                    Else
+                        If currentValue < result Then result = currentValue
+                    End If
+                End If
+            End If
+        Next
+    End If
+    recursiveMin = result
+End Function
 
 Private Function recursiveIncludes( _
         ByVal SearchElement As Variant, _
@@ -1237,7 +1276,7 @@ Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Varia
     Dim diff As Double
     If IsEmpty(expected) Then
         If IsEmpty(actual) Then result = True
-    ElseIf IsNumeric(expected) Then
+    ElseIf IsNumeric(expected) And IsNumeric(actual) Then
         diff = Abs(expected - actual)
         If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
             result = True
@@ -1415,6 +1454,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
         Source:=Source, _
         description:="Array is undefined." _
+    )
+    ErrorDefinitions(ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, _
+        Source:=Source, _
+        description:="Unable to perform the requested operation on a multidimensional array." _
     )
 End Sub
 
@@ -1686,7 +1730,7 @@ Attribute getScalarRepresentation.VB_Description = "Returns scalar values as is 
         On Error GoTo 0
         ' if there is no default member or it returns an object result = Empty
         If IsEmpty(result) Then
-            result = "OBJECT"
+            result = OBJECT_REPR
         End If
     Else
         result = element
