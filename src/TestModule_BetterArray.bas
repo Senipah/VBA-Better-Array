@@ -135,7 +135,7 @@ Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Varia
     Dim diff As Double
     If IsEmpty(expected) Then
         If IsEmpty(actual) Then result = True
-    ElseIf IsNumeric(expected) Then
+    ElseIf IsNumeric(expected) And IsNumeric(actual) Then
         diff = Abs(expected - actual)
         If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
             result = True
@@ -2717,17 +2717,22 @@ End Sub
 'TODO: Max test cases
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayNumeric_ReturnsLargest()
+Private Sub Max_OneDimArrayNumericInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array(1, 3, 2, 6, 4, 9, 0, 5)
+    Dim expected As Long
+    Dim actual As Long
     
+    expected = 9
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Max
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2735,17 +2740,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayStrings_ReturnsLargest()
+Private Sub Max_OneDimArrayStringsInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    Dim expected As String
+    Dim actual As String
     
+    expected = "Foo"
+    SUT.Items = testArray
     'Act:
+    actual = CStr(SUT.Max)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2753,17 +2763,23 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayVariants_ReturnsLargest()
+Private Sub Max_OneDimArrayVariantsInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
     
+    expected = "Foo"
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Max
+    testResult = valuesAreEqual(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2771,17 +2787,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayObjects_GracefulDegradation()
+Private Sub Max_OneDimArrayObjects_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(AG_OBJECT)
+    Dim expected As Variant
+    Dim actual As Variant
     
+    expected = Empty
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Max
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2793,13 +2814,42 @@ Private Sub Max_ParamArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
     
+    expected = "Foo"
     'Act:
-
+    actual = SUT.Max("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    testResult = valuesAreEqual(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Max")
+Private Sub Max_PassedArray_ReturnsLargest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    testArray = Array("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
+    
+    expected = "Foo"
+    'Act:
+    actual = SUT.Max(testArray)
+    testResult = valuesAreEqual(expected, actual)
+    
+    'Assert:
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2807,17 +2857,20 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_MoreThanOneDimension_GracefulDegradation()
+Private Sub Max_JaggedArray_Returnslargest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray As Variant
+    testArray = Array(Array(1, 3, 20, 4), Array(8, 2, 7, 9))
+    expected = 20
     'Act:
+    actual = SUT.Max(testArray)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2825,17 +2878,19 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_EmptyInternal_GracefulDegradation()
+Private Sub Max_EmptyInternal_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim actual As Variant
+    Dim expected As Variant
+    expected = Empty
     
     'Act:
+    actual = SUT.Max
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreSame expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2848,19 +2903,23 @@ End Sub
 ''''''''''''''''
 
 'TODO: Min test cases
-
 '@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayNumeric_ReturnsSmallest()
+Private Sub Min_OneDimArrayNumericInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array(1, 3, 2, 6, 4, 9, 0, 5)
+    Dim expected As Long
+    Dim actual As Long
     
+    expected = 0
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Min
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2868,17 +2927,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayStrings_ReturnsSmallest()
+Private Sub Min_OneDimArrayStringsInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    Dim expected As String
+    Dim actual As String
     
+    expected = "Bar"
+    SUT.Items = testArray
     'Act:
+    actual = CStr(SUT.Min)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2886,17 +2950,23 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayVariants_ReturnsSmallest()
+Private Sub Min_OneDimArrayVariantsInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Array("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
     
+    expected = -1
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Min
+    testResult = valuesAreEqual(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2904,17 +2974,22 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayObjects_GracefulDegradation()
+Private Sub Min_OneDimArrayObjects_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(AG_OBJECT)
+    Dim expected As Variant
+    Dim actual As Variant
     
+    expected = Empty
+    SUT.Items = testArray
     'Act:
+    actual = SUT.Min
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2926,13 +3001,42 @@ Private Sub Min_ParamArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
     
+    expected = -1
     'Act:
-
+    actual = SUT.Min("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    testResult = valuesAreEqual(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Min")
+Private Sub Min_PassedArray_ReturnsSmallest()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    testArray = Array("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
+    Dim expected As Variant
+    Dim actual As Variant
+    Dim testResult As Boolean
+    
+    expected = -1
+    'Act:
+    actual = SUT.Min(testArray)
+    testResult = valuesAreEqual(expected, actual)
+    
+    'Assert:
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2940,17 +3044,20 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Min")
-Private Sub Min_MoreThanOneDimension_GracefulDegradation()
+Private Sub Min_JaggedArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
-
-
-    
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray As Variant
+    testArray = Array(Array(1, 3, 20, 4), Array(8, 2, 7, 9))
+    expected = 1
     'Act:
+    actual = SUT.Min(testArray)
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -2958,17 +3065,19 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Min")
-Private Sub Min_EmptyInternal_GracefulDegradation()
+Private Sub Min_EmptyInternal_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim actual As Variant
+    Dim expected As Variant
+    expected = Empty
     
     'Act:
+    actual = SUT.Min
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreSame expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
