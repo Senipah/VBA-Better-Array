@@ -3095,13 +3095,41 @@ Private Sub Slice_OneDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(AG_VARIANT)
+    expected = testArray
     
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Slice(0)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Slice")
+Private Sub Slice_OneDimNoEndArgObjects_ReturnsCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(AG_OBJECT)
+    expected = testArray
+    
+    SUT.Items = testArray
+    'Act:
+    actual = SUT.Slice(0)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3113,13 +3141,18 @@ Private Sub Slice_OneDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Foo", "Bar")
     
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Slice(0, 2)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3132,13 +3165,26 @@ Private Sub Slice_MultiDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray(1 To 4, 1 To 2) As Variant
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+    testArray(3, 1) = "Xyzzy"
+    testArray(3, 2) = "flob"
+    testArray(4, 1) = "quux"
+    testArray(4, 2) = "quuz"
     
+    expected = testArray
+    
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Slice(1)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3150,13 +3196,28 @@ Private Sub Slice_MultiDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected(1 To 2, 1 To 2) As Variant
+    Dim actual() As Variant
+    Dim testArray(1 To 4, 1 To 2) As Variant
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+    testArray(3, 1) = "Xyzzy"
+    testArray(3, 2) = "flob"
+    testArray(4, 1) = "quux"
+    testArray(4, 2) = "quuz"
     
+    expected(1, 1) = "Foo"
+    expected(1, 2) = "Bar"
+    expected(2, 1) = "Fizz"
+    expected(2, 2) = "Buzz"
+    
+    SUT.Items = testArray
     'Act:
-
+    actual = SUT.Slice(1, 3)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3168,13 +3229,17 @@ Private Sub Slice_JaggedNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
 
-
-    
+    SUT.Items = expected
     'Act:
-
+    actual = SUT.Slice(LBound(expected))
+    testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3186,13 +3251,23 @@ Private Sub Slice_JaggedWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim testResult As Boolean
+    
+    testArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"), _
+        Array("Xyzzy", "flob"), Array("quux", "quuz"))
+   
+    expected = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    SUT.Items = testArray
     
     'Act:
-
+    actual = SUT.Slice(LBound(expected), 2)
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3204,20 +3279,18 @@ Private Sub Slice_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
 
-
-    
     'Act:
-
+    actual = SUT.Slice(1)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
-
-
 
 ''''''''''''''''''''
 ' Method - Reverse '
