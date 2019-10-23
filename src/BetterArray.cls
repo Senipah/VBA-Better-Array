@@ -453,34 +453,44 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     arr = getInternalItems()
     localLength = Me.Length
     relativeStart = StartIndex
-    If relativeStart < 0 Then
-        oldIndex = Max((localLength + relativeStart), 0)
+    If relativeStart < LBound(arr) Then
+        If relativeStart < 0 Then
+            oldIndex = Max((localLength + relativeStart), LBound(arr))
+        Else
+            oldIndex = Max((localLength - relativeStart), LBound(arr))
+        End If
     Else
         oldIndex = Min(relativeStart, localLength)
     End If
     If EndIndex = 0 Then
-        relativeEnd = localLength
+        relativeEnd = localLength + pLowerBound
     Else
         relativeEnd = EndIndex
     End If
-    If relativeEnd < 0 Then
-        final = Max((localLength + relativeEnd), 0)
+    If relativeEnd < LBound(arr) Then
+        final = Max((localLength + relativeEnd), LBound(arr))
     Else
-        final = Min(relativeEnd, localLength)
+        final = Min(relativeEnd, localLength + pLowerBound)
     End If
     
     newIndex = pLowerBound
     count = Max(final - oldIndex, 0) + pLowerBound
-    ReDim result(newIndex To count - 1)
-    Do While oldIndex < final
-        If oldIndex >= LBound(arr) And oldIndex <= UBound(arr) Then
-            result(newIndex) = arr(oldIndex)
-            newIndex = newIndex + 1
-            oldIndex = oldIndex + 1
+    If count > newIndex Then
+        ReDim result(newIndex To count - 1)
+        Do While oldIndex < final
+            If oldIndex >= LBound(arr) And oldIndex <= UBound(arr) Then
+                letOrSetElement result(newIndex), arr(oldIndex)
+                newIndex = newIndex + 1
+                oldIndex = oldIndex + 1
+            End If
+        Loop
+        If pArrayType = BA_MULTIDIMENSION Then
+            Slice = jaggedToMulti(result)
+        Else
+            Slice = result
         End If
-    Loop
+    End If
     
-    Slice = result
 End Function
 
 ' TODO: Implement, Document & Test FromExcelRange method
@@ -1095,7 +1105,7 @@ End Function
 '''''''''''''''''''
 
 ' TODO: use or lose
-Private Function flatten(arr(), Optional ByRef results As BetterArray) As Variant
+Private Function flatten(ByRef arr(), Optional ByRef results As BetterArray) As Variant
     Dim element As Variant
     If results Is Nothing Then Set results = New BetterArray
     For Each element In arr
