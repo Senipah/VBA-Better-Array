@@ -39,6 +39,7 @@ Public Enum ErrorCodes
     EC_EXPECTED_ARRAY
     EC_NULL_STRING
     EC_UNALLOCATED_ARRAY
+    EC_UNDEFINED_ARRAY
     EC_END
 End Enum
 
@@ -351,17 +352,17 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Determines whether the array includes a certain value among its entries.")
+'@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
 Public Function Includes( _
         ByVal SearchElement As Variant, _
         Optional ByVal fromIndex As Long _
     ) As Boolean
-Attribute Includes.VB_Description = "Determines whether the array includes a certain value among its entries."
+Attribute Includes.VB_Description = "Determines whether the SearchArrayay includes a certain value among its entries."
     Dim localLength As Long
     Dim currentIndex As Long
-    Dim arr() As Variant
+    Dim SearchArray() As Variant
     
-    arr = getInternalItems()
+    SearchArray = getInternalItems()
     localLength = Me.Length
     
     If localLength = 0 Then
@@ -378,14 +379,7 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
         currentIndex = localLength + fromIndex
     End If
     
-    Do While currentIndex < localLength
-        If arr(currentIndex) = SearchElement Then
-            Includes = True
-            Exit Function
-        End If
-        currentIndex = currentIndex + 1
-    Loop
-    Includes = False
+    Includes = recursiveIncludes(SearchElement, SearchArray, currentIndex)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -394,13 +388,19 @@ Public Function Keys() As Variant()
 Attribute Keys.VB_Description = "Returns a new array that contains the keys for each index in the array."
     Dim i As Long
     Dim localLowerBound As Long
-    Dim localUpperBound As Long
     Dim result() As Variant
     
-    localLowerBound = Me.LowerBound
-    localUpperBound = Me.UpperBound
-    ReDim result(localLowerBound To localUpperBound)
-    For i = localLowerBound To localUpperBound: result(i) = i: Next
+    If pArrayType = BA_UNDEFINED Then
+        RaiseError EC_UNDEFINED_ARRAY, "Keys"
+    ElseIf pArrayType = BA_UNALLOCATED Then
+        RaiseError EC_UNALLOCATED_ARRAY, "Keys"
+    Else
+        localLowerBound = Me.LowerBound
+        ReDim result(0 To Me.Length - 1)
+        For i = LBound(result) To UBound(result)
+            result(i) = i + localLowerBound
+        Next
+    End If
     Keys = result
 End Function
 
@@ -1138,6 +1138,35 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
+
+Private Function recursiveIncludes( _
+        ByVal SearchElement As Variant, _
+        ByRef SearchArray() As Variant, _
+        Optional ByVal fromIndex As Long _
+    ) As Boolean
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim i As Long
+    localLowerBound = LBound(SearchArray)
+    If fromIndex > localLowerBound Then localLowerBound = fromIndex
+    localUpperBound = UBound(SearchArray)
+    For i = localLowerBound To localUpperBound
+        If IsArray(SearchArray(i)) Then
+            Dim passThru() As Variant
+            passThru = SearchArray(i)
+            If recursiveIncludes(SearchElement, passThru) Then
+                recursiveIncludes = True
+                Exit Function
+            End If
+        Else
+            If valuesAreEqual(SearchElement, SearchArray(i)) Then
+                recursiveIncludes = True
+                Exit Function
+            End If
+        End If
+    Next
+End Function
+
 Private Function recursiveFilter( _
         ByRef SourceArray() As Variant, _
         ByVal match As Variant, _
@@ -1381,6 +1410,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
         Source:=Source, _
         description:="Cannot operate on unallocated array." _
+    )
+    ErrorDefinitions(ErrorCodes.EC_UNDEFINED_ARRAY) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
+        Source:=Source, _
+        description:="Array is undefined." _
     )
 End Sub
 
