@@ -104,7 +104,7 @@ Public Function ConcatArraysOfSameStructure( _
         For Each arg In Args
             If IsArray(arg) Then
                 currentArray = arg
-                UpperBound = UpperBound + GetArrayLength(currentArray)
+                UpperBound = UpperBound + getArrayLength(currentArray)
             End If
         Next
         
@@ -129,6 +129,10 @@ Public Function ConcatArraysOfSameStructure( _
     
     ConcatArraysOfSameStructure = result
 
+End Function
+
+Public Function getArrayLength(ByRef SourceArray() As Variant) As Long
+    getArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
 End Function
 
 '''''''''''''''''''
@@ -246,10 +250,6 @@ Private Function localConcat( _
         End If
     Next
     localConcat = StartingIndex + i
-End Function
-
-Public Function GetArrayLength(ByRef SourceArray() As Variant) As Long
-    GetArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
 End Function
 
 Private Function getUpperBound(ByVal Length As Long) As Long

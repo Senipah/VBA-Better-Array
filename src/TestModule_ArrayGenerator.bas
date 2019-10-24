@@ -1783,7 +1783,7 @@ Private Sub GetArrayLength_OneDimArray_ReturnsCorrectLength()
     
     'Act:
     testArray = SUT.GetArray(Length:=TEST_ARRAY_LENGTH)
-    actual = SUT.GetArrayLength(testArray)
+    actual = SUT.getArrayLength(testArray)
     
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> Expected"
