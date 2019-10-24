@@ -1093,7 +1093,7 @@ Attribute Reverse.VB_Description = "Reverses the order of elements in the array.
     Set Reverse = Me
 End Function
 
-' TODO: Document & test
+' TODO: Implement, Document & Test Flatten method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Flattens a Multi-Dimensional or Jagged array into One Dimension arrays.")
 Public Function Flatten() As BetterArray
@@ -1117,17 +1117,74 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
 End Function
 
 ' TODO: Implement, Document & Test Shuffle method
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+'@Description("shuffles the order of the stored array.")
+Public Function Shuffle(Optional recurse As Boolean) As BetterArray
+    Dim localItems() As Variant
+    Dim result() As Variant
+    Dim currentType As ArrayTypes
+    currentType = pArrayType
+    Select Case currentType
+    Case BA_UNDEFINED
+        RaiseError EC_UNDEFINED_ARRAY, "Shuffle"
+    Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
+        localItems = getInternalItems()
+        result = recursiveShuffle(localItems, recurse)
+        Me.Items = result
+        pArrayType = currentType
+    End Select
+    
+    Set Shuffle = Me
+End Function
 
-' TODO: Implement, Document & Test Flatten method
 
 ' TODO: add algos from C++ STL https://en.cppreference.com/w/cpp/algorithm
 
 ' TODO: Implement remove method to delete entry by index
 
+' TODO: Implement, Document & Test IncludesType method
+
+' TODO: Implement, Document & Test FilterByType method
+
+' TODO: Implement, Document & Test First prop ?
+
+' TODO: Implement, Document & Test Last prop ?
+
+
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
 
+'@Description("shuffles the order of the passed array.")
+Private Function recursiveShuffle( _
+    ByRef arr() As Variant, _
+    Optional ByVal recurse As Boolean _
+    ) As Variant()
+    ' https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+    Dim i As Long
+    Dim j As Long
+    Dim lower As Long
+    Dim upper As Long
+    Dim nested() As Variant
+    lower = LBound(arr)
+    upper = UBound(arr)
+    Randomize
+    For i = upper To lower + 1 Step -1
+        If IsArray(arr(i)) And recurse Then
+            nested = arr(i)
+            arr(i) = recursiveShuffle(nested, recurse)
+        End If
+        j = Int(Rnd * (i + 1))
+        If IsArray(arr(j)) And recurse Then
+            nested = arr(j)
+            arr(j) = recursiveShuffle(nested, recurse)
+        End If
+        Swap arr, i, j
+    Next
+    recursiveShuffle = arr
+End Function
+
+'@Description("reverses the order of the passed array.")
 Private Function recursiveReverse( _
     ByRef arr() As Variant, _
     Optional ByVal recurse As Boolean _
@@ -1142,13 +1199,6 @@ Private Function recursiveReverse( _
     localLength = getArrayLength(arr)
     lower = LBound(arr)
     middle = Int(localLength / 2) + lower
-    
-'    If middle > lower Then
-'        If IsArray(arr(middle)) And recurse Then
-'            passThruArray = arr(middle)
-'            arr(middle) = recursiveReverse(passThruArray, recurse)
-'        End If
-'    End If
     
     Do While lower <> middle
         ' TODO: check this works with and lb
@@ -1167,6 +1217,7 @@ Private Function recursiveReverse( _
     recursiveReverse = arr
 End Function
 
+'@Description("returns the length of the passed array.")
 Private Function getArrayLength(ByRef SourceArray() As Variant) As Long
     getArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
 End Function
