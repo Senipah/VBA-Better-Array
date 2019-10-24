@@ -3560,13 +3560,18 @@ Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim sortedArray() As Variant
+    Dim actual() As Variant
     
+    testArray = Gen.GetArray(AG_DOUBLE)
+    SUT.Items = testArray
+    sortedArray = SUT.Sort.Items
     'Act:
+    actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.NotSequenceEquals sortedArray, actual, "Array is not shufled"
 TestExit:
     Exit Sub
 TestFail:
