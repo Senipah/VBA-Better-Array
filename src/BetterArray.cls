@@ -97,7 +97,7 @@ Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
     If Value < 0 Then Err.Raise 9
     If Value <> pCapacity Then
         If pCapacity > 0 Then
-            If (UBound(pItems) - LBound(pItems) + 1) <> Value Then
+            If getArrayLength(pItems) <> Value Then
                 Dim newItems() As Variant
                 newItems = pItems
                 ReDim Preserve newItems(pLowerBound To (Value + pLowerBound - 1))
@@ -213,7 +213,7 @@ Attribute Items.VB_Description = "Stores the passed array."
                 pLowerBound = localLowerBound
                 pItems = localValues
             End If
-            pLength = UBound(localValues) - LBound(localValues) + 1
+            pLength = getArrayLength(localValues)
             Me.Capacity = pLength
         End If
     Else
@@ -1074,23 +1074,47 @@ End Function
 ' TODO: Check implementation against spec
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
-Public Function Reverse() As BetterArray
+Public Function Reverse(Optional recurse As Boolean) As BetterArray
 Attribute Reverse.VB_Description = "Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first."
-    Dim i As Long
-    Dim localUpperBound As Long
-    Dim arr() As Variant
+    Dim localItems() As Variant
     Dim result() As Variant
-    arr = getInternalItems()
-    localUpperBound = Me.UpperBound
-    ReDim result(Me.LowerBound To localUpperBound)
-    For i = localUpperBound To Me.LowerBound Step -1
-        result = arr(i)
-    Next
-    Me.Items = result
+    Dim currentType As ArrayTypes
+    currentType = pArrayType
+    Select Case currentType
+    Case BA_UNDEFINED
+        RaiseError EC_UNDEFINED_ARRAY, "Reverse"
+    Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
+        localItems = getInternalItems()
+        result = recursiveReverse(localItems, recurse)
+        Me.Items = result
+        pArrayType = currentType
+    End Select
+    
     Set Reverse = Me
 End Function
 
+' TODO: Document & test
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+'@Description("Flattens a Multi-Dimensional or Jagged array into One Dimension arrays.")
+Public Function Flatten() As BetterArray
+Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array into One Dimension arrays."
+    Dim localItems() As Variant
+    Dim result As BetterArray
+        
+    ' noop on 1d or unalloc
+    ' md & jagged both stored as jagged
+    Select Case pArrayType
+    Case BA_UNDEFINED
+        RaiseError EC_UNDEFINED_ARRAY, "Flatten"
+    Case BA_MULTIDIMENSION, BA_JAGGED
+        localItems = getInternalItems()
+        Set result = New BetterArray
+        recursiveFlatten localItems, result
+        Me.Items = result.Items
+    End Select
 
+    Set Flatten = Me
+End Function
 
 ' TODO: Implement, Document & Test Shuffle method
 
@@ -1104,22 +1128,67 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
-' TODO: use or lose
-Private Function flatten(ByRef arr(), Optional ByRef results As BetterArray) As Variant
+Private Function recursiveReverse( _
+    ByRef arr() As Variant, _
+    Optional ByVal recurse As Boolean _
+    ) As Variant()
+    
+    Dim localLength As Long
+    Dim middle As Long
+    Dim lower As Long
+    Dim upper As Long
+    Dim passThruArray() As Variant
+    
+    localLength = getArrayLength(arr)
+    lower = LBound(arr)
+    middle = Int(localLength / 2) + lower
+    
+'    If middle > lower Then
+'        If IsArray(arr(middle)) And recurse Then
+'            passThruArray = arr(middle)
+'            arr(middle) = recursiveReverse(passThruArray, recurse)
+'        End If
+'    End If
+    
+    Do While lower <> middle
+        ' TODO: check this works with and lb
+        upper = UBound(arr) + LBound(arr) - lower
+        If IsArray(arr(lower)) And recurse Then
+            passThruArray = arr(lower)
+            arr(lower) = recursiveReverse(passThruArray, recurse)
+        End If
+        If IsArray(arr(upper)) And recurse Then
+            passThruArray = arr(upper)
+            arr(upper) = recursiveReverse(passThruArray, recurse)
+        End If
+        Swap arr, lower, upper
+        lower = lower + 1
+    Loop
+    recursiveReverse = arr
+End Function
+
+Private Function getArrayLength(ByRef SourceArray() As Variant) As Long
+    getArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
+End Function
+
+'@Description("converts all the values in a jagged array to a 1d array.")
+Private Sub recursiveFlatten( _
+        ByRef arr(), _
+        ByRef results As BetterArray _
+    )
     Dim element As Variant
-    If results Is Nothing Then Set results = New BetterArray
     For Each element In arr
         If IsArray(element) Then
             Dim arrayElement() As Variant
             arrayElement = element
-            flatten arrayElement, results
+            recursiveFlatten arrayElement, results
         Else
             results.Push element
         End If
     Next
-    flatten = results.Items
-End Function
+End Sub
 
+'@Description("Recursively finds the largest value in an array.")
 Private Function recursiveMax(ByRef arr() As Variant) As Variant
     Dim i As Long
     Dim result As Variant
@@ -1154,6 +1223,7 @@ Private Function recursiveMax(ByRef arr() As Variant) As Variant
     recursiveMax = result
 End Function
 
+'@Description("Recursively finds the smallest value in an array.")
 Private Function recursiveMin(ByRef arr() As Variant) As Variant
     Dim i As Long
     Dim result As Variant
@@ -1188,6 +1258,7 @@ Private Function recursiveMin(ByRef arr() As Variant) As Variant
     recursiveMin = result
 End Function
 
+'@Description("Recursively checks if the passed array includes the search element.")
 Private Function recursiveIncludes( _
         ByVal SearchElement As Variant, _
         ByRef SearchArray() As Variant, _
@@ -1216,6 +1287,7 @@ Private Function recursiveIncludes( _
     Next
 End Function
 
+'@Description("Recursively filters a passed array.")
 Private Function recursiveFilter( _
         ByRef SourceArray() As Variant, _
         ByVal match As Variant, _
@@ -1264,6 +1336,7 @@ Private Function recursiveFilter( _
     recursiveFilter = result.Items
 End Function
 
+'@Description("Checks if an array only contains a specific value.")
 Private Function only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
     Dim result As Boolean
     Dim element As Variant
@@ -1277,24 +1350,42 @@ Private Function only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
     only = result
 End Function
 
-
-Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
+'@Description("Compares two values for equality. Doesn't support arrays.")
+Private Function valuesAreEqual( _
+        ByVal expected As Variant, _
+        ByVal actual As Variant _
+    ) As Boolean
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
     Dim result As Boolean
-    Dim diff As Double
+    
+    On Error GoTo ErrHandler
     If IsEmpty(expected) Then
         If IsEmpty(actual) Then result = True
-    ElseIf IsNumeric(expected) And IsNumeric(actual) Then
-        diff = Abs(expected - actual)
-        If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
-            result = True
+    ElseIf IsObject(expected) Then
+        If IsObject(actual) Then
+            If expected Is actual Then result = True
+        End If
+    ElseIf IsNumeric(expected) Then
+        If IsNumeric(actual) Then
+            Dim diff As Double
+            diff = Abs(expected - actual)
+            If diff <= (IIf( _
+                    Abs(expected) < Abs(actual), _
+                    Abs(actual), _
+                    Abs(expected) _
+                ) * Epsilon) Then
+                result = True
+            End If
         End If
     ElseIf expected = actual Then
         result = True
     End If
     valuesAreEqual = result
+    Exit Function
+ErrHandler:
+    valuesAreEqual = False
 End Function
 
 ' TODO: Refactor to remove recursion
