@@ -126,26 +126,98 @@ ErrHandler:
     On Error GoTo 0
 End Function
 
-
-Private Function valuesAreEqual(ByVal expected As Variant, ByVal actual As Variant) As Boolean
+Private Function valuesAreEqual( _
+        ByVal expected As Variant, _
+        ByVal actual As Variant _
+    ) As Boolean
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
     Dim result As Boolean
-    Dim diff As Double
+    
+    On Error GoTo ErrHandler
     If IsEmpty(expected) Then
         If IsEmpty(actual) Then result = True
-    ElseIf IsNumeric(expected) And IsNumeric(actual) Then
-        diff = Abs(expected - actual)
-        If diff <= (IIf(Abs(expected) < Abs(actual), Abs(actual), Abs(expected)) * Epsilon) Then
-            result = True
+    ElseIf IsObject(expected) Then
+        If IsObject(actual) Then
+            If expected Is actual Then result = True
+        End If
+    ElseIf IsNumeric(expected) Then
+        If IsNumeric(actual) Then
+            Dim diff As Double
+            diff = Abs(expected - actual)
+            If diff <= (IIf( _
+                    Abs(expected) < Abs(actual), _
+                    Abs(actual), _
+                    Abs(expected) _
+                ) * Epsilon) Then
+                result = True
+            End If
         End If
     ElseIf expected = actual Then
         result = True
     End If
     valuesAreEqual = result
+    Exit Function
+ErrHandler:
+    valuesAreEqual = False
 End Function
 
+
+'@Description("For Unit Tests only. No MD array support)"
+Private Function arraysAreReversed( _
+        ByRef original() As Variant, _
+        ByRef reversed() As Variant, _
+        Optional ByVal recurse As Boolean _
+    ) As Boolean
+    Dim i As Long
+    Dim localUpperBound As Long
+    Dim localLowerBound As Long
+    Dim result As Boolean
+    
+    On Error GoTo ErrHandler
+    
+    localUpperBound = UBound(original)
+    localLowerBound = LBound(original)
+    arraysAreReversed = True
+    
+    For i = localLowerBound To localUpperBound
+        If IsArray(original(i)) Then
+            If IsArray(reversed(localUpperBound + localLowerBound - i)) Then
+                Dim originalArray() As Variant
+                Dim reversedArray() As Variant
+                originalArray = original(i)
+                reversedArray = reversed(localUpperBound + localLowerBound - i)
+                If recurse Then
+                    If Not arraysAreReversed(originalArray, reversedArray) Then
+                        result = False
+                        Exit For
+                    End If
+                Else
+                    If Not SequenceEquals_JaggedArray(originalArray, reversedArray) Then
+                        arraysAreReversed = False
+                        Exit For
+                    End If
+                End If
+            Else
+                result = False
+                Exit For
+            End If
+        Else
+            If Not valuesAreEqual( _
+                    original(i), _
+                    reversed(localUpperBound + localLowerBound - i) _
+                ) Then
+                result = False
+                Exit For
+            End If
+        End If
+    Next
+    arraysAreReversed = True
+    Exit Function
+ErrHandler:
+    arraysAreReversed = False
+End Function
 
 '''''''''''''''''
 ' Instantiation '
@@ -1139,7 +1211,7 @@ Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     firstArray = Gen.GetArray()
     secondArray = Gen.GetArray()
     expected = Gen.ConcatArraysOfSameStructure(AG_ONEDIMENSION, firstArray, secondArray)
-    expectedLength = Gen.GetArrayLength(expected)
+    expectedLength = Gen.getArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -1240,7 +1312,7 @@ Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     Dim testResult As Boolean
     
     expected = Gen.GetArray(ArrayType:=AG_JAGGED)
-    expectedLength = Gen.GetArrayLength(expected)
+    expectedLength = Gen.getArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -1278,7 +1350,7 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
-    expectedLength = Gen.GetArrayLength(expected)
+    expectedLength = Gen.getArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -1317,7 +1389,7 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     secondArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
-    expectedLength = Gen.GetArrayLength(expected)
+    expectedLength = Gen.getArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -1462,7 +1534,7 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
-    expectedLength = Gen.GetArrayLength(expected)
+    expectedLength = Gen.getArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -2617,7 +2689,7 @@ Private Sub Keys_OneDimArraySpecifiedBase_ReturnsCorrectKeys()
     
     SUT.LowerBound = 2
     testArray = Gen.GetArray
-    ReDim expected(0 To Gen.GetArrayLength(testArray) - 1)
+    ReDim expected(0 To Gen.getArrayLength(testArray) - 1)
     For i = LBound(expected) To UBound(expected)
         expected(i) = i + 2
     Next
@@ -3295,7 +3367,6 @@ End Sub
 ''''''''''''''''''''
 ' Method - Reverse '
 ''''''''''''''''''''
-
 'TODO: Reverse test cases
 
 '@TestMethod("BetterArray_Reverse")
@@ -3303,13 +3374,41 @@ Private Sub Reverse_OneDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+    
+    expected = Gen.GetArray
+    SUT.Items = expected
     
     'Act:
-
+    actual = SUT.Reverse.Items
+    testResult = arraysAreReversed(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual not reverse of expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Reverse")
+Private Sub Reverse_OneDimArrayBase10_ArrayIsReversed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+    
+    Gen.LowerBound = 10
+    expected = Gen.GetArray
+    SUT.Items = expected
+    'Act:
+    actual = SUT.Reverse.Items
+    testResult = arraysAreReversed(expected, actual)
+    'Assert:
+    Assert.IsTrue testResult, "Actual not reverse of expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3321,13 +3420,63 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+    Dim i As Long
+    Dim j As Long
     
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = expected
     'Act:
-
+    actual = SUT.Reverse.Items
+    testResult = True
+    For i = LBound(expected) To UBound(expected)
+        If Not valuesAreEqual( _
+                expected(i, LBound(expected, 2)), _
+                actual(LBound(expected) + UBound(expected) - i, LBound(expected, 2)) _
+            ) Then
+            testResult = False
+            Exit For
+        End If
+    Next
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual not reverse of expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Reverse")
+Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+    Dim i As Long
+    Dim j As Long
+    
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = expected
+    'Act:
+    actual = SUT.Reverse(True).Items
+    testResult = True
+    For i = LBound(expected) To UBound(expected)
+        If Not valuesAreEqual( _
+                expected(i, LBound(expected, 2)), _
+                actual(LBound(expected) + UBound(expected) - i, UBound(expected, 2)) _
+            ) Then
+            testResult = False
+            Exit For
+        End If
+    Next
+    
+    'Assert:
+    Assert.IsTrue testResult, "Actual not reverse of expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3339,13 +3488,17 @@ Private Sub Reverse_JaggedArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
     
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = expected
     'Act:
-
+    actual = SUT.Reverse.Items
+    testResult = arraysAreReversed(expected, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsTrue testResult, "Actual not reverse of expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3353,17 +3506,41 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_EmptyInternal_GracefulDegradation()
+Private Sub Reverse_JaggedArrayRecurse_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
     
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = expected
     'Act:
+    actual = SUT.Reverse(True).Items
+    testResult = arraysAreReversed(expected, actual, True)
+    'Assert:
+    Assert.IsTrue testResult, "Actual not reverse of expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Reverse")
+Private Sub Reverse_EmptyInternal_ReturnsEmpty()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    ReDim expected(0) As Variant
+    expected(0) = Empty
+    'Act:
+    actual = SUT.Reverse.Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3643,9 +3820,6 @@ TestFail:
     Debug.Print EXCEL_DEPENDENCY_WARNING
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
-
-
-
 
 ''''''''''''''''''''''''''''
 ' Method - ParseFromString '
