@@ -9,11 +9,16 @@ nav_order: 1
 
 ## Description
 Returns the current capacity of the internal array.
-## Parameters
+
+## Syntax
+
+*expression*.**Capacity**
+
+### Parameters
 
 **None**
 
-## Returns
+### Returns
 
 Type
 : Long

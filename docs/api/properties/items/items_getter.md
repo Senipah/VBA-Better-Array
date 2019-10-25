@@ -9,10 +9,21 @@ nav_order: 1
 
 ## Description
 Returns the current item list as a variant array
-## Parameters
+
+## Syntax
+
+*expression*.**Items**
+
+### Parameters
+
 **None**
-## Returns
-### (Variant) 
-Variant array of the current items,
+
+### Returns
+
+Type
+: `Variant()`
+
+Description
+: The array of items stored in the current instance.
 
 [Back to Items overview](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items)

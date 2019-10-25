@@ -11,7 +11,7 @@ grand_parent: API
 The `Filter()` method filters and returns the current array based on the specified filter criteria. 
 
 ### Note
-Provides ability to filter on variant arrays (not just with strings unlike the VBA version).
+Provides ability to filter on any type of array (unlike the VBA version which only works with `String` arrays).
 
 ## Syntax
 

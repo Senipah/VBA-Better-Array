@@ -9,27 +9,26 @@ nav_order: 2
 
 ## Description
 Sets the capacity of the internal array.
-## Parameters
 
-*expression*.**Capacity**(*Value*)
+## Syntax
 
----
+*expression*.**Capacity** = *Value*
 
-**Name** 
+### Parameters
+
+Name 
 : `Value`
 
-**Type**
+Type
 : `Long`
 
-**Necessity**
+Necessity
 : Required
 
-**Description**
+Description
 : The new size of the internal array. 
 
----
-
-## Returns
+### Returns
 
 **None**
 

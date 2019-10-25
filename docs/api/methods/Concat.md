@@ -11,12 +11,12 @@ The `Concat()` method joins one or more arrays onto the end of the current array
 
 ## Syntax
 
-*expression*.**Concat**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Concat**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
 Name 
-: `args`
+: `Args`
 
 Type
 : ParamArray `Variant`

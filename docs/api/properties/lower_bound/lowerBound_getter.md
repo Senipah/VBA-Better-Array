@@ -10,11 +10,20 @@ nav_order: 1
 ## Description
 Gets the LowerBound (starting index) of the array.
 
-## Parameters
+## Syntax
+
+*expression*.**LowerBound**
+
+### Parameters
+
 **None**
 
-## Returns
-### (Long) 
-Starting index of the array.
+### Returns
+
+Type
+: `Long`
+
+Description
+: Starting index of the array.
 
 [Back to LowerBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/lower_bound/LowerBound)

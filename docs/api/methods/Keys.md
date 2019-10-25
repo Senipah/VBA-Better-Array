@@ -7,13 +7,24 @@ grand_parent: API
 # Keys
 
 ## Description
-The `Keys()` method returns a new array that contains the keys for each index in the array.
+The `Keys()` method returns a new array (0 based) that contains the keys for each index in the array.
 
-## Parameters
+## Syntax
+
+*expression*.**Keys**()
+
+### Parameters
+
 **None**
-## Returns
-### (Variant)
-A new array containing the keys of all the elements in the array. 
+
+### Returns
+
+Type
+: `Variant()`
+
+Description
+: A 0-based `Variant` array containing the indexes used in the outermost internal array.
+
 
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.keys>

@@ -9,12 +9,22 @@ grand_parent: API
 ## Description
 The `Shift()` method removes the first element from the array and returns that removed element. This method changes the length of the array.
 
-## Parameters
+## Syntax
+
+*expression*.**Shift**()
+
+### Parameters
+
 **None**
 
-## Returns
-### (Variant) 
-The first element from the array.
+### Returns
+
+Type
+: `Variant`
+
+Description
+: The first element from the array.
+
 
 ## Inspiration
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift>

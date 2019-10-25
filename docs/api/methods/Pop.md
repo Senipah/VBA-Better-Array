@@ -9,12 +9,21 @@ grand_parent: API
 ## Description
 The `Pop()` method removes the last element from the array and returns that element. This method changes the length of the array.
 
-## Parameters
+## Syntax
+
+*expression*.**Pop**()
+
+### Parameters
+
 **None**
 
-## Returns
-### (Variant) 
-The last element from the array.
+### Returns
+
+Type
+: `Variant`
+
+Description
+: The last element from the array.
 
 ## Inspiration
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop>

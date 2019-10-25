@@ -10,15 +10,33 @@ grand_parent: API
 The `Push()` method adds one or more elements to the end of an array, in the order in which they appear. The new length of the array is returned as the result of the call.
 
 ## Note
-*Internal array capacity will be doubled automatically every time the length of the array equals or exceeds the capacity of the internal array.*
+Internal array capacity will be doubled automatically every time the length of the array equals the capacity of the internal array.
 
-## Parameters
-### ParamArray `Args` (variant) 
-The element(s) to be added to the end of the array.
+## Syntax
 
-## Returns
-### (Long) 
-New length of the array.
+*expression*.**Push**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
+
+### Parameters
+
+Name 
+: `Args`
+
+Type
+: ParamArray `Variant`
+
+Necessity
+: Optional
+
+Description
+: The element(s) to be added to the end of the array.
+
+### Returns
+
+Type
+: `Long`
+
+Description
+: The new length of the array.
 
 ## Inspiration
 * <https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/push>
