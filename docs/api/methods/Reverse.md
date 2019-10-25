@@ -9,8 +9,8 @@ grand_parent: API
 ## Description
 The `Reverse()` method reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.
 
-## Arguments
-None
+## Parameters
+**None**
 ## Returns
 ### (Object)[BetterArray]
 The current instance with its values now reversed.

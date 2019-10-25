@@ -9,16 +9,28 @@ nav_order: 2
 
 ## Description
 Sets the capacity of the internal array.
-## Arguments
-### Value
-Type
-: Long
+## Parameters
 
-Description
+*expression*.**Capacity**(*Value*)
+
+---
+
+**Name** 
+: `Value`
+
+**Type**
+: `Long`
+
+**Necessity**
+: Required
+
+**Description**
 : The new size of the internal array. 
+
+---
 
 ## Returns
 
-None
+****None****
 
 [Back to Capacity](https://senipah.github.io/VBA-Better-Array/api/properties/capacity/)

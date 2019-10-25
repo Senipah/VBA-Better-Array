@@ -8,7 +8,7 @@ grand_parent: API
 # FromRange
 ## Inspiration
 ## Description
-## Arguments
+## Parameters
 ### `Range` (Range [Object])
 ## Returns
 ### (Variant)

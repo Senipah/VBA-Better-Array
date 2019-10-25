@@ -9,8 +9,8 @@ nav_order: 1
 
 ## Description
 Gets the length of the current array
-## Arguments
-None
+## Parameters
+**None**
 ## Returns
 ### (Long) 
 The length of the current array.

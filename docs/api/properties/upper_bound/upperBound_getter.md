@@ -8,8 +8,8 @@ nav_order: 1
 # UpperBound Get Accessor
 ## Description
 Returns the upper bound of the array
-## Arguments
-None
+## Parameters
+**None**
 ## Returns
 ### (Long) 
 The last used index of the array.

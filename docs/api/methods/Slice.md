@@ -9,7 +9,7 @@ grand_parent: API
 ## Description
 The `Slice()` method returns a shallow copy of a portion of an array into a new array object selected from begin to end (end not included) where begin and end represent the index of items in that array. The original array will not be modified.
 
-## Arguments
+## Parameters
 ### `StartIndex` (Long)
 The index at which to begin extraction.
 A negative index can be used, indicating an offset from the end of the sequence. slice(-2) extracts the last two elements in the sequence.

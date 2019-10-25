@@ -9,8 +9,8 @@ grand_parent: API
 ## Description
 The `Shift()` method removes the first element from the array and returns that removed element. This method changes the length of the array.
 
-## Arguments
-None
+## Parameters
+**None**
 
 ## Returns
 ### (Variant) 

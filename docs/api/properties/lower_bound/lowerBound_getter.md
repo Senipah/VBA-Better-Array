@@ -10,8 +10,8 @@ nav_order: 1
 ## Description
 Gets the LowerBound (starting index) of the array.
 
-## Arguments
-None
+## Parameters
+**None**
 
 ## Returns
 ### (Long) 

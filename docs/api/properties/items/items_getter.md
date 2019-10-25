@@ -9,8 +9,8 @@ nav_order: 1
 
 ## Description
 Returns the current item list as a variant array
-## Arguments
-None
+## Parameters
+**None**
 ## Returns
 ### (Variant) 
 Variant array of the current items,

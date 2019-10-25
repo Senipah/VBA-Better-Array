@@ -9,8 +9,8 @@ grand_parent: API
 ## Description
 The `Pop()` method removes the last element from the array and returns that element. This method changes the length of the array.
 
-## Arguments
-None
+## Parameters
+**None**
 
 ## Returns
 ### (Variant) 

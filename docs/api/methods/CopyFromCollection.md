@@ -9,12 +9,31 @@ grand_parent: API
 ## Description
 The `CopyFromCollection()` method writes the elements stored in a `Collection` object into a BetterArray. Any items already stored in the BetterArray will be lost.
 
-## Arguments
-### `SourceCollection` (Collection [Object]) 
-The `Collection` of elements to be stored in the array
+## Syntax
 
-## Returns:
-### (Variant) 
-The new array
+*expression*.**Concat**(*SourceCollection*)
+
+### Parameters
+
+**Name** 
+: `SourceCollection`
+
+**Type**
+: Collection `Object`
+
+**Necessity**
+: Required
+
+**Description**
+: The `Collection` of elements to be stored in the array
+
+### Returns
+
+**Type**
+: BetterArray `Object`
+
+**Description**
+: The current instance of the BetterArray object with the values from the passed `Collection` stored in the array. 
+
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

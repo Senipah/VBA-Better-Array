@@ -9,7 +9,7 @@ grand_parent: API
 ## Description
 The `Includes()` method determines whether the array includes a certain value among its entries, returning `True` or `False` as appropriate.
 
-## Arguments
+## Parameters
 ### `SearchElement` (Variant)
 The value to search for.
 ### *Optional* `FromIndex` (Long)

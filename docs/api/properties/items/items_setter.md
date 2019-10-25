@@ -9,10 +9,10 @@ nav_order: 2
 ## Description
 Stores an array into the BetterArray object
 
-## Arguments
+## Parameters
 ### `Values` (Variant) 
 The array of items to import to the BetterArray object.
 ## Returns
-None
+**None**
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

@@ -10,7 +10,7 @@ nav_order: 1
 ## Description
 Returns the element stored in the array at the specified index.
 
-## Arguments
+## Parameters
 ### `Index` (Long) 
 The index of the desired element.
 

@@ -9,8 +9,8 @@ grand_parent: API
 ## Description
 The `Keys()` method returns a new array that contains the keys for each index in the array.
 
-## Arguments
-None
+## Parameters
+**None**
 ## Returns
 ### (Variant)
 A new array containing the keys of all the elements in the array. 

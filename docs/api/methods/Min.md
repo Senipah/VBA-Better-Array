@@ -13,9 +13,9 @@ The `Min()` method returns the smallest value in a list of values. If passed a n
 ### Note 
 Multidimensional arrays assigned to the `.Items` property are converted to jagged arrays internally and will be treated as such by the `Min()` method.
 
-## Arguments
+## Parameters
 ### Optional ParamArray `Args` (Variant)
-A list of values or an array to compare. If no arguments are provided the `Min()` method will return the smallest value on the stored array.
+A list of values or an array to compare. If no Parameters are provided the `Min()` method will return the smallest value on the stored array.
 ## Returns
 ### (Variant)
 The largest value in the array. 
