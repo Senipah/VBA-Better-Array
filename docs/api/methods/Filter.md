@@ -8,7 +8,7 @@ grand_parent: API
 # Filter
 
 ## Description
-The `Filter()` method filters and returns the current array LowerBound on the specified filter criteria. 
+The `Filter()` method filters and returns the current array based on the specified filter criteria. 
 
 ### Note
 Provides ability to filter on variant arrays (not just with strings unlike the VBA version).
@@ -19,52 +19,52 @@ Provides ability to filter on variant arrays (not just with strings unlike the V
 
 ### Parameters
 
-**Name** 
+Name 
 : `Match`
 
-**Type**
+Type
 : `Variant`
 
-**Necessity**
+Necessity
 : Required
 
-**Description**
+Description
 : The value to compare against. 
 
 ---
 
-**Name** 
+Name
 : `Exclude`
 
-**Type**
+Type
 : `Boolean`
 
-**Necessity**
+Necessity
 : Optional
 
-**Description**
+Description
 : Boolean value indicating whether to return values that include or exclude `Match`. If include is True, `Filter` returns the subset of the array that contains `Match`. If include is False, `Filter` returns the subset of the array that does not contain `Match`.
 
 ---
 
-**Name** 
+Name 
 : `Recurse`
 
-**Type**
+Type
 : `Boolean`
 
-**Necessity**
+Necessity
 : Optional
 
-**Description**
+Description
 : Boolean value indicating whether the filter should be applied recrsively to a jagged or multidimensional array. By default, only the outermost array will be filtered.
 
 ### Returns
 
-**Type**
+Type
 : BetterArray `Object`
 
-**Description**
+Description
 : The current instance of the BetterArray object with the filter applied to the stored array. 
 
 ## Inspiration

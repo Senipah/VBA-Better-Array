@@ -15,24 +15,24 @@ The `Concat()` method joins one or more arrays onto the end of the current array
 
 ### Parameters
 
-**Name** 
+Name 
 : `args`
 
-**Type**
+Type
 : ParamArray `Variant`
 
-**Necessity**
+Necessity
 : Optional
 
-**Description**
+Description
 : The array(s) to be added to the end of the array. 
 
 ### Returns
 
-**Type**
+Type
 : BetterArray `Object`
 
-**Description**
+Description
 : The current instance of the BetterArray object with the passed arrays having been added to the end. 
 
 ## Inspiration

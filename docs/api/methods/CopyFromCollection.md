@@ -15,24 +15,24 @@ The `CopyFromCollection()` method writes the elements stored in a `Collection` o
 
 ### Parameters
 
-**Name** 
+Name 
 : `SourceCollection`
 
-**Type**
+Type
 : Collection `Object`
 
-**Necessity**
+Necessity
 : Required
 
-**Description**
+Description
 : The `Collection` of elements to be stored in the array
 
 ### Returns
 
-**Type**
+Type
 : BetterArray `Object`
 
-**Description**
+Description
 : The current instance of the BetterArray object with the values from the passed `Collection` stored in the array. 
 
 
