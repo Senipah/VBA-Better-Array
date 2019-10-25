@@ -19,4 +19,4 @@ The element to be inserted into the array.
 ## Returns
 **None**
 
-[Back to Item overview](https://senipah.github.io/VBA-Better-Array/api/properties/item/)
+[Back to Item overview](https://senipah.github.io/VBA-Better-Array/api/properties/item/Item)

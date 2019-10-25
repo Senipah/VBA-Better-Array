@@ -18,4 +18,4 @@ The index of the desired element.
 ### (Variant) 
 The element at the specified index.
 
-[Back to Item overview](https://senipah.github.io/VBA-Better-Array/api/properties/item/)
+[Back to Item overview](https://senipah.github.io/VBA-Better-Array/api/properties/item/Item)

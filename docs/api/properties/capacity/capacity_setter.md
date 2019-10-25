@@ -33,4 +33,4 @@ Sets the capacity of the internal array.
 
 ****None****
 
-[Back to Capacity overview](https://senipah.github.io/VBA-Better-Array/api/properties/capacity/)
+[Back to Capacity overview](https://senipah.github.io/VBA-Better-Array/api/properties/capacity/Capacity)

@@ -15,4 +15,4 @@ Gets the length of the current array
 ### (Long) 
 The length of the current array.
 
-[Back to Length overview](https://senipah.github.io/VBA-Better-Array/api/properties/length/)
+[Back to Length overview](https://senipah.github.io/VBA-Better-Array/api/properties/length/Length)
