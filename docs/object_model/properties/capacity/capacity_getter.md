@@ -12,8 +12,10 @@ Returns the current capacity of the internal array.
 ## Arguments
 None
 ## Returns
+
 Type
 : Long
+
 Description
 : Current capacity of the internal array. 
 
