@@ -1,1 +1,21 @@
-theme: jekyll-theme-cayman
+#theme: jekyll-theme-cayman
+remote_theme: pmarsceill/just-the-docs
+# Set a path/url to a logo that will be displayed instead of the title
+logo: "/assets/img/logo.png"
+# Enable or disable the site search
+# Supports true (default) or false
+search_enabled: true
+# Enable support for hyphenated search words:
+search_tokenizer_separator: /[\s/]+/
+# Aux links for the upper right navigation
+aux_links:
+  "VBA Better Array on GitHub":
+    - "//github.com/Senipah/VBA-Better-Array"
+# Heading anchor links appear on hover over h1-h6 tags in page content
+# allowing users to deep link to a particular heading on a page.
+#
+# Supports true (default) or false/nil
+heading_anchors: true
+
+
+
