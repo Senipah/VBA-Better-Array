@@ -15,4 +15,4 @@ Returns the current item list as a variant array
 ### (Variant) 
 Variant array of the current items,
 
-[Back to Docs](https://senipah.github.io/VBA-Better-Array/)
+[Back to Items overview](https://senipah.github.io/VBA-Better-Array/api/properties/items/)

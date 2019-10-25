@@ -17,4 +17,4 @@ Gets the LowerBound (starting index) of the array.
 ### (Long) 
 Starting index of the array.
 
-[Back to Docs](https://senipah.github.io/VBA-Better-Array/)
+[Back to LowerBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/lowerbound/)

@@ -15,4 +15,4 @@ The array of items to import to the BetterArray object.
 ## Returns
 **None**
 
-[Back to Docs](https://senipah.github.io/VBA-Better-Array/)
+[Back to Items overview](https://senipah.github.io/VBA-Better-Array/api/properties/items/)

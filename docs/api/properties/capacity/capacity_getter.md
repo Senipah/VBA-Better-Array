@@ -22,4 +22,4 @@ Description
 : Current capacity of the internal array. 
 
 
-[Back to Capacity](https://senipah.github.io/VBA-Better-Array/api/properties/capacity/)
+[Back to Capacity overview](https://senipah.github.io/VBA-Better-Array/api/properties/capacity/)
