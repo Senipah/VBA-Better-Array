@@ -1,7 +1,3 @@
----
-has_children: true 
----
-
 # Documentation
 
 ## Properties

@@ -1,4 +1,7 @@
-
+---
+title: Max
+parent: Methods
+---
 
 # Max
 ### Inspiration

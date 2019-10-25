@@ -1,3 +1,8 @@
+---
+title: ToString
+parent: Methods
+---
+
 # ToString
 
 ### Description

@@ -1,3 +1,8 @@
+---
+title: Keys
+parent: Methods
+---
+
 # Keys
 ### Inspiration
 * http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.keys

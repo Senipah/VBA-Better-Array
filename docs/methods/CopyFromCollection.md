@@ -1,3 +1,8 @@
+---
+title: CopyFromCollection
+parent: Methods
+---
+
 # CopyFromCollection
 
 ### Description

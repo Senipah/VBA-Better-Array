@@ -1,3 +1,8 @@
+---
+title: Min
+parent: Methods
+---
+
 
 # Min
 ### Inspiration

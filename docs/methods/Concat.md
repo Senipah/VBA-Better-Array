@@ -1,3 +1,8 @@
+---
+title: Concat
+parent: Methods
+---
+
 # Concat
 
 ### Inspiration

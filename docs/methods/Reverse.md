@@ -1,5 +1,10 @@
+---
+title: Reverse
+parent: Methods
+---
 
-# Filter
+
+# Reverse
 ### Inspiration
 * http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.reverse
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse

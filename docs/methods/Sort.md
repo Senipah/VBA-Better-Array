@@ -1,3 +1,8 @@
+---
+title: Sort
+parent: Methods
+---
+
 # Sort
 
 ### Description

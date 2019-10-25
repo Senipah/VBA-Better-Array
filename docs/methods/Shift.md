@@ -1,3 +1,7 @@
+---
+title: Shift
+parent: Methods
+---
 
 # Shift
 

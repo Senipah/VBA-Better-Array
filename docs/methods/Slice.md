@@ -1,3 +1,8 @@
+---
+title: Slice
+parent: Methods
+---
+
 
 # Slice
 ### Inspiration

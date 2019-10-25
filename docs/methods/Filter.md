@@ -1,3 +1,8 @@
+---
+title: Filter
+parent: Methods
+---
+
 
 # Filter
 ### Inspiration

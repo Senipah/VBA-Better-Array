@@ -1,3 +1,8 @@
+---
+title: Pop
+parent: Methods
+---
+
 # Pop
 
 ### Inspiration

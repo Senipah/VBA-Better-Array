@@ -1,3 +1,8 @@
+---
+title: Capacity
+parent: Properties
+---
+
 # Capacity
 
 ## Get

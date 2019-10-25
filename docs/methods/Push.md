@@ -1,3 +1,7 @@
+---
+title: Push
+parent: Methods
+---
 
 # Push
 

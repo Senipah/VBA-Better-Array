@@ -1,3 +1,8 @@
+---
+title: LowerBound
+parent: Properties
+---
+
 # LowerBound
 
 ## Get

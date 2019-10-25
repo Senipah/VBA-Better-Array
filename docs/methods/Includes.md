@@ -1,3 +1,8 @@
+---
+title: Includes
+parent: Methods
+---
+
 # Includes
 ### Inspiration
 * http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.includes

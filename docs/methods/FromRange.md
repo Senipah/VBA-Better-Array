@@ -1,3 +1,8 @@
+---
+title: FromRange
+parent: Methods
+---
+
 
 # FromRange
 ### Inspiration

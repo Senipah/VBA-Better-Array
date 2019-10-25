@@ -1,3 +1,7 @@
+---
+title: UpperBound
+parent: Properties
+---
 
 # UpperBound
 
