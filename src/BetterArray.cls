@@ -353,6 +353,7 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     ToString = result
 End Function
 
+' TODO: add param for recursion
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
 Public Function Includes( _
@@ -1047,7 +1048,10 @@ End Function
 '@Ignore ShadowedDeclaration
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
-Public Function Filter(ByVal match As Variant, Optional ByVal Include As Boolean) As BetterArray
+Public Function Filter( _
+        ByVal match As Variant, _
+        Optional ByVal Include As Boolean, _
+        Optional ByVal recurse As Boolean) As BetterArray
 Attribute Filter.VB_Description = "Filters the stored array to include only values that meet the specified criteria."
     Dim result() As Variant
     Dim localArray() As Variant
@@ -1063,7 +1067,7 @@ Attribute Filter.VB_Description = "Filters the stored array to include only valu
             localArray, _
             match, _
             Include, _
-            True _
+            recurse _
         )
     End If
     Me.Items = result
@@ -1074,7 +1078,7 @@ End Function
 ' TODO: Check implementation against spec
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
-Public Function Reverse(Optional recurse As Boolean) As BetterArray
+Public Function Reverse(Optional ByVal recurse As Boolean) As BetterArray
 Attribute Reverse.VB_Description = "Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first."
     Dim localItems() As Variant
     Dim result() As Variant
@@ -1119,7 +1123,8 @@ End Function
 ' TODO: Implement, Document & Test Shuffle method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("shuffles the order of the stored array.")
-Public Function Shuffle(Optional recurse As Boolean) As BetterArray
+Public Function Shuffle(Optional ByVal recurse As Boolean) As BetterArray
+Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Dim localItems() As Variant
     Dim result() As Variant
     Dim currentType As ArrayTypes
@@ -1138,7 +1143,27 @@ Public Function Shuffle(Optional recurse As Boolean) As BetterArray
 End Function
 
 
-' TODO: add algos from C++ STL https://en.cppreference.com/w/cpp/algorithm
+
+' TODO: Implement, Document & Test Every method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+
+' TODO: Implement, Document & Test Fill method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+
+' TODO: Implement, Document & Test Join method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+
+' TODO: Implement, Document & Test indexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+
+' TODO: Implement, Document & Test lastIndexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+
+' TODO: Implement, Document & Test some method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+
+' TODO: Implement, Document & Test splice method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 ' TODO: Implement remove method to delete entry by index
 
@@ -1160,6 +1185,7 @@ Private Function recursiveShuffle( _
     ByRef arr() As Variant, _
     Optional ByVal recurse As Boolean _
     ) As Variant()
+Attribute recursiveShuffle.VB_Description = "shuffles the order of the passed array."
     ' https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
     Dim i As Long
     Dim j As Long
@@ -1189,6 +1215,7 @@ Private Function recursiveReverse( _
     ByRef arr() As Variant, _
     Optional ByVal recurse As Boolean _
     ) As Variant()
+Attribute recursiveReverse.VB_Description = "reverses the order of the passed array."
     
     Dim localLength As Long
     Dim middle As Long
@@ -1219,6 +1246,7 @@ End Function
 
 '@Description("returns the length of the passed array.")
 Private Function getArrayLength(ByRef SourceArray() As Variant) As Long
+Attribute getArrayLength.VB_Description = "returns the length of the passed array."
     getArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
 End Function
 
@@ -1227,6 +1255,7 @@ Private Sub recursiveFlatten( _
         ByRef arr(), _
         ByRef results As BetterArray _
     )
+Attribute recursiveFlatten.VB_Description = "converts all the values in a jagged array to a 1d array."
     Dim element As Variant
     For Each element In arr
         If IsArray(element) Then
@@ -1241,6 +1270,7 @@ End Sub
 
 '@Description("Recursively finds the largest value in an array.")
 Private Function recursiveMax(ByRef arr() As Variant) As Variant
+Attribute recursiveMax.VB_Description = "Recursively finds the largest value in an array."
     Dim i As Long
     Dim result As Variant
     
@@ -1276,6 +1306,7 @@ End Function
 
 '@Description("Recursively finds the smallest value in an array.")
 Private Function recursiveMin(ByRef arr() As Variant) As Variant
+Attribute recursiveMin.VB_Description = "Recursively finds the smallest value in an array."
     Dim i As Long
     Dim result As Variant
     
@@ -1315,6 +1346,7 @@ Private Function recursiveIncludes( _
         ByRef SearchArray() As Variant, _
         Optional ByVal fromIndex As Long _
     ) As Boolean
+Attribute recursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
@@ -1345,10 +1377,12 @@ Private Function recursiveFilter( _
         ByVal Include As Boolean, _
         ByVal recurse As Boolean _
     ) As Variant()
+Attribute recursiveFilter.VB_Description = "Recursively filters a passed array."
     Dim result As BetterArray
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
+    Dim isMatch As Boolean
     
     localLowerBound = LBound(SourceArray)
     localUpperBound = UBound(SourceArray)
@@ -1378,8 +1412,8 @@ Private Function recursiveFilter( _
         ElseIf IsObject(SourceArray(i)) Then
             If Not Include Then result.Push SourceArray(i)
         Else
-            If (Include And valuesAreEqual(match, SourceArray(i))) Or _
-                    (Not Include And Not valuesAreEqual(match, SourceArray(i))) Then
+            isMatch = valuesAreEqual(match, SourceArray(i))
+            If (Include And isMatch) Or (Not Include And Not isMatch) Then
                 result.Push SourceArray(i)
             End If
         End If
@@ -1389,6 +1423,7 @@ End Function
 
 '@Description("Checks if an array only contains a specific value.")
 Private Function only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
+Attribute only.VB_Description = "Checks if an array only contains a specific value."
     Dim result As Boolean
     Dim element As Variant
     result = True
@@ -1406,6 +1441,7 @@ Private Function valuesAreEqual( _
         ByVal expected As Variant, _
         ByVal actual As Variant _
     ) As Boolean
+Attribute valuesAreEqual.VB_Description = "Compares two values for equality. Doesn't support arrays."
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
