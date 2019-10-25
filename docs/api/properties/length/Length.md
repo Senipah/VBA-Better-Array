@@ -2,6 +2,7 @@
 title: Length
 parent: Properties
 grand_parent: API
+has_children: true 
 ---
 
 # Length *(Read-Only)*

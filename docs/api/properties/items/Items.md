@@ -2,6 +2,7 @@
 title: Items
 parent: Properties
 grand_parent: API
+has_children: true 
 ---
 
 # Items

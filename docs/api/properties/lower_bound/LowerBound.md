@@ -2,6 +2,7 @@
 title: LowerBound
 parent: Properties
 grand_parent: API
+has_children: true 
 ---
 
 # LowerBound

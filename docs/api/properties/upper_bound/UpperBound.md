@@ -2,6 +2,7 @@
 title: UpperBound
 parent: Properties
 grand_parent: API
+has_children: true 
 ---
 
 # UpperBound *(Read-Only)*
