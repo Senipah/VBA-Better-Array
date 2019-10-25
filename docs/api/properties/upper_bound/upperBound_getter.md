@@ -14,4 +14,4 @@ Returns the upper bound of the array
 ### (Long) 
 The last used index of the array.
 
-[Back to UpperBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/upperbound/)
+[Back to UpperBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/upper_bound/)

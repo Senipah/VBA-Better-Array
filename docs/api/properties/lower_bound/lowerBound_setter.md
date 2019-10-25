@@ -17,4 +17,4 @@ The new LowerBound (base index) of the array.
 ## Returns
 **None**
 
-[Back to LowerBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/lowerbound/)
+[Back to LowerBound overview](https://senipah.github.io/VBA-Better-Array/api/properties/lower_bound/)
