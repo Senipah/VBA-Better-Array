@@ -19,7 +19,7 @@ Name
 : `SourceCollection`
 
 Type
-: Collection `Object`
+: `Collection` / `Object`
 
 Necessity
 : Required

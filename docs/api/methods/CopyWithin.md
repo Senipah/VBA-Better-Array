@@ -63,7 +63,7 @@ If `EndIndex` is omitted, `CopyWithin` will copy until the last index (default t
 ### Returns
 
 Type
-: BetterArray `Object`
+: `BetterArray` / `Object`
 
 Description
 : The current instance of the BetterArray object with the stored array modified. 

@@ -23,7 +23,7 @@ Name
 : `FromRange`
 
 Type
-: Range `Object`
+: `Range` / `Object`
 
 Necessity
 : Required
@@ -62,7 +62,7 @@ Description
 ### Returns
 
 Type
-: BetterArray `Object`
+: `BetterArray` / `Object`
 
 Description
 : If present, only the values in this row of the range will be stored.

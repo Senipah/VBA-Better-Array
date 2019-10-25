@@ -30,7 +30,7 @@ Description
 ### Returns
 
 Type
-: BetterArray `Object`
+: `BetterArray` / `Object`
 
 Description
 : The current instance of the BetterArray object with the array's order reversed.
