@@ -12,7 +12,7 @@ Returns the current capacity of the internal array.
 ## Arguments
 
 None
-: 
+: None
 
 ## Returns
 
