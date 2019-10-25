@@ -3,19 +3,19 @@ title: Reverse
 parent: Methods
 ---
 
-
 # Reverse
-### Inspiration
-* http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.reverse
-* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
 
-### Description
+## Description
 The `Reverse()` method reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.
 
-### Arguments
+## Arguments
 None
-### Returns
-#### (Object)[BetterArray]
+## Returns
+### (Object)[BetterArray]
 The current instance with its values now reversed.
 
-# [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
+## Inspiration
+* <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.reverse>
+* <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse>
+
+[Back to Docs](https://senipah.github.io/VBA-Better-Array/)
