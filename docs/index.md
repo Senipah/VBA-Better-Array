@@ -1,5 +1,5 @@
 ---
-title: Home
+title: About
 nav_order: 1
 ---
 
