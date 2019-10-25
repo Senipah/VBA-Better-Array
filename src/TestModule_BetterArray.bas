@@ -179,7 +179,7 @@ Private Function arraysAreReversed( _
     
     localUpperBound = UBound(original)
     localLowerBound = LBound(original)
-    arraysAreReversed = True
+    result = True
     
     For i = localLowerBound To localUpperBound
         If IsArray(original(i)) Then
@@ -213,7 +213,7 @@ Private Function arraysAreReversed( _
             End If
         End If
     Next
-    arraysAreReversed = True
+    arraysAreReversed = result
     Exit Function
 ErrHandler:
     arraysAreReversed = False
@@ -2414,7 +2414,8 @@ Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArrayn()
 
     SUT.Items = testArray
     'Act:
-    actual = SUT.Filter("Bar", True).Items
+    ' TODO: make sure documents state that for jagged & multi recurse must be true.
+    actual = SUT.Filter("Bar", True, True).Items
     testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
@@ -2446,7 +2447,7 @@ Private Sub Filter_MultiDimArrayExclude_ReturnsFilteredArray()
 
     SUT.Items = testArray
     'Act:
-    SUT.Filter "Bar", False
+    SUT.Filter "Bar", False, True
     actual = SUT.Items
 
     'Assert:
@@ -2477,7 +2478,7 @@ Private Sub Filter_MultiDimArrayInclude_ReturnsFilteredArray()
 
     SUT.Items = testArray
     'Act:
-    actual = SUT.Filter("Bar", True).Items
+    actual = SUT.Filter("Bar", True, True).Items
     'Assert:
     Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
@@ -3424,8 +3425,7 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     Dim i As Long
-    Dim j As Long
-    
+
     expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     'Act:
@@ -3458,7 +3458,6 @@ Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     Dim i As Long
-    Dim j As Long
     
     expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
@@ -3583,32 +3582,42 @@ Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim sortedArray() As Variant
+    Dim actual() As Variant
     
+    testArray = Gen.GetArray(AG_DOUBLE, AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    sortedArray = SUT.Sort.Items
     'Act:
+    actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.NotSequenceEquals sortedArray, actual, "Array is not shufled"
 TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
-
 
 '@TestMethod("BetterArray_Shuffle")
 Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim testArray() As Variant
+    Dim sortedArray() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
     
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    sortedArray = SUT.Sort.Items
     'Act:
-
+    actual = SUT.Shuffle.Items
+    testResult = SequenceEquals_JaggedArray(sortedArray, actual)
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.IsFalse testResult, "Array is not shufled"
 TestExit:
     Exit Sub
 TestFail:
@@ -3616,17 +3625,19 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_EmptyInternal_GracefulDegradation()
+Private Sub Shuffle_EmptyInternal_ReturnsEmptyArray()
     On Error GoTo TestFail
     
     'Arrange:
-
-
+    Dim expected() As Variant
+    Dim actual() As Variant
     
     'Act:
-
+    ReDim expected(0)
+    actual = SUT.Shuffle.Items
+    
     'Assert:
-    Assert.IsTrue (SUT.LowerBound = 0)
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
