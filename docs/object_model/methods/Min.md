@@ -1,6 +1,7 @@
 ---
 title: Min
 parent: Methods
+grand_parent: API
 ---
 
 

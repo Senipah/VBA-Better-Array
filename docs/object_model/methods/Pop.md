@@ -1,6 +1,7 @@
 ---
 title: Pop
 parent: Methods
+grand_parent: API
 ---
 
 # Pop

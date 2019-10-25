@@ -1,6 +1,7 @@
 ---
 title: Max
 parent: Methods
+grand_parent: API
 ---
 
 # Max

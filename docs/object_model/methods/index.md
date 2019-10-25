@@ -1,6 +1,6 @@
 ---
 title: Methods
-parent: VBA Better Array API
+parent: API
 has_children: true 
 nav_order: 2
 ---

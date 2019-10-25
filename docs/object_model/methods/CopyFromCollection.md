@@ -1,6 +1,7 @@
 ---
 title: CopyFromCollection
 parent: Methods
+grand_parent: API
 ---
 
 # CopyFromCollection

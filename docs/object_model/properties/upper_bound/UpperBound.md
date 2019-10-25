@@ -1,6 +1,7 @@
 ---
 title: UpperBound
 parent: Properties
+grand_parent: API
 ---
 
 # UpperBound *(Read-Only)*

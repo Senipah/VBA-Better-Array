@@ -1,6 +1,7 @@
 ---
 title: Slice
 parent: Methods
+grand_parent: API
 ---
 
 # Slice

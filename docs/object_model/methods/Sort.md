@@ -1,6 +1,7 @@
 ---
 title: Sort
 parent: Methods
+grand_parent: API
 ---
 
 # Sort

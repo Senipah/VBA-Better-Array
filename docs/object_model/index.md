@@ -1,5 +1,5 @@
 ---
-title: VBA Better Array API
+title: API
 has_children: true 
 nav_order: 3
 ---
