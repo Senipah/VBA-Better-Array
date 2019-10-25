@@ -4,7 +4,7 @@ parent: Methods
 grand_parent: API
 ---
 
-# FromRange
+# FromExcelRange
 
 ## Description
 
