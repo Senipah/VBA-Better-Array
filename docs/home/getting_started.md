@@ -29,7 +29,6 @@ Items can be added either one at a time:
 Public Sub PushIndividual()
     Dim Foods As BetterArray
     Set Foods = New BetterArray
-    
     Foods.Push "Cheese"
     Foods.Push "Eggs"
     Foods.Push "Ham"
@@ -42,7 +41,6 @@ Or you can add multiple entries at the same time:
 Public Sub PushMultiple()
     Dim Foods As BetterArray
     Set Foods = New BetterArray
-    
     Foods.Push "Cheese", "Eggs", "Ham"
 End Sub
 ```
