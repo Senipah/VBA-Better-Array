@@ -17,7 +17,7 @@ Dim MyArray as BetterArray
 Set MyArray = New BetterArray
 ```
 
-`MyArray` is now an new instance of the `BetterArray` Class.
+`MyArray` is now a new instance of the `BetterArray` Class.
 
 ## Adding items to the array.
 
