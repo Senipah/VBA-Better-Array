@@ -20,6 +20,6 @@ With Unit Tests
 
 Once you have chosen and downloaded the best archive for your purposes, simply extract the files and import them into a new or existing VBA project. To import, either drag and drop the `.bas` and `.cls` files into the "VBE Project Explorer" pane, or from the VBE choose Insert > File.
 
-That's it! Check out the Getting Started page to learn how to create you first BetterArray or jump straight into the API Docs to check out the available Properties/Methods.
+That's it! Check out the [Getting Started](https://senipah.github.io/VBA-Better-Array/home/getting_started.html) page to learn how to create you first BetterArray or jump straight into the [API Docs](https://senipah.github.io/VBA-Better-Array/api/) to check out the available Properties/Methods.
 
 
