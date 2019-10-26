@@ -29,7 +29,7 @@ Necessity
 : Optional
 
 Description
-: The index of the column to be extracted. Only applies to multi-dimensional or jagged arays. If ommitted, or exceeds the bounds of the array, the first column will be returned.
+: The index of the column to be extracted. Only applies to multi-dimensional or jagged arays. If ommitted, or exceeds the bounds of the array, the first column will be used.
 
 ### Returns
 
