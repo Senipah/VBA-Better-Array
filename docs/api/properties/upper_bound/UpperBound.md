@@ -9,6 +9,6 @@ has_children: true
 
 Returns the upper bound (ending index) of the array.
 
-### Note 
+#### Note
 
 This is normally `LowerBound` + `Length`. If the internal array is empty the `UpperBound` let accessor will always return `-1`. 

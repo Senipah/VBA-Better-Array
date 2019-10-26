@@ -9,7 +9,7 @@ has_children: true
 
 Gets or sets the element at the specified index.
 
-## Note
+#### Note
 `Item` is the default member of the `BetterArray` class. Subsequently the accessor can be invoked either explicitly:
 
 ```vb

@@ -10,7 +10,7 @@ grand_parent: API
 ## Description
 The `Filter()` method filters and returns the current array based on the specified filter criteria. 
 
-### Note
+#### Note
 Provides ability to filter on any type of array (unlike the VBA version which only works with `String` arrays).
 
 ## Syntax

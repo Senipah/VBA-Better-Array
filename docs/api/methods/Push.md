@@ -9,7 +9,7 @@ grand_parent: API
 ## Description
 The `Push()` method adds one or more elements to the end of an array, in the order in which they appear. The new length of the array is returned as the result of the call.
 
-## Note
+#### Note
 Internal array capacity will be doubled automatically every time the length of the array equals the capacity of the internal array.
 
 ## Syntax

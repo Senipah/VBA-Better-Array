@@ -6,7 +6,7 @@ nav_order: 2
 
 # Installation
 
-*Note* - This library is unfinished and is in a pre-release state.
+#### Note - This library is unfinished and is in a pre-release state.
 
 Head on over to the [Releases](https://github.com/Senipah/VBA-Better-Array/releases/) page to find the latest release. 
 
