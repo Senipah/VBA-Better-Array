@@ -6,7 +6,7 @@ nav_order: 3
 
 # Getting Started
 
-If you don't already have the `BetterArray.cls` code added to your project, please refer to the [Installation instructions](https://senipah.github.io/VBA-Better-Array/home/installation.html).
+If you don't already have the `BetterArray.cls` code added to your project, please refer to the [installation instructions](https://senipah.github.io/VBA-Better-Array/home/installation.html).
 
 ## Creating your first BetterArray instance
 
