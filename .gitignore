@@ -10,3 +10,5 @@ BetterArray.xlsb
 /src/Archive.bas
 /src/Examples.bas
 /releases/
+/build/
+vba-block.toml
