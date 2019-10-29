@@ -122,7 +122,7 @@ End Sub
 
 ## Assigning a whole array
 
-You can import an array into the BetterArray instance by assiging it with the [Items](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items.html) property let accessor.
+You can import an array into the BetterArray instance by assigning it with the [Items](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items.html) property let accessor.
 
 Example:
 
