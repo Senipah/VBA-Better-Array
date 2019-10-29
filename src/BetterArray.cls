@@ -833,6 +833,8 @@ Public Function Transpose() As BetterArray
     Dim result() As Variant
     Dim localItems() As Variant
     Dim localType As ArrayTypes
+    Dim storedType As ArrayTypes
+    storedType = pArrayType
     localItems = getInternalItems()
     localType = getArrayType(localItems)
     Select Case localType
@@ -847,6 +849,12 @@ Public Function Transpose() As BetterArray
         result = localItems
     End Select
     Me.Items = result
+    If storedType = BA_MULTIDIMENSION Then
+        localType = getArrayType(result)
+        If localType = BA_JAGGED Then
+            pArrayType = BA_MULTIDIMENSION
+        End If
+    End If
     Set Transpose = Me
 End Function
 
@@ -1772,7 +1780,7 @@ Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column 
     Dim result() As Variant
     localUpperBound = UBound(arr)
     localLowerBound = LBound(arr)
-    ReDim result(localLowerBound To (localUpperBound - localLowerBound + 1), _
+    ReDim result(localLowerBound To localUpperBound, _
                  localLowerBound To localLowerBound)
     j = localLowerBound
     For i = localLowerBound To localUpperBound
@@ -1816,17 +1824,37 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
     Dim LowerBoundCol As Long
     Dim UpperBoundCol As Long
     Dim result() As Variant
+    Dim nestedBounds() As Variant
+    Dim nestedArray() As Variant
     
+    nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
     LowerBoundCol = LBound(SourceArray)
     UpperBoundCol = UBound(SourceArray)
-    LowerBoundRow = LBound(SourceArray(LowerBoundCol))
-    UpperBoundRow = UBound(SourceArray(LowerBoundCol))
-    ReDim result(LowerBoundRow To UpperBoundRow, LowerBoundCol To UpperBoundCol)
-    For currentRow = LowerBoundRow To UpperBoundRow
+    LowerBoundRow = nestedBounds(0)
+    UpperBoundRow = nestedBounds(1)
+    'check if array can fit into 1 dimension
+    If LowerBoundRow = UpperBoundRow Then
+        ReDim result(LowerBoundCol To UpperBoundCol)
+        currentRow = LowerBoundRow
         For currentColumn = LowerBoundCol To UpperBoundCol
-            result(currentRow, currentColumn) = SourceArray(currentColumn)(currentRow)
+            result(currentColumn) = SourceArray(currentColumn)(currentRow)
         Next
-    Next
+    ElseIf LowerBoundCol = UpperBoundCol Then
+        ReDim result(LowerBoundRow To UpperBoundRow)
+        currentColumn = LowerBoundCol
+        For currentRow = UpperBoundRow To UpperBoundRow
+            result(currentRow) = SourceArray(currentColumn)(currentRow)
+        Next
+    Else
+        ReDim result(LowerBoundRow To UpperBoundRow)
+        For currentRow = LowerBoundRow To UpperBoundRow
+            ReDim nested(LowerBoundCol To UpperBoundCol)
+            For currentColumn = LowerBoundCol To UpperBoundCol
+                nested(currentColumn) = SourceArray(currentColumn)(currentRow)
+            Next
+            result(currentRow) = nested
+        Next
+    End If
     Transpose_ArrayOfArrays = result
 End Function
 
