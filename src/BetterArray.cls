@@ -20,6 +20,8 @@ Option Explicit
 Private Const DEFAULT_CAPACITY As Long = 4
 Private Const MAX_ARRAY_LENGTH = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
+Private Const MISSING_LONG As Long = -999999
+
 Private Enum ArrayTypes
     BA_UNDEFINED
     BA_UNALLOCATED
@@ -42,6 +44,7 @@ Public Enum ErrorCodes
     EC_UNALLOCATED_ARRAY
     EC_UNDEFINED_ARRAY
     EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION
+    EC_EXPECTED_VARIANT_ARRAY
     EC_END
 End Enum
 
@@ -191,6 +194,10 @@ Attribute Items.VB_Description = "Stores the passed array."
     Dim localLowerBound As Long
     Dim localValues() As Variant
     If IsArray(Values) Then
+        If TypeName(Values) <> "Variant()" Then
+            RaiseError EC_EXPECTED_VARIANT_ARRAY, "Items", "Values"
+            Exit Property
+        End If
         localValues = Values
         pArrayType = getArrayType(localValues)
         If pArrayType = ArrayTypes.BA_UNDEFINED Then
@@ -358,7 +365,7 @@ End Function
 '@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
 Public Function Includes( _
         ByVal SearchElement As Variant, _
-        Optional ByVal fromIndex As Long _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
     ) As Boolean
 Attribute Includes.VB_Description = "Determines whether the SearchArrayay includes a certain value among its entries."
     Dim localLength As Long
@@ -375,8 +382,7 @@ Attribute Includes.VB_Description = "Determines whether the SearchArrayay includ
         
     If fromIndex > Me.LowerBound Then
         currentIndex = fromIndex
-    ElseIf fromIndex = 0 Then
-        'assume 0 val should always be from beginning - cover cases where val is missing
+    ElseIf fromIndex = MISSING_LONG Then
         currentIndex = Me.LowerBound
     Else
         currentIndex = localLength + fromIndex
@@ -439,7 +445,10 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array containing the portion of the stored array between the StartIndex and EndIndex")
-Public Function Slice(ByVal StartIndex As Long, Optional ByVal EndIndex As Long) As Variant()
+Public Function Slice( _
+        ByVal StartIndex As Long, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
+    ) As Variant()
 Attribute Slice.VB_Description = "Returns a new array containing the portion of the stored array between the StartIndex and EndIndex"
     Dim localLength As Long
     Dim relativeStart As Long
@@ -463,7 +472,7 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Else
         oldIndex = Min(relativeStart, localLength)
     End If
-    If EndIndex = 0 Then
+    If EndIndex = MISSING_LONG Then
         relativeEnd = localLength + pLowerBound
     Else
         relativeEnd = EndIndex
@@ -499,8 +508,8 @@ End Function
 '@Description("Stores the values contained in an Excel range in the internal array")
 Public Function FromExcelRange( _
         ByRef FromRange As Object, _
-        Optional ByVal ColumnNumber As Long, _
-        Optional ByVal RowNumber As Long _
+        Optional ByVal ColumnNumber As Long = MISSING_LONG, _
+        Optional ByVal RowNumber As Long = MISSING_LONG _
     ) As BetterArray
 Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
     Dim localColumnNumber As Long
@@ -521,12 +530,14 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
         
         Me.Items = FromRange.Value
     
-        If localColumnNumber > 0 Then
-            'Extract 1d array based on column number
-            Me.Items = Me.ExtractColumn(localColumnNumber)
-        ElseIf localRowNumber > 0 Then
-            'Extract 1d array based on row number
-            Me.Items = Me.ExtractRow(localRowNumber)
+        If localColumnNumber <> MISSING_LONG Then
+            If localRowNumber <> MISSING_LONG Then
+                Me.Items = Me.ExtractSegment(localRowNumber, localColumnNumber)
+            Else
+                Me.Items = Me.ExtractSegment(, localColumnNumber)
+            End If
+        ElseIf localRowNumber <> MISSING_LONG Then
+            Me.Items = Me.ExtractSegment(localRowNumber)
         End If
     Else
         RaiseError ErrorCodes.EC_EXPECTED_RANGE_OBJECT, "FromExcelRange()", "FromRange"
@@ -535,65 +546,99 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
     Set FromExcelRange = Me
 End Function
 
-'@Description("Extracts the specified column of a multidimensional/jagged array as a new array.")
-Public Function ExtractColumn(Optional ByVal ColumnNumber As Long) As Variant()
-Attribute ExtractColumn.VB_Description = "Extracts the specified column of a multidimensional/jagged array as a new array."
+'@Ignore ProcedureNotUsed
+'@Description("Extracts the segment of the array located at the specified indices.")
+Public Function ExtractSegment( _
+    Optional ByVal RowIndex As Long = MISSING_LONG, _
+    Optional ByVal ColumnIndex As Long = MISSING_LONG _
+    ) As Variant()
+Attribute ExtractSegment.VB_Description = "Extracts the segment of the array located at the specified indices."
     Dim i As Long
-    Dim localColumnNumber As Long
-    Dim localLowerBound As Long
-    Dim localUpperBound As Long
+    Dim localRowIndex As Long
+    Dim localColumnIndex As Long
+    Dim nestedBounds() As Variant
     Dim SourceArray() As Variant
     Dim result() As Variant
     
     SourceArray = getInternalItems()
-    If pArrayType = ArrayTypes.BA_MULTIDIMENSION Or pArrayType = ArrayTypes.BA_JAGGED Then
-        localLowerBound = LBound(SourceArray)
-        localUpperBound = UBound(SourceArray)
-        ReDim result(localLowerBound To localUpperBound)
-        
-        If ColumnNumber >= localLowerBound And ColumnNumber <= localUpperBound Then
-            localColumnNumber = ColumnNumber + Me.LowerBound - 1
+
+    If RowIndex = MISSING_LONG Then
+        If ColumnIndex = MISSING_LONG Then
+            ' if no coords provided return full array
+            ' calls to Me.Items instead of SourceArray to covert md from jagged
+            result = Me.Items
         Else
-            localColumnNumber = Me.LowerBound
+            ' Row number missing, column number present
+            Select Case pArrayType
+            Case BA_ONEDIMENSION
+                If ColumnIndex >= Me.LowerBound And ColumnIndex <= Me.UpperBound Then
+                    localColumnIndex = ColumnIndex
+                Else
+                    localColumnIndex = Me.LowerBound
+                End If
+                result = Array(SourceArray(localColumnIndex))
+            Case BA_JAGGED, BA_MULTIDIMENSION
+                ' return full column
+                nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
+                If ColumnIndex >= nestedBounds(0) And ColumnIndex <= nestedBounds(1) Then
+                    localColumnIndex = ColumnIndex
+                Else
+                    localColumnIndex = Me.LowerBound
+                End If
+                ReDim result(Me.LowerBound To Me.UpperBound)
+                For i = Me.LowerBound To Me.UpperBound
+                    result(i) = SourceArray(i)(localColumnIndex)
+                Next
+            Case BA_UNALLOCATED
+                result = SourceArray
+            Case Else
+            End Select
         End If
-        
-        For i = localLowerBound To localUpperBound
-            letOrSetElement result(i), SourceArray(i)(localColumnNumber)
-        Next
     Else
-        ' can't extract from 1d or empty - return unchanged list
-        result = SourceArray
+        ' Row Number not missing
+        If RowIndex >= Me.LowerBound And RowIndex <= Me.UpperBound Then
+            localRowIndex = RowIndex
+        Else
+            localRowIndex = Me.LowerBound
+        End If
+        If ColumnIndex = MISSING_LONG Then
+            ' Row number present, column number missing
+            Select Case pArrayType
+            Case BA_ONEDIMENSION
+                result = Array(SourceArray(localRowIndex))
+            Case BA_JAGGED, BA_MULTIDIMENSION
+                result = SourceArray(localRowIndex)
+            Case BA_UNALLOCATED
+                result = SourceArray
+            Case Else
+            End Select
+        Else
+            ' Row number present, column number present
+            Select Case pArrayType
+            Case BA_ONEDIMENSION
+                ' ignore column number arg as array is 1d
+                result = Array(SourceArray(localRowIndex))
+            Case BA_JAGGED, BA_MULTIDIMENSION
+                ' return intersection of rowIndex and column number
+                nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
+                If ColumnIndex >= nestedBounds(0) And ColumnIndex <= nestedBounds(1) Then
+                    localColumnIndex = ColumnIndex
+                Else
+                    localColumnIndex = Me.LowerBound
+                End If
+                If IsArray(SourceArray(localRowIndex)(localColumnIndex)) Then
+                    result = SourceArray(localRowIndex)(localColumnIndex)
+                Else
+                    result = Array(SourceArray(localRowIndex)(localColumnIndex))
+                End If
+            Case BA_UNALLOCATED
+                result = SourceArray
+            Case Else
+            End Select
+        End If
     End If
     
-    ExtractColumn = result
-End Function
-
-'@Description("Extracts the specified row of a multidimensional/jagged array as a new array.")
-Public Function ExtractRow(Optional ByVal RowNumber As Long) As Variant()
-Attribute ExtractRow.VB_Description = "Extracts the specified row of a multidimensional/jagged array as a new array."
-    Dim localRowNumber As Long
-    Dim localLowerBound As Long
-    Dim localUpperBound As Long
-    Dim SourceArray() As Variant
-    Dim result() As Variant
-
-    SourceArray = getInternalItems()
-    If pArrayType = ArrayTypes.BA_MULTIDIMENSION Or pArrayType = ArrayTypes.BA_JAGGED Then
-        localLowerBound = LBound(SourceArray)
-        localUpperBound = UBound(SourceArray)
-        ReDim result(localLowerBound To localUpperBound)
-
-        If RowNumber >= localLowerBound And RowNumber <= localUpperBound Then
-            localRowNumber = RowNumber + Me.LowerBound - 1
-        Else
-            localRowNumber = Me.LowerBound
-        End If
-        letOrSetElement result, SourceArray(localRowNumber)
-    Else
-        ' can't extract from 1d or empty - return
-        result = SourceArray
-    End If
-    ExtractRow = result
+    ExtractSegment = result
 End Function
 
 ' TODO: Implement, Document & Test ToExcelRange method
@@ -655,7 +700,10 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     Set ToExcelRange = localRange
 End Function
 
-Public Function IsSorted(Optional ByVal ColumnIndex As Variant) As Boolean
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+'@Description("Tests if the stored array is sorted in ascending order.")
+Public Function IsSorted(Optional ByVal ColumnIndex As Long = MISSING_LONG) As Boolean
+Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in ascending order."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -682,7 +730,7 @@ Public Function IsSorted(Optional ByVal ColumnIndex As Variant) As Boolean
             Next
         Case BA_MULTIDIMENSION
             ' should never be true as all md arrays stored as jagged internally
-            If IsMissing(ColumnIndex) Or Not IsNumeric(ColumnIndex) Then
+            If ColumnIndex = MISSING_LONG Then
                 localColumnIndex = LBound(localArray, 2)
             Else
                 localColumnIndex = CLng(ColumnIndex)
@@ -703,7 +751,7 @@ Public Function IsSorted(Optional ByVal ColumnIndex As Variant) As Boolean
             Else
                 For i = localLowerBound To localUpperBound - 1
                     If i = localLowerBound Then
-                        If IsMissing(ColumnIndex) Or Not IsNumeric(ColumnIndex) Then
+                        If ColumnIndex = MISSING_LONG Then
                             localColumnIndex = LBound(localArray(i))
                         Else
                             localColumnIndex = CLng(ColumnIndex)
@@ -828,14 +876,16 @@ Attribute ResetToDefault.VB_Description = "Clears the current array and resets c
     Set ResetToDefault = Me
 End Function
 
-' TODO: Document & Test - ResetToDefault
+' TODO: Document & Test - Clear
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Clears all entries in the current array but retains the same internal capacity")
+'@Description("Clears all entries in the current array but retains existing capacity.")
 Public Function Clear() As BetterArray
-Attribute Clear.VB_Description = "Clears all entries in the current array but retains the same internal capacity"
+Attribute Clear.VB_Description = "Clears all entries in the current array but retains existing capacity."
+    Dim oldCapacity As Long
+    oldCapacity = pCapacity
     pItems = getEmptyArray()
     pLength = 0
-    Me.Capacity = pCapacity
+    Me.Capacity = oldCapacity
     Set Clear = Me
 End Function
 
@@ -932,7 +982,7 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Sorts the stored array in ascending order.")
-Public Function Sort(Optional ByVal SortColumn As Long) As BetterArray
+Public Function Sort(Optional ByVal SortColumn As Long = MISSING_LONG) As BetterArray
 Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim localItems() As Variant
     Dim sortedItems() As Variant
@@ -955,7 +1005,12 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
                     RaiseError EC_EXCEEDS_MAX_SORT_DEPTH, "Sort"
                 End If
             End If
-            quickSort localItems, LBound(localItems), UBound(localItems), ArrayType, SortColumn
+            quickSort _
+                localItems, _
+                LBound(localItems), _
+                UBound(localItems), _
+                ArrayType, _
+                IIf(SortColumn = MISSING_LONG, pLowerBound, SortColumn)
         End If
         sortedItems = localItems
     End If
@@ -967,8 +1022,8 @@ End Function
 '@Description("Copies a section of the stored array to another location in the same array.")
 Public Function CopyWithin( _
         ByVal Target As Long, _
-        Optional ByVal StartIndex As Long, _
-        Optional ByVal EndIndex As Long _
+        Optional ByVal StartIndex As Long = MISSING_LONG, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As BetterArray
 Attribute CopyWithin.VB_Description = "Copies a section of the stored array to another location in the same array."
     Dim localLength As Long
@@ -998,7 +1053,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             toIndex = Min(relativeTarget, localLength)
         End If
         
-        relativeStart = StartIndex
+        relativeStart = IIf(StartIndex = MISSING_LONG, pLowerBound, StartIndex)
         
         If relativeStart < 0 Then
             fromIndex = Max((localLength + relativeStart), 0)
@@ -1006,7 +1061,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             fromIndex = Min(relativeStart, localLength)
         End If
         
-        If EndIndex = 0 Then
+        If EndIndex = MISSING_LONG Then
             relativeEnd = localLength
         Else
             relativeEnd = EndIndex
@@ -1113,6 +1168,7 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
     Case BA_MULTIDIMENSION, BA_JAGGED
         localItems = getInternalItems()
         Set result = New BetterArray
+        result.LowerBound = pLowerBound
         recursiveFlatten localItems, result
         Me.Items = result.Items
     End Select
@@ -1164,6 +1220,8 @@ End Function
 
 ' TODO: Implement, Document & Test splice method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+
+' TODO: Implement, Document & Test Unique
 
 ' TODO: Implement remove method to delete entry by index
 
@@ -1648,6 +1706,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         Source:=Source, _
         description:="Unable to perform the requested operation on a multidimensional array." _
     )
+    ErrorDefinitions(ErrorCodes.EC_EXPECTED_VARIANT_ARRAY) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
+        Source:=Source, _
+        description:="Unable to perform the requested operation on a typed array." _
+    )
 End Sub
 
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
@@ -1673,7 +1736,7 @@ Private Sub RaiseError( _
 Attribute RaiseError.VB_Description = "Raises an application error based on the passed ErrorCode and the definitions defined in ErrorDefinitions."
     Dim currentError As ErrorDefinition
     Dim localArgName As String
-    If ArgName <> vbNullString Then localArgName = "Variable " & ArgName & ": "
+    If ArgName <> vbNullString Then localArgName = "Argument " & ArgName & ": "
     currentError = ErrorDefinitions(ErrorCode)
     Err.Raise currentError.number, _
               currentError.Source & "." & Caller, _
@@ -2564,6 +2627,7 @@ Attribute createMultidimensionalArray.VB_Description = "Returns an empty multidi
     End Select
     createMultidimensionalArray = result
 End Function
+
 
 
 

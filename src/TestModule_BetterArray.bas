@@ -3962,9 +3962,626 @@ TestFail:
 End Sub
 
 
+''''''''''''''''''''''''''''
+' Method - Flatten '
+''''''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_Flatten")
+Private Sub Flatten_OneDimArray_ReturnsSame()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+        
+    expected = Gen.GetArray
+    SUT.Items = expected
+    
+    'Act:
+    actual = SUT.Flatten.Items
+        
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Flatten")
+Private Sub Flatten_MultiDimArray_ReturnsFlattenned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected(1 To 4) As Variant
+    Dim actual() As Variant
+    Dim testArray(1 To 2, 1 To 2) As Variant
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+    
+    expected(1) = "Foo"
+    expected(2) = "Bar"
+    expected(3) = "Fizz"
+    expected(4) = "Buzz"
+    
+    SUT.Items = testArray
+    
+    'Act:
+    actual = SUT.Flatten.Items
+        
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Flatten")
+Private Sub Flatten_JaggedArray_ReturnsFlattenned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected(0 To 3) As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    testArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    
+    expected(0) = "Foo"
+    expected(1) = "Bar"
+    expected(2) = "Fizz"
+    expected(3) = "Buzz"
+    
+    SUT.Items = testArray
+    
+    'Act:
+    actual = SUT.Flatten.Items
+        
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 
+'@TestMethod("BetterArray_Flatten")
+Private Sub Flatten_EmptyInternal_ReturnsArraySizeOne()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected(0) As Variant
+    Dim actual() As Variant
+    expected(0) = Empty
+    
+    'Act:
+    actual = SUT.Flatten.Items
+        
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+''''''''''''''''''
+' Method - Clear '
+''''''''''''''''''
+
+'@TestMethod("BetterArray_Clear")
+Private Sub Clear_OneDimArray_Clears()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected(0) As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedCapacity As Long
+    Dim actualCapacity As Long
+    
+    expected(0) = Empty
+    testArray = Gen.GetArray
+    SUT.Items = testArray
+    expectedCapacity = SUT.Capacity
+    'Act:
+    actual = SUT.Clear.Items
+    actualCapacity = SUT.Capacity
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedCapacity, actualCapacity, "Actual capacity <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'''''''''''''''''''''''''''
+' Method - ResetToDefault '
+'''''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_ResetToDefault")
+Private Sub ResetToDefault_OneDimArray_Resets()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected(0) As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedCapacity As Long
+    Dim actualCapacity As Long
+    
+    expected(0) = Empty
+    testArray = Gen.GetArray
+    SUT.Items = testArray
+    expectedCapacity = 4
+    'Act:
+    actual = SUT.ResetToDefault.Items
+    actualCapacity = SUT.Capacity
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedCapacity, actualCapacity, "Actual capacity <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 
+''''''''''''''''''
+' Method - Clone '
+''''''''''''''''''
+
+'@TestMethod("BetterArray_Clone")
+Private Sub Clone_OneDimArray_CloneIsNotOriginalItemsAreSame()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim clonedSUT As BetterArray
+        
+    expected = Gen.GetArray
+    SUT.Items = expected
+    
+    'Act:
+    Set clonedSUT = SUT.Clone
+    actual = clonedSUT.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreNotSame SUT, clonedSUT, "Clone is same as original"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'''''''''''''''''''''''''''
+' Method - ExtractSegment '
+'''''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_OneDimArrayNoArgs_FullArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+        
+    expected = Gen.GetArray
+    SUT.Items = expected
+    
+    'Act:
+    actual = SUT.ExtractSegment()
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_OneDimArrayJustRowArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+        
+    testArray = Gen.GetArray
+    SUT.Items = testArray
+    RowIndex = 2
+    expected = Array(testArray(RowIndex))
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_OneDimArrayJustColArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim ColumnIndex As Long
+        
+    testArray = Gen.GetArray
+    SUT.Items = testArray
+    ColumnIndex = 3
+    expected = Array(testArray(ColumnIndex))
+    
+    'Act:
+    actual = SUT.ExtractSegment(, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_OneDimArrayRowAndColArgs_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+    Dim ColumnIndex As Long
+        
+    testArray = Gen.GetArray
+    SUT.Items = testArray
+    RowIndex = 2
+    ColumnIndex = 3
+    expected = Array(testArray(RowIndex))
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_JaggedArrayNoArgs_FullArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+        
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = expected
+    
+    'Act:
+    actual = SUT.ExtractSegment()
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_JaggedArrayJustRowArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    RowIndex = 2
+    expected = testArray(RowIndex)
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_JaggedArrayJustColArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim ColumnIndex As Long
+    Dim i As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    ColumnIndex = 3
+    ReDim expected(LBound(testArray) To UBound(testArray))
+    For i = LBound(expected) To UBound(expected)
+        expected(i) = testArray(i)(ColumnIndex)
+    Next
+    
+    'Act:
+    actual = SUT.ExtractSegment(, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_JaggedDimArrayRowAndColArgs_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+    Dim ColumnIndex As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    RowIndex = 2
+    ColumnIndex = 3
+    expected = Array(testArray(RowIndex)(ColumnIndex))
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_MultiDimArrayNoArgs_FullArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+        
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = expected
+    
+    'Act:
+    actual = SUT.ExtractSegment()
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_MultiDimArrayJustRowArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+    Dim i As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    RowIndex = 2
+    ReDim expected(LBound(testArray, 2) To UBound(testArray, 2))
+    For i = LBound(expected) To UBound(expected)
+        expected(i) = testArray(RowIndex, i)
+    Next
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_MultiDimArrayJustColArg_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim ColumnIndex As Long
+    Dim i As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    ColumnIndex = 3
+    ReDim expected(LBound(testArray) To UBound(testArray))
+    For i = LBound(expected) To UBound(expected)
+        expected(i) = testArray(i, ColumnIndex)
+    Next
+    
+    'Act:
+    actual = SUT.ExtractSegment(, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_ExtractSegment")
+Private Sub ExtractSegment_MultiDimDimArrayRowAndColArgs_ArrayReturned()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim RowIndex As Long
+    Dim ColumnIndex As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    RowIndex = 2
+    ColumnIndex = 3
+    expected = Array(testArray(RowIndex, ColumnIndex))
+    
+    'Act:
+    actual = SUT.ExtractSegment(RowIndex, ColumnIndex)
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+''''''''''''''''''''''
+' Method - Transpose '
+''''''''''''''''''''''
+
+''''''''''''''''''''''
+' Method - Transpose '
+''''''''''''''''''''''
+
+''''''''''''''''''''''
+' Method - Unique '
+''''''''''''''''''''''
+
+
+' TODO: Implement, Document & Test Unique
+
+''''''''''''''''''''''
+' Method - Remove '
+''''''''''''''''''''''
+
+' TODO: Implement remove method to delete entry by index
+
+''''''''''''''''''''''
+' Method - IncludesType '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test IncludesType method
+
+''''''''''''''''''''''
+' Method - FilterByType '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test FilterByType method
+
+''''''''''''''''''''''
+' Property - First '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test First prop ?
+
+''''''''''''''''''''''
+' Property - Last '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test Last prop ?
+
+''''''''''''''''''''''
+' Method - Every  '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test Every method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+
+''''''''''''''''''''''
+' Method - Fill  '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test Fill method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+
+''''''''''''''''''''''
+' Method - Join '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test Join method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+
+''''''''''''''''''''''
+' Method - IndexOf '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test indexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+
+''''''''''''''''''''''
+' Method - LastIndexOf '
+''''''''''''''''''''''
+
+
+' TODO: Implement, Document & Test lastIndexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+
+''''''''''''''''''''''
+' Method - Some '
+''''''''''''''''''''''
+
+
+' TODO: Implement, Document & Test some method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+
+''''''''''''''''''''''
+' Method - Splice '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test splice method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 
