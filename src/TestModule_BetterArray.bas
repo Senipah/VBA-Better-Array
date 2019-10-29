@@ -4491,10 +4491,106 @@ End Sub
 ''''''''''''''''''''''
 ' Method - Transpose '
 ''''''''''''''''''''''
+'@TestMethod("BetterArray_Transpose")
+Private Sub Transpose_OneDimArray_ArrayTransposed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim i As Long
+        
+    testArray = Gen.GetArray()
+    SUT.Items = testArray
+    
+        
+    ReDim expected(LBound(testArray) To UBound(testArray), _
+        LBound(testArray) To LBound(testArray))
+    For i = LBound(testArray) To UBound(testArray)
+        expected(i, LBound(testArray)) = testArray(i)
+    Next
+    
+    'Act:
+    actual = SUT.Transpose.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
-''''''''''''''''''''''
-' Method - Transpose '
-''''''''''''''''''''''
+'@TestMethod("BetterArray_Transpose")
+Private Sub Transpose_JaggedArray_ArrayTransposed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim nested() As Variant
+    Dim i As Long
+    Dim j As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    
+    ReDim expected(0 To TEST_ARRAY_LENGTH - 1)
+
+    For i = LBound(testArray) To UBound(testArray)
+        ReDim nested(0 To TEST_ARRAY_LENGTH - 1)
+        For j = LBound(testArray(i)) To UBound(testArray(i))
+            nested(j) = testArray(j)(i)
+        Next
+        expected(i) = nested
+    Next
+'
+    'Act:
+    actual = SUT.Transpose.Items
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Transpose")
+Private Sub Transpose_MultiDimArray_ArrayTransposed()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim i As Long
+    Dim j As Long
+        
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    
+    ReDim expected(LBound(testArray, 2) To UBound(testArray, 2), _
+        LBound(testArray, 1) To UBound(testArray, 1))
+    
+    For i = LBound(testArray, 1) To UBound(testArray, 1)
+        For j = LBound(testArray, 2) To UBound(testArray, 2)
+            expected(j, i) = testArray(i, j)
+        Next
+    Next
+    
+    'Act:
+    actual = SUT.Transpose.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 ''''''''''''''''''''''
 ' Method - Unique '
