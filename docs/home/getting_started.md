@@ -175,3 +175,52 @@ Public Sub Iterating_PlusOne()
     ' Numbers is now: 2, 3, 4
 End Sub
 ```
+
+## Mutating the values in Jagged or Multi-dimension arrays
+
+To mutate the value of a stored jagged (array-of-arrays) or multi-dimension array, you must assign the element at the deired index in the outermost array to a local variable, make the desired changes, and then assign the local variable back into the BetterArray instance at the appropriate index. 
+
+See the following example:
+
+```vb
+Public Sub Mutating2DArray()
+    Dim i As Long
+    Dim originalArray(1 To 3, 1 To 2) As Variant
+    Dim result() As Variant
+    Dim MyList As BetterArray
+    Dim currentElement() As Variant
+    
+    originalArray(1, 1) = "Foo"
+    originalArray(1, 2) = 1
+    originalArray(2, 1) = "Bar"
+    originalArray(2, 2) = 2
+    originalArray(3, 1) = "Fizz"
+    originalArray(3, 2) = 3
+    
+    Set MyList = New BetterArray
+    MyList.Items = originalArray
+    MyList.Push Array("Buzz", 4)
+    
+    For i = MyList.LowerBound To MyList.UpperBound
+        currentElement = MyList.Item(i)
+        currentElement(2) = currentElement(2) + 1
+        MyList.Item(i) = currentElement
+    Next
+    
+    result = MyList.Items
+    ' result is a 2d array dimensioned as (1 To 4, 1 to 2)
+    ' result:
+    '|---|--------|--------|
+    '|   |    1   |    2   |
+    '|---|--------|--------|
+    '| 1 | "Foo"  |      2 |
+    '| 2 | "Bar"  |      3 |
+    '| 3 | "Fizz" |      4 |
+    '| 4 | "Buzz" |      5 |
+    '|---|--------|--------|
+End Sub
+```
+
+#### NOTE
+
+Multi-dimension arrays are converted to jagged arrays on assignment and converted back to a multi-dimension (tabular) structur on retrieval.
