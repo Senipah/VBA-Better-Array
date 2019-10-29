@@ -178,7 +178,7 @@ End Sub
 
 ## Mutating the values in Jagged or Multi-dimension arrays
 
-To mutate the value of a stored jagged (array-of-arrays) or multi-dimension array, you must assign the element at the deired index in the outermost array to a local variable, make the desired changes, and then assign the local variable back into the BetterArray instance at the appropriate index. 
+To mutate the value of a stored jagged (array-of-arrays) or multi-dimension array, you must assign the element at the desired index in the outermost array to a local variable, make the desired changes, and then assign the local variable back into the BetterArray instance at the appropriate index. 
 
 See the following example:
 
