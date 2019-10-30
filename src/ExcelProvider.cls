@@ -13,13 +13,12 @@ Attribute VB_Description = "An RAII container providing access to an Excel appli
 
 Option Explicit
 
-Private Const DEV As Boolean = False ' Determines if application is visible
 Private Const ErrCode As Long = vbObjectError + 513
 
 Private pExcelApplication As Object
 Private pCurrentWorkbook As Object
 Private pCurrentWorksheet As Object
-
+Private pVisible As Boolean
 
 '@Description("Constructor")
 Private Sub Class_Initialize()
@@ -29,7 +28,7 @@ Attribute Class_Initialize.VB_Description = "Constructor"
     Set pCurrentWorkbook = pExcelApplication.Workbooks.Add
     Set pCurrentWorksheet = pCurrentWorkbook.Worksheets.Add
     pCurrentWorksheet.Name = TypeName(Me)
-    pExcelApplication.Visible = DEV
+    pExcelApplication.Visible = False
     On Error GoTo 0
     Exit Sub
 ErrHandler:
@@ -61,6 +60,17 @@ ErrHandler:
         & vbCrLf & "Ensure no orphan Excel application processes exist on system."
     On Error GoTo 0
 End Sub
+
+Public Property Get Visible() As Boolean
+    Visible = pVisible
+End Property
+
+Public Property Let Visible(ByVal Value As Boolean)
+    pVisible = Value
+    If Not pExcelApplication Is Nothing Then
+        pExcelApplication.Visible = pVisible
+    End If
+End Property
 
 '@Description("Returns the acquired Excel Application object")
 Public Property Get ExcelApplication() As Object
