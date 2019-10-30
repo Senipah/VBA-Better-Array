@@ -4,6 +4,20 @@ Option Private Module
 
 '@Folder("Tests.Performance")
 
+Private Function formatDescriptor(ByVal descriptor As String) As String
+    Dim result As String
+    Dim corner As String
+    Dim vertice As String
+    Dim horizon As String
+    corner = "+"
+    vertice = "|"
+    horizon = "-"
+    result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
+           & vertice & " " & descriptor & " " & vertice & vbCrLf _
+           & corner & String(Len(descriptor) + 2, horizon) & corner
+    formatDescriptor = result
+End Function
+
 Public Sub PushingScalar()
     Const maxEntries As Long = 1000000
     Const descriptor As String = "Pushing {count} Scalar Values."
@@ -14,7 +28,7 @@ Public Sub PushingScalar()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print Replace(descriptor, "{count}", CStr(i))
+        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
         manualTime = PushingScalarByRedim(i)
         betterArrayTime = PushingScalarByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
@@ -26,7 +40,7 @@ End Sub
 
 Private Sub RatePerformance(ByVal manualTime As Double, ByVal betterArrayTime As Double)
     Const descriptor As String = "Time taken with "
-    Const resultStart As String = "Better Array is "
+    Const resultStart As String = "BetterArray is "
     Const resultEnd As String = " Than the manual method."
     Dim diff As Double
     
@@ -83,7 +97,7 @@ Public Sub PushingArrays()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print Replace(descriptor, "{count}", CStr(i))
+        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
         manualTime = PushingArraysByRedim(i)
         betterArrayTime = PushingArraysByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
@@ -123,7 +137,7 @@ End Function
 
 Public Sub TransposingJaggedToExcel()
     Const maxEntries As Long = 100000
-    Const descriptor As String = "Transpsing To Excel {count} Arrays."
+    Const descriptor As String = "Transposing To Excel {count} Arrays."
     
     Dim i As Long
     Dim betterArrayTime As Double
@@ -131,7 +145,7 @@ Public Sub TransposingJaggedToExcel()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print Replace(descriptor, "{count}", CStr(i))
+        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
         manualTime = TransposingByTranspose(i)
         betterArrayTime = TransposingByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
