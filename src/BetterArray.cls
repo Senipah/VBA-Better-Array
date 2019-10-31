@@ -370,7 +370,7 @@ End Function
 '@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
 Public Function Includes( _
         ByVal SearchElement As Variant, _
-        Optional ByVal fromIndex As Long = MISSING_LONG _
+        Optional ByVal FromIndex As Long = MISSING_LONG _
     ) As Boolean
 Attribute Includes.VB_Description = "Determines whether the SearchArrayay includes a certain value among its entries."
     Dim localLength As Long
@@ -385,12 +385,12 @@ Attribute Includes.VB_Description = "Determines whether the SearchArrayay includ
         Exit Function
     End If
         
-    If fromIndex > Me.LowerBound Then
-        currentIndex = fromIndex
-    ElseIf fromIndex = MISSING_LONG Then
+    If FromIndex > Me.LowerBound Then
+        currentIndex = FromIndex
+    ElseIf FromIndex = MISSING_LONG Then
         currentIndex = Me.LowerBound
     Else
-        currentIndex = localLength + fromIndex
+        currentIndex = localLength + FromIndex
     End If
     
     Includes = recursiveIncludes(SearchElement, SearchArray, currentIndex)
@@ -1022,7 +1022,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Dim relativeStart As Long
     Dim relativeEnd As Long
     Dim toIndex As Long
-    Dim fromIndex As Long
+    Dim FromIndex As Long
     Dim final As Long
     Dim count As Long
     Dim direction As Long
@@ -1047,9 +1047,9 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
         relativeStart = IIf(StartIndex = MISSING_LONG, pLowerBound, StartIndex)
         
         If relativeStart < 0 Then
-            fromIndex = Max((localLength + relativeStart), 0)
+            FromIndex = Max((localLength + relativeStart), 0)
         Else
-            fromIndex = Min(relativeStart, localLength)
+            FromIndex = Min(relativeStart, localLength)
         End If
         
         If EndIndex = MISSING_LONG Then
@@ -1064,21 +1064,21 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             final = Min(relativeEnd, localLength)
         End If
         
-        count = Min(final - fromIndex, localLength - toIndex)
+        count = Min(final - FromIndex, localLength - toIndex)
         
-        If fromIndex < toIndex And toIndex < fromIndex + count Then
+        If FromIndex < toIndex And toIndex < FromIndex + count Then
             direction = -1
-            fromIndex = fromIndex + count - 1
+            FromIndex = FromIndex + count - 1
             toIndex = toIndex + count - 1
         Else
             direction = 1
         End If
         
         Do While count > 0
-            If fromIndex >= LBound(localArray) And fromIndex <= UBound(localArray) Then
-                localArray(toIndex) = localArray(fromIndex)
+            If FromIndex >= LBound(localArray) And FromIndex <= UBound(localArray) Then
+                localArray(toIndex) = localArray(FromIndex)
             End If
-            fromIndex = fromIndex + direction
+            FromIndex = FromIndex + direction
             toIndex = toIndex + direction
             count = count - 1
         Loop
@@ -1189,6 +1189,56 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Set Shuffle = Me
 End Function
 
+' TODO: Implement, Document & Test indexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+
+Public Function IndexOf( _
+        ByVal SearchElement As Variant, _
+        Optional ByVal FromIndex As Long = MISSING_LONG _
+    ) As Long
+    Dim localItems() As Variant
+    Dim localLength As Long
+    Dim relativeStart As Long
+    Dim currentIndex As Long
+    
+    localItems = getInternalItems()
+    localLength = Me.Length
+    If localLength = 0 Then
+        IndexOf = MISSING_LONG
+        Exit Function
+    End If
+
+    If FromIndex = MISSING_LONG Then
+        relativeStart = LBound(localItems)
+    Else
+        relativeStart = FromIndex
+    End If
+    
+    If relativeStart >= LBound(localItems) Then
+        currentIndex = relativeStart
+    Else
+        If relativeStart > 0 Then
+            currentIndex = UBound(localItems) - relativeStart
+        Else
+            currentIndex = UBound(localItems) + relativeStart + (0 - LBound(localItems))
+        End If
+        
+        If currentIndex < LBound(localItems) Then
+            currentIndex = LBound(localItems)
+        End If
+    End If
+    
+    Do While currentIndex <= UBound(localItems)
+        If valuesAreEqual(SearchElement, localItems(currentIndex)) Then
+            IndexOf = currentIndex
+            Exit Function
+        End If
+        currentIndex = currentIndex + 1
+    Loop
+    
+    IndexOf = MISSING_LONG
+End Function
+
 
 
 ' TODO: Implement, Document & Test Every method
@@ -1200,8 +1250,7 @@ End Function
 ' TODO: Implement, Document & Test Join method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
 
-' TODO: Implement, Document & Test indexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+
 
 ' TODO: Implement, Document & Test lastIndexOf method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
@@ -1393,14 +1442,14 @@ End Function
 Private Function recursiveIncludes( _
         ByVal SearchElement As Variant, _
         ByRef SearchArray() As Variant, _
-        Optional ByVal fromIndex As Long _
+        Optional ByVal FromIndex As Long _
     ) As Boolean
 Attribute recursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
     localLowerBound = LBound(SearchArray)
-    If fromIndex > localLowerBound Then localLowerBound = fromIndex
+    If FromIndex > localLowerBound Then localLowerBound = FromIndex
     localUpperBound = UBound(SearchArray)
     For i = localLowerBound To localUpperBound
         If IsArray(SearchArray(i)) Then

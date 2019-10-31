@@ -25,6 +25,7 @@ Private sut As BetterArray
 ' Module level declaration of ArrayGenerator as used by most tests
 Private Gen As ArrayGenerator
 
+Private Const MISSING_LONG As Long = -999999
 Private Const TEST_ARRAY_LENGTH As Long = 10
 Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an ExcelProvider instance had failed." & _
         " Once resolved ensure to end any orphan Excel processes running on this system."
@@ -4652,6 +4653,88 @@ TestFail:
 End Sub
 
 ''''''''''''''''''''''
+' Method - IndexOf '
+''''''''''''''''''''''
+
+' TODO: Implement, Document & Test indexOf method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    
+    expected = 3
+        
+    testArray = Gen.GetArray()
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(testArray(expected))
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayValueMissing_ReturnsNegative1()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    
+    expected = MISSING_LONG
+        
+    testArray = Gen.GetArray()
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf("Foo")
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_JaggedArray_ReturnsMissingLong()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    
+    expected = 3
+        
+    testArray = Gen.GetArray()
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(testArray(expected))
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+''''''''''''''''''''''
 ' Method - Unique '
 ''''''''''''''''''''''
 
@@ -4709,12 +4792,7 @@ End Sub
 ' TODO: Implement, Document & Test Join method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
 
-''''''''''''''''''''''
-' Method - IndexOf '
-''''''''''''''''''''''
 
-' TODO: Implement, Document & Test indexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
 
 ''''''''''''''''''''''
 ' Method - LastIndexOf '
