@@ -10,17 +10,17 @@ grand_parent: API
 
 The `FromExcelRange()` method accepts an Excel Range object as an argument and stores the values contained within the range to the internal array. If the Range object contains only one row or column, the values will be stored and returned as a one-dimension array. 
 
-If the Range contains both multiple Rows and Columns the default behaviour is that the array returned by accessing the `Items` get accessor will be returned as a multi-dimension array. If a `ColumnNumber` or `RowNumber` argument is provided, only the values in that Row/Column will be stored as a one-dimension array.
+If the Range contains both multiple Rows and Columns the default behaviour is that the array returned by accessing the `Items` get accessor will be returned as a multi-dimension array. If a `columnNumber` or `rowNumber` argument is provided, only the values in that Row/Column will be stored as a one-dimension array.
 
 
 ## Syntax
 
-*expression*.**FromExcelRange**(*FromRange*, [*ColumnNumber*], [*RowNumber*])
+*expression*.**FromExcelRange**(*fromRange*, [*columnNumber*], [*rowNumber*])
 
 ### Parameters
 
 Name 
-: `FromRange`
+: `fromRange`
 
 Type
 : `Range` / `Object`
@@ -34,7 +34,7 @@ Description
 ---
 
 Name 
-: `ColumnNumber`
+: `columnNumber`
 
 Type
 : `Long`
@@ -48,7 +48,7 @@ Description
 ---
 
 Name 
-: `RowNumber`
+: `rowNumber`
 
 Type
 : `Long`

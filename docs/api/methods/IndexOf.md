@@ -11,12 +11,12 @@ The `IndexOf()` method method returns the first index at which a given element c
 
 ## Syntax
 
-*expression*.**IndexOf**(*SearchElement*,[*FromIndex*]) 
+*expression*.**IndexOf**(*searchElement*,[*fromIndex*]) 
 
 ### Parameters
 
 Name 
-: `SearchElement`
+: `searchElement`
 
 Type
 : `Variant`
@@ -30,7 +30,7 @@ Description
 ---
 
 Name 
-: `FromIndex`
+: `fromIndex`
 
 Type
 : `Long`

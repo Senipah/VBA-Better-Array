@@ -13,12 +13,12 @@ The `ToExcelRange()` method writes the values stored in the array to an excel wo
 
 ## Syntax
 
-*expression*.**ToExcelRange**(*Destination*, [*TransposeValues*])
+*expression*.**ToExcelRange**(*destination*, [*transposeValues*])
 
 ### Parameters
 
 Name 
-: `Destination`
+: `destination`
 
 Type
 : `Range` / `Object`
@@ -32,7 +32,7 @@ Description
 ---
 
 Name 
-: `TransposeValues`
+: `transposeValues`
 
 Type
 : `Boolean`

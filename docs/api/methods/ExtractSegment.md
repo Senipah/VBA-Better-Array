@@ -13,12 +13,12 @@ If the stored array is one-dimension and both column and row arguments are provi
 
 ## Syntax
 
-*expression*.**ExtractSegment**([*RowIndex*], [*ColumnIndex*])
+*expression*.**ExtractSegment**([*rowIndex*], [*columnIndex*])
 
 ### Parameters
 
 Name 
-: `RowIndex`
+: `rowIndex`
 
 Type
 : `Long`
@@ -32,7 +32,7 @@ Description
 ---
 
 Name 
-: `ColumnIndex`
+: `columnIndex`
 
 Type
 : `Long`

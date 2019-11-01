@@ -11,12 +11,12 @@ The `Reverse()` method reverses the order of elements in the array. The first ar
 
 ## Syntax
 
-*expression*.**Reverse**([*Recurse*])
+*expression*.**Reverse**([*recurse*])
 
 ### Parameters
 
 Name 
-: `Recurse`
+: `recurse`
 
 Type
 : `Boolean`

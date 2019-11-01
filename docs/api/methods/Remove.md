@@ -11,12 +11,12 @@ The `Remove()` method removes the element at the specified index from the array.
 
 ## Syntax
 
-*expression*.**Remove**(*Index*)
+*expression*.**Remove**(*index*)
 
 ### Parameters
 
 Name 
-: `Index`
+: `index`
 
 Type
 : `Long`

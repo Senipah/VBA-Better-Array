@@ -16,7 +16,7 @@ The `Concat()` method joins one or more arrays onto the end of the current array
 ### Parameters
 
 Name 
-: `Args`
+: `args`
 
 Type
 : ParamArray `Variant`

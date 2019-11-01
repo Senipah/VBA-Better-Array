@@ -15,12 +15,12 @@ The end argument is optional with the length of the this object as its default v
 
 ## Syntax
 
-*expression*.**CopyWithin**(*Target*, [*StartIndex*], [*EndIndex*])
+*expression*.**CopyWithin**(*target*, [*startIndex*], [*endIndex*])
 
 ### Parameters
 
 Name 
-: `Target`
+: `target`
 
 Type
 : `Long`
@@ -29,12 +29,12 @@ Necessity
 : Required
 
 Description
-: The index at which to copy the sequence to. If negative, `Target` will be counted from the end. If `Target` is at or greater than the array's `Length` property, nothing will be copied. If `Target` is positioned after `StartIndex`, the copied sequence will be trimmed to fit the array's `Length` property.
+: The index at which to copy the sequence to. If negative, `target` will be counted from the end. If `target` is at or greater than the array's `Length` property, nothing will be copied. If `target` is positioned after `startIndex`, the copied sequence will be trimmed to fit the array's `Length` property.
 
 ---
 
 Name
-: `StartIndex`
+: `startIndex`
 
 Type
 : `Long`
@@ -43,12 +43,12 @@ Necessity
 : Optional
 
 Description
-: The index at which to start copying elements from. If negative, `StartIndex` will be counted from the end. If `StartIndex` is omitted, `CopyWithin` will copy from the LowerBound index of the array. 
+: The index at which to start copying elements from. If negative, `startIndex` will be counted from the end. If `startIndex` is omitted, `CopyWithin` will copy from the LowerBound index of the array. 
 
 ---
 
 Name
-: `EndIndex`
+: `endIndex`
 
 Type
 : `Long`
@@ -57,8 +57,8 @@ Necessity
 : Optional
 
 Description
-: The index at which to end copying elements from. `CopyWithin` copies up to but not including `EndIndex`. If negative, `EndIndex` will be counted from the end.
-If `EndIndex` is omitted, `CopyWithin` will copy until the last index (default to the array's `Length` property).
+: The index at which to end copying elements from. `CopyWithin` copies up to but not including `endIndex`. If negative, `endIndex` will be counted from the end.
+If `endIndex` is omitted, `CopyWithin` will copy until the last index (default to the array's `Length` property).
 
 ### Returns
 

@@ -7,7 +7,7 @@ grand_parent: API
 # IsSorted
 
 ## Description
-The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `ColumnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the aray is sorted by the values in that column. 
+The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `columnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the aray is sorted by the values in that column. 
 
 #### Note
 
@@ -15,12 +15,12 @@ The `IsSorted()` method tests if the stored array is sorted in ascending order. 
 
 ## Syntax
 
-*expression*.**IsSorted**(`ColumnIndex`) 
+*expression*.**IsSorted**(`columnIndex`) 
 
 ### Parameters
 
 Name 
-: `ColumnIndex`
+: `columnIndex`
 
 Type
 : `Long`
@@ -29,7 +29,7 @@ Necessity
 : Optional
 
 Description
-: The index of the column to be extracted. Only applies to multi-dimensional or jagged arays. If ommitted, or exceeds the bounds of the array, the first column will be used.
+: The index of the column to be to be used when determining if the entries are in order. Only used in multi-dimensional or jagged arrays with a depth of 2.
 
 ### Returns
 

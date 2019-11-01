@@ -11,12 +11,12 @@ The `ToString()` method returns a string representing the array structure and it
 
 ## Syntax
 
-*expression*.**ToString**([*PrettyPrint*], [*DelimitStrings*], [*OpeningDelimiter*], [*ClosingDelimiter*])
+*expression*.**ToString**([*prettyPrint*], [*delimitStrings*], [*openingDelimiter*], [*closingDelimiter*])
 
 ### Parameters
 
 Name 
-: `PrettyPrint`
+: `prettyPrint`
 
 Type
 : `Boolean`
@@ -30,7 +30,7 @@ Description
 ---
 
 Name 
-: `DelimitStrings`
+: `delimitStrings`
 
 Type
 : `Boolean`
@@ -44,7 +44,7 @@ Description
 ---
 
 Name 
-: `OpeningDelimiter`
+: `openingDelimiter`
 
 Type
 : `String`
@@ -53,12 +53,12 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `OpeningDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
+: If provided, the string passed to `openingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
 
 ---
 
 Name 
-: `ClosingDelimiter`
+: `closingDelimiter`
 
 Type
 : `String`
@@ -67,7 +67,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `ClosingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+: If provided, the string passed to `closingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
 
 ### Returns
 

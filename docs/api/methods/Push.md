@@ -14,12 +14,12 @@ Internal array capacity will be doubled automatically every time the length of t
 
 ## Syntax
 
-*expression*.**Push**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
+*expression*.**Push**([*args1*[, *args2*[, ...[, *argsN*]]]])
 
 ### Parameters
 
 Name 
-: `Args`
+: `args`
 
 Type
 : ParamArray `Variant`

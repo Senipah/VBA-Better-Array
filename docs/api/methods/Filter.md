@@ -15,12 +15,12 @@ Provides ability to filter on any type of array (unlike the VBA version which on
 
 ## Syntax
 
-*expression*.**Filter**(*Match*, [*Exclude*], [*Recurse*])
+*expression*.**Filter**(*match*, [*exclude*], [*recurse*])
 
 ### Parameters
 
 Name 
-: `Match`
+: `match`
 
 Type
 : `Variant`
@@ -34,7 +34,7 @@ Description
 ---
 
 Name
-: `Exclude`
+: `exclude`
 
 Type
 : `Boolean`
@@ -43,12 +43,12 @@ Necessity
 : Optional
 
 Description
-: Boolean value indicating whether to return values that include or exclude `Match`. If include is True, `Filter` returns the subset of the array that contains `Match`. If include is False, `Filter` returns the subset of the array that does not contain `Match`.
+: Boolean value indicating whether to return values that include or exclude `match`. If include is True, `Filter` returns the subset of the array that contains `match`. If include is False, `Filter` returns the subset of the array that does not contain `match`.
 
 ---
 
 Name 
-: `Recurse`
+: `recurse`
 
 Type
 : `Boolean`

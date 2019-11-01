@@ -11,12 +11,12 @@ The `Includes()` method determines whether the array includes a certain value am
 
 ## Syntax
 
-*expression*.**Includes**(*SearchElement*, [*FromIndex*])
+*expression*.**Includes**(*searchElement*, [*fromIndex*])
 
 ### Parameters
 
 Name 
-: `SearchElement`
+: `searchElement`
 
 Type
 : `Variant`
@@ -30,7 +30,7 @@ Description
 ---
 
 Name 
-: `FromIndex`
+: `fromIndex`
 
 Type
 : `Long`
@@ -39,7 +39,7 @@ Necessity
 : Optional
 
 Description
-: The position in this array at which to begin searching for `SearchElement`; the first character to be searched is found at `FromIndex` for positive values of `FromIndex`, or at the array's `Length` property + `FromIndex` for negative values of `FromIndex` (using the absolute value of `FromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `LowerBound` property.
+: The position in this array at which to begin searching for `searchElement`; the first character to be searched is found at `fromIndex` for positive values of `fromIndex`, or at the array's `Length` property + `fromIndex` for negative values of `fromIndex` (using the absolute value of `fromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `LowerBound` property.
 
 ### Returns
 
@@ -47,7 +47,7 @@ Type
 : `Boolean`
 
 Description
-: `True` if the array includes `SearchElement`, `False` if not.
+: `True` if the array includes `searchElement`, `False` if not.
 
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.includes>

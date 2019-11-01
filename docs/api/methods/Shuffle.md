@@ -11,12 +11,12 @@ The `Shuffle()` method Shuffles the order of elements in the array using the [Fi
 
 ## Syntax
 
-*expression*.**Shuffle**([*Recurse*])
+*expression*.**Shuffle**([*recurse*])
 
 ### Parameters
 
 Name 
-: `Recurse`
+: `recurse`
 
 Type
 : `Boolean`

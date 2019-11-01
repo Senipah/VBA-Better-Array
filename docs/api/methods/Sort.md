@@ -16,12 +16,12 @@ Arrays more than two dimensions deep are unsupported and an error will be raised
 
 ## Syntax
 
-*expression*.**Sort**([*SortColumn*])
+*expression*.**Sort**([*sortColumn*])
 
 ### Parameters
 
 Name 
-: `SortColumn`
+: `sortColumn`
 
 Type
 : `Long`

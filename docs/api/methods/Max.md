@@ -14,12 +14,12 @@ Multi-dimensional arrays assigned to the `.Items` property are converted to jagg
 
 ## Syntax
 
-*expression*.**Max**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
+*expression*.**Max**([*args1*[, *args2*[, ...[, *argsN*]]]])
 
 ### Parameters
 
 Name 
-: `Args`
+: `args`
 
 Type
 : ParamArray `Variant`

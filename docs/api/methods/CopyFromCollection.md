@@ -11,12 +11,12 @@ The `CopyFromCollection()` method writes the elements stored in a `Collection` o
 
 ## Syntax
 
-*expression*.**Concat**(*SourceCollection*)
+*expression*.**Concat**(*sourceCollection*)
 
 ### Parameters
 
 Name 
-: `SourceCollection`
+: `sourceCollection`
 
 Type
 : `Collection` / `Object`

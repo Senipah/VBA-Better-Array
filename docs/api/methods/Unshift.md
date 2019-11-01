@@ -11,12 +11,12 @@ The `Unshift()` method adds one or more elements to the beginning of an array an
 
 ## Syntax
 
-*expression*.**Unshift**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
+*expression*.**Unshift**([*args1*[, *args2*[, ...[, *argsN*]]]])
 
 ### Parameters
 
 Name 
-: `Args`
+: `args`
 
 Type
 : ParamArray `Variant`
