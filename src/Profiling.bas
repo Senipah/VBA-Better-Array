@@ -4,6 +4,7 @@ Option Private Module
 
 '@Folder("Tests.Performance")
 
+'@Ignore FunctionReturnValueNotUsed
 Private Function formatDescriptor(ByVal descriptor As String) As String
     Dim result As String
     Dim corner As String
@@ -194,6 +195,7 @@ Private Function TransposingByBetterArray(ByVal count As Long) As Double
     exl.Visible = True
     TransposingByBetterArray = Timer - startTime
 End Function
+
 
 
 
