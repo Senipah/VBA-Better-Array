@@ -7,7 +7,7 @@ grand_parent: API
 # Unique
 
 ## Description
-The `Unique()` removes all duplicate elements from the outermost array such that only unique elements remain.
+The `Unique()` method removes all duplicate elements from the outermost array such that only unique elements remain.
 
 ## Syntax
 
