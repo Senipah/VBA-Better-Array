@@ -4,7 +4,7 @@ parent: Methods
 grand_parent: API
 ---
 
-# Sort
+# Remove
 
 ## Description
 The `Remove()` method removes the element at the specified index from the array. If the index is negative, the index will be counted from the end of the array. Returns the new length of the array.
