@@ -16,7 +16,7 @@ Implements IValuesList
 
 Private IsObjectType As Boolean
 Private Const VALUE_COUNT As Long = 100
-Private Values(VALUE_COUNT) As Variant
+Private values(VALUE_COUNT) As Variant
 
 Private Sub Class_Initialize()
     Dim TypesList(0 To 4) As IValuesList
@@ -28,7 +28,7 @@ Private Sub Class_Initialize()
     
     Dim i As Long
     For i = 0 To VALUE_COUNT
-        Values(i) = TypesList(rand(4)).GetRandomValue
+        values(i) = TypesList(Rand(4)).GetRandomValue
     Next
     IsObjectType = False
 End Sub
@@ -38,10 +38,10 @@ Public Property Get IValuesList_IsObjectType() As Boolean
 End Property
 
 Private Function IValuesList_GetRandomValue() As Variant
-    IValuesList_GetRandomValue = Values(rand(LBound(Values), UBound(Values)))
+    IValuesList_GetRandomValue = values(Rand(LBound(values), UBound(values)))
 End Function
 
-Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
-    Randomize: rand = Int(Rnd * (Max - Min) + 1) + Min
+Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
+    Randomize: Rand = Int(Rnd * (Max - Min) + 1) + Min
 End Function
 

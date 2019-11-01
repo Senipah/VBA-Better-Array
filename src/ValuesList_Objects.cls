@@ -27,10 +27,10 @@ End Property
 Public Function IValuesList_GetRandomValue() As Variant
     Dim result As Collection
     Set result = New Collection
-    result.Add rand(-1000, 1000)
+    result.Add Rand(-1000, 1000)
     Set IValuesList_GetRandomValue = result
 End Function
 
-Private Function rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
-    Randomize: rand = Int(Rnd * (Max - Min) + 1) + Min
+Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
+    Randomize: Rand = Int(Rnd * (Max - Min) + 1) + Min
 End Function

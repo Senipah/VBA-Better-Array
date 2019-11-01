@@ -50,7 +50,7 @@ End Enum
 
 Private Type ErrorDefinition
     number As Long
-    Source As String
+    source As String
     description As String
 End Type
 
@@ -95,15 +95,15 @@ Attribute Capacity.VB_Description = "Returns the capacity of the internal array.
 End Property
 
 '@Description("Sets the capacity of the internal array.")
-Public Property Let Capacity(ByVal Value As Long)
+Public Property Let Capacity(ByVal value As Long)
 Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
-    If Value < 0 Then Err.Raise 9
-    If Value <> pCapacity Then
+    If value < 0 Then Err.Raise 9
+    If value <> pCapacity Then
         If pCapacity > 0 Then
-            If getArrayLength(pItems) <> Value Then
+            If GetArrayLength(pItems) <> value Then
                 Dim newItems() As Variant
                 newItems = pItems
-                ReDim Preserve newItems(pLowerBound To (Value + pLowerBound - 1))
+                ReDim Preserve newItems(pLowerBound To (value + pLowerBound - 1))
                 pItems = newItems
             End If
         Else
@@ -114,9 +114,9 @@ Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
 End Property
 
 '@Description("Returns the number of entries stored in the array.")
-Public Property Get Length() As Long
-Attribute Length.VB_Description = "Returns the number of entries stored in the array."
-    Length = pLength
+Public Property Get length() As Long
+Attribute length.VB_Description = "Returns the number of entries stored in the array."
+    length = pLength
 End Property
 
 '@Description("Returns largest used index in the array.")
@@ -136,11 +136,11 @@ Attribute LowerBound.VB_Description = "Returns smallest used index in the array.
 End Property
 
 '@Description("Sets the starting index of the array. If an array is already stored then it will be re-indexed to match the new value")
-Public Property Let LowerBound(ByVal Value As Long)
+Public Property Let LowerBound(ByVal value As Long)
 Attribute LowerBound.VB_Description = "Sets the starting index of the array. If an array is already stored then it will be re-indexed to match the new value"
     LowerBoundSet = True
-    If Value <> pLowerBound And Value >= 0 Then
-        pLowerBound = Value
+    If value <> pLowerBound And value >= 0 Then
+        pLowerBound = value
         pItems = Rebase()
         pCapacity = pLength
     End If
@@ -148,15 +148,15 @@ End Property
 
 '@DefaultMember
 '@Description("Returns the element in the array stored at the specified index.")
-Public Property Get Item(ByVal Index As Long)
+Public Property Get Item(ByVal index As Long)
 Attribute Item.VB_Description = "Returns the element in the array stored at the specified index."
 Attribute Item.VB_UserMemId = 0
-    If Index <= pLength Then
+    If index <= pLength Then
         ' not using letOrSetElement here as it might try to access the Items letter
-        If IsObject(pItems(Index)) Then
-            Set Item = pItems(Index)
+        If IsObject(pItems(index)) Then
+            Set Item = pItems(index)
         Else
-            Item = pItems(Index)
+            Item = pItems(index)
         End If
     Else
         Err.Raise 9
@@ -164,13 +164,13 @@ Attribute Item.VB_UserMemId = 0
 End Property
 
 '@Description("Assigns the passed element to the array at the specified index.")
-Public Property Let Item(ByVal Index As Long, ByVal element As Variant)
+Public Property Let Item(ByVal index As Long, ByVal element As Variant)
 Attribute Item.VB_Description = "Assigns the passed element to the array at the specified index."
-    If Me.UpperBound >= Index Then
-        If Index < Me.LowerBound Then
+    If Me.UpperBound >= index Then
+        If index < Me.LowerBound Then
             Me.Unshift element
         Else
-            letOrSetElement pItems(Index), element
+            LetOrSetElement pItems(index), element
         End If
     Else
         Me.Push element
@@ -181,31 +181,31 @@ End Property
 Public Property Get Items() As Variant
 Attribute Items.VB_Description = "Returns the stored array."
     Dim result() As Variant
-    result = getInternalItems()
+    result = GetInternalItems()
     If pArrayType = ArrayTypes.BA_MULTIDIMENSION Then
-        If isJaggedArray(result) Then result = jaggedToMulti(result)
+        If IsJaggedArray(result) Then result = JaggedToMulti(result)
     End If
     Items = result
 End Property
 
 '@Description("Stores the passed array.")
-Public Property Let Items(ByVal Values As Variant)
+Public Property Let Items(ByVal values As Variant)
 Attribute Items.VB_Description = "Stores the passed array."
     Dim localLowerBound As Long
     Dim localValues() As Variant
-    If IsArray(Values) Then
-        If TypeName(Values) <> "Variant()" Then
+    If IsArray(values) Then
+        If TypeName(values) <> "Variant()" Then
             RaiseError EC_EXPECTED_VARIANT_ARRAY, "Items", "Values"
             Exit Property
         End If
-        localValues = Values
-        pArrayType = getArrayType(localValues)
+        localValues = values
+        pArrayType = GetArrayType(localValues)
         
         If pArrayType = ArrayTypes.BA_UNDEFINED Then
             RaiseError EC_EXPECTED_ARRAY, "Items", "Values"
         Else
             If pArrayType = BA_UNALLOCATED Then
-                localValues = getEmptyArray()
+                localValues = GetEmptyArray()
             End If
             
             localLowerBound = LBound(localValues)
@@ -215,7 +215,7 @@ Attribute Items.VB_Description = "Stores the passed array."
             End If
             
             If pArrayType = BA_MULTIDIMENSION Then
-                localValues = multiToJagged(localValues)
+                localValues = MultiToJagged(localValues)
             End If
             
             If localLowerBound <> pLowerBound Then
@@ -223,13 +223,13 @@ Attribute Items.VB_Description = "Stores the passed array."
             Else
                 pItems = localValues
             End If
-            pLength = getArrayLength(localValues)
+            pLength = GetArrayLength(localValues)
             Me.Capacity = pLength
         End If
     Else
         ' If Values is not an array then clear our internal array and push the Values arg
         ' TODO: Document and write tests
-        Me.Clear.Push Values
+        Me.Clear.Push values
     End If
 
 End Property
@@ -244,7 +244,7 @@ End Property
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Adds the provided argments to the array at the next available index.")
-Public Function Push(ParamArray Args() As Variant) As Variant
+Public Function Push(ParamArray args() As Variant) As Variant
 Attribute Push.VB_Description = "Adds the provided argments to the array at the next available index."
     Dim element As Variant
 
@@ -253,7 +253,7 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
         pArrayType = ArrayTypes.BA_ONEDIMENSION
     End If
 
-    For Each element In Args
+    For Each element In args
         If pLength = pCapacity Then
             EnsureCapacity pLength + 1
         End If
@@ -262,7 +262,7 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
             Dim ArrayElementType As ArrayTypes
             arrayElement = element
             If pArrayType = BA_ONEDIMENSION Then
-                ArrayElementType = getArrayType(arrayElement)
+                ArrayElementType = GetArrayType(arrayElement)
                 If ArrayElementType = BA_MULTIDIMENSION Then
                     pArrayType = BA_MULTIDIMENSION
                 Else
@@ -272,9 +272,9 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
             If LBound(arrayElement) <> pLowerBound Then
                 arrayElement = Rebase(arrayElement, ArrayElementType)
             End If
-            letOrSetElement pItems(pLength + pLowerBound), arrayElement
+            LetOrSetElement pItems(pLength + pLowerBound), arrayElement
         Else
-            letOrSetElement pItems(pLength + pLowerBound), element
+            LetOrSetElement pItems(pLength + pLowerBound), element
 '            If pArrayType = BA_MULTIDIMENSION Then
 '                'encase in array if pushing to md
 '                letOrSetElement pItems(pLength + pLowerBound), Array(element)
@@ -317,49 +317,49 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Adds one or more elements to the beginning of an array. Returns the new length of the array.")
-Public Function Unshift(ParamArray Args() As Variant) As Long
+Public Function Unshift(ParamArray args() As Variant) As Long
 Attribute Unshift.VB_Description = "Adds one or more elements to the beginning of an array. Returns the new length of the array."
     Dim newItems() As Variant
     Dim oldItems() As Variant
     Dim oldType As ArrayTypes
     
-    newItems = Args
+    newItems = args
     oldType = pArrayType
-    oldItems = getInternalItems()
+    oldItems = GetInternalItems()
     Me.Items = newItems
     If oldType <> BA_UNALLOCATED And oldType <> BA_UNDEFINED Then
         Me.Concat oldItems
         pArrayType = oldType
     End If
-    Unshift = Me.Length
+    Unshift = Me.length
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString( _
-        Optional ByVal PrettyPrint As Boolean, _
-        Optional ByVal DelimitStrings As Boolean, _
-        Optional ByVal OpeningDelimiter As String, _
-        Optional ByVal ClosingDelimiter As String _
+        Optional ByVal prettyPrint As Boolean, _
+        Optional ByVal delimitStrings As Boolean, _
+        Optional ByVal openingDelimiter As String, _
+        Optional ByVal closingDelimiter As String _
     ) As String
 Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
-    Dim ArrayType As ArrayTypes
+    Dim arrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
     
-    localItems = getInternalItems()
-    ArrayType = getArrayType(localItems)
-    If Not ArrayType = ArrayTypes.BA_UNDEFINED And _
-       Not ArrayType = ArrayTypes.BA_UNALLOCATED Then
-        If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
-            localItems = multiToJagged(localItems)
+    localItems = GetInternalItems()
+    arrayType = GetArrayType(localItems)
+    If Not arrayType = ArrayTypes.BA_UNDEFINED And _
+       Not arrayType = ArrayTypes.BA_UNALLOCATED Then
+        If arrayType = ArrayTypes.BA_MULTIDIMENSION Then
+            localItems = MultiToJagged(localItems)
         End If
-        result = recursiveToString( _
+        result = RecursiveToString( _
             arr:=localItems, _
-            PrettyPrint:=PrettyPrint, _
-            DelimitStrings:=DelimitStrings, _
-            OpeningDelimiter:=OpeningDelimiter, _
-            ClosingDelimiter:=ClosingDelimiter _
+            prettyPrint:=prettyPrint, _
+            delimitStrings:=delimitStrings, _
+            openingDelimiter:=openingDelimiter, _
+            closingDelimiter:=closingDelimiter _
         )
     End If
     ToString = result
@@ -369,31 +369,31 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
 Public Function Includes( _
-        ByVal SearchElement As Variant, _
-        Optional ByVal FromIndex As Long = MISSING_LONG _
+        ByVal searchElement As Variant, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
     ) As Boolean
 Attribute Includes.VB_Description = "Determines whether the SearchArrayay includes a certain value among its entries."
     Dim localLength As Long
     Dim currentIndex As Long
-    Dim SearchArray() As Variant
+    Dim searchArray() As Variant
     
-    SearchArray = getInternalItems()
-    localLength = Me.Length
+    searchArray = GetInternalItems()
+    localLength = Me.length
     
     If localLength = 0 Then
         Includes = False
         Exit Function
     End If
         
-    If FromIndex > Me.LowerBound Then
-        currentIndex = FromIndex
-    ElseIf FromIndex = MISSING_LONG Then
+    If fromIndex > Me.LowerBound Then
+        currentIndex = fromIndex
+    ElseIf fromIndex = MISSING_LONG Then
         currentIndex = Me.LowerBound
     Else
-        currentIndex = localLength + FromIndex
+        currentIndex = localLength + fromIndex
     End If
     
-    Includes = recursiveIncludes(SearchElement, SearchArray, currentIndex)
+    Includes = RecursiveIncludes(searchElement, searchArray, currentIndex)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -410,7 +410,7 @@ Attribute Keys.VB_Description = "Returns a new array that contains the keys for 
         RaiseError EC_UNALLOCATED_ARRAY, "Keys"
     Else
         localLowerBound = Me.LowerBound
-        ReDim result(0 To Me.Length - 1)
+        ReDim result(0 To Me.length - 1)
         For i = LBound(result) To UBound(result)
             result(i) = i + localLowerBound
         Next
@@ -420,39 +420,39 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array")
-Public Function Max(ParamArray Args() As Variant) As Variant
+Public Function Max(ParamArray args() As Variant) As Variant
 Attribute Max.VB_Description = "Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array"
     Dim arr() As Variant
     
-    If UBound(Args) < LBound(Args) Then          'Test if no args provided
-        arr = getInternalItems()
+    If UBound(args) < LBound(args) Then          'Test if no args provided
+        arr = GetInternalItems()
     Else
-        arr = Args
+        arr = args
     End If
     
-    Max = recursiveMax(arr)
+    Max = RecursiveMax(arr)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array")
-Public Function Min(ParamArray Args() As Variant) As Variant
+Public Function Min(ParamArray args() As Variant) As Variant
 Attribute Min.VB_Description = "Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array"
     Dim arr() As Variant
     
-    If UBound(Args) < LBound(Args) Then          'Test if no args provided
-        arr = getInternalItems()
+    If UBound(args) < LBound(args) Then          'Test if no args provided
+        arr = GetInternalItems()
     Else
-        arr = Args
+        arr = args
     End If
     
-    Min = recursiveMin(arr)
+    Min = RecursiveMin(arr)
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array containing the portion of the stored array between the StartIndex and EndIndex")
 Public Function Slice( _
-        ByVal StartIndex As Long, _
-        Optional ByVal EndIndex As Long = MISSING_LONG _
+        ByVal startIndex As Long, _
+        Optional ByVal endIndex As Long = MISSING_LONG _
     ) As Variant()
 Attribute Slice.VB_Description = "Returns a new array containing the portion of the stored array between the StartIndex and EndIndex"
     Dim localLength As Long
@@ -465,9 +465,9 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Dim arr() As Variant
     Dim result() As Variant
     
-    arr = getInternalItems()
-    localLength = Me.Length
-    relativeStart = StartIndex
+    arr = GetInternalItems()
+    localLength = Me.length
+    relativeStart = startIndex
     If relativeStart < LBound(arr) Then
         If relativeStart < 0 Then
             oldIndex = Max((localLength + relativeStart), LBound(arr))
@@ -477,10 +477,10 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Else
         oldIndex = Min(relativeStart, localLength)
     End If
-    If EndIndex = MISSING_LONG Then
+    If endIndex = MISSING_LONG Then
         relativeEnd = localLength + pLowerBound
     Else
-        relativeEnd = EndIndex
+        relativeEnd = endIndex
     End If
     If relativeEnd < LBound(arr) Then
         final = Max((localLength + relativeEnd), LBound(arr))
@@ -494,13 +494,13 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
         ReDim result(newIndex To count - 1)
         Do While oldIndex < final
             If oldIndex >= LBound(arr) And oldIndex <= UBound(arr) Then
-                letOrSetElement result(newIndex), arr(oldIndex)
+                LetOrSetElement result(newIndex), arr(oldIndex)
                 newIndex = newIndex + 1
                 oldIndex = oldIndex + 1
             End If
         Loop
         If pArrayType = BA_MULTIDIMENSION Then
-            Slice = jaggedToMulti(result)
+            Slice = JaggedToMulti(result)
         Else
             Slice = result
         End If
@@ -512,28 +512,28 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Stores the values contained in an Excel range in the internal array")
 Public Function FromExcelRange( _
-        ByRef FromRange As Object, _
-        Optional ByVal ColumnNumber As Long = MISSING_LONG, _
-        Optional ByVal RowNumber As Long = MISSING_LONG _
+        ByRef fromRange As Object, _
+        Optional ByVal columnNumber As Long = MISSING_LONG, _
+        Optional ByVal rowNumber As Long = MISSING_LONG _
     ) As BetterArray
 Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
     Dim localColumnNumber As Long
     Dim localRowNumber As Long
     
-    If TypeName(FromRange) = "Range" Then
-        If FromRange.Columns.count = 1 Then
+    If TypeName(fromRange) = "Range" Then
+        If fromRange.Columns.count = 1 Then
             localColumnNumber = 1
         Else
-            localColumnNumber = ColumnNumber
+            localColumnNumber = columnNumber
         End If
         
-        If FromRange.Rows.count = 1 Then
+        If fromRange.Rows.count = 1 Then
             localRowNumber = 1
         Else
-            localRowNumber = RowNumber
+            localRowNumber = rowNumber
         End If
         
-        Me.Items = FromRange.Value
+        Me.Items = fromRange.value
     
         If localColumnNumber <> MISSING_LONG Then
             If localRowNumber <> MISSING_LONG Then
@@ -554,21 +554,21 @@ End Function
 '@Ignore ProcedureNotUsed
 '@Description("Extracts the segment of the array located at the specified indices.")
 Public Function ExtractSegment( _
-    Optional ByVal RowIndex As Long = MISSING_LONG, _
-    Optional ByVal ColumnIndex As Long = MISSING_LONG _
+    Optional ByVal rowIndex As Long = MISSING_LONG, _
+    Optional ByVal columnIndex As Long = MISSING_LONG _
     ) As Variant()
 Attribute ExtractSegment.VB_Description = "Extracts the segment of the array located at the specified indices."
     Dim i As Long
     Dim localRowIndex As Long
     Dim localColumnIndex As Long
     Dim nestedBounds() As Variant
-    Dim SourceArray() As Variant
+    Dim sourceArray() As Variant
     Dim result() As Variant
     
-    SourceArray = getInternalItems()
+    sourceArray = GetInternalItems()
 
-    If RowIndex = MISSING_LONG Then
-        If ColumnIndex = MISSING_LONG Then
+    If rowIndex = MISSING_LONG Then
+        If columnIndex = MISSING_LONG Then
             ' if no coords provided return full array
             ' calls to Me.Items instead of SourceArray to covert md from jagged
             result = Me.Items
@@ -576,45 +576,45 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
             ' Row number missing, column number present
             Select Case pArrayType
             Case BA_ONEDIMENSION
-                If ColumnIndex >= Me.LowerBound And ColumnIndex <= Me.UpperBound Then
-                    localColumnIndex = ColumnIndex
+                If columnIndex >= Me.LowerBound And columnIndex <= Me.UpperBound Then
+                    localColumnIndex = columnIndex
                 Else
                     localColumnIndex = Me.LowerBound
                 End If
-                result = Array(SourceArray(localColumnIndex))
+                result = Array(sourceArray(localColumnIndex))
             Case BA_JAGGED, BA_MULTIDIMENSION
                 ' return full column
-                nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
-                If ColumnIndex >= nestedBounds(0) And ColumnIndex <= nestedBounds(1) Then
-                    localColumnIndex = ColumnIndex
+                nestedBounds = GetMaxBoundsAtDimension(sourceArray, 2)
+                If columnIndex >= nestedBounds(0) And columnIndex <= nestedBounds(1) Then
+                    localColumnIndex = columnIndex
                 Else
                     localColumnIndex = Me.LowerBound
                 End If
                 ReDim result(Me.LowerBound To Me.UpperBound)
                 For i = Me.LowerBound To Me.UpperBound
-                    result(i) = SourceArray(i)(localColumnIndex)
+                    result(i) = sourceArray(i)(localColumnIndex)
                 Next
             Case BA_UNALLOCATED
-                result = SourceArray
+                result = sourceArray
             Case Else
             End Select
         End If
     Else
         ' Row Number not missing
-        If RowIndex >= Me.LowerBound And RowIndex <= Me.UpperBound Then
-            localRowIndex = RowIndex
+        If rowIndex >= Me.LowerBound And rowIndex <= Me.UpperBound Then
+            localRowIndex = rowIndex
         Else
             localRowIndex = Me.LowerBound
         End If
-        If ColumnIndex = MISSING_LONG Then
+        If columnIndex = MISSING_LONG Then
             ' Row number present, column number missing
             Select Case pArrayType
             Case BA_ONEDIMENSION
-                result = Array(SourceArray(localRowIndex))
+                result = Array(sourceArray(localRowIndex))
             Case BA_JAGGED, BA_MULTIDIMENSION
-                result = SourceArray(localRowIndex)
+                result = sourceArray(localRowIndex)
             Case BA_UNALLOCATED
-                result = SourceArray
+                result = sourceArray
             Case Else
             End Select
         Else
@@ -622,22 +622,22 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
             Select Case pArrayType
             Case BA_ONEDIMENSION
                 ' ignore column number arg as array is 1d
-                result = Array(SourceArray(localRowIndex))
+                result = Array(sourceArray(localRowIndex))
             Case BA_JAGGED, BA_MULTIDIMENSION
                 ' return intersection of rowIndex and column number
-                nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
-                If ColumnIndex >= nestedBounds(0) And ColumnIndex <= nestedBounds(1) Then
-                    localColumnIndex = ColumnIndex
+                nestedBounds = GetMaxBoundsAtDimension(sourceArray, 2)
+                If columnIndex >= nestedBounds(0) And columnIndex <= nestedBounds(1) Then
+                    localColumnIndex = columnIndex
                 Else
                     localColumnIndex = Me.LowerBound
                 End If
-                If IsArray(SourceArray(localRowIndex)(localColumnIndex)) Then
-                    result = SourceArray(localRowIndex)(localColumnIndex)
+                If IsArray(sourceArray(localRowIndex)(localColumnIndex)) Then
+                    result = sourceArray(localRowIndex)(localColumnIndex)
                 Else
-                    result = Array(SourceArray(localRowIndex)(localColumnIndex))
+                    result = Array(sourceArray(localRowIndex)(localColumnIndex))
                 End If
             Case BA_UNALLOCATED
-                result = SourceArray
+                result = sourceArray
             Case Else
             End Select
         End If
@@ -651,12 +651,12 @@ End Function
 '@Description("Writes the values stored in the array to an excel worksheet starting at the specified range.")
 Public Function ToExcelRange( _
         ByRef destination As Object, _
-        Optional ByVal TransposeValues As Boolean _
+        Optional ByVal transposeValues As Boolean _
     ) As Object
 Attribute ToExcelRange.VB_Description = "Writes the values stored in the array to an excel worksheet starting at the specified range."
     Dim localRange As Object
     Dim localItems() As Variant
-    Dim Depth As Long
+    Dim depth As Long
     Dim lengthRows As Long
     Dim lengthColumns As Long
     
@@ -664,23 +664,23 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     lengthColumns = 1 'default
     
     If TypeName(destination) = "Range" Then
-        localItems = getInternalItems()
-        Depth = getJaggedArrayDepth(localItems)
-        If Depth > 0 Then 'check array is allocated
-            If Depth = 1 Then
+        localItems = GetInternalItems()
+        depth = GetJaggedArrayDepth(localItems)
+        If depth > 0 Then 'check array is allocated
+            If depth = 1 Then
                 '1d array
-                localItems = ensureScalar1DArray(localItems)
-                If TransposeValues Then
-                    lengthRows = Me.Length
+                localItems = EnsureScalar1DArray(localItems)
+                If transposeValues Then
+                    lengthRows = Me.length
                     localItems = Transpose_1DArray(localItems)
                 Else
-                    lengthColumns = Me.Length
+                    lengthColumns = Me.length
                 End If
-            ElseIf Depth > 1 Then
+            ElseIf depth > 1 Then
                 'jagged array - multidim arrays should also be stored as jagged internally
                 Const outputDepth As Long = 2 'need 2 dimensions for tabular representation output
-                localItems = jaggedToMulti(localItems, outputDepth, EnsureScalar:=True)
-                If TransposeValues Then
+                localItems = JaggedToMulti(localItems, outputDepth, ensureScalar:=True)
+                If transposeValues Then
                     lengthRows = UBound(localItems, 2) - LBound(localItems, 2) + 1
                     lengthColumns = UBound(localItems, 1) - LBound(localItems, 1) + 1
                     localItems = Transpose_2DArray(localItems)
@@ -693,7 +693,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
                 RowSize:=lengthRows, _
                 ColumnSize:=lengthColumns _
             )
-            localRange.Value = localItems
+            localRange.value = localItems
         Else
             'array must be unalloc
             'do nothing(?)
@@ -707,23 +707,23 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Tests if the stored array is sorted in ascending order.")
-Public Function IsSorted(Optional ByVal ColumnIndex As Long = MISSING_LONG) As Boolean
+Public Function IsSorted(Optional ByVal columnIndex As Long = MISSING_LONG) As Boolean
 Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in ascending order."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim localColumnIndex As Long
-    Dim Depth As Long
+    Dim depth As Long
     Dim result As Boolean
     Dim localArray() As Variant
     Dim storedType As ArrayTypes
     
     result = True
     
-    localArray = getInternalItems()
+    localArray = GetInternalItems()
     localLowerBound = LBound(localArray)
     localUpperBound = UBound(localArray)
-    storedType = getArrayType(localArray)
+    storedType = GetArrayType(localArray)
     If storedType <> BA_UNDEFINED And storedType <> BA_UNALLOCATED Then
         Select Case storedType
         Case BA_ONEDIMENSION
@@ -735,10 +735,10 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
             Next
         Case BA_MULTIDIMENSION
             ' should never be true as all md arrays stored as jagged internally
-            If ColumnIndex = MISSING_LONG Then
+            If columnIndex = MISSING_LONG Then
                 localColumnIndex = LBound(localArray, 2)
             Else
-                localColumnIndex = CLng(ColumnIndex)
+                localColumnIndex = CLng(columnIndex)
             End If
             For i = localLowerBound To localUpperBound - 1
                 If i = localLowerBound Then
@@ -749,17 +749,17 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
                 End If
             Next
         Case BA_JAGGED
-            Depth = getJaggedArrayDepth(localArray)
-            If Depth > 2 Then
+            depth = GetJaggedArrayDepth(localArray)
+            If depth > 2 Then
                 IsSorted = False
                 RaiseError EC_EXCEEDS_MAX_SORT_DEPTH, "IsSorted"
             Else
                 For i = localLowerBound To localUpperBound - 1
                     If i = localLowerBound Then
-                        If ColumnIndex = MISSING_LONG Then
+                        If columnIndex = MISSING_LONG Then
                             localColumnIndex = LBound(localArray(i))
                         Else
-                            localColumnIndex = CLng(ColumnIndex)
+                            localColumnIndex = CLng(columnIndex)
                         End If
                     End If
                     If localArray(i)(localColumnIndex) > localArray(i + 1)(localColumnIndex) Then
@@ -775,8 +775,8 @@ End Function
 
 '@Description("returns the first index at which a given element can be found in the array")
 Public Function IndexOf( _
-        ByVal SearchElement As Variant, _
-        Optional ByVal FromIndex As Long = MISSING_LONG _
+        ByVal searchElement As Variant, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
     ) As Long
 Attribute IndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim localItems() As Variant
@@ -784,17 +784,17 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     Dim relativeStart As Long
     Dim currentIndex As Long
     
-    localItems = getInternalItems()
-    localLength = Me.Length
+    localItems = GetInternalItems()
+    localLength = Me.length
     If localLength = 0 Then
         IndexOf = MISSING_LONG
         Exit Function
     End If
 
-    If FromIndex = MISSING_LONG Then
+    If fromIndex = MISSING_LONG Then
         relativeStart = LBound(localItems)
     Else
-        relativeStart = FromIndex
+        relativeStart = fromIndex
     End If
     
     If relativeStart >= LBound(localItems) Then
@@ -812,7 +812,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     End If
     
     Do While currentIndex <= UBound(localItems)
-        If elementsAreEqual(SearchElement, localItems(currentIndex)) Then
+        If ElementsAreEqual(searchElement, localItems(currentIndex)) Then
             IndexOf = currentIndex
             Exit Function
         End If
@@ -823,7 +823,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
 End Function
 
 '@Description("Removes the item at the specified index. Returns the new length of the array")
-Public Function Remove(ByVal Index As Long) As Long
+Public Function Remove(ByVal index As Long) As Long
 Attribute Remove.VB_Description = "Removes the item at the specified index. Returns the new length of the array"
     Dim relativeIndex As Long
     Dim localType As ArrayTypes
@@ -831,13 +831,13 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
     relativeIndex = MISSING_LONG
     localType = pArrayType
     
-    If Index >= Me.LowerBound Then
-        If Index <= Me.UpperBound Then
-            relativeIndex = Index
+    If index >= Me.LowerBound Then
+        If index <= Me.UpperBound Then
+            relativeIndex = index
         End If
     Else
-        If Index < 0 Then
-            relativeIndex = Me.UpperBound + Index
+        If index < 0 Then
+            relativeIndex = Me.UpperBound + index
             If relativeIndex < Me.LowerBound Then relativeIndex = MISSING_LONG
         End If
     End If
@@ -876,7 +876,7 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
         End If
     End If
     
-    Remove = Me.Length
+    Remove = Me.length
 End Function
 
 
@@ -887,10 +887,10 @@ End Function
 '@Ignore FunctionReturnValueNotUsed
 '@Description("Parses a string representing an array and stores the outcome.")
 Public Function ParseFromString( _
-        ByVal SourceString As String, _
-        Optional ByVal ValueSeparator As String = ",", _
-        Optional ByVal ArrayOpenDelimiter As String, _
-        Optional ByVal ArrayClosingDelimiter As String _
+        ByVal sourceString As String, _
+        Optional ByVal valueSeparator As String = ",", _
+        Optional ByVal arrayOpenDelimiter As String, _
+        Optional ByVal arrayClosingDelimiter As String _
     ) As BetterArray
 Attribute ParseFromString.VB_Description = "Parses a string representing an array and stores the outcome."
     Dim opener As String
@@ -898,12 +898,12 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
     Dim ArraysAreDelimited As Boolean
     Dim result() As Variant
     
-    If Len(SourceString) > 0 Then
-        If ArrayOpenDelimiter = vbNullString And ArrayClosingDelimiter = vbNullString Then
+    If Len(sourceString) > 0 Then
+        If arrayOpenDelimiter = vbNullString And arrayClosingDelimiter = vbNullString Then
             Dim firstChar As String
             Dim lastChar As String
-            firstChar = Left$(SourceString, 1)
-            lastChar = Right$(SourceString, 1)
+            firstChar = Left$(sourceString, 1)
+            lastChar = Right$(sourceString, 1)
             ' no array delimiters supplied
             ' see if the diff in ascii values are for first and last chars are less than 3
             ' this covers () [] {} <>
@@ -920,15 +920,15 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
             End If
         Else
             ' array delimiters supplied
-            opener = ArrayOpenDelimiter
-            closer = ArrayClosingDelimiter
+            opener = arrayOpenDelimiter
+            closer = arrayClosingDelimiter
             ArraysAreDelimited = True
         End If
         
         If ArraysAreDelimited Then
-            result = ParseDelimitedArrayString(SourceString, ValueSeparator, opener, closer)
+            result = ParseDelimitedArrayString(sourceString, valueSeparator, opener, closer)
         Else
-            result = ParseArraySegmentFromString(SourceString, 1, 0, ValueSeparator)
+            result = ParseArraySegmentFromString(sourceString, 1, 0, valueSeparator)
         End If
     Else
         RaiseError EC_NULL_STRING, "ParseFromString", "SourceString"
@@ -946,8 +946,8 @@ Public Function Transpose() As BetterArray
     Dim localType As ArrayTypes
     Dim storedType As ArrayTypes
     storedType = pArrayType
-    localItems = getInternalItems()
-    localType = getArrayType(localItems)
+    localItems = GetInternalItems()
+    localType = GetArrayType(localItems)
     Select Case localType
     Case ArrayTypes.BA_ONEDIMENSION
         result = Transpose_1DArray(localItems)
@@ -961,7 +961,7 @@ Public Function Transpose() As BetterArray
     End Select
     Me.Items = result
     If storedType = BA_MULTIDIMENSION Then
-        localType = getArrayType(result)
+        localType = GetArrayType(result)
         If localType = BA_JAGGED Then
             pArrayType = BA_MULTIDIMENSION
         End If
@@ -988,7 +988,7 @@ End Function
 Public Function ResetToDefault() As BetterArray
 Attribute ResetToDefault.VB_Description = "Clears the current array and resets capacity to default value"
     pLowerBound = 0
-    pItems = getEmptyArray()
+    pItems = GetEmptyArray()
     pLength = 0
     Me.Capacity = DEFAULT_CAPACITY
     pArrayType = BA_UNALLOCATED
@@ -1002,7 +1002,7 @@ Public Function Clear() As BetterArray
 Attribute Clear.VB_Description = "Clears all entries in the current array but retains existing capacity."
     Dim oldCapacity As Long
     oldCapacity = pCapacity
-    pItems = getEmptyArray()
+    pItems = GetEmptyArray()
     pLength = 0
     Me.Capacity = oldCapacity
     Set Clear = Me
@@ -1010,28 +1010,28 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Joins one or more arrays onto the end of the current array.")
-Public Function Concat(ParamArray Args() As Variant) As BetterArray
+Public Function Concat(ParamArray args() As Variant) As BetterArray
 Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the current array."
     Dim arg As Variant
     Dim localArray() As Variant
     Dim localType As ArrayTypes
     Dim i As Long
     
-    For Each arg In Args
+    For Each arg In args
         If IsArray(arg) Then
             localArray = arg
             ' should never return BA_UNDEFINED as we've already checked it's an array
-            localType = getArrayType(localArray)
+            localType = GetArrayType(localArray)
             ' If pushing to unallocated array short circuit individual pushes and just assign with me.items
             If pArrayType = BA_UNALLOCATED Then
                 If localType = BA_UNALLOCATED Then
-                    Me.Items = getEmptyArray()
+                    Me.Items = GetEmptyArray()
                 Else
                     Me.Items = localArray
                 End If
             Else
                 If localType = BA_MULTIDIMENSION Then
-                    localArray = multiToJagged(localArray)
+                    localArray = MultiToJagged(localArray)
                 End If
                 
                 If pArrayType = BA_ONEDIMENSION Then
@@ -1055,20 +1055,20 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes all of the elements in a Collection objet to the internal array.")
-Public Function CopyFromCollection(ByVal SourceCollection As Collection) As BetterArray
+Public Function CopyFromCollection(ByVal sourceCollection As Collection) As BetterArray
 Attribute CopyFromCollection.VB_Description = "Writes all of the elements in a Collection objet to the internal array."
-    If SourceCollection Is Nothing Then
+    If sourceCollection Is Nothing Then
         RaiseError EC_EXPECTED_COLLECTION_OBJECT, "CopyFromCollection", "SourceCollection"
     End If
     Dim i As Long
     Dim newItems() As Variant
-    pLength = SourceCollection.count
+    pLength = sourceCollection.count
     If pLength = 0 Then
-        newItems = getEmptyArray
+        newItems = GetEmptyArray
     Else
         ReDim newItems(pLowerBound To (pLength - pLowerBound - 1))
         For i = 1 To pLength
-            newItems(i + pLowerBound - 1) = SourceCollection.Item(i)
+            newItems(i + pLowerBound - 1) = sourceCollection.Item(i)
         Next
     End If
     Me.Items = newItems
@@ -1077,35 +1077,35 @@ End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Sorts the stored array in ascending order.")
-Public Function Sort(Optional ByVal SortColumn As Long = MISSING_LONG) As BetterArray
+Public Function Sort(Optional ByVal sortColumn As Long = MISSING_LONG) As BetterArray
 Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim localItems() As Variant
     Dim sortedItems() As Variant
-    Dim ArrayType As ArrayTypes
+    Dim arrayType As ArrayTypes
     
-    localItems = getInternalItems()
-    ArrayType = getArrayType(localItems)
-    If ArrayType = ArrayTypes.BA_UNALLOCATED Or _
-       ArrayType = ArrayTypes.BA_UNDEFINED Then
-        sortedItems = getEmptyArray
+    localItems = GetInternalItems()
+    arrayType = GetArrayType(localItems)
+    If arrayType = ArrayTypes.BA_UNALLOCATED Or _
+       arrayType = ArrayTypes.BA_UNDEFINED Then
+        sortedItems = GetEmptyArray
     Else
-        If Me.Length > 0 Then
-            If ArrayType <> BA_ONEDIMENSION Then
-                If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
-                    localItems = multiToJagged(localItems)
+        If Me.length > 0 Then
+            If arrayType <> BA_ONEDIMENSION Then
+                If arrayType = ArrayTypes.BA_MULTIDIMENSION Then
+                    localItems = MultiToJagged(localItems)
                 End If
-                Dim Depth As Long
-                Depth = getJaggedArrayDepth(localItems)
-                If Depth > 2 Then
+                Dim depth As Long
+                depth = GetJaggedArrayDepth(localItems)
+                If depth > 2 Then
                     RaiseError EC_EXCEEDS_MAX_SORT_DEPTH, "Sort"
                 End If
             End If
-            quickSort _
+            QuickSort _
                 localItems, _
                 LBound(localItems), _
                 UBound(localItems), _
-                ArrayType, _
-                IIf(SortColumn = MISSING_LONG, pLowerBound, SortColumn)
+                arrayType, _
+                IIf(sortColumn = MISSING_LONG, pLowerBound, sortColumn)
         End If
         sortedItems = localItems
     End If
@@ -1116,9 +1116,9 @@ End Function
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Copies a section of the stored array to another location in the same array.")
 Public Function CopyWithin( _
-        ByVal Target As Long, _
-        Optional ByVal StartIndex As Long = MISSING_LONG, _
-        Optional ByVal EndIndex As Long = MISSING_LONG _
+        ByVal target As Long, _
+        Optional ByVal startIndex As Long = MISSING_LONG, _
+        Optional ByVal endIndex As Long = MISSING_LONG _
     ) As BetterArray
 Attribute CopyWithin.VB_Description = "Copies a section of the stored array to another location in the same array."
     Dim localLength As Long
@@ -1126,7 +1126,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Dim relativeStart As Long
     Dim relativeEnd As Long
     Dim toIndex As Long
-    Dim FromIndex As Long
+    Dim fromIndex As Long
     Dim final As Long
     Dim count As Long
     Dim direction As Long
@@ -1138,9 +1138,9 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Case ArrayTypes.BA_UNALLOCATED
         RaiseError EC_UNALLOCATED_ARRAY, "CopyWithin"
     Case Else
-        localArray = getInternalItems()
-        localLength = Me.Length
-        relativeTarget = Target
+        localArray = GetInternalItems()
+        localLength = Me.length
+        relativeTarget = target
         
         If relativeTarget < 0 Then
             toIndex = Max((localLength + relativeTarget), 0)
@@ -1148,18 +1148,18 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             toIndex = Min(relativeTarget, localLength)
         End If
         
-        relativeStart = IIf(StartIndex = MISSING_LONG, pLowerBound, StartIndex)
+        relativeStart = IIf(startIndex = MISSING_LONG, pLowerBound, startIndex)
         
         If relativeStart < 0 Then
-            FromIndex = Max((localLength + relativeStart), 0)
+            fromIndex = Max((localLength + relativeStart), 0)
         Else
-            FromIndex = Min(relativeStart, localLength)
+            fromIndex = Min(relativeStart, localLength)
         End If
         
-        If EndIndex = MISSING_LONG Then
+        If endIndex = MISSING_LONG Then
             relativeEnd = localLength
         Else
-            relativeEnd = EndIndex
+            relativeEnd = endIndex
         End If
         
         If relativeEnd < 0 Then
@@ -1168,21 +1168,21 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             final = Min(relativeEnd, localLength)
         End If
         
-        count = Min(final - FromIndex, localLength - toIndex)
+        count = Min(final - fromIndex, localLength - toIndex)
         
-        If FromIndex < toIndex And toIndex < FromIndex + count Then
+        If fromIndex < toIndex And toIndex < fromIndex + count Then
             direction = -1
-            FromIndex = FromIndex + count - 1
+            fromIndex = fromIndex + count - 1
             toIndex = toIndex + count - 1
         Else
             direction = 1
         End If
         
         Do While count > 0
-            If FromIndex >= LBound(localArray) And FromIndex <= UBound(localArray) Then
-                localArray(toIndex) = localArray(FromIndex)
+            If fromIndex >= LBound(localArray) And fromIndex <= UBound(localArray) Then
+                localArray(toIndex) = localArray(fromIndex)
             End If
-            FromIndex = FromIndex + direction
+            fromIndex = fromIndex + direction
             toIndex = toIndex + direction
             count = count - 1
         Loop
@@ -1200,7 +1200,7 @@ End Function
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
 Public Function Filter( _
         ByVal match As Variant, _
-        Optional ByVal Include As Boolean, _
+        Optional ByVal include As Boolean, _
         Optional ByVal recurse As Boolean) As BetterArray
 Attribute Filter.VB_Description = "Filters the stored array to include only values that meet the specified criteria."
     Dim result() As Variant
@@ -1210,13 +1210,13 @@ Attribute Filter.VB_Description = "Filters the stored array to include only valu
     If localType = BA_UNDEFINED Then
         RaiseError EC_EXPECTED_ARRAY, "Filter"
     ElseIf localType = BA_UNALLOCATED Then
-        result = getEmptyArray()
+        result = GetEmptyArray()
     Else
-        localArray = getInternalItems()
-        result = recursiveFilter( _
+        localArray = GetInternalItems()
+        result = RecursiveFilter( _
             localArray, _
             match, _
-            Include, _
+            include, _
             recurse _
         )
     End If
@@ -1238,8 +1238,8 @@ Attribute Reverse.VB_Description = "Reverses the order of elements in the array.
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Reverse"
     Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
-        localItems = getInternalItems()
-        result = recursiveReverse(localItems, recurse)
+        localItems = GetInternalItems()
+        result = RecursiveReverse(localItems, recurse)
         Me.Items = result
         pArrayType = currentType
     End Select
@@ -1261,10 +1261,10 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Flatten"
     Case BA_MULTIDIMENSION, BA_JAGGED
-        localItems = getInternalItems()
+        localItems = GetInternalItems()
         Set result = New BetterArray
         result.LowerBound = pLowerBound
-        recursiveFlatten localItems, result
+        RecursiveFlatten localItems, result
         Me.Items = result.Items
     End Select
 
@@ -1284,8 +1284,8 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Shuffle"
     Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
-        localItems = getInternalItems()
-        result = recursiveShuffle(localItems, recurse)
+        localItems = GetInternalItems()
+        result = RecursiveShuffle(localItems, recurse)
         Me.Items = result
         pArrayType = currentType
     End Select
@@ -1303,7 +1303,7 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     Dim result As BetterArray
     Dim i As Long
     
-    localItems = getInternalItems()
+    localItems = GetInternalItems()
     localType = pArrayType
     Set result = New BetterArray
     For i = Me.LowerBound To Me.UpperBound
@@ -1348,11 +1348,11 @@ End Function
 '''''''''''''''''''
 
 '@Description("shuffles the order of the passed array.")
-Private Function recursiveShuffle( _
-    ByRef arr() As Variant, _
-    Optional ByVal recurse As Boolean _
+Private Function RecursiveShuffle( _
+        ByRef arr() As Variant, _
+        Optional ByVal recurse As Boolean _
     ) As Variant()
-Attribute recursiveShuffle.VB_Description = "shuffles the order of the passed array."
+Attribute RecursiveShuffle.VB_Description = "shuffles the order of the passed array."
     ' https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
     Dim i As Long
     Dim j As Long
@@ -1365,24 +1365,24 @@ Attribute recursiveShuffle.VB_Description = "shuffles the order of the passed ar
     For i = upper To lower + 1 Step -1
         If IsArray(arr(i)) And recurse Then
             nested = arr(i)
-            arr(i) = recursiveShuffle(nested, recurse)
+            arr(i) = RecursiveShuffle(nested, recurse)
         End If
         j = Int(Rnd * (i + 1))
         If IsArray(arr(j)) And recurse Then
             nested = arr(j)
-            arr(j) = recursiveShuffle(nested, recurse)
+            arr(j) = RecursiveShuffle(nested, recurse)
         End If
         Swap arr, i, j
     Next
-    recursiveShuffle = arr
+    RecursiveShuffle = arr
 End Function
 
 '@Description("reverses the order of the passed array.")
-Private Function recursiveReverse( _
-    ByRef arr() As Variant, _
-    Optional ByVal recurse As Boolean _
+Private Function RecursiveReverse( _
+        ByRef arr() As Variant, _
+        Optional ByVal recurse As Boolean _
     ) As Variant()
-Attribute recursiveReverse.VB_Description = "reverses the order of the passed array."
+Attribute RecursiveReverse.VB_Description = "reverses the order of the passed array."
     
     Dim localLength As Long
     Dim middle As Long
@@ -1390,7 +1390,7 @@ Attribute recursiveReverse.VB_Description = "reverses the order of the passed ar
     Dim upper As Long
     Dim passThruArray() As Variant
     
-    localLength = getArrayLength(arr)
+    localLength = GetArrayLength(arr)
     lower = LBound(arr)
     middle = Int(localLength / 2) + lower
     
@@ -1399,36 +1399,36 @@ Attribute recursiveReverse.VB_Description = "reverses the order of the passed ar
         upper = UBound(arr) + LBound(arr) - lower
         If IsArray(arr(lower)) And recurse Then
             passThruArray = arr(lower)
-            arr(lower) = recursiveReverse(passThruArray, recurse)
+            arr(lower) = RecursiveReverse(passThruArray, recurse)
         End If
         If IsArray(arr(upper)) And recurse Then
             passThruArray = arr(upper)
-            arr(upper) = recursiveReverse(passThruArray, recurse)
+            arr(upper) = RecursiveReverse(passThruArray, recurse)
         End If
         Swap arr, lower, upper
         lower = lower + 1
     Loop
-    recursiveReverse = arr
+    RecursiveReverse = arr
 End Function
 
 '@Description("returns the length of the passed array.")
-Private Function getArrayLength(ByRef SourceArray() As Variant) As Long
-Attribute getArrayLength.VB_Description = "returns the length of the passed array."
-    getArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
+Private Function GetArrayLength(ByRef sourceArray() As Variant) As Long
+Attribute GetArrayLength.VB_Description = "returns the length of the passed array."
+    GetArrayLength = UBound(sourceArray) - LBound(sourceArray) + 1
 End Function
 
 '@Description("converts all the values in a jagged array to a 1d array.")
-Private Sub recursiveFlatten( _
+Private Sub RecursiveFlatten( _
         ByRef arr(), _
         ByRef results As BetterArray _
     )
-Attribute recursiveFlatten.VB_Description = "converts all the values in a jagged array to a 1d array."
+Attribute RecursiveFlatten.VB_Description = "converts all the values in a jagged array to a 1d array."
     Dim element As Variant
     For Each element In arr
         If IsArray(element) Then
             Dim arrayElement() As Variant
             arrayElement = element
-            recursiveFlatten arrayElement, results
+            RecursiveFlatten arrayElement, results
         Else
             results.Push element
         End If
@@ -1436,12 +1436,12 @@ Attribute recursiveFlatten.VB_Description = "converts all the values in a jagged
 End Sub
 
 '@Description("Recursively finds the largest value in an array.")
-Private Function recursiveMax(ByRef arr() As Variant) As Variant
-Attribute recursiveMax.VB_Description = "Recursively finds the largest value in an array."
+Private Function RecursiveMax(ByRef arr() As Variant) As Variant
+Attribute RecursiveMax.VB_Description = "Recursively finds the largest value in an array."
     Dim i As Long
     Dim result As Variant
     
-    If isMultidimensionalArray(arr) Then
+    If IsMultidimensionalArray(arr) Then
         RaiseError EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, "Max", "Args"
     Else
         For i = LBound(arr) To UBound(arr)
@@ -1449,7 +1449,7 @@ Attribute recursiveMax.VB_Description = "Recursively finds the largest value in 
                 Dim nestedArray() As Variant
                 Dim nestedResult As Variant
                 nestedArray = arr(i)
-                nestedResult = recursiveMax(nestedArray)
+                nestedResult = RecursiveMax(nestedArray)
                 If IsEmpty(result) Then
                     result = nestedResult
                 Else
@@ -1457,7 +1457,7 @@ Attribute recursiveMax.VB_Description = "Recursively finds the largest value in 
                 End If
             Else
                 Dim currentValue As Variant
-                currentValue = getScalarRepresentation(arr(i))
+                currentValue = GetScalarRepresentation(arr(i))
                 If currentValue <> OBJECT_REPR Then
                     If IsEmpty(result) Then
                         result = currentValue
@@ -1468,16 +1468,16 @@ Attribute recursiveMax.VB_Description = "Recursively finds the largest value in 
             End If
         Next
     End If
-    recursiveMax = result
+    RecursiveMax = result
 End Function
 
 '@Description("Recursively finds the smallest value in an array.")
-Private Function recursiveMin(ByRef arr() As Variant) As Variant
-Attribute recursiveMin.VB_Description = "Recursively finds the smallest value in an array."
+Private Function RecursiveMin(ByRef arr() As Variant) As Variant
+Attribute RecursiveMin.VB_Description = "Recursively finds the smallest value in an array."
     Dim i As Long
     Dim result As Variant
     
-    If isMultidimensionalArray(arr) Then
+    If IsMultidimensionalArray(arr) Then
         RaiseError EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, "Max", "Args"
     Else
         For i = LBound(arr) To UBound(arr)
@@ -1485,7 +1485,7 @@ Attribute recursiveMin.VB_Description = "Recursively finds the smallest value in
                 Dim nestedArray() As Variant
                 Dim nestedResult As Variant
                 nestedArray = arr(i)
-                nestedResult = recursiveMin(nestedArray)
+                nestedResult = RecursiveMin(nestedArray)
                 If IsEmpty(result) Then
                     result = nestedResult
                 Else
@@ -1493,7 +1493,7 @@ Attribute recursiveMin.VB_Description = "Recursively finds the smallest value in
                 End If
             Else
                 Dim currentValue As Variant
-                currentValue = getScalarRepresentation(arr(i))
+                currentValue = GetScalarRepresentation(arr(i))
                 If currentValue <> OBJECT_REPR Then
                     If IsEmpty(result) Then
                         result = currentValue
@@ -1504,33 +1504,33 @@ Attribute recursiveMin.VB_Description = "Recursively finds the smallest value in
             End If
         Next
     End If
-    recursiveMin = result
+    RecursiveMin = result
 End Function
 
 '@Description("Recursively checks if the passed array includes the search element.")
-Private Function recursiveIncludes( _
-        ByVal SearchElement As Variant, _
-        ByRef SearchArray() As Variant, _
-        Optional ByVal FromIndex As Long _
+Private Function RecursiveIncludes( _
+        ByVal searchElement As Variant, _
+        ByRef searchArray() As Variant, _
+        Optional ByVal fromIndex As Long _
     ) As Boolean
-Attribute recursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
+Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
-    localLowerBound = LBound(SearchArray)
-    If FromIndex > localLowerBound Then localLowerBound = FromIndex
-    localUpperBound = UBound(SearchArray)
+    localLowerBound = LBound(searchArray)
+    If fromIndex > localLowerBound Then localLowerBound = fromIndex
+    localUpperBound = UBound(searchArray)
     For i = localLowerBound To localUpperBound
-        If IsArray(SearchArray(i)) Then
+        If IsArray(searchArray(i)) Then
             Dim passThru() As Variant
-            passThru = SearchArray(i)
-            If recursiveIncludes(SearchElement, passThru) Then
-                recursiveIncludes = True
+            passThru = searchArray(i)
+            If RecursiveIncludes(searchElement, passThru) Then
+                RecursiveIncludes = True
                 Exit Function
             End If
         Else
-            If elementsAreEqual(SearchElement, SearchArray(i)) Then
-                recursiveIncludes = True
+            If ElementsAreEqual(searchElement, searchArray(i)) Then
+                RecursiveIncludes = True
                 Exit Function
             End If
         End If
@@ -1538,77 +1538,77 @@ Attribute recursiveIncludes.VB_Description = "Recursively checks if the passed a
 End Function
 
 '@Description("Recursively filters a passed array.")
-Private Function recursiveFilter( _
-        ByRef SourceArray() As Variant, _
+Private Function RecursiveFilter( _
+        ByRef sourceArray() As Variant, _
         ByVal match As Variant, _
-        ByVal Include As Boolean, _
+        ByVal include As Boolean, _
         ByVal recurse As Boolean _
     ) As Variant()
-Attribute recursiveFilter.VB_Description = "Recursively filters a passed array."
+Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
     Dim result As BetterArray
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
     Dim isMatch As Boolean
     
-    localLowerBound = LBound(SourceArray)
-    localUpperBound = UBound(SourceArray)
+    localLowerBound = LBound(sourceArray)
+    localUpperBound = UBound(sourceArray)
     Set result = New BetterArray
     result.LowerBound = Me.LowerBound
     For i = localLowerBound To localUpperBound
-        If IsArray(SourceArray(i)) Then
-            If isArrayAllocated(SourceArray(i)) Then
+        If IsArray(sourceArray(i)) Then
+            If IsArrayAllocated(sourceArray(i)) Then
                 If recurse Then
                     Dim localArray() As Variant
-                    localArray = SourceArray(i)
-                    localArray = recursiveFilter( _
+                    localArray = sourceArray(i)
+                    localArray = RecursiveFilter( _
                         localArray, _
                         match, _
-                        Include, _
+                        include, _
                         recurse _
                     )
-                    If Not only(localArray, Empty) Then
+                    If Not Only(localArray, Empty) Then
                         result.Push localArray
                     End If
                 Else
-                    If Not Include Then result.Push SourceArray(i)
+                    If Not include Then result.Push sourceArray(i)
                 End If
             Else
-                result.Push getEmptyArray()
+                result.Push GetEmptyArray()
             End If
-        ElseIf IsObject(SourceArray(i)) Then
-            If Not Include Then result.Push SourceArray(i)
+        ElseIf IsObject(sourceArray(i)) Then
+            If Not include Then result.Push sourceArray(i)
         Else
-            isMatch = elementsAreEqual(match, SourceArray(i))
-            If (Include And isMatch) Or (Not Include And Not isMatch) Then
-                result.Push SourceArray(i)
+            isMatch = ElementsAreEqual(match, sourceArray(i))
+            If (include And isMatch) Or (Not include And Not isMatch) Then
+                result.Push sourceArray(i)
             End If
         End If
     Next
-    recursiveFilter = result.Items
+    RecursiveFilter = result.Items
 End Function
 
 '@Description("Checks if an array only contains a specific value.")
-Private Function only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
-Attribute only.VB_Description = "Checks if an array only contains a specific value."
+Private Function Only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
+Attribute Only.VB_Description = "Checks if an array only contains a specific value."
     Dim result As Boolean
     Dim element As Variant
     result = True
     For Each element In arr
-        If Not elementsAreEqual(match, element) Then
+        If Not ElementsAreEqual(match, element) Then
             result = False
             Exit For
         End If
     Next
-    only = result
+    Only = result
 End Function
 
 '@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
-Private Function elementsAreEqual( _
+Private Function ElementsAreEqual( _
         ByVal expected As Variant, _
         ByVal actual As Variant _
     ) As Boolean
-Attribute elementsAreEqual.VB_Description = "Compares two values for equality. Doesn't support multidimensional arrays."
+Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. Doesn't support multidimensional arrays."
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
@@ -1623,7 +1623,7 @@ Attribute elementsAreEqual.VB_Description = "Compares two values for equality. D
                 Dim currentlyEqual As Boolean
                 currentlyEqual = True
                 For i = LBound(expected) To UBound(actual)
-                    If Not elementsAreEqual(expected(i), actual(i)) Then
+                    If Not ElementsAreEqual(expected(i), actual(i)) Then
                         currentlyEqual = False
                         Exit For
                     End If
@@ -1652,20 +1652,20 @@ Attribute elementsAreEqual.VB_Description = "Compares two values for equality. D
     ElseIf expected = actual Then
         result = True
     End If
-    elementsAreEqual = result
+    ElementsAreEqual = result
     Exit Function
 ErrHandler:
-    elementsAreEqual = False
+    ElementsAreEqual = False
 End Function
 
 ' TODO: Refactor to remove recursion
 '@Description("Recursively parses nested arrays from a string.")
 Private Function ParseDelimitedArrayString( _
-        ByVal SourceString As String, _
-        ByVal ValueSeparator As String, _
+        ByVal sourceString As String, _
+        ByVal valueSeparator As String, _
         ByVal opener As String, _
         ByVal closer As String, _
-        Optional ByRef Cursor As Long = 2 _
+        Optional ByRef cursor As Long = 2 _
     ) As Variant()
 Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested arrays from a string."
     Dim currentChar As String
@@ -1673,15 +1673,15 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
     Dim i As Long
     Dim breakLoop As Boolean
     Dim nextOpener As Long
-    Dim NextCloser As Long
+    Dim nextCloser As Long
     
-    currentChar = Mid$(SourceString, Cursor, 1)
-    nextOpener = InStr(Cursor, SourceString, opener)
-    NextCloser = InStr(Cursor, SourceString, closer)
+    currentChar = Mid$(sourceString, cursor, 1)
+    nextOpener = InStr(cursor, sourceString, opener)
+    nextCloser = InStr(cursor, sourceString, closer)
     
-    If currentChar <> opener And (NextCloser < nextOpener Or nextOpener = 0) Then
+    If currentChar <> opener And (nextCloser < nextOpener Or nextOpener = 0) Then
         ' we're inside an array to be parsed
-        ParseDelimitedArrayString = ParseArraySegmentFromString(SourceString, Cursor, NextCloser, ValueSeparator)
+        ParseDelimitedArrayString = ParseArraySegmentFromString(sourceString, cursor, nextCloser, valueSeparator)
         Exit Function
     End If
         
@@ -1692,23 +1692,23 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
             If i > pLowerBound Then
                 ReDim Preserve localResult(i)
             Else
-                localResult = getEmptyArray
+                localResult = GetEmptyArray
             End If
-            Cursor = Cursor + 1
+            cursor = cursor + 1
             localResult(i) = ParseDelimitedArrayString( _
-                SourceString, _
-                ValueSeparator, _
+                sourceString, _
+                valueSeparator, _
                 opener, _
                 closer, _
-                Cursor _
+                cursor _
             )
             i = i + 1
         End If
-        currentChar = Mid$(SourceString, Cursor, 1)
+        currentChar = Mid$(sourceString, cursor, 1)
         Do Until currentChar = opener
-            Cursor = Cursor + 1
-            currentChar = Mid$(SourceString, Cursor, 1)
-            If currentChar = closer Or Cursor >= Len(SourceString) Then
+            cursor = cursor + 1
+            currentChar = Mid$(sourceString, cursor, 1)
+            If currentChar = closer Or cursor >= Len(sourceString) Then
                 breakLoop = True
                 Exit Do
             End If
@@ -1720,23 +1720,23 @@ End Function
 
 '@Description("Returns an array from a delimited string")
 Private Function ParseArraySegmentFromString( _
-        ByVal SourceString As String, _
-        ByRef Cursor As Long, _
-        ByVal NextCloser As Long, _
-        ByVal ValueSeparator As String _
+        ByVal sourceString As String, _
+        ByRef cursor As Long, _
+        ByVal nextCloser As Long, _
+        ByVal valueSeparator As String _
     ) As Variant()
 Attribute ParseArraySegmentFromString.VB_Description = "Returns an array from a delimited string"
     Dim segmentLength As Long
     Dim segment() As String
-    segmentLength = IIf(NextCloser = 0, Len(SourceString), NextCloser - Cursor)
-    segment = Split(Mid$(SourceString, Cursor, segmentLength), ValueSeparator)
-    Cursor = NextCloser
-    ParseArraySegmentFromString = duckTypeStringArray(segment)
+    segmentLength = IIf(nextCloser = 0, Len(sourceString), nextCloser - cursor)
+    segment = Split(Mid$(sourceString, cursor, segmentLength), valueSeparator)
+    cursor = nextCloser
+    ParseArraySegmentFromString = DuckTypeStringArray(segment)
 End Function
 
 '@Description("Takes a string array. Returns a Variant array with the elements converted to an appropriate type")
-Private Function duckTypeStringArray(ByRef arr() As String) As Variant()
-Attribute duckTypeStringArray.VB_Description = "Takes a string array. Returns a Variant array with the elements converted to an appropriate type"
+Private Function DuckTypeStringArray(ByRef arr() As String) As Variant()
+Attribute DuckTypeStringArray.VB_Description = "Takes a string array. Returns a Variant array with the elements converted to an appropriate type"
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1768,72 +1768,72 @@ Attribute duckTypeStringArray.VB_Description = "Takes a string array. Returns a 
             result(i) = Trim$(element)
         End If
     Next
-    duckTypeStringArray = result
+    DuckTypeStringArray = result
 End Function
 
 '@Description("Populates the ErrorDefinitions array.")
 Private Sub PopulateErrorDefinitions()
 Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefinitions array."
-    Dim Source As String
-    Source = TypeName(Me)
+    Dim source As String
+    source = TypeName(Me)
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_RANGE_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_RANGE_OBJECT, _
-        Source:=Source, _
+        source:=source, _
         description:="Range Object Expected" _
     )
     ErrorDefinitions(ErrorCodes.EC_MAX_DIMENSIONS_LIMIT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_MAX_DIMENSIONS_LIMIT, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot convert structure of arrays with more than 20 dimensions." _
     )
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT, _
-        Source:=Source, _
+        source:=source, _
         description:="Valid Collection Object Expected" _
     )
     ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot sort on arrays with more than 2 dimensions" _
     )
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_JAGGED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_JAGGED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected jagged array." _
     )
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected multidimension array." _
     )
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected array." _
     )
     ErrorDefinitions(ErrorCodes.EC_NULL_STRING) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_NULL_STRING, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot parse from a null string. Expected string with length greater than 0." _
     )
     ErrorDefinitions(ErrorCodes.EC_UNALLOCATED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot operate on unallocated array." _
     )
     ErrorDefinitions(ErrorCodes.EC_UNDEFINED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Array is undefined." _
     )
     ErrorDefinitions(ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, _
-        Source:=Source, _
+        source:=source, _
         description:="Unable to perform the requested operation on a multidimensional array." _
     )
     ErrorDefinitions(ErrorCodes.EC_EXPECTED_VARIANT_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Unable to perform the requested operation on a typed array." _
     )
 End Sub
@@ -1841,37 +1841,37 @@ End Sub
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
 Private Function ErrorDefinitionFactory( _
         ByVal number As Long, _
-        ByVal Source As String, _
+        ByVal source As String, _
         ByVal description As String _
     ) As ErrorDefinition
 Attribute ErrorDefinitionFactory.VB_Description = "Returns an ErrorDefinition Type populated with the provided arguments."
     Dim result As ErrorDefinition
     result.number = number
-    result.Source = Source
+    result.source = source
     result.description = description
     ErrorDefinitionFactory = result
 End Function
 
 '@Description("Raises an application error based on the passed ErrorCode and the definitions defined in ErrorDefinitions.")
 Private Sub RaiseError( _
-        ByVal ErrorCode As ErrorCodes, _
-        ByVal Caller As String, _
-        Optional ByVal ArgName As String _
+        ByVal errorCode As ErrorCodes, _
+        ByVal caller As String, _
+        Optional ByVal argName As String _
     )
 Attribute RaiseError.VB_Description = "Raises an application error based on the passed ErrorCode and the definitions defined in ErrorDefinitions."
     Dim currentError As ErrorDefinition
     Dim localArgName As String
-    If ArgName <> vbNullString Then localArgName = "Argument " & ArgName & ": "
-    currentError = ErrorDefinitions(ErrorCode)
+    If argName <> vbNullString Then localArgName = "Argument " & argName & ": "
+    currentError = ErrorDefinitions(errorCode)
     Err.Raise currentError.number, _
-              currentError.Source & "." & Caller, _
+              currentError.source & "." & caller, _
               localArgName & currentError.description
 End Sub
 
 'Used by ToExcelRange
 '@Description("Ensures each element of passed array can be represented as a scalar value.")
-Private Function ensureScalar1DArray(ByRef arr() As Variant) As Variant()
-Attribute ensureScalar1DArray.VB_Description = "Ensures each element of passed array can be represented as a scalar value."
+Private Function EnsureScalar1DArray(ByRef arr() As Variant) As Variant()
+Attribute EnsureScalar1DArray.VB_Description = "Ensures each element of passed array can be represented as a scalar value."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -1881,9 +1881,9 @@ Attribute ensureScalar1DArray.VB_Description = "Ensures each element of passed a
     localUpperBound = UBound(arr)
     ReDim result(localLowerBound To localUpperBound)
     For i = localLowerBound To localUpperBound
-        result(i) = getScalarRepresentation(arr(i))
+        result(i) = GetScalarRepresentation(arr(i))
     Next
-    ensureScalar1DArray = result
+    EnsureScalar1DArray = result
 End Function
 
 '@Description("Converts a 1d array to a 1 column wide 2d array.")
@@ -1908,7 +1908,7 @@ Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column 
 End Function
 
 '@Description("Transposes the values in a 2d array. Rows become columns, columns become rows.")
-Private Function Transpose_2DArray(ByRef SourceArray() As Variant) As Variant()
+Private Function Transpose_2DArray(ByRef sourceArray() As Variant) As Variant()
 Attribute Transpose_2DArray.VB_Description = "Transposes the values in a 2d array. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
@@ -1918,21 +1918,21 @@ Attribute Transpose_2DArray.VB_Description = "Transposes the values in a 2d arra
     Dim UpperBoundCol As Long
     Dim result() As Variant
     
-    LowerBoundCol = LBound(SourceArray, 1)
-    UpperBoundCol = UBound(SourceArray, 1)
-    LowerBoundRow = LBound(SourceArray, 2)
-    UpperBoundRow = UBound(SourceArray, 2)
+    LowerBoundCol = LBound(sourceArray, 1)
+    UpperBoundCol = UBound(sourceArray, 1)
+    LowerBoundRow = LBound(sourceArray, 2)
+    UpperBoundRow = UBound(sourceArray, 2)
     ReDim result(LowerBoundRow To UpperBoundRow, LowerBoundCol To UpperBoundCol)
     For currentRow = LowerBoundRow To UpperBoundRow
         For currentColumn = LowerBoundCol To UpperBoundRow
-            result(currentRow, currentColumn) = SourceArray(currentColumn, currentRow)
+            result(currentRow, currentColumn) = sourceArray(currentColumn, currentRow)
         Next
     Next
     Transpose_2DArray = result
 End Function
 
 '@Description("Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows.")
-Private Function Transpose_ArrayOfArrays(ByRef SourceArray() As Variant) As Variant()
+Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
 Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
@@ -1944,9 +1944,9 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
     Dim nestedBounds() As Variant
     Dim nested() As Variant
     
-    nestedBounds = getMaxBoundsAtDimension(SourceArray, 2)
-    LowerBoundCol = LBound(SourceArray)
-    UpperBoundCol = UBound(SourceArray)
+    nestedBounds = GetMaxBoundsAtDimension(sourceArray, 2)
+    LowerBoundCol = LBound(sourceArray)
+    UpperBoundCol = UBound(sourceArray)
     LowerBoundRow = nestedBounds(0)
     UpperBoundRow = nestedBounds(1)
     'check if array can fit into 1 dimension
@@ -1954,20 +1954,20 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
         ReDim result(LowerBoundCol To UpperBoundCol)
         currentRow = LowerBoundRow
         For currentColumn = LowerBoundCol To UpperBoundCol
-            result(currentColumn) = SourceArray(currentColumn)(currentRow)
+            result(currentColumn) = sourceArray(currentColumn)(currentRow)
         Next
     ElseIf LowerBoundCol = UpperBoundCol Then
         ReDim result(LowerBoundRow To UpperBoundRow)
         currentColumn = LowerBoundCol
         For currentRow = UpperBoundRow To UpperBoundRow
-            result(currentRow) = SourceArray(currentColumn)(currentRow)
+            result(currentRow) = sourceArray(currentColumn)(currentRow)
         Next
     Else
         ReDim result(LowerBoundRow To UpperBoundRow)
         For currentRow = LowerBoundRow To UpperBoundRow
             ReDim nested(LowerBoundCol To UpperBoundCol)
             For currentColumn = LowerBoundCol To UpperBoundCol
-                nested(currentColumn) = SourceArray(currentColumn)(currentRow)
+                nested(currentColumn) = sourceArray(currentColumn)(currentRow)
             Next
             result(currentRow) = nested
         Next
@@ -1976,54 +1976,54 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
 End Function
 
 '@Description("Returns an empty 1d array with 1 slot.")
-Private Function getEmptyArray() As Variant()
-Attribute getEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot."
+Private Function GetEmptyArray() As Variant()
+Attribute GetEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot."
     Dim result() As Variant
     ReDim result(pLowerBound To pLowerBound)
-    getEmptyArray = result
+    GetEmptyArray = result
 End Function
 
 '@Description("Sorts in place a passed array using the QuickSort algorithm.")
-Private Sub quickSort( _
+Private Sub QuickSort( _
         ByRef arr() As Variant, _
-        ByVal Low As Long, _
-        ByVal High As Long, _
-        ByVal ArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        ByVal low As Long, _
+        ByVal high As Long, _
+        ByVal arrayType As ArrayTypes, _
+        Optional ByVal col As Long _
     )
-Attribute quickSort.VB_Description = "Sorts in place a passed array using the QuickSort algorithm."
+Attribute QuickSort.VB_Description = "Sorts in place a passed array using the QuickSort algorithm."
     Dim partitionIndex As Long
-    If Low < High Then
-        partitionIndex = qsPartition(arr, Low, High, ArrayType, Col)
-        quickSort arr, Low, partitionIndex - 1, ArrayType, Col
-        quickSort arr, partitionIndex + 1, High, ArrayType, Col
+    If low < high Then
+        partitionIndex = QsPartition(arr, low, high, arrayType, col)
+        QuickSort arr, low, partitionIndex - 1, arrayType, col
+        QuickSort arr, partitionIndex + 1, high, arrayType, col
     End If
 End Sub
 
 '@Description("Child function of quickSort. Returns the next partition index.")
-Private Function qsPartition( _
+Private Function QsPartition( _
         ByRef arr() As Variant, _
-        ByVal Low As Long, _
-        ByVal High As Long, _
-        ByVal ArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        ByVal low As Long, _
+        ByVal high As Long, _
+        ByVal arrayType As ArrayTypes, _
+        Optional ByVal col As Long _
     ) As Long
-Attribute qsPartition.VB_Description = "Child function of quickSort. Returns the next partition index."
+Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the next partition index."
     Dim i As Long
     Dim j As Long
     Dim pivot As Variant
     Dim current As Variant
     
-    If ArrayType = BA_JAGGED Then
-        pivot = arr(High)(Col)
+    If arrayType = BA_JAGGED Then
+        pivot = arr(high)(col)
     Else
-        pivot = arr(High)
+        pivot = arr(high)
     End If
     
-    i = Low - 1
-    For j = Low To High - 1
-        If ArrayType = BA_JAGGED Then
-            current = arr(j)(Col)
+    i = low - 1
+    For j = low To high - 1
+        If arrayType = BA_JAGGED Then
+            current = arr(j)(col)
         Else
             current = arr(j)
         End If
@@ -2033,33 +2033,33 @@ Attribute qsPartition.VB_Description = "Child function of quickSort. Returns the
             Swap arr, i, j
         End If
     Next
-    Swap arr, i + 1, High
-    qsPartition = i + 1
+    Swap arr, i + 1, high
+    QsPartition = i + 1
 End Function
 
 '@Description("Swaps the location of two elements in an array.")
 Private Sub Swap(ByRef arr() As Variant, ByVal i As Long, ByVal j As Long)
 Attribute Swap.VB_Description = "Swaps the location of two elements in an array."
     Dim element As Variant
-    letOrSetElement element, arr(i)
-    letOrSetElement arr(i), arr(j)
+    LetOrSetElement element, arr(i)
+    LetOrSetElement arr(i), arr(j)
     '@Ignore UnassignedVariableUsage
-    letOrSetElement arr(j), element
+    LetOrSetElement arr(j), element
 End Sub
 
 '@Description("Sets or lets the value of a variable by reference depending on the type of the element to be assigned")
-Private Sub letOrSetElement(ByRef destination As Variant, ByRef Source As Variant)
-Attribute letOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
-    If IsObject(Source) Then
-        Set destination = Source
+Private Sub LetOrSetElement(ByRef destination As Variant, ByRef source As Variant)
+Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
+    If IsObject(source) Then
+        Set destination = source
     Else
-        destination = Source
+        destination = source
     End If
 End Sub
 
 '@Description("Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi).")
-Private Function getInternalItems() As Variant()
-Attribute getInternalItems.VB_Description = "Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi)."
+Private Function GetInternalItems() As Variant()
+Attribute GetInternalItems.VB_Description = "Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi)."
     Dim result() As Variant
     If pArrayType <> BA_UNALLOCATED And pArrayType <> BA_UNDEFINED Then
         result = pItems
@@ -2067,21 +2067,21 @@ Attribute getInternalItems.VB_Description = "Retrieves the stored items trimmed 
             If pLength > 0 Then ReDim Preserve result(pLowerBound To Me.UpperBound)
         End If
     Else
-        result = getEmptyArray()
+        result = GetEmptyArray()
     End If
-    getInternalItems = result
+    GetInternalItems = result
 End Function
 
 '@Description("Recursively parses an array to a string representation.")
-Private Function recursiveToString( _
+Private Function RecursiveToString( _
         ByRef arr() As Variant, _
-        ByVal PrettyPrint As Boolean, _
-        Optional ByVal Tabs As Long = 1, _
-        Optional ByVal DelimitStrings As Boolean, _
-        Optional ByVal OpeningDelimiter As String, _
-        Optional ByVal ClosingDelimiter As String _
+        ByVal prettyPrint As Boolean, _
+        Optional ByVal tabs As Long = 1, _
+        Optional ByVal delimitStrings As Boolean, _
+        Optional ByVal openingDelimiter As String, _
+        Optional ByVal closingDelimiter As String _
     ) As String
-Attribute recursiveToString.VB_Description = "Recursively parses an array to a string representation."
+Attribute RecursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim result As String
     Dim sep As String
@@ -2089,35 +2089,35 @@ Attribute recursiveToString.VB_Description = "Recursively parses an array to a s
     Dim opener As String
     Dim closer As String
     
-    opener = IIf(OpeningDelimiter = vbNullString, "{", OpeningDelimiter)
-    closer = IIf(ClosingDelimiter = vbNullString, "}", ClosingDelimiter)
+    opener = IIf(openingDelimiter = vbNullString, "{", openingDelimiter)
+    closer = IIf(closingDelimiter = vbNullString, "}", closingDelimiter)
     
     result = opener
     For i = LBound(arr) To UBound(arr)
-        sep = IIf(i = UBound(arr), closer, IIf(PrettyPrint, ", ", ","))
+        sep = IIf(i = UBound(arr), closer, IIf(prettyPrint, ", ", ","))
         If IsArray(arr(i)) Then
             Dim nested() As Variant
             nested = arr(i)
-            If PrettyPrint Then result = result & vbCrLf & Space(tabWidth * Tabs)
-            result = result & recursiveToString(nested, PrettyPrint, Tabs + 1, DelimitStrings, opener, closer)
-            result = result & IIf(i = UBound(arr) And PrettyPrint, vbCrLf & Space(tabWidth * (Tabs - 1)) & sep, sep)
+            If prettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
+            result = result & RecursiveToString(nested, prettyPrint, tabs + 1, delimitStrings, opener, closer)
+            result = result & IIf(i = UBound(arr) And prettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
         Else
             result = result & Replace( _
-                    CStr(getScalarRepresentation(arr(i), DelimitStrings)), _
+                    CStr(GetScalarRepresentation(arr(i), delimitStrings)), _
                     ",", _
                     vbNullString _
                 ) & sep
         End If
     Next
-    recursiveToString = result
+    RecursiveToString = result
 End Function
 
 '@Description("Returns scalar values as is or appropriate representation if not scalar.")
-Private Function getScalarRepresentation( _
+Private Function GetScalarRepresentation( _
         ByRef element As Variant, _
-        Optional ByVal DelimitStrings As Boolean _
+        Optional ByVal delimitStrings As Boolean _
     ) As Variant
-Attribute getScalarRepresentation.VB_Description = "Returns scalar values as is or appropriate representation if not scalar."
+Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is or appropriate representation if not scalar."
     Dim result As Variant
     If IsObject(element) Then
         On Error Resume Next
@@ -2135,27 +2135,27 @@ Attribute getScalarRepresentation.VB_Description = "Returns scalar values as is 
     If IsArray(result) And Not IsEmpty(result) Then
         Dim passThruArray() As Variant
         passThruArray = result
-        result = recursiveToString(passThruArray, False, DelimitStrings:=DelimitStrings)
+        result = RecursiveToString(passThruArray, False, delimitStrings:=delimitStrings)
     End If
-    If Not IsNumeric(result) And DelimitStrings Then
-        getScalarRepresentation = Chr$(34) & result & Chr$(34)
+    If Not IsNumeric(result) And delimitStrings Then
+        GetScalarRepresentation = Chr$(34) & result & Chr$(34)
     Else
-        getScalarRepresentation = result
+        GetScalarRepresentation = result
     End If
     
 End Function
 
 '@Description("Returns the type of a passed array.")
-Private Function getArrayType(ByVal arr As Variant) As ArrayTypes
-Attribute getArrayType.VB_Description = "Returns the type of a passed array."
+Private Function GetArrayType(ByVal arr As Variant) As ArrayTypes
+Attribute GetArrayType.VB_Description = "Returns the type of a passed array."
     Dim result As ArrayTypes
     If IsArray(arr) Then
-        If Not isArrayAllocated(arr) Then
+        If Not IsArrayAllocated(arr) Then
             result = BA_UNALLOCATED
         Else
-            If isMultidimensionalArray(arr) Then
+            If IsMultidimensionalArray(arr) Then
                 result = BA_MULTIDIMENSION
-            ElseIf isJaggedArray(arr) Then
+            ElseIf IsJaggedArray(arr) Then
                 result = BA_JAGGED
             Else
                 result = BA_ONEDIMENSION
@@ -2168,14 +2168,14 @@ Attribute getArrayType.VB_Description = "Returns the type of a passed array."
             RaiseError EC_EXPECTED_ARRAY, "getArrayType", "Arr"
         End If
     End If
-    getArrayType = result
+    GetArrayType = result
 End Function
 
 '@Description("Tests if an array has been allocated.")
-Private Function isArrayAllocated(ByVal arr As Variant) As Boolean
-Attribute isArrayAllocated.VB_Description = "Tests if an array has been allocated."
+Private Function IsArrayAllocated(ByVal arr As Variant) As Boolean
+Attribute IsArrayAllocated.VB_Description = "Tests if an array has been allocated."
     On Error Resume Next
-    isArrayAllocated = ( _
+    IsArrayAllocated = ( _
         IsArray(arr) And _
         Not IsError(LBound(arr, 1)) And _
         LBound(arr, 1) <= UBound(arr, 1) _
@@ -2184,14 +2184,14 @@ Attribute isArrayAllocated.VB_Description = "Tests if an array has been allocate
 End Function
 
 '@Description("Tests if an array is jagged.")
-Private Function isJaggedArray(ByVal arr As Variant) As Boolean
-Attribute isJaggedArray.VB_Description = "Tests if an array is jagged."
+Private Function IsJaggedArray(ByVal arr As Variant) As Boolean
+Attribute IsJaggedArray.VB_Description = "Tests if an array is jagged."
     If IsArray(arr) Then
         On Error GoTo ErrHandler
         Dim element As Variant
         For Each element In arr
             If IsArray(element) Then
-                isJaggedArray = True
+                IsJaggedArray = True
                 Exit Function
             End If
         Next
@@ -2203,15 +2203,15 @@ ErrHandler:
 End Function
 
 '@Description("Tests if an array is multidimensioned.")
-Private Function isMultidimensionalArray(ByVal arr As Variant) As Boolean
-Attribute isMultidimensionalArray.VB_Description = "Tests if an array is multidimensioned."
+Private Function IsMultidimensionalArray(ByVal arr As Variant) As Boolean
+Attribute IsMultidimensionalArray.VB_Description = "Tests if an array is multidimensioned."
     If IsArray(arr) Then
         On Error GoTo ErrHandler
         '@Ignore VariableNotUsed
         Dim localUpperBound As Long
         '@Ignore AssignmentNotUsed
         localUpperBound = UBound(arr, 2)
-        isMultidimensionalArray = True
+        IsMultidimensionalArray = True
         On Error GoTo 0
     End If
     Exit Function
@@ -2221,20 +2221,20 @@ End Function
 
 '@Ignore FunctionReturnValueNotUsed
 '@Description("re-indexes array to conform to new bounds. Does not change length.")
-Private Function Rebase(Optional ByRef arr As Variant, Optional ByVal ArrayType As ArrayTypes) As Variant()
+Private Function Rebase(Optional ByRef arr As Variant, Optional ByVal arrayType As ArrayTypes) As Variant()
 Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Does not change length."
     Dim localArray() As Variant
     Dim localType As ArrayTypes
 
     If IsMissing(arr) Or Not IsArray(arr) Then
-        localArray = getInternalItems
+        localArray = GetInternalItems
         localType = pArrayType
     Else
         localArray = arr
-        If ArrayType = 0 Then
-            localType = getArrayType(localArray)
+        If arrayType = 0 Then
+            localType = GetArrayType(localArray)
         Else
-            localType = ArrayType
+            localType = arrayType
         End If
     End If
     Select Case localType
@@ -2245,14 +2245,14 @@ Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Do
         ' if they don't and additional arrays are added via concat the resulting
         ' md array from jaggedToMulti will have unexpected bounds
         ' NOTE: This may need to be applied to jagged too for consistency
-        Rebase = recursiveRebase(localArray, True)
+        Rebase = RecursiveRebase(localArray, True)
     Case Else
-        Rebase = recursiveRebase(localArray, False)
+        Rebase = RecursiveRebase(localArray, False)
     End Select
 End Function
 
 '@Description("re-indexes nested arrays to conform to new bounds. Child function of Rebase)
-Private Function recursiveRebase( _
+Private Function RecursiveRebase( _
         ByRef arr() As Variant, _
         ByVal recurse As Boolean _
     ) As Variant()
@@ -2270,13 +2270,13 @@ Private Function recursiveRebase( _
         If IsArray(arr(i)) And recurse And offset <> 0 Then
             Dim nested() As Variant
             nested = arr(i)
-            newItems(i + offset) = recursiveRebase(nested, recurse)
+            newItems(i + offset) = RecursiveRebase(nested, recurse)
         Else
             newItems(i + offset) = arr(i)
         End If
     Next
     
-    recursiveRebase = newItems
+    RecursiveRebase = newItems
 End Function
 
 '@Description("Increases capacity of internal array if required.")
@@ -2292,17 +2292,17 @@ Attribute EnsureCapacity.VB_Description = "Increases capacity of internal array 
 End Sub
 
 '@Description("Converts jagged arrays to multidimension arrays")
-Private Function jaggedToMulti( _
-        ByRef SourceArray() As Variant, _
-        Optional ByVal Depth As Long, _
-        Optional ByVal EnsureScalar As Boolean _
+Private Function JaggedToMulti( _
+        ByRef sourceArray() As Variant, _
+        Optional ByVal depth As Long, _
+        Optional ByVal ensureScalar As Boolean _
     ) As Variant()
-Attribute jaggedToMulti.VB_Description = "Converts jagged arrays to multidimension arrays"
+Attribute JaggedToMulti.VB_Description = "Converts jagged arrays to multidimension arrays"
     Dim localDepth As Long
     Dim result() As Variant
-    localDepth = Depth
+    localDepth = depth
     If localDepth = 0 Then
-        localDepth = getJaggedArrayDepth(SourceArray)
+        localDepth = GetJaggedArrayDepth(sourceArray)
 '        If Not isJaggedArray(arr) Then
 '            RaiseError EC_EXPECTED_JAGGED_ARRAY, "jaggedToMulti", "Arr()"
 '            Exit Function
@@ -2310,57 +2310,57 @@ Attribute jaggedToMulti.VB_Description = "Converts jagged arrays to multidimensi
 '        localDepth = getJaggedArrayDepth(arr)
     End If
     If localDepth <= 1 Then
-        result = SourceArray
+        result = sourceArray
     ElseIf localDepth = 2 Then
         Dim firstDimBounds() As Variant
         Dim secondDimBounds() As Variant
         Dim i As Long
         Dim j As Long
-        firstDimBounds = getArrayBounds(SourceArray)
-        secondDimBounds = getMaxBoundsAtDimension(SourceArray, 2)
+        firstDimBounds = GetArrayBounds(sourceArray)
+        secondDimBounds = GetMaxBoundsAtDimension(sourceArray, 2)
         ReDim result(firstDimBounds(0) To firstDimBounds(1), _
             secondDimBounds(0) To secondDimBounds(1))
         For i = firstDimBounds(0) To firstDimBounds(1)
-            If IsArray(SourceArray(i)) Then
-                For j = LBound(SourceArray(i)) To UBound(SourceArray(i))
-                    If EnsureScalar Then
-                        letOrSetElement result(i, j), _
-                            getScalarRepresentation(SourceArray(i)(j))
+            If IsArray(sourceArray(i)) Then
+                For j = LBound(sourceArray(i)) To UBound(sourceArray(i))
+                    If ensureScalar Then
+                        LetOrSetElement result(i, j), _
+                            GetScalarRepresentation(sourceArray(i)(j))
                     Else
-                        letOrSetElement result(i, j), _
-                            SourceArray(i)(j)
+                        LetOrSetElement result(i, j), _
+                            sourceArray(i)(j)
                     End If
                 Next
             Else
-                If EnsureScalar Then
-                    letOrSetElement result(i, LBound(result, 2)), _
-                        getScalarRepresentation(SourceArray(i))
+                If ensureScalar Then
+                    LetOrSetElement result(i, LBound(result, 2)), _
+                        GetScalarRepresentation(sourceArray(i))
                 Else
-                    letOrSetElement result(i, LBound(result, 2)), _
-                        SourceArray(i)
+                    LetOrSetElement result(i, LBound(result, 2)), _
+                        sourceArray(i)
                 End If
             End If
         Next
     ElseIf localDepth > 2 And localDepth <= 20 Then
-        result = recursiveJaggedToMulti(SourceArray, localDepth, EnsureScalar:=localDepth)
+        result = RecursiveJaggedToMulti(sourceArray, localDepth, ensureScalar:=localDepth)
     Else
         RaiseError EC_MAX_DIMENSIONS_LIMIT, "jaggedToMulti()", "SourceArray()"
-        result = SourceArray
+        result = sourceArray
     End If
-    jaggedToMulti = result
+    JaggedToMulti = result
 End Function
 
 
 '@Description("Recursively Converts jagged arrays to multidimension arrays")
-Private Function recursiveJaggedToMulti( _
+Private Function RecursiveJaggedToMulti( _
         ByRef arr() As Variant, _
-        Optional ByVal Depth As Long, _
-        Optional ByVal CurrentDepth As Long, _
-        Optional ByRef Crumbs As Variant, _
+        Optional ByVal depth As Long, _
+        Optional ByVal currentDepth As Long, _
+        Optional ByRef crumbs As Variant, _
         Optional ByRef result As Variant, _
-        Optional ByVal EnsureScalar As Boolean _
+        Optional ByVal ensureScalar As Boolean _
     ) As Variant()
-Attribute recursiveJaggedToMulti.VB_Description = "Recursively Converts jagged arrays to multidimension arrays"
+Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged arrays to multidimension arrays"
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -2370,17 +2370,17 @@ Attribute recursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
     Dim localResult() As Variant
 
 
-    localDepth = Depth
-    localCurrentDepth = CurrentDepth
+    localDepth = depth
+    localCurrentDepth = currentDepth
 
-    If IsMissing(Crumbs) Then
+    If IsMissing(crumbs) Then
         ReDim localCrumbs(localDepth - 1)
     Else
-        localCrumbs = Crumbs
+        localCrumbs = crumbs
     End If
 
     If IsMissing(result) Then
-        localResult = createMultidimensionalArray(mapJaggedArray(arr, KnownDepth:=localDepth))
+        localResult = CreateMultidimensionalArray(MapJaggedArray(arr, KnownDepth:=localDepth))
     Else
         localResult = result
     End If
@@ -2391,10 +2391,10 @@ Attribute recursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
     For i = localLowerBound To localUpperBound
         localCrumbs(localCurrentDepth - 1) = i
         If localCurrentDepth = localDepth Then
-            If EnsureScalar Then
-                localResult = letElementByBreadcrumb(localResult, localCrumbs, getScalarRepresentation(arr(i)))
+            If ensureScalar Then
+                localResult = LetElementByBreadcrumb(localResult, localCrumbs, GetScalarRepresentation(arr(i)))
             Else
-                localResult = letElementByBreadcrumb(localResult, localCrumbs, arr(i))
+                localResult = LetElementByBreadcrumb(localResult, localCrumbs, arr(i))
             End If
         Else
             Dim nested() As Variant
@@ -2403,27 +2403,27 @@ Attribute recursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
             Else
                 nested = arr(i)
             End If
-            localResult = recursiveJaggedToMulti( _
+            localResult = RecursiveJaggedToMulti( _
                 arr:=nested, _
-                Depth:=localDepth, _
-                CurrentDepth:=localCurrentDepth, _
-                Crumbs:=localCrumbs, _
+                depth:=localDepth, _
+                currentDepth:=localCurrentDepth, _
+                crumbs:=localCrumbs, _
                 result:=localResult, _
-                EnsureScalar:=EnsureScalar _
+                ensureScalar:=ensureScalar _
             )
         End If
     Next
-    recursiveJaggedToMulti = localResult
+    RecursiveJaggedToMulti = localResult
 End Function
 
 '@Description("Converts multidimension arrays to jagged arrays.")
-Private Function multiToJagged( _
+Private Function MultiToJagged( _
         ByRef arr() As Variant, _
-        Optional ByVal Depth As Long, _
-        Optional ByVal CurrentDepth As Long, _
-        Optional ByRef Crumbs As Variant _
+        Optional ByVal depth As Long, _
+        Optional ByVal currentDepth As Long, _
+        Optional ByRef crumbs As Variant _
     ) As Variant()
-Attribute multiToJagged.VB_Description = "Converts multidimension arrays to jagged arrays."
+Attribute MultiToJagged.VB_Description = "Converts multidimension arrays to jagged arrays."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -2433,24 +2433,24 @@ Attribute multiToJagged.VB_Description = "Converts multidimension arrays to jagg
     Dim result() As Variant
     Dim boundOffset As Long
     
-    localDepth = Depth
-    localCurrentDepth = CurrentDepth
+    localDepth = depth
+    localCurrentDepth = currentDepth
     
     If localDepth = 0 Then
-        If Not isMultidimensionalArray(arr) Then
+        If Not IsMultidimensionalArray(arr) Then
             RaiseError EC_EXPECTED_MULTIDIMENSION_ARRAY, "multiToJagged", "Arr()"
             Exit Function
         End If
-        localDepth = getMultidimensionalArrayDepth(arr)
+        localDepth = GetMultidimensionalArrayDepth(arr)
     End If
     
     If localDepth > 20 Then
         RaiseError EC_MAX_DIMENSIONS_LIMIT, "multiToJagged", "Arr()"
     ElseIf localDepth > 1 Then
-        If IsMissing(Crumbs) Then
+        If IsMissing(crumbs) Then
             ReDim localCrumbs(localDepth - 1)
         Else
-            localCrumbs = Crumbs
+            localCrumbs = crumbs
         End If
         localCurrentDepth = localCurrentDepth + 1
         localLowerBound = LBound(arr, localCurrentDepth)
@@ -2460,67 +2460,67 @@ Attribute multiToJagged.VB_Description = "Converts multidimension arrays to jagg
         For i = localLowerBound To localUpperBound
             localCrumbs(localCurrentDepth - 1) = i
             If localCurrentDepth = localDepth Then
-                letOrSetElement result(i + boundOffset), getElementByBreadcrumb(arr, localCrumbs)
+                LetOrSetElement result(i + boundOffset), GetElementByBreadcrumb(arr, localCrumbs)
             Else
-                result(i + boundOffset) = multiToJagged(arr, localDepth, localCurrentDepth, localCrumbs)
+                result(i + boundOffset) = MultiToJagged(arr, localDepth, localCurrentDepth, localCrumbs)
             End If
         Next
     Else
         result = arr
     End If
-    multiToJagged = result
+    MultiToJagged = result
 End Function
 
 '@Description("Returns a number representing how many levels of nested arrays are contained in array.")
-Private Function getJaggedArrayDepth(ByRef arr() As Variant) As Long
-Attribute getJaggedArrayDepth.VB_Description = "Returns a number representing how many levels of nested arrays are contained in array."
+Private Function GetJaggedArrayDepth(ByRef arr() As Variant) As Long
+Attribute GetJaggedArrayDepth.VB_Description = "Returns a number representing how many levels of nested arrays are contained in array."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
-    Dim CurrentDepth As Long
+    Dim currentDepth As Long
     Dim maxDepth As Long
-    Dim Depth As Long
+    Dim depth As Long
     
     If IsArray(arr) Then
-        Depth = Depth + 1
+        depth = depth + 1
         localLowerBound = LBound(arr)
         localUpperBound = UBound(arr)
         For i = localLowerBound To localUpperBound
             If IsArray(arr(i)) Then
                 Dim nested() As Variant
                 nested = arr(i)
-                CurrentDepth = getJaggedArrayDepth(nested)
-                If CurrentDepth > maxDepth Then maxDepth = CurrentDepth
+                currentDepth = GetJaggedArrayDepth(nested)
+                If currentDepth > maxDepth Then maxDepth = currentDepth
             End If
         Next
-        Depth = Depth + maxDepth
+        depth = depth + maxDepth
     End If
-    getJaggedArrayDepth = Depth
+    GetJaggedArrayDepth = depth
 End Function
 
 '@Description("Gets the maximium bound values for a specified dimension of a jagged array.")
-Private Function getMaxBoundsAtDimension( _
-        ByRef SourceArray() As Variant, _
-        Optional ByVal Dimension As Long = 1, _
+Private Function GetMaxBoundsAtDimension( _
+        ByRef sourceArray() As Variant, _
+        Optional ByVal dimension As Long = 1, _
         Optional ByVal currentDimension As Long = 1 _
     ) As Variant()
-Attribute getMaxBoundsAtDimension.VB_Description = "Gets the maximium bound values for a specified dimension of a jagged array."
+Attribute GetMaxBoundsAtDimension.VB_Description = "Gets the maximium bound values for a specified dimension of a jagged array."
     Dim maxBounds() As Variant
     
-    If currentDimension < Dimension Then
+    If currentDimension < dimension Then
         Dim i As Long
         Dim currentBounds() As Variant
         Dim localLowerBound As Long
         Dim localUpperBound As Long
         
-        localLowerBound = LBound(SourceArray)
-        localUpperBound = UBound(SourceArray)
+        localLowerBound = LBound(sourceArray)
+        localUpperBound = UBound(sourceArray)
         For i = localLowerBound To localUpperBound
-            If IsArray(SourceArray(i)) Then
+            If IsArray(sourceArray(i)) Then
                 Dim nested() As Variant
-                nested = SourceArray(i)
-                currentBounds = getMaxBoundsAtDimension(nested, Dimension, currentDimension + 1)
-                If Not isArrayAllocated(maxBounds) Then
+                nested = sourceArray(i)
+                currentBounds = GetMaxBoundsAtDimension(nested, dimension, currentDimension + 1)
+                If Not IsArrayAllocated(maxBounds) Then
                     maxBounds = currentBounds
                 Else
                     If currentBounds(0) < maxBounds(0) Then maxBounds(0) = currentBounds(0)
@@ -2529,54 +2529,54 @@ Attribute getMaxBoundsAtDimension.VB_Description = "Gets the maximium bound valu
             End If
         Next
     Else
-        maxBounds = getArrayBounds(SourceArray)
+        maxBounds = GetArrayBounds(sourceArray)
     End If
     
-    getMaxBoundsAtDimension = maxBounds
+    GetMaxBoundsAtDimension = maxBounds
 End Function
 
 '@Description("Returns an array representing the structure of a jagged array")
-Private Function mapJaggedArray( _
-        ByRef SourceArray() As Variant, _
+Private Function MapJaggedArray( _
+        ByRef sourceArray() As Variant, _
         Optional ByVal KnownDepth As Long _
     ) As Variant()
-Attribute mapJaggedArray.VB_Description = "Returns an array representing the structure of a jagged array"
+Attribute MapJaggedArray.VB_Description = "Returns an array representing the structure of a jagged array"
     Dim i As Long
     Dim localMap() As Variant
     Dim localDepth As Long
 
-    If Not IsArray(SourceArray) Then Exit Function
+    If Not IsArray(sourceArray) Then Exit Function
 
     If KnownDepth > 0 Then
         localDepth = KnownDepth
     Else
-        localDepth = getJaggedArrayDepth(SourceArray)
+        localDepth = GetJaggedArrayDepth(sourceArray)
     End If
 
     ' crumbs are base 0
     ReDim localMap(0 To localDepth - 1)
 
     For i = LBound(localMap) To UBound(localMap)
-        localMap(i) = getMaxBoundsAtDimension(SourceArray, i + 1)
+        localMap(i) = GetMaxBoundsAtDimension(sourceArray, i + 1)
     Next
 
-    mapJaggedArray = localMap
+    MapJaggedArray = localMap
 End Function
 
 '@Description("Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound.")
-Private Function getArrayBounds(ByVal arr As Variant) As Variant()
-Attribute getArrayBounds.VB_Description = "Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound."
+Private Function GetArrayBounds(ByVal arr As Variant) As Variant()
+Attribute GetArrayBounds.VB_Description = "Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound."
     Dim result(0 To 1) As Variant
     If IsArray(arr) Then
         result(0) = LBound(arr)
         result(1) = UBound(arr)
     End If
-    getArrayBounds = result
+    GetArrayBounds = result
 End Function
 
 '@Description("Returns a number representing the total number of dimensions of a multidimension array.")
-Private Function getMultidimensionalArrayDepth(ByVal arr As Variant) As Long
-Attribute getMultidimensionalArrayDepth.VB_Description = "Returns a number representing the total number of dimensions of a multidimension array."
+Private Function GetMultidimensionalArrayDepth(ByVal arr As Variant) As Long
+Attribute GetMultidimensionalArrayDepth.VB_Description = "Returns a number representing the total number of dimensions of a multidimension array."
     Dim i As Long
     '@Ignore VariableNotUsed
     Dim void As Long
@@ -2588,238 +2588,238 @@ Attribute getMultidimensionalArrayDepth.VB_Description = "Returns a number repre
     Loop Until Err.number <> 0
     Err.Clear
     On Error GoTo 0
-    getMultidimensionalArrayDepth = i - 1
+    GetMultidimensionalArrayDepth = i - 1
 End Function
 
 '@Description("Returns the element stored in an array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
-Private Function getElementByBreadcrumb( _
+Private Function GetElementByBreadcrumb( _
         ByRef arr() As Variant, _
-        ByRef Crumb() As Variant _
+        ByRef crumb() As Variant _
     ) As Variant
-Attribute getElementByBreadcrumb.VB_Description = "Returns the element stored in an array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
+Attribute GetElementByBreadcrumb.VB_Description = "Returns the element stored in an array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
     Dim result As Variant
-    Select Case UBound(Crumb)
+    Select Case UBound(crumb)
     Case 0
-        letOrSetElement result, arr(Crumb(0))
+        LetOrSetElement result, arr(crumb(0))
     Case 1
-        letOrSetElement result, arr(Crumb(0), Crumb(1))
+        LetOrSetElement result, arr(crumb(0), crumb(1))
     Case 2
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2))
     Case 3
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3))
     Case 4
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4))
     Case 5
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5))
     Case 6
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6))
     Case 7
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7))
     Case 8
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8))
     Case 9
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9))
     Case 10
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10))
     Case 11
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11))
     Case 12
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12))
     Case 13
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13))
     Case 14
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14))
     Case 15
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15))
     Case 16
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16))
     Case 17
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17))
     Case 18
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18))
     Case 19
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18), Crumb(19))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19))
     Case 20
-        letOrSetElement result, arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), _
-            Crumb(9), Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18), Crumb(19), Crumb(20))
+        LetOrSetElement result, arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), _
+            crumb(9), crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20))
     End Select
     '@Ignore UnassignedVariableUsage
-    getElementByBreadcrumb = result
+    GetElementByBreadcrumb = result
 End Function
 
 '@Description("Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
-Private Function letElementByBreadcrumb( _
+Private Function LetElementByBreadcrumb( _
         ByRef arr() As Variant, _
-        ByRef Crumb() As Variant, _
+        ByRef crumb() As Variant, _
         ByVal element As Variant _
     ) As Variant
-Attribute letElementByBreadcrumb.VB_Description = "Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
-    Select Case UBound(Crumb)
+Attribute LetElementByBreadcrumb.VB_Description = "Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
+    Select Case UBound(crumb)
     Case 0
-        letOrSetElement arr(Crumb(0)), element
+        LetOrSetElement arr(crumb(0)), element
     Case 1
-        letOrSetElement arr(Crumb(0), Crumb(1)), element
+        LetOrSetElement arr(crumb(0), crumb(1)), element
     Case 2
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2)), element
     Case 3
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3)), element
     Case 4
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4)), element
     Case 5
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5)), element
     Case 6
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6)), element
     Case 7
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7)), element
     Case 8
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8)), element
     Case 9
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9)), _
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9)), _
             element
     Case 10
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10)), element
     Case 11
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11)), element
     Case 12
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12)), element
     Case 13
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12), Crumb(13)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13)), element
     Case 14
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14)), element
     Case 15
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15)), element
     Case 16
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-        Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16)), element
     Case 17
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17)), element
     Case 18
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-            Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+            crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18)), element
     Case 19
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-        Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18), Crumb(19)), element
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19)), element
     Case 20
-        letOrSetElement arr(Crumb(0), Crumb(1), Crumb(2), Crumb(3), Crumb(4), Crumb(5), Crumb(6), Crumb(7), Crumb(8), Crumb(9), _
-        Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18), Crumb(19), Crumb(20)), _
+        LetOrSetElement arr(crumb(0), crumb(1), crumb(2), crumb(3), crumb(4), crumb(5), crumb(6), crumb(7), crumb(8), crumb(9), _
+        crumb(10), crumb(11), crumb(12), crumb(13), crumb(14), crumb(15), crumb(16), crumb(17), crumb(18), crumb(19), crumb(20)), _
         element
     End Select
 
-    letElementByBreadcrumb = arr
+    LetElementByBreadcrumb = arr
 End Function
 
 '@Description("Returns an empty multidimensional array with the dimensions specified in the crumb argument. A crumb is an array representing the structure of the multidimension array.")
-Private Function createMultidimensionalArray(ByRef Crumb() As Variant) As Variant()
-Attribute createMultidimensionalArray.VB_Description = "Returns an empty multidimensional array with the dimensions specified in the crumb argument. A crumb is an array representing the structure of the multidimension array."
+Private Function CreateMultidimensionalArray(ByRef crumb() As Variant) As Variant()
+Attribute CreateMultidimensionalArray.VB_Description = "Returns an empty multidimensional array with the dimensions specified in the crumb argument. A crumb is an array representing the structure of the multidimension array."
     Dim result() As Variant
-    Select Case UBound(Crumb)
+    Select Case UBound(crumb)
     Case 0
-        ReDim result(Crumb(0)(0) To Crumb(0)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1))
     Case 1
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1))
     Case 2
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1))
     Case 3
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1))
     Case 4
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1))
     Case 5
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1))
     Case 6
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1))
     Case 7
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1))
     Case 8
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1))
     Case 9
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1))
     Case 10
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1))
     Case 11
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1))
     Case 12
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1))
     Case 13
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1))
     Case 14
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1))
     Case 15
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1))
     Case 16
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1), _
-                     Crumb(16)(0) To Crumb(16)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1))
     Case 17
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1), _
-                     Crumb(16)(0) To Crumb(16)(1), Crumb(17)(0) To Crumb(17)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1))
     Case 18
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1), _
-                     Crumb(16)(0) To Crumb(16)(1), Crumb(17)(0) To Crumb(17)(1), Crumb(18)(0) To Crumb(18)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1))
     Case 19
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1), _
-                     Crumb(16)(0) To Crumb(16)(1), Crumb(17)(0) To Crumb(17)(1), Crumb(18)(0) To Crumb(18)(1), Crumb(19)(0) To Crumb(19)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1))
     Case 20
-        ReDim result(Crumb(0)(0) To Crumb(0)(1), Crumb(1)(0) To Crumb(1)(1), Crumb(2)(0) To Crumb(2)(1), Crumb(3)(0) To Crumb(3)(1), _
-                     Crumb(4)(0) To Crumb(4)(1), Crumb(5)(0) To Crumb(5)(1), Crumb(6)(0) To Crumb(6)(1), Crumb(7)(0) To Crumb(7)(1), _
-                     Crumb(8)(0) To Crumb(8)(1), Crumb(9)(0) To Crumb(9)(1), Crumb(10)(0) To Crumb(10)(1), Crumb(11)(0) To Crumb(11)(1), _
-                     Crumb(12)(0) To Crumb(12)(1), Crumb(13)(0) To Crumb(13)(1), Crumb(14)(0) To Crumb(14)(1), Crumb(15)(0) To Crumb(15)(1), _
-                     Crumb(16)(0) To Crumb(16)(1), Crumb(17)(0) To Crumb(17)(1), Crumb(18)(0) To Crumb(18)(1), Crumb(19)(0) To Crumb(19)(1), _
-                     Crumb(20)(0) To Crumb(20)(1))
+        ReDim result(crumb(0)(0) To crumb(0)(1), crumb(1)(0) To crumb(1)(1), crumb(2)(0) To crumb(2)(1), crumb(3)(0) To crumb(3)(1), _
+                     crumb(4)(0) To crumb(4)(1), crumb(5)(0) To crumb(5)(1), crumb(6)(0) To crumb(6)(1), crumb(7)(0) To crumb(7)(1), _
+                     crumb(8)(0) To crumb(8)(1), crumb(9)(0) To crumb(9)(1), crumb(10)(0) To crumb(10)(1), crumb(11)(0) To crumb(11)(1), _
+                     crumb(12)(0) To crumb(12)(1), crumb(13)(0) To crumb(13)(1), crumb(14)(0) To crumb(14)(1), crumb(15)(0) To crumb(15)(1), _
+                     crumb(16)(0) To crumb(16)(1), crumb(17)(0) To crumb(17)(1), crumb(18)(0) To crumb(18)(1), crumb(19)(0) To crumb(19)(1), _
+                     crumb(20)(0) To crumb(20)(1))
     End Select
-    createMultidimensionalArray = result
+    CreateMultidimensionalArray = result
 End Function
 
 
