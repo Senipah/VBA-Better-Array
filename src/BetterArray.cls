@@ -20,7 +20,7 @@ Option Explicit
 Private Const DEFAULT_CAPACITY As Long = 4
 Private Const MAX_ARRAY_LENGTH = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
-Private Const MISSING_LONG As Long = -999999
+Private Const MISSING_LONG As Long = -9999
 
 Private Enum ArrayTypes
     BA_UNDEFINED
@@ -773,6 +773,112 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
     IsSorted = result
 End Function
 
+'@Description("returns the first index at which a given element can be found in the array")
+Public Function IndexOf( _
+        ByVal SearchElement As Variant, _
+        Optional ByVal FromIndex As Long = MISSING_LONG _
+    ) As Long
+Attribute IndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
+    Dim localItems() As Variant
+    Dim localLength As Long
+    Dim relativeStart As Long
+    Dim currentIndex As Long
+    
+    localItems = getInternalItems()
+    localLength = Me.Length
+    If localLength = 0 Then
+        IndexOf = MISSING_LONG
+        Exit Function
+    End If
+
+    If FromIndex = MISSING_LONG Then
+        relativeStart = LBound(localItems)
+    Else
+        relativeStart = FromIndex
+    End If
+    
+    If relativeStart >= LBound(localItems) Then
+        currentIndex = relativeStart
+    Else
+        If relativeStart > 0 Then
+            currentIndex = LBound(localItems)
+        Else
+            currentIndex = UBound(localItems) + relativeStart
+        End If
+        
+        If currentIndex < LBound(localItems) Then
+            currentIndex = LBound(localItems)
+        End If
+    End If
+    
+    Do While currentIndex <= UBound(localItems)
+        If elementsAreEqual(SearchElement, localItems(currentIndex)) Then
+            IndexOf = currentIndex
+            Exit Function
+        End If
+        currentIndex = currentIndex + 1
+    Loop
+    
+    IndexOf = MISSING_LONG
+End Function
+
+'@Description("Removes the item at the specified index. Returns the new length of the array")
+Public Function Remove(ByVal Index As Long) As Long
+Attribute Remove.VB_Description = "Removes the item at the specified index. Returns the new length of the array"
+    Dim relativeIndex As Long
+    Dim localType As ArrayTypes
+    
+    relativeIndex = MISSING_LONG
+    localType = pArrayType
+    
+    If Index >= Me.LowerBound Then
+        If Index <= Me.UpperBound Then
+            relativeIndex = Index
+        End If
+    Else
+        If Index < 0 Then
+            relativeIndex = Me.UpperBound + Index
+            If relativeIndex < Me.LowerBound Then relativeIndex = MISSING_LONG
+        End If
+    End If
+    
+    If relativeIndex <> MISSING_LONG Then
+        Dim beforeSlice() As Variant
+        Dim afterSlice() As Variant
+        Dim beforeExists As Boolean
+        Dim afterExists As Boolean
+        
+        If relativeIndex > Me.LowerBound Then
+            beforeSlice = Me.Slice(Me.LowerBound, relativeIndex)
+            beforeExists = True
+        End If
+        If relativeIndex < Me.UpperBound Then
+            afterSlice = Me.Slice(relativeIndex + 1)
+            afterExists = True
+        End If
+        If beforeExists Then
+            If afterExists Then
+                Dim result As BetterArray
+                Set result = New BetterArray
+                Me.Items = result.Concat(beforeSlice, afterSlice).Items
+            Else
+                Me.Items = beforeSlice
+            End If
+        Else
+            If afterExists Then
+                Me.Items = afterSlice
+            End If
+        End If
+        If beforeExists Or afterExists Then
+            If pArrayType = BA_JAGGED And localType = BA_MULTIDIMENSION Then
+                pArrayType = localType
+            End If
+        End If
+    End If
+    
+    Remove = Me.Length
+End Function
+
 
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
@@ -910,8 +1016,6 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
     Dim localArray() As Variant
     Dim localType As ArrayTypes
     Dim i As Long
-    Dim storedElements() As Variant
-    Dim arrayWrapper() As Variant
     
     For Each arg In Args
         If IsArray(arg) Then
@@ -1189,57 +1293,28 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Set Shuffle = Me
 End Function
 
-' TODO: Implement, Document & Test indexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
 
-Public Function IndexOf( _
-        ByVal SearchElement As Variant, _
-        Optional ByVal FromIndex As Long = MISSING_LONG _
-    ) As Long
+' TODO: Implement, Document & Test Unique
+'@Description("filters the array to contain only unique elements")
+Public Function Unique() As BetterArray
+Attribute Unique.VB_Description = "filters the array to contain only unique elements"
     Dim localItems() As Variant
-    Dim localLength As Long
-    Dim relativeStart As Long
-    Dim currentIndex As Long
+    Dim localType As ArrayTypes
+    Dim result As BetterArray
+    Dim i As Long
     
     localItems = getInternalItems()
-    localLength = Me.Length
-    If localLength = 0 Then
-        IndexOf = MISSING_LONG
-        Exit Function
-    End If
-
-    If FromIndex = MISSING_LONG Then
-        relativeStart = LBound(localItems)
-    Else
-        relativeStart = FromIndex
-    End If
-    
-    If relativeStart >= LBound(localItems) Then
-        currentIndex = relativeStart
-    Else
-        If relativeStart > 0 Then
-            currentIndex = UBound(localItems) - relativeStart
-        Else
-            currentIndex = UBound(localItems) + relativeStart + (0 - LBound(localItems))
+    localType = pArrayType
+    Set result = New BetterArray
+    For i = Me.LowerBound To Me.UpperBound
+        If Me.IndexOf(localItems(i)) = i Then
+            result.Push localItems(i)
         End If
-        
-        If currentIndex < LBound(localItems) Then
-            currentIndex = LBound(localItems)
-        End If
-    End If
-    
-    Do While currentIndex <= UBound(localItems)
-        If valuesAreEqual(SearchElement, localItems(currentIndex)) Then
-            IndexOf = currentIndex
-            Exit Function
-        End If
-        currentIndex = currentIndex + 1
-    Loop
-    
-    IndexOf = MISSING_LONG
+    Next
+    Me.Items = result.Items
+    pArrayType = localType
+    Set Unique = Me
 End Function
-
-
 
 ' TODO: Implement, Document & Test Every method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
@@ -1250,8 +1325,6 @@ End Function
 ' TODO: Implement, Document & Test Join method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
 
-
-
 ' TODO: Implement, Document & Test lastIndexOf method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 
@@ -1260,10 +1333,6 @@ End Function
 
 ' TODO: Implement, Document & Test splice method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-
-' TODO: Implement, Document & Test Unique
-
-' TODO: Implement remove method to delete entry by index
 
 ' TODO: Implement, Document & Test IncludesType method
 
@@ -1460,7 +1529,7 @@ Attribute recursiveIncludes.VB_Description = "Recursively checks if the passed a
                 Exit Function
             End If
         Else
-            If valuesAreEqual(SearchElement, SearchArray(i)) Then
+            If elementsAreEqual(SearchElement, SearchArray(i)) Then
                 recursiveIncludes = True
                 Exit Function
             End If
@@ -1510,7 +1579,7 @@ Attribute recursiveFilter.VB_Description = "Recursively filters a passed array."
         ElseIf IsObject(SourceArray(i)) Then
             If Not Include Then result.Push SourceArray(i)
         Else
-            isMatch = valuesAreEqual(match, SourceArray(i))
+            isMatch = elementsAreEqual(match, SourceArray(i))
             If (Include And isMatch) Or (Not Include And Not isMatch) Then
                 result.Push SourceArray(i)
             End If
@@ -1526,7 +1595,7 @@ Attribute only.VB_Description = "Checks if an array only contains a specific val
     Dim element As Variant
     result = True
     For Each element In arr
-        If Not valuesAreEqual(match, element) Then
+        If Not elementsAreEqual(match, element) Then
             result = False
             Exit For
         End If
@@ -1534,26 +1603,42 @@ Attribute only.VB_Description = "Checks if an array only contains a specific val
     only = result
 End Function
 
-'@Description("Compares two values for equality. Doesn't support arrays.")
-Private Function valuesAreEqual( _
+'@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
+Private Function elementsAreEqual( _
         ByVal expected As Variant, _
         ByVal actual As Variant _
     ) As Boolean
-Attribute valuesAreEqual.VB_Description = "Compares two values for equality. Doesn't support arrays."
+Attribute elementsAreEqual.VB_Description = "Compares two values for equality. Doesn't support multidimensional arrays."
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
     Dim result As Boolean
+    Dim i As Long
     
     On Error GoTo ErrHandler
-    If IsEmpty(expected) Then
-        If IsEmpty(actual) Then result = True
-    ElseIf IsObject(expected) Then
-        If IsObject(actual) Then
+    If IsArray(expected) Or IsArray(actual) Then
+        If IsArray(expected) And IsArray(actual) Then
+            If LBound(expected) = LBound(actual) And _
+                    UBound(expected) = UBound(actual) Then
+                Dim currentlyEqual As Boolean
+                currentlyEqual = True
+                For i = LBound(expected) To UBound(actual)
+                    If Not elementsAreEqual(expected(i), actual(i)) Then
+                        currentlyEqual = False
+                        Exit For
+                    End If
+                Next
+                result = currentlyEqual
+            End If
+        End If
+    ElseIf IsEmpty(expected) Or IsEmpty(actual) Then
+        If IsEmpty(expected) And IsEmpty(actual) Then result = True
+    ElseIf IsObject(expected) Or IsObject(actual) Then
+        If IsObject(expected) And IsObject(actual) Then
             If expected Is actual Then result = True
         End If
-    ElseIf IsNumeric(expected) Then
-        If IsNumeric(actual) Then
+    ElseIf IsNumeric(expected) Or IsNumeric(actual) Then
+        If IsNumeric(expected) And IsNumeric(actual) Then
             Dim diff As Double
             diff = Abs(expected - actual)
             If diff <= (IIf( _
@@ -1567,10 +1652,10 @@ Attribute valuesAreEqual.VB_Description = "Compares two values for equality. Doe
     ElseIf expected = actual Then
         result = True
     End If
-    valuesAreEqual = result
+    elementsAreEqual = result
     Exit Function
 ErrHandler:
-    valuesAreEqual = False
+    elementsAreEqual = False
 End Function
 
 ' TODO: Refactor to remove recursion
@@ -2736,6 +2821,7 @@ Attribute createMultidimensionalArray.VB_Description = "Returns an empty multidi
     End Select
     createMultidimensionalArray = result
 End Function
+
 
 
 

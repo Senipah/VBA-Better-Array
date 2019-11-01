@@ -25,7 +25,7 @@ Private sut As BetterArray
 ' Module level declaration of ArrayGenerator as used by most tests
 Private Gen As ArrayGenerator
 
-Private Const MISSING_LONG As Long = -999999
+Private Const MISSING_LONG As Long = -9999
 Private Const TEST_ARRAY_LENGTH As Long = 10
 Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an ExcelProvider instance had failed." & _
         " Once resolved ensure to end any orphan Excel processes running on this system."
@@ -83,7 +83,7 @@ Private Function SequenceEquals_JaggedArray( _
                 GoTo ErrHandler
             End If
         Else
-            If Not valuesAreEqual(expected(i), actual(i)) Then
+            If Not elementsAreEqual(expected(i), actual(i)) Then
                 GoTo ErrHandler
             End If
         End If
@@ -112,7 +112,7 @@ Private Function SequenceEquals_JaggedArrayVsRange( _
     
     For i = 1 To actual.Rows.count
         For j = 1 To actual.Columns.count
-            If Not valuesAreEqual( _
+            If Not elementsAreEqual( _
                 expected(IIf(transposed, j - 1, i - 1), IIf(transposed, i - 1, j - 1)), _
                 actual.Cells.Item(i, j).Value _
             ) Then
@@ -127,24 +127,42 @@ ErrHandler:
     On Error GoTo 0
 End Function
 
-Private Function valuesAreEqual( _
+'@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
+Private Function elementsAreEqual( _
         ByVal expected As Variant, _
         ByVal actual As Variant _
     ) As Boolean
+Attribute elementsAreEqual.VB_Description = "Compares two values for equality. Doesn't support multidimensional arrays."
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
     Dim result As Boolean
+    Dim i As Long
     
     On Error GoTo ErrHandler
-    If IsEmpty(expected) Then
-        If IsEmpty(actual) Then result = True
-    ElseIf IsObject(expected) Then
-        If IsObject(actual) Then
+    If IsArray(expected) Or IsArray(actual) Then
+        If IsArray(expected) And IsArray(actual) Then
+            If LBound(expected) = LBound(actual) And _
+                    UBound(expected) = UBound(actual) Then
+                Dim currentlyEqual As Boolean
+                currentlyEqual = True
+                For i = LBound(expected) To UBound(actual)
+                    If Not elementsAreEqual(expected(i), actual(i)) Then
+                        currentlyEqual = False
+                        Exit For
+                    End If
+                Next
+                result = currentlyEqual
+            End If
+        End If
+    ElseIf IsEmpty(expected) Or IsEmpty(actual) Then
+        If IsEmpty(expected) And IsEmpty(actual) Then result = True
+    ElseIf IsObject(expected) Or IsObject(actual) Then
+        If IsObject(expected) And IsObject(actual) Then
             If expected Is actual Then result = True
         End If
-    ElseIf IsNumeric(expected) Then
-        If IsNumeric(actual) Then
+    ElseIf IsNumeric(expected) Or IsNumeric(actual) Then
+        If IsNumeric(expected) And IsNumeric(actual) Then
             Dim diff As Double
             diff = Abs(expected - actual)
             If diff <= (IIf( _
@@ -158,10 +176,10 @@ Private Function valuesAreEqual( _
     ElseIf expected = actual Then
         result = True
     End If
-    valuesAreEqual = result
+    elementsAreEqual = result
     Exit Function
 ErrHandler:
-    valuesAreEqual = False
+    elementsAreEqual = False
 End Function
 
 
@@ -205,7 +223,7 @@ Private Function arraysAreReversed( _
                 Exit For
             End If
         Else
-            If Not valuesAreEqual( _
+            If Not elementsAreEqual( _
                     original(i), _
                     reversed(localUpperBound + localLowerBound - i) _
                 ) Then
@@ -2910,7 +2928,7 @@ Private Sub Max_OneDimArrayVariantsInternal_ReturnsLargest()
     sut.Items = testArray
     'Act:
     actual = sut.Max
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
@@ -2954,7 +2972,7 @@ Private Sub Max_ParamArray_ReturnsLargest()
     expected = "Foo"
     'Act:
     actual = sut.Max("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
@@ -2979,7 +2997,7 @@ Private Sub Max_PassedArray_ReturnsLargest()
     expected = "Foo"
     'Act:
     actual = sut.Max(testArray)
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
@@ -3097,7 +3115,7 @@ Private Sub Min_OneDimArrayVariantsInternal_ReturnsSmallest()
     sut.Items = testArray
     'Act:
     actual = sut.Min
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
 TestExit:
@@ -3141,7 +3159,7 @@ Private Sub Min_ParamArray_ReturnsSmallest()
     expected = -1
     'Act:
     actual = sut.Min("Foo", 1, "Bar", 100, "Fizz", -1, "Buzz")
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
@@ -3166,7 +3184,7 @@ Private Sub Min_PassedArray_ReturnsSmallest()
     expected = -1
     'Act:
     actual = sut.Min(testArray)
-    testResult = valuesAreEqual(expected, actual)
+    testResult = elementsAreEqual(expected, actual)
     
     'Assert:
     Assert.IsTrue testResult, "Actual <> expected"
@@ -3492,7 +3510,7 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     actual = sut.Reverse.Items
     testResult = True
     For i = LBound(expected) To UBound(expected)
-        If Not valuesAreEqual( _
+        If Not elementsAreEqual( _
                 expected(i, LBound(expected, 2)), _
                 actual(LBound(expected) + UBound(expected) - i, LBound(expected, 2)) _
             ) Then
@@ -3525,7 +3543,7 @@ Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
     actual = sut.Reverse(True).Items
     testResult = True
     For i = LBound(expected) To UBound(expected)
-        If Not valuesAreEqual( _
+        If Not elementsAreEqual( _
                 expected(i, LBound(expected, 2)), _
                 actual(LBound(expected) + UBound(expected) - i, UBound(expected, 2)) _
             ) Then
@@ -4685,7 +4703,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayValueMissing_ReturnsNegative1()
+Private Sub IndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4710,7 +4728,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_JaggedArray_ReturnsMissingLong()
+Private Sub IndexOf_JaggedArray_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4720,7 +4738,7 @@ Private Sub IndexOf_JaggedArray_ReturnsMissingLong()
     
     expected = 3
         
-    testArray = Gen.GetArray()
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     
     'Act:
@@ -4737,9 +4755,68 @@ End Sub
 ''''''''''''''''''''''
 ' Method - Unique '
 ''''''''''''''''''''''
-
-
 ' TODO: Implement, Document & Test Unique
+
+'@TestMethod("BetterArray_Unique")
+Private Sub Unique_OneDimArray_ReturnsUniqueList()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    
+    testArray = Array(1, 2, 2, 1, 3, 4, 5, 5, 6, 3)
+    expected = Array(1, 2, 3, 4, 5, 6)
+        
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Unique.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Unique")
+Private Sub Unique_JaggedArray_ReturnsUniqueList()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar"), _
+        Array("Foo", "Fizz"), _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar") _
+    )
+    expected = Array( _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar"), _
+        Array("Foo", "Fizz") _
+    )
+        
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Unique.Items
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 ''''''''''''''''''''''
 ' Method - Remove '
@@ -4747,15 +4824,225 @@ End Sub
 
 ' TODO: Implement remove method to delete entry by index
 
-''''''''''''''''''''''
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_OneDimArray_RemovesElementAtIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 2
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Foo", "Bar", "Buzz")
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_JaggedArray_RemovesElementAtIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 2
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray = Array( _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar"), _
+        Array("Foo", "Fizz"), _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar") _
+    )
+    expected = Array( _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar"), _
+        Array(1, 2, 3), _
+        Array("Foo", "Bar") _
+    )
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_MultiDimArray_RemovesElementAtIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 2
+    Dim expected(1 To 2, 1 To 2) As Variant
+    Dim actual() As Variant
+    Dim testArray(1 To 3, 1 To 2) As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+    testArray(3, 1) = "Whizz"
+    testArray(3, 2) = "Bang"
+    
+    expected(1, 1) = "Foo"
+    expected(1, 2) = "Bar"
+    expected(2, 1) = "Whizz"
+    expected(2, 2) = "Bang"
+
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_OneDimArrayRemoveFirst_RemovesElementAtIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 0
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Bar", "Fizz", "Buzz")
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_OneDimArrayRemoveLast_RemovesElementAtIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 3
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Foo", "Bar", "Fizz")
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_OneDimArrayIndexExceedsBounds_NothingRemoved()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const removeIndex As Long = 100
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim expectedLength As Long
+    Dim actualLength As Long
+    
+    testArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    expected = Array("Foo", "Bar", "Fizz", "Buzz")
+    expectedLength = Gen.getArrayLength(expected)
+    
+    sut.Items = testArray
+    
+    'Act:
+    
+    actualLength = sut.Remove(removeIndex)
+    actual = sut.Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.AreEqual expectedLength, actualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'''''''''''''''''''''''''
 ' Method - IncludesType '
-''''''''''''''''''''''
+'''''''''''''''''''''''''
 
 ' TODO: Implement, Document & Test IncludesType method
 
-''''''''''''''''''''''
+'''''''''''''''''''''''''
 ' Method - FilterByType '
-''''''''''''''''''''''
+'''''''''''''''''''''''''
 
 ' TODO: Implement, Document & Test FilterByType method
 
