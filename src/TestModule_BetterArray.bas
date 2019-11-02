@@ -2568,9 +2568,6 @@ End Sub
 '''''''''''''''''''''
 ' Method - Includes '
 '''''''''''''''''''''
-' TODO: add method IncludesType
-
-'TODO: Includes test cases
 
 '@TestMethod("BetterArray_Includes")
 Private Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
@@ -2724,11 +2721,62 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'''''''''''''''''''''''''
+' Method - IncludesType '
+'''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_IncludesType")
+Private Sub IncludesType_OneDimArrayContainsType_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim searchType As String
+    testArray = Gen.GetArray(AG_DOUBLE)
+    expected = True
+    sut.Items = testArray
+    searchType = "Double"
+    
+    'Act:
+    actual = sut.IncludesType(searchType)
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IncludesType")
+Private Sub IncludesType_OneDimArrayDoesntContainType_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim searchType As String
+    testArray = Gen.GetArray(AG_DOUBLE)
+    expected = False
+    sut.Items = testArray
+    searchType = "string"
+    
+    'Act:
+    actual = sut.IncludesType(searchType)
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
 '''''''''''''''''
 ' Method - Keys '
 '''''''''''''''''
-'TODO: Keys test cases
-
 
 '@TestMethod("BetterArray_Keys")
 Private Sub Keys_OneDimArrayDefaultBase_ReturnsCorrectKeys()
@@ -5034,11 +5082,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
-'''''''''''''''''''''''''
-' Method - IncludesType '
-'''''''''''''''''''''''''
 
-' TODO: Implement, Document & Test IncludesType method
 
 '''''''''''''''''''''''''
 ' Method - FilterByType '

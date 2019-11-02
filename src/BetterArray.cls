@@ -396,6 +396,37 @@ Attribute Includes.VB_Description = "Determines whether the SearchArrayay includ
     Includes = RecursiveIncludes(searchElement, searchArray, currentIndex)
 End Function
 
+' TODO: add param for recursion
+'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
+'@Description("Determines whether the SearchArrayay includes a matching typename.")
+Public Function IncludesType( _
+        ByVal searchTypeName As String, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
+    ) As Boolean
+Attribute IncludesType.VB_Description = "Determines whether the SearchArrayay includes a matching typename."
+    Dim localLength As Long
+    Dim currentIndex As Long
+    Dim searchArray() As Variant
+    
+    searchArray = GetInternalItems()
+    localLength = Me.length
+    
+    If localLength = 0 Then
+        IncludesType = False
+        Exit Function
+    End If
+        
+    If fromIndex > Me.LowerBound Then
+        currentIndex = fromIndex
+    ElseIf fromIndex = MISSING_LONG Then
+        currentIndex = Me.LowerBound
+    Else
+        currentIndex = localLength + fromIndex
+    End If
+    
+    IncludesType = RecursiveIncludes(searchTypeName, searchArray, currentIndex, True)
+End Function
+
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array that contains the keys for each index in the array.")
 Public Function Keys() As Variant()
@@ -1322,9 +1353,6 @@ End Function
 ' TODO: Implement, Document & Test Fill method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
 
-' TODO: Implement, Document & Test Join method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
-
 ' TODO: Implement, Document & Test lastIndexOf method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 
@@ -1333,15 +1361,6 @@ End Function
 
 ' TODO: Implement, Document & Test splice method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-
-' TODO: Implement, Document & Test IncludesType method
-
-' TODO: Implement, Document & Test FilterByType method
-
-' TODO: Implement, Document & Test First prop ?
-
-' TODO: Implement, Document & Test Last prop ?
-
 
 '''''''''''''''''''
 ' Private Methods '
@@ -1511,7 +1530,8 @@ End Function
 Private Function RecursiveIncludes( _
         ByVal searchElement As Variant, _
         ByRef searchArray() As Variant, _
-        Optional ByVal fromIndex As Long _
+        Optional ByVal fromIndex As Long, _
+        Optional ByVal compareTypeNames As Boolean _
     ) As Boolean
 Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
     Dim localLowerBound As Long
@@ -1521,20 +1541,30 @@ Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed a
     If fromIndex > localLowerBound Then localLowerBound = fromIndex
     localUpperBound = UBound(searchArray)
     For i = localLowerBound To localUpperBound
-        If IsArray(searchArray(i)) Then
-            Dim passThru() As Variant
-            passThru = searchArray(i)
-            If RecursiveIncludes(searchElement, passThru) Then
+        If compareTypeNames Then
+            If InStr( _
+                    UCase$(TypeName(searchArray(i))), _
+                    UCase$(CStr(searchElement)) _
+                ) > 0 Then
                 RecursiveIncludes = True
                 Exit Function
             End If
-        Else
+        End If
+        If IsArray(searchArray(i)) Then
+            Dim passThru() As Variant
+            passThru = searchArray(i)
+            If RecursiveIncludes(searchElement, passThru, compareTypeNames:=compareTypeNames) Then
+                RecursiveIncludes = True
+                Exit Function
+            End If
+        ElseIf Not compareTypeNames Then
             If ElementsAreEqual(searchElement, searchArray(i)) Then
                 RecursiveIncludes = True
                 Exit Function
             End If
         End If
     Next
+    RecursiveIncludes = False
 End Function
 
 '@Description("Recursively filters a passed array.")
@@ -1544,7 +1574,6 @@ Private Function RecursiveFilter( _
         ByVal include As Boolean, _
         ByVal recurse As Boolean _
     ) As Variant()
-Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
     Dim result As BetterArray
     Dim localLowerBound As Long
     Dim localUpperBound As Long
