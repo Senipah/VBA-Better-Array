@@ -433,7 +433,7 @@ Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalA
     
     'Act:
     sut.Items = testArray
-    actual = sut.length
+    actual = sut.Length
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual length <> expected"
@@ -458,7 +458,7 @@ Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOrigina
 
     'Act:
     sut.Items = testArray
-    actual = sut.length
+    actual = sut.Length
     
     'Assert:
     Assert.AreEqual expected, actual, "Actual length <> expected"
@@ -483,7 +483,7 @@ Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
 
     'Act:
     sut.Items = testArray
-    actual = sut.length
+    actual = sut.Length
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual length <> expected"
@@ -577,7 +577,7 @@ Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowe
     Assert.AreEqual sut.LowerBound, actual, "Actual LowerBound <> SUT.LowerBound prop"
     Assert.AreEqual UBound(testArray) + 1, UBound(returnedItems), "Actual upperbound <> expected"
     Assert.AreEqual sut.UpperBound, UBound(returnedItems), "Actual upperbound <> SUT.UpperBound prop"
-    Assert.AreEqual sut.length, TEST_ARRAY_LENGTH, "Actual length does not equal expected"
+    Assert.AreEqual sut.Length, TEST_ARRAY_LENGTH, "Actual length does not equal expected"
 
 TestExit:
     Exit Sub
@@ -641,7 +641,7 @@ Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.length, "Actual length does not match expected length"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.Length, "Actual length does not match expected length"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "Actual LowerBound does not match expected LowerBound"
 
 TestExit:
@@ -672,7 +672,7 @@ Private Sub Item_ChangingIndexBelowLowerBound_ItemIsUnshifted()
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual result does not match expected result"
-    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.length, "Actual length does not match expected length"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.Length, "Actual length does not match expected length"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "Actual LowerBound does not match expected LowerBound"
 
 TestExit:
@@ -754,7 +754,7 @@ Private Sub Push_AddToNewBetterArray_ItemAdded()
     'Act:
     sut.Push expected
     actual = sut.Item(sut.LowerBound)
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
 
     'Assert:
@@ -787,7 +787,7 @@ Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.length, "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -816,7 +816,7 @@ Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.length, "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -846,7 +846,7 @@ Private Sub Push_AddToExistingJaggedArray_ItemAdded()
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Element value incorrect"
-    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.length, "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH + 1, sut.Length, "Length value incorrect"
 
 TestExit:
     Exit Sub
@@ -871,7 +871,7 @@ Private Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
     'Act:
     sut.Push expected, 2, 3
     actual = sut.Item(sut.LowerBound)
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
 
     'Assert:
@@ -912,7 +912,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
 
     'Assert:
     Assert.AreEqual expected, actual, "Element value incorrect"
-    Assert.AreEqual TEST_ARRAY_LENGTH - 1, sut.length, "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH - 1, sut.Length, "Length value incorrect"
     Assert.AreEqual UBound(testArray) - 1, sut.UpperBound, "Upperbound value incorrect"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
@@ -945,7 +945,7 @@ Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     'Act:
     actual = sut.Pop
     actualLowerBound = sut.LowerBound
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
 
     'Assert:
@@ -987,7 +987,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
 
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
-    Assert.AreEqual TEST_ARRAY_LENGTH - 1, sut.length, "Length value incorrect"
+    Assert.AreEqual TEST_ARRAY_LENGTH - 1, sut.Length, "Length value incorrect"
     Assert.AreEqual UBound(testArray) - 1, sut.UpperBound, "Upperbound value incorrect"
     Assert.AreEqual expectedLowerBound, actualLowerBound, "LowerBound value incorrect"
 
@@ -1015,7 +1015,7 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     'Act:
     actual = sut.Shift
     actualLowerBound = sut.LowerBound
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
 
     'Assert:
@@ -1160,12 +1160,12 @@ Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     Dim actualUpperBound As Long
     
     expectedLength = TEST_ARRAY_LENGTH
-    expected = Gen.GetArray(length:=expectedLength)
+    expected = Gen.GetArray(Length:=expectedLength)
     expectedUpperBound = UBound(expected)
     
     'Act:
     actual = sut.Concat(expected).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1200,7 +1200,7 @@ Private Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
     
     'Act:
     actual = sut.Concat(firstAray, secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1236,7 +1236,7 @@ Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1263,12 +1263,12 @@ Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     Dim actualUpperBound As Long
     
     expectedLength = TEST_ARRAY_LENGTH
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION, length:=expectedLength)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION, Length:=expectedLength)
     expectedUpperBound = UBound(expected)
     
     'Act:
     actual = sut.Concat(expected).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1296,15 +1296,15 @@ Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     Dim actualUpperBound As Long
     
     expectedLength = TEST_ARRAY_LENGTH * 2
-    firstArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
-    secondArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    firstArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    secondArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     expected = Gen.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, firstArray, secondArray)
     expectedUpperBound = UBound(expected)
     
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1330,13 +1330,13 @@ Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(arrayType:=AG_JAGGED)
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
     expectedLength = Gen.GetArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
     'Act:
     actual = sut.Concat(expected).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     testResult = SequenceEquals_JaggedArray(expected, actual)
     
@@ -1365,8 +1365,8 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    firstArray = Gen.GetArray(arrayType:=AG_JAGGED)
-    secondArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    firstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -1375,7 +1375,7 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     testResult = SequenceEquals_JaggedArray(expected, actual)
     
@@ -1404,8 +1404,8 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    firstArray = Gen.GetArray(arrayType:=AG_JAGGED)
-    secondArray = Gen.GetArray(arrayType:=AG_ONEDIMENSION)
+    firstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -1414,7 +1414,7 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     testResult = SequenceEquals_JaggedArray(expected, actual)
     
@@ -1468,7 +1468,7 @@ Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1521,7 +1521,7 @@ Private Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1580,7 +1580,7 @@ Private Sub Concat_AddMultiDimArrayDepth3ToExistingOneDimArray_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     
     'Assert:
@@ -1608,8 +1608,8 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    firstArray = Gen.GetArray(arrayType:=AG_ONEDIMENSION)
-    secondArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    firstArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
+    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -1618,7 +1618,7 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     'Act:
     sut.Items = firstArray
     actual = sut.Concat(secondArray).Items
-    actualLength = sut.length
+    actualLength = sut.Length
     actualUpperBound = sut.UpperBound
     testResult = SequenceEquals_JaggedArray(expected, actual)
     
@@ -2053,7 +2053,7 @@ Public Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
     Dim testArray() As Variant
     '@Ignore VariableNotUsed
     Dim actual As Boolean
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED, depth:=3)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED, depth:=3)
     sut.Items = testArray
     'Act
     actual = sut.IsSorted
@@ -2107,7 +2107,7 @@ Private Sub Sort_MultiDimArray_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = testArray
     'Act:
     sut.Sort
@@ -2127,7 +2127,7 @@ Private Sub Sort_JaggedArray_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     'Act:
     sut.Sort
@@ -2363,7 +2363,7 @@ Private Sub CopyWithin_JaggedArrayElement3ToIndex0_SelectionCopiedLengthUnchange
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     expected = testArray
     expected(0) = expected(3)
     sut.Items = testArray
@@ -2841,7 +2841,7 @@ Private Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     Dim testArray() As Variant
     Dim i As Long
     
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     ReDim expected(LBound(testArray) To UBound(testArray))
     For i = LBound(testArray) To UBound(testArray)
         expected(i) = i
@@ -2867,7 +2867,7 @@ Private Sub Keys_JaggedArray_ReturnsCorrectKeys()
     Dim testArray() As Variant
     Dim i As Long
     
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     ReDim expected(LBound(testArray) To UBound(testArray))
     For i = LBound(testArray) To UBound(testArray)
         expected(i) = i
@@ -3431,7 +3431,7 @@ Private Sub Slice_JaggedNoEndArg_ReturnsCopy()
     Dim expected() As Variant
     Dim actual() As Variant
     Dim testResult As Boolean
-    expected = Gen.GetArray(arrayType:=AG_JAGGED)
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
 
     sut.Items = expected
     'Act:
@@ -3552,7 +3552,7 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     Dim testResult As Boolean
     Dim i As Long
 
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = expected
     'Act:
     actual = sut.Reverse.Items
@@ -3585,7 +3585,7 @@ Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
     Dim testResult As Boolean
     Dim i As Long
     
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = expected
     'Act:
     actual = sut.Reverse(True).Items
@@ -3617,7 +3617,7 @@ Private Sub Reverse_JaggedArray_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(arrayType:=AG_JAGGED)
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = expected
     'Act:
     actual = sut.Reverse.Items
@@ -3639,7 +3639,7 @@ Private Sub Reverse_JaggedArrayRecurse_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(arrayType:=AG_JAGGED)
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = expected
     'Act:
     actual = sut.Reverse(True).Items
@@ -3736,7 +3736,7 @@ Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     sortedArray = sut.Sort.Items
     'Act:
@@ -3862,7 +3862,7 @@ Private Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     Set ExcelApp = New ExcelProvider
     Set destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = expected
     transposed = False
     
@@ -3894,7 +3894,7 @@ Private Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     Set ExcelApp = New ExcelProvider
     Set destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = expected
     transposed = True
     
@@ -4404,7 +4404,7 @@ Private Sub ExtractSegment_JaggedArrayNoArgs_FullArrayReturned()
     Dim expected() As Variant
     Dim actual() As Variant
         
-    expected = Gen.GetArray(arrayType:=AG_JAGGED)
+    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = expected
     
     'Act:
@@ -4429,7 +4429,7 @@ Private Sub ExtractSegment_JaggedArrayJustRowArg_ArrayReturned()
     Dim testArray() As Variant
     Dim rowIndex As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     rowIndex = 2
     expected = testArray(rowIndex)
@@ -4456,7 +4456,7 @@ Private Sub ExtractSegment_JaggedArrayJustColArg_ArrayReturned()
     Dim columnIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     columnIndex = 3
     ReDim expected(LBound(testArray) To UBound(testArray))
@@ -4486,7 +4486,7 @@ Private Sub ExtractSegment_JaggedDimArrayRowAndColArgs_ArrayReturned()
     Dim rowIndex As Long
     Dim columnIndex As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     rowIndex = 2
     columnIndex = 3
@@ -4511,7 +4511,7 @@ Private Sub ExtractSegment_MultiDimArrayNoArgs_FullArrayReturned()
     Dim expected() As Variant
     Dim actual() As Variant
         
-    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = expected
     
     'Act:
@@ -4537,7 +4537,7 @@ Private Sub ExtractSegment_MultiDimArrayJustRowArg_ArrayReturned()
     Dim rowIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = testArray
     rowIndex = 2
     ReDim expected(LBound(testArray, 2) To UBound(testArray, 2))
@@ -4567,7 +4567,7 @@ Private Sub ExtractSegment_MultiDimArrayJustColArg_ArrayReturned()
     Dim columnIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = testArray
     columnIndex = 3
     ReDim expected(LBound(testArray) To UBound(testArray))
@@ -4597,7 +4597,7 @@ Private Sub ExtractSegment_MultiDimDimArrayRowAndColArgs_ArrayReturned()
     Dim rowIndex As Long
     Dim columnIndex As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = testArray
     rowIndex = 2
     columnIndex = 3
@@ -4660,7 +4660,7 @@ Private Sub Transpose_JaggedArray_ArrayTransposed()
     Dim i As Long
     Dim j As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     
     ReDim expected(0 To TEST_ARRAY_LENGTH - 1)
@@ -4695,7 +4695,7 @@ Private Sub Transpose_MultiDimArray_ArrayTransposed()
     Dim i As Long
     Dim j As Long
         
-    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     sut.Items = testArray
     
     ReDim expected(LBound(testArray, 2) To UBound(testArray, 2), _
@@ -4786,7 +4786,7 @@ Private Sub IndexOf_JaggedArray_ReturnsCorrectIndex()
     
     expected = 3
         
-    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     sut.Items = testArray
     
     'Act:

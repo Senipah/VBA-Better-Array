@@ -56,14 +56,14 @@ End Property
 
 Public Function GetArray( _
         Optional ByVal valueType As ValueTypes = ValueTypes.AG_VARIANT, _
-        Optional ByVal arrayType As ArrayTypes = ArrayTypes.AG_ONEDIMENSION, _
-        Optional ByVal length As Long = 10, _
+        Optional ByVal ArrayType As ArrayTypes = ArrayTypes.AG_ONEDIMENSION, _
+        Optional ByVal Length As Long = 10, _
         Optional ByVal depth As Long _
     ) As Variant
     Dim localLength As Long
     Dim vals As IValuesList
        
-    localLength = IIf(length <= 0, 1, length)
+    localLength = IIf(Length <= 0, 1, Length)
     
     Select Case valueType
     Case ValueTypes.AG_BOOLEAN
@@ -81,11 +81,11 @@ Public Function GetArray( _
     Case ValueTypes.AG_VARIANT
         Set vals = New ValuesList_Variants
     End Select
-    GetArray = GetArrayOfType(localLength, vals, arrayType, depth)
+    GetArray = GetArrayOfType(localLength, vals, ArrayType, depth)
 End Function
 
 Public Function ConcatArraysOfSameStructure( _
-        ByVal arrayType As ArrayTypes, _
+        ByVal ArrayType As ArrayTypes, _
         ParamArray args() As Variant _
     ) As Variant()
     ' This method is exclusively for use as a test dependency and not for production use
@@ -98,7 +98,7 @@ Public Function ConcatArraysOfSameStructure( _
     
     UpperBound = -1
     
-    If arrayType = AG_UNALLOCATED Or arrayType = AG_UNDEFINED Then
+    If ArrayType = AG_UNALLOCATED Or ArrayType = AG_UNDEFINED Then
         'Handle Exception
     Else
         For Each arg In args
@@ -108,7 +108,7 @@ Public Function ConcatArraysOfSameStructure( _
             End If
         Next
         
-        If arrayType = AG_MULTIDIMENSION Then
+        If ArrayType = AG_MULTIDIMENSION Then
             ReDim result(UpperBound, UBound(currentArray, 2))
             For Each arg In args
                 If IsArray(arg) Then
@@ -140,30 +140,30 @@ End Function
 '''''''''''''''''''
 
 Private Function GetArrayOfType( _
-        ByVal length As Long, _
+        ByVal Length As Long, _
         ByVal vals As IValuesList, _
-        ByVal arrayType As ArrayTypes, _
+        ByVal ArrayType As ArrayTypes, _
         Optional ByVal depth As Long _
     ) As Variant
     Dim result As Variant
-    Select Case arrayType
+    Select Case ArrayType
     Case ArrayTypes.AG_JAGGED
-        result = GetJaggedArray(length, vals, depth)
+        result = GetJaggedArray(Length, vals, depth)
     Case ArrayTypes.AG_MULTIDIMENSION
-        result = GetMultidimensionalArray(length, vals)
+        result = GetMultidimensionalArray(Length, vals)
     Case ArrayTypes.AG_ONEDIMENSION
-        result = GetOneDimensionalArray(length, vals)
+        result = GetOneDimensionalArray(Length, vals)
     End Select
     GetArrayOfType = result
 End Function
 
 Private Function GetOneDimensionalArray( _
-        ByVal length As Long, _
+        ByVal Length As Long, _
         ByVal vals As IValuesList _
     ) As Variant()
     Dim i As Long
     Dim arr() As Variant
-    ReDim arr(pLowerBound To GetUpperBound(length))
+    ReDim arr(pLowerBound To GetUpperBound(Length))
     For i = LBound(arr) To UBound(arr)
         If vals.IsObjectType Then
             Set arr(i) = vals.GetRandomValue()
@@ -175,13 +175,13 @@ Private Function GetOneDimensionalArray( _
 End Function
 
 Private Function GetMultidimensionalArray( _
-        ByVal length As Long, _
+        ByVal Length As Long, _
         ByVal vals As IValuesList _
     ) As Variant()
     Dim i As Long
     Dim j As Long
     Dim arr() As Variant
-    ReDim arr(pLowerBound To GetUpperBound(length), pLowerBound To GetUpperBound(length))
+    ReDim arr(pLowerBound To GetUpperBound(Length), pLowerBound To GetUpperBound(Length))
     For i = LBound(arr, 1) To UBound(arr, 1)
         For j = LBound(arr, 2) To UBound(arr, 2)
             If vals.IsObjectType Then
@@ -195,7 +195,7 @@ Private Function GetMultidimensionalArray( _
 End Function
 
 Private Function GetJaggedArray( _
-        ByVal length As Long, _
+        ByVal Length As Long, _
         ByVal vals As IValuesList, _
         ByVal depth As Long, _
         Optional ByVal currentDepth As Long _
@@ -208,12 +208,12 @@ Private Function GetJaggedArray( _
     'default to depth of 2
     localDepth = IIf(depth > 0, depth, 2)
     localCurrentDepth = currentDepth + 1
-    ReDim result(pLowerBound To GetUpperBound(length))
+    ReDim result(pLowerBound To GetUpperBound(Length))
     For i = LBound(result) To UBound(result)
         If localCurrentDepth >= (localDepth - 1) Then
-            result(i) = GetOneDimensionalArray(length, vals)
+            result(i) = GetOneDimensionalArray(Length, vals)
         Else
-            result(i) = GetJaggedArray(length, vals, localDepth, localCurrentDepth)
+            result(i) = GetJaggedArray(Length, vals, localDepth, localCurrentDepth)
         End If
     Next
     GetJaggedArray = result
@@ -254,8 +254,8 @@ Private Function LocalConcat( _
     LocalConcat = startingIndex + i
 End Function
 
-Private Function GetUpperBound(ByVal length As Long) As Long
-    GetUpperBound = length + pLowerBound - 1
+Private Function GetUpperBound(ByVal Length As Long) As Long
+    GetUpperBound = Length + pLowerBound - 1
 End Function
 
 
