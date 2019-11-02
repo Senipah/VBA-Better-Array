@@ -2100,7 +2100,7 @@ Attribute GetInternalItems.VB_Description = "Retrieves the stored items trimmed 
     Dim result() As Variant
     If this.ArrayType <> BA_UNALLOCATED And this.ArrayType <> BA_UNDEFINED Then
         result = this.Items
-        If Me.Capacity > this.Length Then
+        If this.Capacity > this.Length Then
             If this.Length > 0 Then ReDim Preserve result(this.LowerBound To Me.UpperBound)
         End If
     Else
@@ -2319,9 +2319,9 @@ End Function
 '@Description("Increases capacity of internal array if required.")
 Private Sub EnsureCapacity(ByVal MinimumCapacity As Long)
 Attribute EnsureCapacity.VB_Description = "Increases capacity of internal array if required."
-    If Me.Capacity < MinimumCapacity Then
+    If this.Capacity < MinimumCapacity Then
         Dim newCapacity As Long
-        newCapacity = IIf(Me.Capacity = 0, DEFAULT_CAPACITY, Me.Capacity * 2)
+        newCapacity = IIf(this.Capacity = 0, DEFAULT_CAPACITY, this.Capacity * 2)
             If newCapacity > MAX_ARRAY_LENGTH Then newCapacity = MAX_ARRAY_LENGTH
         If newCapacity < MinimumCapacity Then newCapacity = MinimumCapacity
         Me.Capacity = newCapacity
