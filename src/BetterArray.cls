@@ -338,7 +338,7 @@ Attribute Unshift.VB_Description = "Adds one or more elements to the beginning o
         Me.Concat oldItems
         this.ArrayType = oldType
     End If
-    Unshift = Me.Length
+    Unshift = this.Length
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -385,7 +385,7 @@ Attribute Includes.VB_Description = "Determines whether the SearchArrayay includ
     Dim searchArray() As Variant
     
     searchArray = GetInternalItems()
-    localLength = Me.Length
+    localLength = this.Length
     
     If localLength = 0 Then
         Includes = False
@@ -416,7 +416,7 @@ Attribute IncludesType.VB_Description = "Determines whether the SearchArrayay in
     Dim searchArray() As Variant
     
     searchArray = GetInternalItems()
-    localLength = Me.Length
+    localLength = this.Length
     
     If localLength = 0 Then
         IncludesType = False
@@ -448,7 +448,7 @@ Attribute Keys.VB_Description = "Returns a new array that contains the keys for 
         RaiseError EC_UNALLOCATED_ARRAY, "Keys"
     Else
         localLowerBound = Me.LowerBound
-        ReDim result(0 To Me.Length - 1)
+        ReDim result(0 To this.Length - 1)
         For i = LBound(result) To UBound(result)
             result(i) = i + localLowerBound
         Next
@@ -504,7 +504,7 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Dim result() As Variant
     
     arr = GetInternalItems()
-    localLength = Me.Length
+    localLength = this.Length
     relativeStart = startIndex
     If relativeStart < LBound(arr) Then
         If relativeStart < 0 Then
@@ -599,7 +599,7 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
     Dim i As Long
     Dim localRowIndex As Long
     Dim localColumnIndex As Long
-    Dim nestedBounds() As Variant
+    Dim nestedBounds() As Long
     Dim sourceArray() As Variant
     Dim result() As Variant
     
@@ -709,10 +709,10 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
                 '1d array
                 localItems = EnsureScalar1DArray(localItems)
                 If transposeValues Then
-                    lengthRows = Me.Length
+                    lengthRows = this.Length
                     localItems = Transpose_1DArray(localItems)
                 Else
-                    lengthColumns = Me.Length
+                    lengthColumns = this.Length
                 End If
             ElseIf depth > 1 Then
                 'jagged array - multidim arrays should also be stored as jagged internally
@@ -823,7 +823,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     Dim currentIndex As Long
     
     localItems = GetInternalItems()
-    localLength = Me.Length
+    localLength = this.Length
     If localLength = 0 Then
         IndexOf = MISSING_LONG
         Exit Function
@@ -914,7 +914,7 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
         End If
     End If
     
-    Remove = Me.Length
+    Remove = this.Length
 End Function
 
 
@@ -1127,7 +1127,7 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
        ArrayType = ArrayTypes.BA_UNDEFINED Then
         sortedItems = GetEmptyArray
     Else
-        If Me.Length > 0 Then
+        If this.Length > 0 Then
             If ArrayType <> BA_ONEDIMENSION Then
                 If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
                     localItems = MultiToJagged(localItems)
@@ -1177,7 +1177,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
         RaiseError EC_UNALLOCATED_ARRAY, "CopyWithin"
     Case Else
         localArray = GetInternalItems()
-        localLength = Me.Length
+        localLength = this.Length
         relativeTarget = target
         
         If relativeTarget < 0 Then
@@ -1978,7 +1978,7 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
     Dim LowerBoundCol As Long
     Dim UpperBoundCol As Long
     Dim result() As Variant
-    Dim nestedBounds() As Variant
+    Dim nestedBounds() As Long
     Dim nested() As Variant
     
     nestedBounds = GetMaxBoundsAtDimension(sourceArray, 2)
@@ -2339,18 +2339,18 @@ Attribute JaggedToMulti.VB_Description = "Converts jagged arrays to multidimensi
     Dim result() As Variant
     localDepth = depth
     If localDepth = 0 Then
+        If Not IsJaggedArray(sourceArray) Then
+            RaiseError EC_EXPECTED_JAGGED_ARRAY, "JaggedToMulti", "sourceArray()"
+            Exit Function
+        End If
         localDepth = GetJaggedArrayDepth(sourceArray)
-'        If Not isJaggedArray(arr) Then
-'            RaiseError EC_EXPECTED_JAGGED_ARRAY, "jaggedToMulti", "Arr()"
-'            Exit Function
-'        End If
-'        localDepth = getJaggedArrayDepth(arr)
     End If
+    
     If localDepth <= 1 Then
         result = sourceArray
     ElseIf localDepth = 2 Then
-        Dim firstDimBounds() As Variant
-        Dim secondDimBounds() As Variant
+        Dim firstDimBounds() As Long
+        Dim secondDimBounds() As Long
         Dim i As Long
         Dim j As Long
         firstDimBounds = GetArrayBounds(sourceArray)
@@ -2381,14 +2381,112 @@ Attribute JaggedToMulti.VB_Description = "Converts jagged arrays to multidimensi
     ElseIf localDepth > 2 And localDepth <= 20 Then
         result = RecursiveJaggedToMulti(sourceArray, localDepth, ensureScalar:=localDepth)
     Else
-        RaiseError EC_MAX_DIMENSIONS_LIMIT, "jaggedToMulti()", "SourceArray()"
+        RaiseError EC_MAX_DIMENSIONS_LIMIT, "JaggedToMulti()", "sourceArray()"
         result = sourceArray
     End If
     JaggedToMulti = result
 End Function
 
+Private Function MultiToJagged( _
+        ByRef sourceArray() As Variant, _
+        Optional ByVal depth As Long _
+    ) As Variant()
+    Dim localDepth As Long
+    Dim result() As Variant
+    
+    localDepth = depth
+    
+    If localDepth = 0 Then
+        If Not IsMultidimensionalArray(sourceArray) Then
+            RaiseError EC_EXPECTED_MULTIDIMENSION_ARRAY, "MultiToJagged", "sourceArray()"
+            result = sourceArray
+            Exit Function
+        End If
+        localDepth = GetMultidimensionalArrayDepth(sourceArray)
+    End If
+    
+    If localDepth <= 1 Then
+        result = sourceArray
+    ElseIf localDepth = 2 Then
+        Dim firstDimBounds(0 To 1) As Long
+        Dim secondDimBounds(0 To 1) As Long
+        Dim firstDimOffset As Long
+        Dim secondDimOffset As Long
+        Dim nested() As Variant
+        Dim i As Long
+        Dim j As Long
+        
+        firstDimBounds(0) = LBound(sourceArray, 1)
+        firstDimBounds(1) = UBound(sourceArray, 1)
+        secondDimBounds(0) = LBound(sourceArray, 2)
+        secondDimBounds(1) = UBound(sourceArray, 2)
+        firstDimOffset = this.LowerBound - firstDimBounds(0)
+        secondDimOffset = this.LowerBound - secondDimBounds(0)
+        ReDim result(firstDimBounds(0) + firstDimOffset To firstDimBounds(1) + firstDimOffset)
+        For i = firstDimBounds(0) To firstDimBounds(1)
+            ReDim nested(secondDimBounds(0) + secondDimOffset To secondDimBounds(1) + secondDimOffset)
+            For j = secondDimBounds(0) To secondDimBounds(1)
+                LetOrSetElement nested(j + secondDimOffset), sourceArray(i, j)
+            Next
+            result(i + firstDimOffset) = nested
+        Next
+    ElseIf localDepth > 2 And localDepth <= 20 Then
+        result = RecursiveMultiToJagged(sourceArray, localDepth)
+    Else
+        RaiseError EC_MAX_DIMENSIONS_LIMIT, "MultiToJagged()", "sourceArray()"
+        result = sourceArray
+    End If
+    
+    MultiToJagged = result
+End Function
 
-'@Description("Recursively Converts jagged arrays to multidimension arrays")
+'@Description("Recursively Converts multidimension arrays to jagged arrays. For md arrays with more than 2d.")
+Private Function RecursiveMultiToJagged( _
+        ByRef arr() As Variant, _
+        Optional ByVal depth As Long, _
+        Optional ByVal currentDepth As Long, _
+        Optional ByRef crumbs As Variant _
+    ) As Variant()
+Attribute RecursiveMultiToJagged.VB_Description = "Recursively Converts multidimension arrays to jagged arrays. For md arrays with more than 2d."
+    Dim i As Long
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim localDepth As Long
+    Dim localCurrentDepth As Long
+    Dim localCrumbs() As Variant
+    Dim result() As Variant
+    Dim boundOffset As Long
+    
+    localDepth = depth
+    localCurrentDepth = currentDepth
+    
+    If localDepth > 1 Then
+        If IsMissing(crumbs) Then
+            ReDim localCrumbs(localDepth - 1)
+        Else
+            localCrumbs = crumbs
+        End If
+        localCurrentDepth = localCurrentDepth + 1
+        localLowerBound = LBound(arr, localCurrentDepth)
+        localUpperBound = UBound(arr, localCurrentDepth)
+        boundOffset = this.LowerBound - localLowerBound
+        ReDim result(localLowerBound + boundOffset To localUpperBound + boundOffset)
+        For i = localLowerBound To localUpperBound
+            localCrumbs(localCurrentDepth - 1) = i
+            If localCurrentDepth = localDepth Then
+                LetOrSetElement result(i + boundOffset), GetElementByBreadcrumb(arr, localCrumbs)
+            Else
+                result(i + boundOffset) = RecursiveMultiToJagged(arr, localDepth, localCurrentDepth, localCrumbs)
+            End If
+        Next
+    Else
+        result = arr
+    End If
+    RecursiveMultiToJagged = result
+End Function
+
+
+'@Description("Recursively Converts jagged arrays to multidimension arrays. For jagged arrays with more than 2d.")
 Private Function RecursiveJaggedToMulti( _
         ByRef arr() As Variant, _
         Optional ByVal depth As Long, _
@@ -2397,7 +2495,7 @@ Private Function RecursiveJaggedToMulti( _
         Optional ByRef result As Variant, _
         Optional ByVal ensureScalar As Boolean _
     ) As Variant()
-Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged arrays to multidimension arrays"
+Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged arrays to multidimension arrays. For jagged arrays with more than 2d."
     Dim i As Long
     Dim localLowerBound As Long
     Dim localUpperBound As Long
@@ -2453,61 +2551,6 @@ Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
     RecursiveJaggedToMulti = localResult
 End Function
 
-'@Description("Converts multidimension arrays to jagged arrays.")
-Private Function MultiToJagged( _
-        ByRef arr() As Variant, _
-        Optional ByVal depth As Long, _
-        Optional ByVal currentDepth As Long, _
-        Optional ByRef crumbs As Variant _
-    ) As Variant()
-Attribute MultiToJagged.VB_Description = "Converts multidimension arrays to jagged arrays."
-    Dim i As Long
-    Dim localLowerBound As Long
-    Dim localUpperBound As Long
-    Dim localDepth As Long
-    Dim localCurrentDepth As Long
-    Dim localCrumbs() As Variant
-    Dim result() As Variant
-    Dim boundOffset As Long
-    
-    localDepth = depth
-    localCurrentDepth = currentDepth
-    
-    If localDepth = 0 Then
-        If Not IsMultidimensionalArray(arr) Then
-            RaiseError EC_EXPECTED_MULTIDIMENSION_ARRAY, "multiToJagged", "Arr()"
-            Exit Function
-        End If
-        localDepth = GetMultidimensionalArrayDepth(arr)
-    End If
-    
-    If localDepth > 20 Then
-        RaiseError EC_MAX_DIMENSIONS_LIMIT, "multiToJagged", "Arr()"
-    ElseIf localDepth > 1 Then
-        If IsMissing(crumbs) Then
-            ReDim localCrumbs(localDepth - 1)
-        Else
-            localCrumbs = crumbs
-        End If
-        localCurrentDepth = localCurrentDepth + 1
-        localLowerBound = LBound(arr, localCurrentDepth)
-        localUpperBound = UBound(arr, localCurrentDepth)
-        boundOffset = this.LowerBound - localLowerBound
-        ReDim result(localLowerBound + boundOffset To localUpperBound + boundOffset)
-        For i = localLowerBound To localUpperBound
-            localCrumbs(localCurrentDepth - 1) = i
-            If localCurrentDepth = localDepth Then
-                LetOrSetElement result(i + boundOffset), GetElementByBreadcrumb(arr, localCrumbs)
-            Else
-                result(i + boundOffset) = MultiToJagged(arr, localDepth, localCurrentDepth, localCrumbs)
-            End If
-        Next
-    Else
-        result = arr
-    End If
-    MultiToJagged = result
-End Function
-
 '@Description("Returns a number representing how many levels of nested arrays are contained in array.")
 Private Function GetJaggedArrayDepth(ByRef arr() As Variant) As Long
 Attribute GetJaggedArrayDepth.VB_Description = "Returns a number representing how many levels of nested arrays are contained in array."
@@ -2540,13 +2583,13 @@ Private Function GetMaxBoundsAtDimension( _
         ByRef sourceArray() As Variant, _
         Optional ByVal dimension As Long = 1, _
         Optional ByVal currentDimension As Long = 1 _
-    ) As Variant()
+    ) As Long()
 Attribute GetMaxBoundsAtDimension.VB_Description = "Gets the maximium bound values for a specified dimension of a jagged array."
-    Dim maxBounds() As Variant
+    Dim maxBounds() As Long
     
     If currentDimension < dimension Then
         Dim i As Long
-        Dim currentBounds() As Variant
+        Dim currentBounds() As Long
         Dim localLowerBound As Long
         Dim localUpperBound As Long
         
@@ -2601,9 +2644,9 @@ Attribute MapJaggedArray.VB_Description = "Returns an array representing the str
 End Function
 
 '@Description("Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound.")
-Private Function GetArrayBounds(ByVal arr As Variant) As Variant()
+Private Function GetArrayBounds(ByVal arr As Variant) As Long()
 Attribute GetArrayBounds.VB_Description = "Returns a 0-based array with two slots. First slot is the lowerbound of the passed array. second slot (index 0) is the upper bound."
-    Dim result(0 To 1) As Variant
+    Dim result(0 To 1) As Long
     If IsArray(arr) Then
         result(0) = LBound(arr)
         result(1) = UBound(arr)
