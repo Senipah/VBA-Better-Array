@@ -75,7 +75,7 @@ git commit --message $currentVersion
 # to delete all tags run:
 # git tag | foreach-object -process { git tag -d $_ }
 git tag $currentVersion
-git push
+#git push
 
 
 return $currentVersion
