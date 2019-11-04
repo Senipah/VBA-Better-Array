@@ -76,5 +76,5 @@ git add --all
 git commit --message $currentVersion
 git tag $currentVersion
 git push --tags
-
+git push
 return $currentVersion
