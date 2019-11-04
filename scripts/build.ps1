@@ -73,7 +73,7 @@ Set-Location $projectRoot.FullName
 git add --all
 git commit --message $currentVersion
 git tag $currentVersion
-#git push
+git push
 
 
 return $currentVersion
