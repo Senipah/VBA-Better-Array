@@ -23,3 +23,23 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: true
+      - name: Upload standalone
+        id: upload-standalone 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./releases/latest/Standalone.Zip
+          asset_name: Standalone.zip
+          asset_content_type: application/zip
+      - name: Upload With Tests
+        id: upload-with-tests 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./releases/latest/With Tests.Zip
+          asset_name: With Tests.Zip
+          asset_content_type: application/zip
