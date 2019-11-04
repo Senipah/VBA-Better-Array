@@ -74,10 +74,7 @@ Copy-Item -Path $withTestsPath -Destination $latest.FullName
 Set-Location $projectRoot.FullName
 git add --all
 git commit --message $currentVersion
-# to delete all tags run:
-# git tag | foreach-object -process { git tag -d $_ }
 git tag $currentVersion
 git push --tags
-
 
 return $currentVersion
