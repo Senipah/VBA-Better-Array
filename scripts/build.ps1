@@ -48,12 +48,12 @@ switch($versionIncrement){
         $versionArray[-1] = [int]$versionArray[-1] + 1
     }
 }
-$currentVersion = $versionArray -join "."
+$currentVersion = "v$($versionArray -join ".")" 
 
 $standaloneList = $standaloneList.ForEach({"$src\$_"})
 $withTestsList = $withTestsList.ForEach({"$src\$_"})
 
-$outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath "v$($currentVersion)")
+$outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath $currentVersion)
 
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
 $withTestsPath  = "$($outputPath.FullName)\With Tests.Zip"
@@ -72,6 +72,8 @@ Copy-Item -Path $withTestsPath -Destination $latest.FullName
 Set-Location $projectRoot.FullName
 git add --all
 git commit --message $currentVersion
+# to delete all tags run:
+# git tag | foreach-object -process { git tag -d $_ }
 git tag $currentVersion
 git push
 
