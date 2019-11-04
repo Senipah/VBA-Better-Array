@@ -17,7 +17,7 @@ Click one of the below download links to download the latest BetterArray release
 **Description**|**Download link**
 :-----:|:-----:
 Download this if you just want the BetterArray class. Most people should choose this option.|[Standalone](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/Standalone.Zip)
-Download this if you just want the BetterArray class AND the unit tests.|[With Tests](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/With%20Tests.Zip)
+Download this if you just want the BetterArray class AND the unit tests. **Note** Unit Tests depend on [Rubberduck VBA](https://github.com/rubberduck-vba/Rubberduck) as the test runner.|[With Tests](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/With%20Tests.Zip)
 
 Refer to the [installation documentation](https://senipah.github.io/VBA-Better-Array/home/installation.html) for more information.
 
