@@ -5,7 +5,6 @@ if($currentItems) {
     $old = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "old")
     $oldDate = $src.LastWriteTime.ToString("yyyy-MM-dd")
     $destination = Join-Path -Path $old.FullName -ChildPath $oldDate
-
     $i = 0
     While (Test-Path $destination) {
         $i += 1
