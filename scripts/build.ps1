@@ -1,6 +1,4 @@
-﻿
-
-param(
+﻿param(
     [Parameter(Position=0)]
     [ValidateSet('major','minor','patch')]
     [System.String]$versionIncrement = "patch"
@@ -27,16 +25,12 @@ $projectRoot = (Get-Item $PSScriptRoot).Parent
 $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
-Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
 $existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
 $latestVersion = $existing | Sort-Object LastAccessTime -Descending | Select-Object -First 1
-if ($latestVersion) 
-{
+if ($latestVersion) {
     Write-Host $latest.name
     $currentVersion = [regex]::Match($latestVersion.Name,"(\d.\d.\d)").captures.groups[1].value
-}
-else
-{
+} else {
     $currentVersion = "0.0.0"
 }
 $versionArray = $currentVersion.Split(".") 
@@ -64,21 +58,14 @@ $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releas
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
 $withTestsPath  = "$($outputPath.FullName)\With Tests.Zip"
 
-$standalone = @{
-Path = $standaloneList
-CompressionLevel = "Optimal"
-DestinationPath = "$($outputPath.FullName)\Standalone.Zip"
-}
-
-$withTests = @{
-Path = $withTestsList
-CompressionLevel = "Optimal"
-DestinationPath = "$($outputPath.FullName)\With Tests.Zip"
-}
-
+# Create .zip files
 Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath
 Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath
 
+# Delete current files in latest
+Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
+
+# Copy new files to latest
 Copy-Item -Path $standalonePath -Destination $latest.FullName
 Copy-Item -Path $withTestsPath -Destination $latest.FullName
 
