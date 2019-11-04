@@ -69,4 +69,11 @@ Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
 Copy-Item -Path $standalonePath -Destination $latest.FullName
 Copy-Item -Path $withTestsPath -Destination $latest.FullName
 
+Set-Location $projectRoot.FullName
+git add --all
+git commit --message $currentVersion
+git tag $currentVersion
+git push
+
+
 return $currentVersion
