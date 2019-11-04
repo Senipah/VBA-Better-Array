@@ -9,6 +9,6 @@ BetterArray.xlsb
 /src/QuickTests.bas
 /src/Archive.bas
 /src/Examples.bas
-# /releases/
+/releases/v*
 /build/
 vba-block.toml
