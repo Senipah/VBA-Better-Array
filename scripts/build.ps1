@@ -57,7 +57,7 @@ $withTestsList = $withTestsList.ForEach({"$src\$_"})
 $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath $currentVersion)
 
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
-$withTestsPath  = "$($outputPath.FullName)\With Tests.Zip"
+$withTestsPath  = "$($outputPath.FullName)\WithTests.Zip"
 
 # Create .zip files
 Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath
@@ -74,6 +74,6 @@ Set-Location $projectRoot.FullName
 git add --all
 git commit --message $currentVersion
 git tag $currentVersion
-git push --tags
 git push
+git push --tags
 return $currentVersion
