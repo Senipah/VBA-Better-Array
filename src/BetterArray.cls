@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "An array class for VBA providing features found in more modern languages "
 '@Folder("BetterArray")
 '@ModuleDescription("An array class for VBA providing features found in more modern languages ")
+' Copyright (c) 2019 Nick Morgan. See License: https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE
 
 Option Explicit
 
@@ -374,12 +375,12 @@ End Function
 
 ' TODO: add param for recursion
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Determines whether the SearchArrayay includes a certain value among its entries.")
+'@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes( _
         ByVal searchElement As Variant, _
         Optional ByVal fromIndex As Long = MISSING_LONG _
     ) As Boolean
-Attribute Includes.VB_Description = "Determines whether the SearchArrayay includes a certain value among its entries."
+Attribute Includes.VB_Description = "Determines whether the array includes a certain value among its entries."
     Dim localLength As Long
     Dim currentIndex As Long
     Dim searchArray() As Variant
@@ -405,12 +406,12 @@ End Function
 
 ' TODO: add param for recursion
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
-'@Description("Determines whether the SearchArrayay includes a matching typename.")
+'@Description("Determines whether the type of any of the elements in the array matches the typename.")
 Public Function IncludesType( _
         ByVal searchTypeName As String, _
         Optional ByVal fromIndex As Long = MISSING_LONG _
     ) As Boolean
-Attribute IncludesType.VB_Description = "Determines whether the SearchArrayay includes a matching typename."
+Attribute IncludesType.VB_Description = "Determines whether the type of any of the elements in the array matches the typename."
     Dim localLength As Long
     Dim currentIndex As Long
     Dim searchArray() As Variant
@@ -432,6 +433,71 @@ Attribute IncludesType.VB_Description = "Determines whether the SearchArrayay in
     End If
     
     IncludesType = RecursiveIncludes(searchTypeName, searchArray, currentIndex, True)
+End Function
+
+' TODO: Implement, Document & Test Every method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+'@Description("Determines whether all elements in the array match a value.")
+Public Function Every( _
+        ByVal searchElement As Variant, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
+    ) As Boolean
+Attribute Every.VB_Description = "Determines whether all elements in the array match a value."
+    
+    Dim localLength As Long
+    Dim currentIndex As Long
+    Dim searchArray() As Variant
+    
+    searchArray = GetInternalItems()
+    localLength = this.Length
+    
+    If localLength = 0 Then
+        Every = False
+        Exit Function
+    End If
+        
+    If fromIndex > Me.LowerBound Then
+        currentIndex = fromIndex
+    ElseIf fromIndex = MISSING_LONG Then
+        currentIndex = Me.LowerBound
+    Else
+        currentIndex = localLength + fromIndex
+    End If
+    
+    Every = RecursiveEvery(searchElement, searchArray, currentIndex)
+End Function
+
+' TODO: Implement, Document & Test EveryType method
+'@Description("Determines whether the type of all elements match the provided typename.")
+'@Ignore ProcedureNotUsed
+Public Function EveryType( _
+        ByVal searchTypeName As String, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
+    ) As Boolean
+Attribute EveryType.VB_Description = "Determines whether the type of all elements match the provided typename."
+    
+    Dim localLength As Long
+    Dim currentIndex As Long
+    Dim searchArray() As Variant
+    
+    searchArray = GetInternalItems()
+    localLength = this.Length
+    
+    If localLength = 0 Then
+        EveryType = False
+        Exit Function
+    End If
+        
+    If fromIndex > Me.LowerBound Then
+        currentIndex = fromIndex
+    ElseIf fromIndex = MISSING_LONG Then
+        currentIndex = Me.LowerBound
+    Else
+        currentIndex = localLength + fromIndex
+    End If
+    
+    EveryType = RecursiveEvery(searchTypeName, searchArray, currentIndex, True)
+    
 End Function
 
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
@@ -1263,6 +1329,37 @@ Attribute Filter.VB_Description = "Filters the stored array to include only valu
     Set Filter = Me
 End Function
 
+
+'@Description("Filters the stored array to include only values of the specified type.")
+'@Ignore ProcedureNotUsed
+Public Function FilterType( _
+        ByVal searchTypeName As String, _
+        Optional ByVal include As Boolean, _
+        Optional ByVal recurse As Boolean) As BetterArray
+Attribute FilterType.VB_Description = "Filters the stored array to include only values of the specified type."
+    Dim result() As Variant
+    Dim localArray() As Variant
+    Dim localType As ArrayTypes
+    localType = this.ArrayType
+    If localType = BA_UNDEFINED Then
+        RaiseError EC_EXPECTED_ARRAY, "Filter"
+    ElseIf localType = BA_UNALLOCATED Then
+        result = GetEmptyArray()
+    Else
+        localArray = GetInternalItems()
+        result = RecursiveFilter( _
+            localArray, _
+            searchTypeName, _
+            include, _
+            recurse, _
+            True _
+        )
+    End If
+    Me.Items = result
+    If localType = BA_MULTIDIMENSION Then this.ArrayType = localType
+    Set FilterType = Me
+End Function
+
 ' TODO: Check implementation against spec
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
@@ -1354,8 +1451,7 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     Set Unique = Me
 End Function
 
-' TODO: Implement, Document & Test Every method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+
 
 ' TODO: Implement, Document & Test Fill method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
@@ -1372,6 +1468,46 @@ End Function
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+'@Description("Recursively checks if the passed array only includes the search element.")
+Private Function RecursiveEvery( _
+        ByVal searchElement As Variant, _
+        ByRef searchArray() As Variant, _
+        Optional ByVal fromIndex As Long, _
+        Optional ByVal compareTypeNames As Boolean _
+    ) As Boolean
+    Dim localLowerBound As Long
+    Dim localUpperBound As Long
+    Dim i As Long
+    
+    localLowerBound = LBound(searchArray)
+    If fromIndex > localLowerBound Then localLowerBound = fromIndex
+    localUpperBound = UBound(searchArray)
+
+    For i = localLowerBound To localUpperBound
+        If compareTypeNames Then
+            If Not InStr( _
+                    UCase$(TypeName(searchArray(i))), _
+                    UCase$(CStr(searchElement)) _
+                ) > 0 Then
+                Exit Function
+            End If
+        End If
+        If IsArray(searchArray(i)) Then
+            Dim passThru() As Variant
+            passThru = searchArray(i)
+            If Not RecursiveEvery(searchElement, passThru, compareTypeNames:=compareTypeNames) Then
+                Exit Function
+            End If
+        ElseIf Not compareTypeNames Then
+            If Not ElementsAreEqual(searchElement, searchArray(i)) Then
+                Exit Function
+            End If
+        End If
+    Next
+    
+    RecursiveEvery = True
+End Function
 
 '@Description("shuffles the order of the passed array.")
 Private Function RecursiveShuffle( _
@@ -1579,7 +1715,8 @@ Private Function RecursiveFilter( _
         ByRef sourceArray() As Variant, _
         ByVal match As Variant, _
         ByVal include As Boolean, _
-        ByVal recurse As Boolean _
+        ByVal recurse As Boolean, _
+        Optional ByVal compareTypeNames As Boolean _
     ) As Variant()
 Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
     Dim result As BetterArray
@@ -1593,51 +1730,55 @@ Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
     Set result = New BetterArray
     result.LowerBound = Me.LowerBound
     For i = localLowerBound To localUpperBound
-        If IsArray(sourceArray(i)) Then
+        If IsArray(sourceArray(i)) And recurse Then
             If IsArrayAllocated(sourceArray(i)) Then
-                If recurse Then
-                    Dim localArray() As Variant
-                    localArray = sourceArray(i)
-                    localArray = RecursiveFilter( _
-                        localArray, _
-                        match, _
-                        include, _
-                        recurse _
-                    )
-                    If Not Only(localArray, Empty) Then
-                        result.Push localArray
-                    End If
-                Else
-                    If Not include Then result.Push sourceArray(i)
+                Dim localArray() As Variant
+                localArray = sourceArray(i)
+                localArray = RecursiveFilter( _
+                    localArray, _
+                    match, _
+                    include, _
+                    recurse, _
+                    compareTypeNames _
+                )
+                ' don't push a returned empty array
+                If Not RecursiveEvery(Empty, localArray) Then
+                    result.Push localArray
                 End If
             Else
-                result.Push GetEmptyArray()
+                ' push an empty array if current is an unalocated rray
+                If compareTypeNames Then
+                    isMatch = (InStr( _
+                        UCase$(TypeName(sourceArray(i))), _
+                        UCase$(CStr(match)) _
+                    ) > 0)
+                    ' push an empty array if only asked to exclude specific types or type
+                    ' matches the requested type (even though it's empty...)
+                    If (include And isMatch) Or (Not include And Not isMatch) Then
+                        result.Push GetEmptyArray()
+                    End If
+                Else
+                    If Not include Then
+                        ' push an empty array if only asked to exclude specific values
+                        result.Push GetEmptyArray()
+                    End If
+                End If
             End If
-        ElseIf IsObject(sourceArray(i)) Then
-            If Not include Then result.Push sourceArray(i)
         Else
-            isMatch = ElementsAreEqual(match, sourceArray(i))
+            If compareTypeNames Then
+                isMatch = (InStr( _
+                    UCase$(TypeName(sourceArray(i))), _
+                    UCase$(CStr(match)) _
+                ) > 0)
+            Else
+                isMatch = ElementsAreEqual(match, sourceArray(i))
+            End If
             If (include And isMatch) Or (Not include And Not isMatch) Then
                 result.Push sourceArray(i)
             End If
         End If
     Next
     RecursiveFilter = result.Items
-End Function
-
-'@Description("Checks if an array only contains a specific value.")
-Private Function Only(ByRef arr() As Variant, ByVal match As Variant) As Boolean
-Attribute Only.VB_Description = "Checks if an array only contains a specific value."
-    Dim result As Boolean
-    Dim element As Variant
-    result = True
-    For Each element In arr
-        If Not ElementsAreEqual(match, element) Then
-            result = False
-            Exit For
-        End If
-    Next
-    Only = result
 End Function
 
 '@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
@@ -2901,6 +3042,8 @@ Attribute CreateMultidimensionalArray.VB_Description = "Returns an empty multidi
     End Select
     CreateMultidimensionalArray = result
 End Function
+
+
 
 
 

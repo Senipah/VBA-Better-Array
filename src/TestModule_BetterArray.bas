@@ -5083,24 +5083,30 @@ TestFail:
 End Sub
 
 
+'@TestMethod("BetterArray_Remove")
+Private Sub Every_OneDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array("Foo", "Foo", "Foo", "Foo")
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
 
-'''''''''''''''''''''''''
-' Method - FilterByType '
-'''''''''''''''''''''''''
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
-' TODO: Implement, Document & Test FilterByType method
-
-''''''''''''''''''''''
-' Property - First '
-''''''''''''''''''''''
-
-' TODO: Implement, Document & Test First prop ?
-
-''''''''''''''''''''''
-' Property - Last '
-''''''''''''''''''''''
-
-' TODO: Implement, Document & Test Last prop ?
 
 ''''''''''''''''''''''
 ' Method - Every  '
