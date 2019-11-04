@@ -10,6 +10,17 @@ This library is a work in progress.
 
 [Read The Docs](https://senipah.github.io/VBA-Better-Array/) for information on how to get started with VBA Better Array.
 
+## Installation
+
+Click one of the below download links to download the latest BetterArray release. Both are `.zip` archives. The standalone archive just contains the `BetterArray.cls` file.
+
+**Description**|**Download link**
+:-----:|:-----:
+Download this if you just want the BetterArray class. Most people should choose this option.|[Standalone](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/Standalone.Zip)
+Download this if you just want the BetterArray class AND the unit tests.|[With Tests](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/With%20Tests.Zip)
+
+Refer to the [installation documentation](https://senipah.github.io/VBA-Better-Array/home/installation.html) for more information.
+
 ## Contributing
 
 Currently closed to pull requests.
