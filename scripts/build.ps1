@@ -27,10 +27,9 @@ $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
 $existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
 $latestVersion = $existing | 
-    sort { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
-    select -Index 0
+    Sort-Object { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
+    Select-Object -Index 0
 if ($latestVersion) {
-    Write-Host $latest.name
     $currentVersion = [regex]::Match($latestVersion.Name,"(\d.\d.\d)").captures.groups[1].value
 } else {
     $currentVersion = "0.0.0"
