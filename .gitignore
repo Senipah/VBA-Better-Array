@@ -12,3 +12,4 @@ BetterArray.xlsb
 /releases/v*
 /build/
 vba-block.toml
+/.github/workflows/backup.yml
