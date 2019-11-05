@@ -21,7 +21,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: 'test'
           draft: true
           prerelease: true
       - name: Upload standalone
