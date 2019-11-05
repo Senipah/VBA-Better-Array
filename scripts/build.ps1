@@ -84,12 +84,13 @@ Copy-Item -Path $withTestsPath -Destination $latest.FullName
 
 
 Set-Location $projectRoot.FullName
-$log = git log "<$($previousVersion.Name)>"..HEAD --oneline
-Write-Host $log
+$log = git log $previousVersion.Name..HEAD --oneline
+Write-Host $log 
 
-# git add --all
-# git commit --message $currentVersion
-# git tag $currentVersion
-# git push
-# git push --tags
-# return $currentVersion
+git add --all
+git commit --message $currentVersion + $nl + $log
+git tag $currentVersion
+git push
+git push --tags
+return $currentVersion
+Exit

@@ -91,4 +91,7 @@ Attribute CurrentWorksheet.VB_Description = "Returns the Excel workbook object"
 End Property
 
 
-'v0.0.9
+'v0.0.2
+
+
+'v0.0.6
