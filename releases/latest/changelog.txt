@@ -1,7 +1,1 @@
-9100959 test release
-2e36f68 use ncipollo/release-action@v1
-4f58ee2 ignore backup workflow
-5571ae4 test
-372621d version test
-af28d53 untrack old releases
-da4dc40 untrack old releases
+68d9fbe fix formatting
