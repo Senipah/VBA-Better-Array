@@ -20,3 +20,6 @@ End Property
 Public Function GetRandomValue() As Variant
 
 End Function
+
+
+'v0.1.0

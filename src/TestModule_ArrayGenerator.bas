@@ -1793,3 +1793,6 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
+
+'v0.1.0
