@@ -59,7 +59,7 @@ $withTestsList = $withTestsList.ForEach({
             $content[-1] = $currentFooter
             $content | Set-Content "$src\$_"
         } else {
-            $content + ($nl) + ($currentFooter)  | Set-Content "$src\$_"
+            ($content) + ($nl) + ($currentFooter)  | Set-Content "$src\$_"
         }
     }
     "$src\$_"

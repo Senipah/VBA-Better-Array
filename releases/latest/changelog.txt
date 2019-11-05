@@ -1,5 +1,0 @@
-commit 41d4bd082919c8dfd49c053ecf47623eb0054290
-Author: Senipah <n.morgan86@googlemail.com>
-Date:   Tue Nov 5 12:17:11 2019 +0000
-
-    handle when no previous git tags
