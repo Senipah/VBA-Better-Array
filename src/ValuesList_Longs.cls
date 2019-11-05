@@ -33,7 +33,4 @@ Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
 End Function
 
 
-'v0.0.2
-
-
 'v0.0.6

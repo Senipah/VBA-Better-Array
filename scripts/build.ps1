@@ -25,12 +25,14 @@ $projectRoot = (Get-Item $PSScriptRoot).Parent
 $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
-$existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
-$previousVersion = $existing | 
-    Sort-Object { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
-    Select-Object -Index 0
-if ($previousVersion) {
-    $currentVersion = [regex]::Match($previousVersion.Name,"(\d.\d.\d)").captures.groups[1].value
+# $existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
+Set-Location $projectRoot.FullName
+$lastTag = git describe --tags --abbrev=0
+# $previousVersion = $existing | 
+#     Sort-Object { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
+#     Select-Object -Index 0
+if ($lastTag) {
+    $currentVersion = [regex]::Match($lastTag,"(\d+.\d+.\d+)").captures.groups[1].value
 } else {
     $currentVersion = "0.0.0"
 }
@@ -52,13 +54,12 @@ switch($versionIncrement){
 $currentVersion = "v$($versionArray -join ".")" 
 $standaloneList = $standaloneList.ForEach({"$src\$_"})
 $nl = [Environment]::NewLine
-$previousHeader = "'" + $previousVersion.Name
-$currentHeader = "'" + $currentVersion
+$currentFooter = "'" + $currentVersion
 $withTestsList = $withTestsList.ForEach({
     # Add version number to bottom of all files - standalone is also in this array
     $content = Get-Content "$src\$_"
-    if ($content[-1] -ne $currentHeader) {
-        if ($content[-1] -eq $previousHeader) {
+    if ($content[-1] -ne $currentFooter) {
+        if ($content[-1] -Match "^v\d+.\d+.\d+$") {
             $content[-1] = $currentHeader
             $content | Set-Content "$src\$_"
         } else {
@@ -71,24 +72,26 @@ $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releas
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
 $withTestsPath  = "$($outputPath.FullName)\WithTests.Zip"
 
-# Create .zip files
-Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath
-Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath
-
 # Delete current files in latest
 Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
+
+# Create .zip files
+Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath -Force
+Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath -Force
+
+
+# Create change-log
+$log = git log $lastTag`..HEAD --oneline # escape period with backtick
+$changeLog = New-Item -ItemType File -Force -Path "$($outputPath.FullName)\changelog.txt"
+Set-Content $changeLog $log
 
 # Copy new files to latest
 Copy-Item -Path $standalonePath -Destination $latest.FullName
 Copy-Item -Path $withTestsPath -Destination $latest.FullName
-
-
-Set-Location $projectRoot.FullName
-$log = git log $previousVersion.Name..HEAD --oneline
-Write-Host $log 
+Copy-Item -Path $changeLog -Destination $latest.FullName
 
 git add --all
-git commit --message $currentVersion + $nl + $log
+git commit --message $currentVersion
 git tag $currentVersion
 git push
 git push --tags
