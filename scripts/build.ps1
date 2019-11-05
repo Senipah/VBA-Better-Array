@@ -81,7 +81,7 @@ if ($lastTag) {
     $log = git log $lastTag`..HEAD --oneline # escape period with backtick
 } else {
     # get commits unpushed commits
-    $log = git log origin/master`..master
+    $log = git log origin/master`..master --oneline
 }
 
 $changeLog = New-Item -ItemType File -Force -Path "$($outputPath.FullName)\changelog.txt"
