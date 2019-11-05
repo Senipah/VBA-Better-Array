@@ -49,7 +49,6 @@ switch($versionIncrement){
 }
 $currentVersion = "v$($versionArray -join ".")" 
 $standaloneList = $standaloneList.ForEach({"$src\$_"})
-$nl = [Environment]::NewLine
 $currentFooter = "'" + $currentVersion
 $withTestsList = $withTestsList.ForEach({
     # Add version number to bottom of all files - standalone is also in this array
@@ -59,7 +58,7 @@ $withTestsList = $withTestsList.ForEach({
             $content[-1] = $currentFooter
             $content | Set-Content "$src\$_"
         } else {
-            ($content) + ($nl) + ($currentFooter)  | Set-Content "$src\$_"
+            ($content) + ($currentFooter)  | Set-Content "$src\$_"
         }
     }
     "$src\$_"
