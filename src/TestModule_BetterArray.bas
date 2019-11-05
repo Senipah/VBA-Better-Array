@@ -2565,6 +2565,169 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'''''''''''''''''''''''
+' Method - FilterType '
+'''''''''''''''''''''''
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_OneDimExclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    
+    testArray = Array("Foo", 1.23, "Fizz", "Buzz")
+    expected = Array("Foo", "Fizz", "Buzz")
+    sut.Items = testArray
+    'Act:
+    actual = sut.FilterType("double").Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_OneDimInclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    
+    testArray = Array(1, "Bar", 1.23, 100)
+    expected = Array("Bar")
+    sut.Items = testArray
+    'Act:
+    actual = sut.FilterType("string", True).Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_JaggedArrayExclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+
+    testArray = Array(Array("Foo", 1.5), Array("Fizz", "Buzz"))
+    expected = Array(Array("Foo"), Array("Fizz", "Buzz"))
+    sut.Items = testArray
+    'Act:
+    actual = sut.FilterType("double", False).Items
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    'Assert:
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_JaggedArrayInclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testResult As Boolean
+
+    testArray = Array(Array(1, "Bar"), Array(1.2, -4))
+    expected = Array(Array("Bar"))
+
+    sut.Items = testArray
+    'Act:
+    ' TODO: make sure documents state that for jagged & multi recurse must be true.
+    actual = sut.FilterType("string", True, True).Items
+    testResult = SequenceEquals_JaggedArray(expected, actual)
+    'Assert:
+    Assert.IsTrue testResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_MultiDimArrayExclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = 1.23
+    testArray(2, 1) = "Fizz"
+    testArray(2, 2) = "Buzz"
+
+    ReDim expected(1 To 2, 1 To 2)
+    expected(1, 1) = "Foo"
+    expected(2, 1) = "Fizz"
+    expected(2, 2) = "Buzz"
+
+    sut.Items = testArray
+    'Act:
+    sut.FilterType "double", False, True
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_MultiDimArrayInclude_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected() As Variant
+    Dim actual() As Variant
+
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = 1.23
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = 123
+    testArray(2, 2) = 5000
+
+    ReDim expected(1 To 1, 1 To 1)
+    expected(1, 1) = "Bar"
+
+    sut.Items = testArray
+    'Act:
+    actual = sut.FilterType("string", True, True).Items
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
 '''''''''''''''''''''
 ' Method - Includes '
 '''''''''''''''''''''
@@ -5082,8 +5245,14 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+''''''''''''''''''
+' Method - Every '
+''''''''''''''''''
+' TODO: Implement, Document & Test Every method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
 
-'@TestMethod("BetterArray_Remove")
+
+'@TestMethod("BetterArray_Every")
 Private Sub Every_OneDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
@@ -5107,13 +5276,293 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'@TestMethod("BetterArray_Every")
+Private Sub Every_OneDimArrayOfDifferentString_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array("Foo", "Bar", "Foo", "Foo")
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
 
-''''''''''''''''''''''
-' Method - Every  '
-''''''''''''''''''''''
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
-' TODO: Implement, Document & Test Every method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+'@TestMethod("BetterArray_Every")
+Private Sub Every_JaggedDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array(Array("Foo", "Foo", "Foo", "Foo"), Array("Foo", "Foo", "Foo", "Foo"))
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Every")
+Private Sub Every_JaggedDimArrayOfSameString_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array(Array("Foo", "Bar", "Foo", "Foo"), Array("Foo", "Foo", "Foo", "Foo"))
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Every")
+Private Sub Every_MiltiDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Foo"
+    testArray(2, 1) = "Foo"
+    testArray(2, 2) = "Foo"
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Every")
+Private Sub Every_MiltiDimArrayOfDifferentString_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Bar"
+    testArray(2, 1) = "Foo"
+    testArray(2, 2) = "Foo"
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Every("Foo")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'''''''''''''''''''''
+' Method - EveryType'
+'''''''''''''''''''''
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_OneDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array("Foo", "Foo", "Foo", "Foo")
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_OneDimArrayOfDifferentTypes_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array("Foo", 1, 1.2, "Foo")
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_JaggedDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array("Foo", "Foo", "Foo", "Foo"), _
+        Array("Foo", "Foo", "Foo", "Foo") _
+    )
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_JaggedDimArrayOfSameString_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array("Foo", 1.123, "Foo", "Foo"), _
+        Array("Foo", "Foo", "Foo", "Foo") _
+    )
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_MiltiDimArrayOfSameString_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = "Foo"
+    testArray(2, 1) = "Foo"
+    testArray(2, 2) = "Foo"
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsTrue actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_MiltiDimArrayOfDifferentString_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    ReDim testArray(1 To 2, 1 To 2)
+    testArray(1, 1) = "Foo"
+    testArray(1, 2) = 1.123
+    testArray(2, 1) = "Foo"
+    testArray(2, 2) = "Foo"
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.EveryType("string")
+    
+    'Assert:
+    Assert.IsFalse actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
 
 ''''''''''''''''''''''
 ' Method - Fill  '
@@ -5121,14 +5570,6 @@ End Sub
 
 ' TODO: Implement, Document & Test Fill method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
-
-''''''''''''''''''''''
-' Method - Join '
-''''''''''''''''''''''
-
-' TODO: Implement, Document & Test Join method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
-
 
 
 ''''''''''''''''''''''
@@ -5155,6 +5596,3 @@ End Sub
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 
-
-
-'v0.0.1

@@ -89,6 +89,3 @@ Public Property Get CurrentWorksheet() As Object
 Attribute CurrentWorksheet.VB_Description = "Returns the Excel workbook object"
     Set CurrentWorksheet = pCurrentWorksheet
 End Property
-
-
-'v0.0.1

@@ -242,10 +242,6 @@ Attribute Items.VB_Description = "Stores the passed array."
 
 End Property
 
-''''''''''''''''''''''
-' Private Properties '
-''''''''''''''''''''''
-
 ''''''''''''''''''
 ' Public Methods '
 ''''''''''''''''''
@@ -1476,6 +1472,7 @@ Private Function RecursiveEvery( _
         Optional ByVal fromIndex As Long, _
         Optional ByVal compareTypeNames As Boolean _
     ) As Boolean
+Attribute RecursiveEvery.VB_Description = "Recursively checks if the passed array only includes the search element."
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim i As Long
@@ -1485,21 +1482,20 @@ Private Function RecursiveEvery( _
     localUpperBound = UBound(searchArray)
 
     For i = localLowerBound To localUpperBound
-        If compareTypeNames Then
-            If Not InStr( _
-                    UCase$(TypeName(searchArray(i))), _
-                    UCase$(CStr(searchElement)) _
-                ) > 0 Then
-                Exit Function
-            End If
-        End If
         If IsArray(searchArray(i)) Then
             Dim passThru() As Variant
             passThru = searchArray(i)
             If Not RecursiveEvery(searchElement, passThru, compareTypeNames:=compareTypeNames) Then
                 Exit Function
             End If
-        ElseIf Not compareTypeNames Then
+        ElseIf compareTypeNames Then
+            If Not InStr( _
+                    UCase$(TypeName(searchArray(i))), _
+                    UCase$(CStr(searchElement)) _
+                ) > 0 Then
+                Exit Function
+            End If
+        Else
             If Not ElementsAreEqual(searchElement, searchArray(i)) Then
                 Exit Function
             End If
@@ -3043,33 +3039,3 @@ Attribute CreateMultidimensionalArray.VB_Description = "Returns an empty multidi
     CreateMultidimensionalArray = result
 End Function
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'v0.0.1
