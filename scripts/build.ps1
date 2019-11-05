@@ -56,10 +56,10 @@ $withTestsList = $withTestsList.ForEach({
     $content = Get-Content "$src\$_"
     if ($content[-1] -ne $currentFooter) {
         if ($content[-1] -Match "^v\d+.\d+.\d+$") {
-            $content[-1] = $currentHeader
+            $content[-1] = $currentFooter
             $content | Set-Content "$src\$_"
         } else {
-            $content + ($nl) + ($currentHeader)  | Set-Content "$src\$_"
+            $content + ($nl) + ($currentFooter)  | Set-Content "$src\$_"
         }
     }
     "$src\$_"
@@ -76,7 +76,14 @@ Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPat
 Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath -Force
 
 # Create change-log
-$log = git log $lastTag`..HEAD --oneline # escape period with backtick
+if ($lastTag) {
+    # get commits since last tag
+    $log = git log $lastTag`..HEAD --oneline # escape period with backtick
+} else {
+    # get commits unpushed commits
+    $log = git log origin/master`..master
+}
+
 $changeLog = New-Item -ItemType File -Force -Path "$($outputPath.FullName)\changelog.txt"
 Set-Content $changeLog $log
 
