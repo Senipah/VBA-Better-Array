@@ -32,3 +32,5 @@ Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long
     Randomize: Rand = Int(Rnd * (Max - Min) + 1) + Min
 End Function
 
+
+
