@@ -26,11 +26,11 @@ $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
 $existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
-$latestVersion = $existing | 
+$previousVersion = $existing | 
     Sort-Object { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
     Select-Object -Index 0
-if ($latestVersion) {
-    $currentVersion = [regex]::Match($latestVersion.Name,"(\d.\d.\d)").captures.groups[1].value
+if ($previousVersion) {
+    $currentVersion = [regex]::Match($previousVersion.Name,"(\d.\d.\d)").captures.groups[1].value
 } else {
     $currentVersion = "0.0.0"
 }
@@ -50,12 +50,24 @@ switch($versionIncrement){
     }
 }
 $currentVersion = "v$($versionArray -join ".")" 
-
 $standaloneList = $standaloneList.ForEach({"$src\$_"})
-$withTestsList = $withTestsList.ForEach({"$src\$_"})
-
+$nl = [Environment]::NewLine
+$previousHeader = "'" + $previousVersion.Name
+$currentHeader = "'" + $currentVersion
+$withTestsList = $withTestsList.ForEach({
+    # Add version number to bottom of all files - standalone is also in this array
+    $content = Get-Content "$src\$_"
+    if ($content[-1] -ne $currentHeader) {
+        if ($content[-1] -eq $previousHeader) {
+            $content[-1] = $currentHeader
+            $content | Set-Content "$src\$_"
+        } else {
+            $content + ($nl) + ($currentHeader)  | Set-Content "$src\$_"
+        }
+    }
+    "$src\$_"
+})
 $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath $currentVersion)
-
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
 $withTestsPath  = "$($outputPath.FullName)\WithTests.Zip"
 
@@ -70,10 +82,14 @@ Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
 Copy-Item -Path $standalonePath -Destination $latest.FullName
 Copy-Item -Path $withTestsPath -Destination $latest.FullName
 
+
 Set-Location $projectRoot.FullName
-git add --all
-git commit --message $currentVersion
-git tag $currentVersion
-git push
-git push --tags
-return $currentVersion
+$log = git log "<$($previousVersion.Name)>"..HEAD --oneline
+Write-Host $log
+
+# git add --all
+# git commit --message $currentVersion
+# git tag $currentVersion
+# git push
+# git push --tags
+# return $currentVersion
