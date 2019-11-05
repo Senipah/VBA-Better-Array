@@ -25,12 +25,8 @@ $projectRoot = (Get-Item $PSScriptRoot).Parent
 $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
-# $existing =  Get-ChildItem -Path $releases.FullName -Exclude "latest" -Directory 
 Set-Location $projectRoot.FullName
 $lastTag = git describe --tags --abbrev=0
-# $previousVersion = $existing | 
-#     Sort-Object { [version]($_.Name -replace '^.*(\d+(\.\d+){1,3})$', '$1') } -Descending | 
-#     Select-Object -Index 0
 if ($lastTag) {
     $currentVersion = [regex]::Match($lastTag,"(\d+.\d+.\d+)").captures.groups[1].value
 } else {
@@ -78,7 +74,6 @@ Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
 # Create .zip files
 Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath -Force
 Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath -Force
-
 
 # Create change-log
 $log = git log $lastTag`..HEAD --oneline # escape period with backtick
