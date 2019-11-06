@@ -112,7 +112,7 @@ Attribute Capacity.VB_Description = "Sets the capacity of the internal array."
                 Dim newItems() As Variant
                 newItems = this.Items
                 ReDim Preserve newItems(this.LowerBound To (value + this.LowerBound - 1))
-                this.Items = newItems
+                InternalItems = newItems
             End If
         Else
             ReDim this.Items(this.LowerBound To (DEFAULT_CAPACITY + this.LowerBound - 1))
@@ -149,7 +149,7 @@ Attribute LowerBound.VB_Description = "Sets the starting index of the array. If 
     this.LowerBoundSet = True
     If value <> this.LowerBound And value >= 0 Then
         this.LowerBound = value
-        this.Items = Rebase()
+        InternalItems = Rebase()
         this.Capacity = this.Length
     End If
 End Property
@@ -189,7 +189,7 @@ End Property
 Public Property Get Items() As Variant
 Attribute Items.VB_Description = "Returns the stored array."
     Dim result() As Variant
-    result = GetInternalItems()
+    result = InternalItems()
     If this.ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
         If IsJaggedArray(result) Then result = JaggedToMulti(result)
     End If
@@ -201,46 +201,76 @@ Public Property Let Items(ByVal values As Variant)
 Attribute Items.VB_Description = "Stores the passed array."
     Dim localLowerBound As Long
     Dim localValues() As Variant
-    If IsArray(values) Then
+    
+    If TypeName(values) = TypeName(Me) Then
+        localValues = values.Items
+    ElseIf IsArray(values) Then
         If TypeName(values) <> "Variant()" Then
             RaiseError EC_EXPECTED_VARIANT_ARRAY, "Items", "Values"
             Exit Property
-        End If
-        localValues = values
-        this.ArrayType = GetArrayType(localValues)
-        
-        If this.ArrayType = ArrayTypes.BA_UNDEFINED Then
-            RaiseError EC_EXPECTED_ARRAY, "Items", "Values"
         Else
-            If this.ArrayType = BA_UNALLOCATED Then
-                localValues = GetEmptyArray()
-            End If
-            
-            localLowerBound = LBound(localValues)
-            
-            If Not this.LowerBoundSet Then
-                this.LowerBound = localLowerBound
-            End If
-            
-            If this.ArrayType = BA_MULTIDIMENSION Then
-                localValues = MultiToJagged(localValues)
-            End If
-            
-            If localLowerBound <> this.LowerBound Then
-                this.Items = Rebase(localValues, this.ArrayType)
-            Else
-                this.Items = localValues
-            End If
-            this.Length = GetArrayLength(localValues)
-            Me.Capacity = this.Length
+            localValues = values
         End If
     Else
         ' If Values is not an array then clear our internal array and push the Values arg
         ' TODO: Document and write tests
         Me.Clear.Push values
+        Exit Property
+    End If
+
+    this.ArrayType = GetArrayType(localValues)
+    
+    If this.ArrayType = ArrayTypes.BA_UNDEFINED Then
+        RaiseError EC_EXPECTED_ARRAY, "Items", "Values"
+    Else
+        If this.ArrayType = BA_UNALLOCATED Then
+            localValues = GetEmptyArray()
+        End If
+        
+        localLowerBound = LBound(localValues)
+        
+        If Not this.LowerBoundSet Then
+            this.LowerBound = localLowerBound
+        End If
+        
+        If this.ArrayType = BA_MULTIDIMENSION Then
+            localValues = MultiToJagged(localValues)
+        End If
+        
+        If localLowerBound <> this.LowerBound Then
+            InternalItems = Rebase(localValues, this.ArrayType)
+        Else
+            InternalItems = localValues
+        End If
+        this.Length = GetArrayLength(localValues)
+        Me.Capacity = this.Length
     End If
 
 End Property
+
+''''''''''''''''''''''
+' Private Properties '
+''''''''''''''''''''''
+
+'@Description("Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi).")
+Private Property Get InternalItems() As Variant()
+    Dim result() As Variant
+    If this.ArrayType <> BA_UNALLOCATED And this.ArrayType <> BA_UNDEFINED Then
+        result = this.Items
+        If this.Capacity > this.Length Then
+            If this.Length > 0 Then ReDim Preserve result(this.LowerBound To Me.UpperBound)
+        End If
+    Else
+        result = GetEmptyArray()
+    End If
+    InternalItems = result
+End Property
+
+'@Description("Assigns the passed array to this.items")
+Private Property Let InternalItems(value() As Variant)
+    this.Items = value
+End Property
+
 
 ''''''''''''''''''
 ' Public Methods '
@@ -279,12 +309,6 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
             LetOrSetElement this.Items(this.Length + this.LowerBound), arrayElement
         Else
             LetOrSetElement this.Items(this.Length + this.LowerBound), element
-'            If this.ArrayType = BA_MULTIDIMENSION Then
-'                'encase in array if pushing to md
-'                letOrSetElement this.Items(this.Length + this.LowerBound), Array(element)
-'            Else
-'                letOrSetElement this.Items(this.Length + this.LowerBound), element
-'            End If
         End If
         this.Length = this.Length + 1
     Next
@@ -329,7 +353,7 @@ Attribute Unshift.VB_Description = "Adds one or more elements to the beginning o
     
     newItems = args
     oldType = this.ArrayType
-    oldItems = GetInternalItems()
+    oldItems = InternalItems()
     Me.Items = newItems
     If oldType <> BA_UNALLOCATED And oldType <> BA_UNDEFINED Then
         Me.Concat oldItems
@@ -351,7 +375,7 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     Dim result As String
     Dim localItems() As Variant
     
-    localItems = GetInternalItems()
+    localItems = InternalItems()
     ArrayType = GetArrayType(localItems)
     If Not ArrayType = ArrayTypes.BA_UNDEFINED And _
        Not ArrayType = ArrayTypes.BA_UNALLOCATED Then
@@ -381,7 +405,7 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
     Dim currentIndex As Long
     Dim searchArray() As Variant
     
-    searchArray = GetInternalItems()
+    searchArray = InternalItems()
     localLength = this.Length
     
     If localLength = 0 Then
@@ -412,7 +436,7 @@ Attribute IncludesType.VB_Description = "Determines whether the type of any of t
     Dim currentIndex As Long
     Dim searchArray() As Variant
     
-    searchArray = GetInternalItems()
+    searchArray = InternalItems()
     localLength = this.Length
     
     If localLength = 0 Then
@@ -444,7 +468,7 @@ Attribute Every.VB_Description = "Determines whether all elements in the array m
     Dim currentIndex As Long
     Dim searchArray() As Variant
     
-    searchArray = GetInternalItems()
+    searchArray = InternalItems()
     localLength = this.Length
     
     If localLength = 0 Then
@@ -476,7 +500,7 @@ Attribute EveryType.VB_Description = "Determines whether the type of all element
     Dim currentIndex As Long
     Dim searchArray() As Variant
     
-    searchArray = GetInternalItems()
+    searchArray = InternalItems()
     localLength = this.Length
     
     If localLength = 0 Then
@@ -525,7 +549,7 @@ Attribute Max.VB_Description = "Returns the largest value in a list of values. I
     Dim arr() As Variant
     
     If UBound(args) < LBound(args) Then          'Test if no args provided
-        arr = GetInternalItems()
+        arr = InternalItems()
     Else
         arr = args
     End If
@@ -540,7 +564,7 @@ Attribute Min.VB_Description = "Returns the smallest value in a list of values. 
     Dim arr() As Variant
     
     If UBound(args) < LBound(args) Then          'Test if no args provided
-        arr = GetInternalItems()
+        arr = InternalItems()
     Else
         arr = args
     End If
@@ -565,7 +589,7 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Dim arr() As Variant
     Dim result() As Variant
     
-    arr = GetInternalItems()
+    arr = InternalItems()
     localLength = this.Length
     relativeStart = startIndex
     If relativeStart < LBound(arr) Then
@@ -665,7 +689,7 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
     Dim sourceArray() As Variant
     Dim result() As Variant
     
-    sourceArray = GetInternalItems()
+    sourceArray = InternalItems()
 
     If rowIndex = MISSING_LONG Then
         If columnIndex = MISSING_LONG Then
@@ -764,7 +788,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     lengthColumns = 1 'default
     
     If TypeName(destination) = "Range" Then
-        localItems = GetInternalItems()
+        localItems = InternalItems()
         depth = GetJaggedArrayDepth(localItems)
         If depth > 0 Then 'check array is allocated
             If depth = 1 Then
@@ -820,7 +844,7 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
     
     result = True
     
-    localArray = GetInternalItems()
+    localArray = InternalItems()
     localLowerBound = LBound(localArray)
     localUpperBound = UBound(localArray)
     storedType = GetArrayType(localArray)
@@ -884,7 +908,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     Dim relativeStart As Long
     Dim currentIndex As Long
     
-    localItems = GetInternalItems()
+    localItems = InternalItems()
     localLength = this.Length
     If localLength = 0 Then
         IndexOf = MISSING_LONG
@@ -920,6 +944,44 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     Loop
     
     IndexOf = MISSING_LONG
+End Function
+
+'@Description("returns the first index at which a given element can be found in the array")
+Public Function LastIndexOf( _
+        ByVal searchElement As Variant, _
+        Optional ByVal fromIndex As Long = MISSING_LONG _
+    ) As Long
+    Dim localItems() As Variant
+    Dim localLength As Long
+    Dim currentIndex As Long
+    
+    If this.Length = 0 Then
+        LastIndexOf = MISSING_LONG
+        Exit Function
+    End If
+
+    localItems = InternalItems()
+    
+    If fromIndex = MISSING_LONG Then
+        currentIndex = UBound(localItems)
+    Else
+        If fromIndex >= LBound(localItems) Then
+            currentIndex = Min(fromIndex, UBound(localItems))
+        ElseIf fromIndex < 0 Then
+            currentIndex = UBound(localItems) + fromIndex
+        End If
+        
+    End If
+    
+    Do While currentIndex >= LBound(localItems)
+        If ElementsAreEqual(searchElement, localItems(currentIndex)) Then
+            LastIndexOf = currentIndex
+            Exit Function
+        End If
+        currentIndex = currentIndex - 1
+    Loop
+    
+    LastIndexOf = MISSING_LONG
 End Function
 
 '@Description("Removes the item at the specified index. Returns the new length of the array")
@@ -983,6 +1045,48 @@ End Function
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
+
+
+' TODO: Implement, Document & Test Fill method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+'@Description("Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
+Public Function Fill( _
+    ByVal value As Variant, _
+    Optional ByVal startIndex As Long = MISSING_LONG, _
+    Optional ByVal endIndex As Long = MISSING_LONG _
+    ) As BetterArray
+    Dim localItems() As Variant
+    Dim relativeStart As Long
+    Dim relativeEnd As Long
+    
+    localItems = InternalItems
+    If startIndex = MISSING_LONG Then
+        relativeStart = this.LowerBound
+    Else
+        If startIndex < 0 Then
+            relativeStart = Max(Me.UpperBound + startIndex, this.LowerBound)
+        ElseIf startIndex < this.LowerBound Then
+            relativeStart = this.LowerBound
+        Else
+            relativeStart = Min(startIndex, Me.UpperBound)
+        End If
+    End If
+    
+    If endIndex = MISSING_LONG Then
+        relativeEnd = Me.UpperBound
+    Else
+        If endIndex < 0 And endIndex < this.LowerBound Then
+            relativeEnd = Max(Me.UpperBound + endIndex, this.LowerBound)
+        ElseIf endIndex < this.LowerBound Then
+            relativeEnd = Me.UpperBound
+        Else
+            relativeEnd = Min(endIndex, Me.UpperBound)
+        End If
+    End If
+    InternalItems = RecursiveFill(localItems, value, relativeStart, relativeEnd)
+    Set Fill = Me
+End Function
+
 ' TODO: Document
 '@Ignore FunctionReturnValueNotUsed
 '@Description("Parses a string representing an array and stores the outcome.")
@@ -1046,7 +1150,7 @@ Public Function Transpose() As BetterArray
     Dim localType As ArrayTypes
     Dim storedType As ArrayTypes
     storedType = this.ArrayType
-    localItems = GetInternalItems()
+    localItems = InternalItems()
     localType = GetArrayType(localItems)
     Select Case localType
     Case ArrayTypes.BA_ONEDIMENSION
@@ -1088,7 +1192,7 @@ End Function
 Public Function ResetToDefault() As BetterArray
 Attribute ResetToDefault.VB_Description = "Clears the current array and resets capacity to default value"
     this.LowerBound = 0
-    this.Items = GetEmptyArray()
+    InternalItems = GetEmptyArray()
     this.Length = 0
     Me.Capacity = DEFAULT_CAPACITY
     this.ArrayType = BA_UNALLOCATED
@@ -1102,7 +1206,7 @@ Public Function Clear() As BetterArray
 Attribute Clear.VB_Description = "Clears all entries in the current array but retains existing capacity."
     Dim oldCapacity As Long
     oldCapacity = this.Capacity
-    this.Items = GetEmptyArray()
+    InternalItems = GetEmptyArray()
     this.Length = 0
     Me.Capacity = oldCapacity
     Set Clear = Me
@@ -1183,7 +1287,7 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim sortedItems() As Variant
     Dim ArrayType As ArrayTypes
     
-    localItems = GetInternalItems()
+    localItems = InternalItems()
     ArrayType = GetArrayType(localItems)
     If ArrayType = ArrayTypes.BA_UNALLOCATED Or _
        ArrayType = ArrayTypes.BA_UNDEFINED Then
@@ -1238,7 +1342,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Case ArrayTypes.BA_UNALLOCATED
         RaiseError EC_UNALLOCATED_ARRAY, "CopyWithin"
     Case Else
-        localArray = GetInternalItems()
+        localArray = InternalItems()
         localLength = this.Length
         relativeTarget = target
         
@@ -1312,7 +1416,7 @@ Attribute Filter.VB_Description = "Filters the stored array to include only valu
     ElseIf localType = BA_UNALLOCATED Then
         result = GetEmptyArray()
     Else
-        localArray = GetInternalItems()
+        localArray = InternalItems()
         result = RecursiveFilter( _
             localArray, _
             match, _
@@ -1342,7 +1446,7 @@ Attribute FilterType.VB_Description = "Filters the stored array to include only 
     ElseIf localType = BA_UNALLOCATED Then
         result = GetEmptyArray()
     Else
-        localArray = GetInternalItems()
+        localArray = InternalItems()
         result = RecursiveFilter( _
             localArray, _
             searchTypeName, _
@@ -1369,7 +1473,7 @@ Attribute Reverse.VB_Description = "Reverses the order of elements in the array.
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Reverse"
     Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
-        localItems = GetInternalItems()
+        localItems = InternalItems()
         result = RecursiveReverse(localItems, recurse)
         Me.Items = result
         this.ArrayType = currentType
@@ -1392,7 +1496,7 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Flatten"
     Case BA_MULTIDIMENSION, BA_JAGGED
-        localItems = GetInternalItems()
+        localItems = InternalItems()
         Set result = New BetterArray
         result.LowerBound = this.LowerBound
         RecursiveFlatten localItems, result
@@ -1415,7 +1519,7 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Case BA_UNDEFINED
         RaiseError EC_UNDEFINED_ARRAY, "Shuffle"
     Case BA_ONEDIMENSION, BA_MULTIDIMENSION, BA_JAGGED
-        localItems = GetInternalItems()
+        localItems = InternalItems()
         result = RecursiveShuffle(localItems, recurse)
         Me.Items = result
         this.ArrayType = currentType
@@ -1434,7 +1538,7 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     Dim result As BetterArray
     Dim i As Long
     
-    localItems = GetInternalItems()
+    localItems = InternalItems()
     localType = this.ArrayType
     Set result = New BetterArray
     For i = Me.LowerBound To Me.UpperBound
@@ -1449,9 +1553,6 @@ End Function
 
 
 
-' TODO: Implement, Document & Test Fill method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
-
 ' TODO: Implement, Document & Test lastIndexOf method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 
@@ -1464,6 +1565,38 @@ End Function
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+'@Description("Recursvely fills the array (and nested arrays) with the passed value.")
+Private Function RecursiveFill( _
+    ByRef sourceArray() As Variant, _
+    ByVal value As Variant, _
+    Optional ByVal startIndex As Long = MISSING_LONG, _
+    Optional ByVal endIndex As Long = MISSING_LONG _
+    ) As Variant()
+    Dim relativeStart As Long
+    Dim relativeEnd As Long
+    Dim i As Long
+    
+    If startIndex = MISSING_LONG Then
+        relativeStart = LBound(sourceArray)
+    Else
+        relativeStart = startIndex
+    End If
+    If endIndex = MISSING_LONG Then
+        relativeEnd = UBound(sourceArray)
+    Else
+        relativeEnd = endIndex
+    End If
+    For i = startIndex To endIndex
+        If IsArray(sourceArray(i)) Then
+            Dim passThru() As Variant
+            passThru = RecursiveFill(passThru, value)
+        Else
+            LetOrSetElement sourceArray(i), value
+        End If
+    Next
+    RecursiveFill = sourceArray
+End Function
 
 '@Description("Recursively checks if the passed array only includes the search element.")
 Private Function RecursiveEvery( _
@@ -2231,21 +2364,6 @@ Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable
     End If
 End Sub
 
-'@Description("Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi).")
-Private Function GetInternalItems() As Variant()
-Attribute GetInternalItems.VB_Description = "Retrieves the stored items trimmed to the correct length. Does not change structure (i.e jagged to multi)."
-    Dim result() As Variant
-    If this.ArrayType <> BA_UNALLOCATED And this.ArrayType <> BA_UNDEFINED Then
-        result = this.Items
-        If this.Capacity > this.Length Then
-            If this.Length > 0 Then ReDim Preserve result(this.LowerBound To Me.UpperBound)
-        End If
-    Else
-        result = GetEmptyArray()
-    End If
-    GetInternalItems = result
-End Function
-
 '@Description("Recursively parses an array to a string representation.")
 Private Function RecursiveToString( _
         ByRef arr() As Variant, _
@@ -2401,7 +2519,7 @@ Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Do
     Dim localType As ArrayTypes
 
     If IsMissing(arr) Or Not IsArray(arr) Then
-        localArray = GetInternalItems
+        localArray = InternalItems
         localType = this.ArrayType
     Else
         localArray = arr
@@ -3039,6 +3157,3 @@ Attribute CreateMultidimensionalArray.VB_Description = "Returns an empty multidi
     CreateMultidimensionalArray = result
 End Function
 
-
-
-'v0.1.0
