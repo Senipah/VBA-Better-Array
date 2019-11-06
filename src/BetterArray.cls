@@ -19,6 +19,7 @@ Option Explicit
 '''''''''''''''''''
 
 Private Const DEFAULT_CAPACITY As Long = 4
+' NOTE: placeholder
 Private Const MAX_ARRAY_LENGTH = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
 Private Const MISSING_LONG As Long = -9999
@@ -46,6 +47,7 @@ Public Enum ErrorCodes
     EC_UNDEFINED_ARRAY
     EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION
     EC_EXPECTED_VARIANT_ARRAY
+    EC_EXCEEDS_MAX_ARRAY_LENGTH
     EC_END
 End Enum
 
@@ -1042,11 +1044,116 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
     Remove = this.Length
 End Function
 
+' TODO: Implement, Document & Test splice method
+' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+'@Description("changes the contents of the array by removing or replacing existing elements and/or adding new elements in place.")
+Public Function Splice( _
+        ByVal startIndex As Long, _
+        ParamArray args() As Variant _
+    ) As Variant()
+    Dim localItems() As Variant
+    Dim actualStart As Long
+    Dim insertCount As Long
+    Dim actualDeleteCount As Long
+    Dim argsCount As Long
+    Dim localLength As Long
+    Dim localArgs() As Variant
+    Dim result() As Variant
+    Dim i As Long
+    Dim tempArray() As Variant
+    
+    localArgs = args
+    localItems = InternalItems
+    localLength = this.Length
+    If startIndex < LBound(localItems) Then
+        actualStart = Max(localLength + startIndex, LBound(localItems))
+    Else
+        actualStart = Min(startIndex, localLength)
+    End If
+    argsCount = GetArrayLength(localArgs)
+    If argsCount = 0 Then
+        ' only a start index has been supplied
+        ' we're gonna delete everything
+        insertCount = 0
+        actualDeleteCount = localLength - actualStart
+    Else
+        ' first arg in args is delete count, second onwards are insertion items
+        insertCount = argsCount - 1
+        'deleteCount is first element in args.
+        actualDeleteCount = Min(Max(args(LBound(args)), 0), localLength - actualStart)
+    End If
+    
+    If localLength + insertCount - actualDeleteCount > MAX_ARRAY_LENGTH Then
+        RaiseError EC_EXCEEDS_MAX_ARRAY_LENGTH, "Splice"
+        Exit Function
+    End If
+
+    ' get items to be deleted for return val
+    If actualDeleteCount > 0 Then
+        ReDim result(0 To actualDeleteCount - 1)
+        i = 0
+        Do While i < actualDeleteCount
+            LetOrSetElement result(i), localItems(actualStart + i)
+            i = i + 1
+        Loop
+    Else
+        ' return empty array if nothing to be deleted
+        ReDim result(0)
+    End If
+    
+    Dim itemCount As Long
+    Dim Items() As Variant
+    
+    If insertCount > 0 Then
+        ReDim Items(0 To insertCount - 1)
+        For i = LBound(Items) To UBound(Items)
+            Items(i) = args(i + 1)
+        Next
+    End If
+    
+    itemCount = GetArrayLength(Items)
+            
+    If itemCount < actualDeleteCount Then
+        i = actualStart
+        Do While i < (localLength - actualDeleteCount)
+            LetOrSetElement localItems(i + itemCount), localItems(i + actualDeleteCount)
+            i = i + 1
+        Loop
+        
+        
+        i = localLength
+        Do While i > (localLength - actualDeleteCount + itemCount)
+            ' Perform ? DeletePropertyOrThrow(O, ! ToString(k - 1)).
+            i = i - 1
+        Loop
+    ElseIf itemCount > actualDeleteCount Then
+        i = (localLength - actualDeleteCount)
+        tempArray = localItems
+        ReDim Preserve tempArray(i + itemCount - 1) As Variant
+        Do While i > actualStart
+            LetOrSetElement tempArray(i + itemCount - 1), localItems(i + actualDeleteCount - 1)
+            i = i - 1
+        Loop
+        localItems = tempArray
+    End If
+    
+    i = actualStart
+    Dim j As Long
+    For j = LBound(Items) To UBound(Items)
+        localItems(i) = Items(j)
+        i = i + 1
+    Next
+    
+    'ReDim Preserve localItems(this.LowerBound To localLength - actualDeleteCount + itemCount)
+    InternalItems = localItems
+    
+    Splice = result
+End Function
+
 
 ''''''''''''''''''''''''''''
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
-
 
 ' TODO: Implement, Document & Test Fill method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
@@ -1553,16 +1660,6 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     Set Unique = Me
 End Function
 
-
-
-' TODO: Implement, Document & Test lastIndexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
-
-' TODO: Implement, Document & Test some method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
-
-' TODO: Implement, Document & Test splice method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 '''''''''''''''''''
 ' Private Methods '
@@ -2145,6 +2242,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
         source:=source, _
         description:="Unable to perform the requested operation on a typed array." _
+    )
+    this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH, _
+        source:=source, _
+        description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
 End Sub
 
