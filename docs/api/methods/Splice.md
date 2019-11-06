@@ -66,7 +66,7 @@ Description
 : An array containing the deleted elements. If only one element is removed, an array of one element is returned. If no elements are removed, an empty array is returned.
 
 ## Inspiration
-* <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.Splice>
+* <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.splice>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Splice>
 
 
