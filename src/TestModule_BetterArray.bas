@@ -5766,4 +5766,63 @@ End Sub
 ' TODO: Implement, Document & Test splice method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayInsertAtIndex1_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    expected = Array("Jan", "Feb", "March", "April", "June")
+    testArray = Array("Jan", "March", "April", "June")
+    sut.Items = testArray
+    ReDim expectedResult(0)
+
+    'Act:
+    actualResult = sut.Splice(1, 0, "Feb")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayInsertAtIndex1Delete1_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+
+    expected = Array("Jan", "Feb", "March", "April", "May")
+    testArray = Array("Jan", "Feb", "March", "April", "June")
+    sut.Items = testArray
+    expectedResult = Array("June")
+    
+    'Act:
+    actualResult = sut.Splice(4, 1, "May")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
