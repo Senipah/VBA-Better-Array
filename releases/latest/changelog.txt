@@ -1,3 +1,4 @@
+4c0eec6 write release files to temp dir before adding ver
 59b332f remove version footer
 1348de1 add fill & lastindexof tests
 1dc44ff mv getInternalItems to private prop. + lastindexof
