@@ -10,6 +10,7 @@ BetterArray.xlsb
 /src/Archive.bas
 /src/Examples.bas
 /releases/v*
+/releases/temp
 /build/
 vba-block.toml
 /.github/workflows/backup.yml
