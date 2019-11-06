@@ -50,19 +50,20 @@ switch($versionIncrement){
 }
 $currentVersion = "v$($versionArray -join ".")" 
 $currentFooter = "'" + $currentVersion
-$standaloneList = $standaloneList.ForEach({"$temp.FullName\$_"})
+Write-Host $temp
+$standaloneList = $standaloneList.ForEach({"$temp\$_"})
 $withTestsList = $withTestsList.ForEach({
     # Add version number to bottom of all files - standalone is also in this array
     $content = Get-Content "$src\$_"
     if ($content[-1] -ne $currentFooter) {
         if ($content[-1] -Match "^v\d+.\d+.\d+$") {
             $content[-1] = $currentFooter
-            $content | Set-Content "$temp.FullName\$_"
+            $content | Set-Content "$temp\$_"
         } else {
-            ($content) + ($currentFooter)  | Set-Content "$temp.FullName\$_"
+            ($content) + ($currentFooter)  | Set-Content "$temp\$_"
         }
     }
-    "$temp.FullName\$_"
+    "$temp\$_"
 })
 $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath $currentVersion)
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
