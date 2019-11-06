@@ -25,6 +25,7 @@ $projectRoot = (Get-Item $PSScriptRoot).Parent
 $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest= Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
+$temp = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath "temp")
 Set-Location $projectRoot.FullName
 $lastTag = git describe --tags --abbrev=0
 if ($lastTag) {
@@ -48,20 +49,20 @@ switch($versionIncrement){
     }
 }
 $currentVersion = "v$($versionArray -join ".")" 
-$standaloneList = $standaloneList.ForEach({"$src\$_"})
 $currentFooter = "'" + $currentVersion
+$standaloneList = $standaloneList.ForEach({"$temp.FullName\$_"})
 $withTestsList = $withTestsList.ForEach({
     # Add version number to bottom of all files - standalone is also in this array
     $content = Get-Content "$src\$_"
     if ($content[-1] -ne $currentFooter) {
         if ($content[-1] -Match "^v\d+.\d+.\d+$") {
             $content[-1] = $currentFooter
-            $content | Set-Content "$src\$_"
+            $content | Set-Content "$temp.FullName\$_"
         } else {
-            ($content) + ($currentFooter)  | Set-Content "$src\$_"
+            ($content) + ($currentFooter)  | Set-Content "$temp.FullName\$_"
         }
     }
-    "$src\$_"
+    "$temp.FullName\$_"
 })
 $outputPath = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath $currentVersion)
 $standalonePath = "$($outputPath.FullName)\Standalone.Zip"
@@ -73,6 +74,9 @@ Get-ChildItem -Path $latest.FullName | Remove-Item -Recurse
 # Create .zip files
 Compress-Archive -Path $standaloneList -CompressionLevel Optimal -DestinationPath $standalonePath -Force
 Compress-Archive -Path $withTestsList -CompressionLevel Optimal -DestinationPath $withTestsPath -Force
+
+# Delete temp folder now archives created
+Remove-Item $temp.FullName -Recurse
 
 # Create change-log
 if ($lastTag) {
