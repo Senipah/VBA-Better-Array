@@ -39,7 +39,7 @@ Necessity
 : Optional
 
 Description
-: The index to start the search at. If the index is greater than or equal to the array's length, -9999 is returned, which means the array will not be searched. If the provided index value is a negative number, it is taken as the offset from the end of the array. Note: if the provided index is negative, the array is still searched from front to back. If the provided index is 0, then the whole array will be searched. Default: entire array is searched.
+: The index to start the search at. Defaults to the UpperBound of the array. If the index is greater than or equal to the array's length, -9999 is returned, which means the array will not be searched. If the provided index value is a negative number, it is taken as the offset from the end of the array. Note: if the provided index is negative, the array is still searched from front to back. If the provided index is 0, then the whole array will be searched. Default: entire array is searched.
 
 ### Returns
 
