@@ -5571,22 +5571,193 @@ End Sub
 ' TODO: Implement, Document & Test Fill method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
 
+'@TestMethod("BetterArray_Fill")
+Private Sub Fill_OneDimArray2To4_SpecifiedIndicesFilled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual() As Variant
+    Dim expected() As Variant
+    
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray
+    
+    Const FillVal = 0
+        
+    expected = testArray
+    Dim i As Long
+    For i = 2 To 4
+        expected(i) = FillVal
+    Next
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Fill(FillVal, 2, 4).Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Fill")
+Private Sub Fill_OneDimArray1ToEnd_SpecifiedIndicesFilled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual() As Variant
+    Dim expected() As Variant
+    
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray
+    
+    Const FillVal = 5
+        
+    expected = testArray
+    Dim i As Long
+    For i = 1 To UBound(expected)
+        expected(i) = FillVal
+    Next
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Fill(FillVal, 1).Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Fill")
+Private Sub Fill_OneDimArrayAll_SpecifiedIndicesFilled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual() As Variant
+    Dim expected() As Variant
+    
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray
+    
+    Const FillVal = 6
+        
+    expected = testArray
+    Dim i As Long
+    For i = LBound(expected) To UBound(expected)
+        expected(i) = FillVal
+    Next
+    
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Fill(FillVal).Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 ''''''''''''''''''''''
 ' Method - LastIndexOf '
 ''''''''''''''''''''''
-
+    
 
 ' TODO: Implement, Document & Test lastIndexOf method
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 
-''''''''''''''''''''''
-' Method - Some '
-''''''''''''''''''''''
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    
+    expected = 3
+        
+    testArray = Array("Dodo", "Tiger", "Penguin", "Dodo")
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.LastIndexOf("Dodo")
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
+    On Error GoTo TestFail
 
-' TODO: Implement, Document & Test some method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+
+    expected = MISSING_LONG
+
+    testArray = Gen.GetArray()
+    sut.Items = testArray
+
+    'Act:
+    actual = sut.LastIndexOf("Foo")
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_JaggedArray_ReturnsCorrectIndex()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+
+    expected = 3
+
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    sut.Items = testArray
+
+    'Act:
+    actual = sut.LastIndexOf(testArray(expected))
+
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
 
 ''''''''''''''''''''''
 ' Method - Splice '
@@ -5596,6 +5767,3 @@ End Sub
 ' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 
-
-
-'v0.1.0
