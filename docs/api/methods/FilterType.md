@@ -67,4 +67,22 @@ Type
 Description
 : The current instance of the BetterArray object with the filter applied to the stored array. 
 
+## Example
+
+```vb
+Public Sub FilterTypeExample()
+    Dim MyArray As BetterArray
+    Dim result() As Variant
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Foo", 1.23, "Fizz", "Buzz"
+    MyArray.FilterType "Double"
+
+    result = MyArray.Items
+
+    ' expected output:
+    ' result is a array with the values: "Foo", "Fizz", "Buzz"
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

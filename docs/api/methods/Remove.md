@@ -35,4 +35,21 @@ Type
 Description
 : The new length of the array.
 
+## Example
+
+```vb
+Public Sub RemoveExample()
+    Dim result As Long
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    result = MyArray.Remove(2)
+    
+    ' expected output:
+    ' result  = 3 - the new length of MyArray
+    ' MyArray now contains "Banana", "Orange", "Mango"
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

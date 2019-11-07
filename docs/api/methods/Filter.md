@@ -67,6 +67,24 @@ Type
 Description
 : The current instance of the BetterArray object with the filter applied to the stored array. 
 
+## Example
+
+```vb
+Public Sub FilterExample()
+    Dim MyArray As BetterArray
+    Dim result() As Variant
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Foo", "Bar", "Fizz", "Buzz"
+    MyArray.Filter "Bar"
+
+    result = MyArray.Items
+
+    ' expected output:
+    ' result is a array with the values: "Foo", "Fizz", "Buzz"
+End Sub
+```
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.filter>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter>

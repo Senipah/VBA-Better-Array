@@ -39,4 +39,27 @@ Type
 Description
 : `True` if the array is sorted, `False` if not.
 
+## Example
+
+```vb
+Public Sub IsSortedExample()
+    Dim result As Boolean
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push 1, 4, 2, 5, 3, 6
+    result = MyArray.IsSorted
+    Debug.Print result
+    ' expected output:
+    ' result is False
+    
+    MyArray.Clear
+    MyArray.Push 1, 2, 3, 4, 5, 6
+    result = MyArray.IsSorted
+    Debug.Print result
+    ' expected output:
+    ' result is True
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

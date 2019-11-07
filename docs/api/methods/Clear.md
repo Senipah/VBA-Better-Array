@@ -25,4 +25,18 @@ Type
 Description
 : The current instance of the BetterArray object with all entries cleared but capacity retained. 
 
+## Example
+
+```vb
+Public Sub ClearExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    MyArray.Push 1, 2, 3
+    MyArray.Clear
+    result = MyArray.Items
+    ' expected output: result is an empty array
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

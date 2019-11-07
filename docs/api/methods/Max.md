@@ -38,6 +38,21 @@ Type
 Description
 : The largest value in the array.
 
+## Example
+
+```vb
+Public Sub MaxExample()
+    Dim result As Long
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push 10, 1, 3, 5, 9, 12, 2, 8, 7
+    result = MyArray.Max()
+    ' expected output:
+    ' result  = 12
+End Sub
+```
+
 ## Inspiration
 * <https://support.office.com/en-gb/article/max-function-e0012414-9ac8-4b34-9a47-73e662c08098>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max>

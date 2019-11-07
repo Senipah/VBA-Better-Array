@@ -51,6 +51,21 @@ Type
 Description
 : The Excel Range object containing the outputted values.
 
+## Example
+
+```vb
+Public Sub ToExcelRangeExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    MyArray.ToExcelRange ThisWorkbook.Sheets.Add.Range("A1"), True
+    ' expected output:
+    ' A new worksheet has been added and the MyArray items have been
+    ' written to A1:A4
+End Sub
+```
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
 

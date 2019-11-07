@@ -49,5 +49,20 @@ Type
 Description
 : `True` if the array includes `searchElement`, `False` if not.
 
+## Example
+
+```vb
+Public Sub EveryTypeExample()
+    Dim MyArray As BetterArray
+    Dim result As Boolean
+    
+    Set MyArray = New BetterArray
+    MyArray.Push "Foo", "Foo", "Foo", "Foo"
+    result = MyArray.EveryType("String")
+
+    ' expected output:
+    ' result is True
+End Sub
+```
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

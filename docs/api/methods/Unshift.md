@@ -35,6 +35,22 @@ Type
 Description
 : The new length of the array.
 
+## Example
+
+```vb
+Public Sub UnshiftExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    MyArray.Unshift "Lemon", "Pineapple"
+    result = MyArray.Items
+    ' expected output:
+    ' result is an array containing: "Lemon", "Pineapple","Banana", "Orange", "Apple", "Mango"
+End Sub
+```
+
 ## Inspiration
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Unshift>
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.unshift>

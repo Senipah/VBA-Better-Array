@@ -64,6 +64,23 @@ Type
 Description
 : `True` if the array includes `searchElement`, `False` if not.
 
+## Example
+
+```vb
+Public Sub IncludesExample()
+    Dim result As Boolean
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Foo", "Bar", "Fizz", "Buzz"
+    result = MyArray.Includes("Bar")
+    ' expected output:
+    ' result is True
+End Sub
+```
+
+
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.includes>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes>

@@ -35,6 +35,21 @@ Type
 Description
 : The current instance of the BetterArray object with the array's order reversed.
 
+## Example
+
+```vb
+Public Sub ReverseExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    MyArray.Reverse
+    result = MyArray.Items
+    ' expected output:
+    ' result = "Mango","Apple","Orange","Banana"
+End Sub
+```
 
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.reverse>

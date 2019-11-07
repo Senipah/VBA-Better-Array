@@ -49,6 +49,22 @@ Type
 Description
 : `True` if the array includes `searchElement`, `False` if not.
 
+## Example
+
+```vb
+Public Sub EveryExample()
+    Dim MyArray As BetterArray
+    Dim result As Boolean
+    
+    Set MyArray = New BetterArray
+    MyArray.Push "Foo", "Foo", "Foo", "Foo"
+    result = MyArray.Every("Foo")
+
+    ' expected output:
+    ' result is True
+End Sub
+```
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.every>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every>

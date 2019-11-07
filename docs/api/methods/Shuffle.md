@@ -35,4 +35,22 @@ Type
 Description
 : The current instance of the BetterArray object with the array's order Shuffled.
 
+
+## Example
+
+```vb
+Public Sub ShiftExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    MyArray.Shuffle
+    result = MyArray.Items
+    ' expected output:
+    ' result will contain  "Banana", "Orange", "Apple", "Mango" but the order
+    ' has been shuffled. e.g: "Mango", "Banana", "Apple", "Orange"
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

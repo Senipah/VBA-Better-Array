@@ -40,4 +40,20 @@ Type
 Description
 : The current instance of the BetterArray object with the array's order sorted in ascending order.
 
+## Example
+
+```vb
+Public Sub SortExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push 3, 2, 6, 3, 7, 1, 3, 7, 9, 4
+    MyArray.Sort
+    result = MyArray.Items
+    ' expected output:
+    ' result =  1,2,3,3,3,4,6,7,7,9
+End Sub
+```
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

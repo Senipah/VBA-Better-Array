@@ -68,4 +68,21 @@ Type
 Description
 : `True` if the array includes `searchTypeName` type, `False` if not.
 
+## Example
+
+```vb
+Public Sub IncludesTypeExample()
+    Dim result As Boolean
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Foo", 1.23, "Fizz", "Buzz"
+    result = MyArray.IncludesType("Double")
+    ' expected output:
+    ' result is True
+End Sub
+```
+
+
+
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

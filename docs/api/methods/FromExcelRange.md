@@ -67,6 +67,20 @@ Type
 Description
 : If present, only the values in this row of the range will be stored.
 
+## Example
+
+```vb
+Public Sub FromExcelRangeExample()
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.FromExcelRange ActiveSheet.UsedRange
+
+    ' expected output:
+    ' MyArray now stores the values in the UsedRange of the active worksheet
+End Sub
+```
+
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
 

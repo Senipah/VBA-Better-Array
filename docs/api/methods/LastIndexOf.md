@@ -49,6 +49,22 @@ Type
 Description
 : The last index of the element in the array; -9999 if not found.
 
+## Example
+
+```vb
+Public Sub LastIndexOfExample()
+    Dim result As Long
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Apple", "Banana", "Orange", "Apple", "Mango"
+    result = MyArray.LastIndexOf("Apple")
+    ' expected output:
+    ' result  = 3
+End Sub
+```
+
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.lastindexof>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf>

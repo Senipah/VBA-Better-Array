@@ -50,6 +50,23 @@ Type
 Description
 : A new array containing the extracted elements.
 
+## Example
+
+```vb
+Public Sub SliceExample()
+    Dim citrus() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Lemon", "Apple", "Mango"
+    citrus = MyArray.Slice(1, 3)
+    ' expected output:
+    ' citrus =  "Orange", "Lemon"
+    ' MyArray still contains all of: "Banana", "Orange", "Lemon", "Apple", "Mango"
+End Sub
+```
+
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.slice>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice>

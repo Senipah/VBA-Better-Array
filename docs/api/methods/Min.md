@@ -39,6 +39,22 @@ Type
 Description
 : The smallest value in the array.
 
+## Example
+
+```vb
+Public Sub MinExample()
+    Dim result As Long
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push 10, 1, 3, 5, 9, 12, 2, 8, 7
+    result = MyArray.Min
+    ' expected output:
+    ' result  = 1
+End Sub
+```
+
+## Inspiration
 * <https://support.office.com/en-gb/article/min-function-61635d12-920f-4ce2-a70f-96f202dcc152>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min>
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-math.min>

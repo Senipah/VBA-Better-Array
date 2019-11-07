@@ -51,5 +51,27 @@ Type
 Description
 : A variant array containing the extracted segment.
 
+## Example
+
+```vb
+Public Sub ExtractSegmentExample()
+    Dim MultiDimensionArray(1 To 2, 1 To 2) As Variant
+    Dim MyArray As BetterArray
+    Dim result() As Variant
+    
+    MultiDimensionArray(1, 1) = "Foo"
+    MultiDimensionArray(1, 2) = 1
+    MultiDimensionArray(2, 1) = "Bar"
+    MultiDimensionArray(2, 2) = 2
+    
+    Set MyArray = New BetterArray
+    MyArray.Items = MultiDimensionArray
+    result = MyArray.ExtractSegment(columnIndex:=2)
+
+    ' expected output:
+    ' result is a one-dimension array with the values: 1, 2
+End Sub
+```
+
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

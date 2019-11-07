@@ -38,6 +38,19 @@ Type
 Description
 : The new length of the array.
 
+## Example
+
+```vb
+Public Sub PushExample()
+    Dim result As String
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    ' MyArray now contains "Banana", "Orange", "Apple", "Mango"
+End Sub
+```
+
 ## Inspiration
 * <https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/push>
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.push>

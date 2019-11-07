@@ -77,5 +77,20 @@ Type
 Description
 : A string representing the array structure and its elements.
 
+## Example
+
+```vb
+Public Sub ToStringExample()
+    Dim result As String
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    result = MyArray.ToString
+    Debug.Print result
+    ' expected output:
+    ' result = "{Banana,Orange,Apple,Mango}"
+End Sub
+```
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)

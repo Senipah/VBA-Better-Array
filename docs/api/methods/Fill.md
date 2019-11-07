@@ -64,6 +64,23 @@ Type
 Description
 : The current instance of the BetterArray object array filled with the passed value between the specified indices. If ommited the array will be filled to the last index.
 
+## Example
+
+```vb
+Public Sub FillExample()
+    Dim MyArray As BetterArray
+    Dim result() As Variant
+
+    Set MyArray = New BetterArray
+    MyArray.Push 1, 2, 3, 4
+    MyArray.Fill 0, 2, 4
+    result = MyArray.Items
+
+    ' expected output:
+    ' result is a array with the values: 1, 2, 0, 0
+End Sub
+```
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.fill>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill>

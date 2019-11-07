@@ -69,6 +69,23 @@ Description
 : The current instance of the BetterArray object with the stored array modified. 
 
 
+## Example
+
+```vb
+Public Sub CopyWithinExample()
+    Dim MyArray As BetterArray
+    Dim result() As Variant
+    
+    Set MyArray = New BetterArray
+    MyArray.Push "a", "b", "c", "d", "e"
+    MyArray.CopyWithin 0, 3, 4
+    result = MyArray.Items
+    
+    ' expected output:
+    ' result is an array with the values: "d", "b", "c", "d", "e"
+End Sub
+```
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.copywithin>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin>

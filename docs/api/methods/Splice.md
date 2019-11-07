@@ -65,6 +65,23 @@ Type
 Description
 : A zero-based array containing the deleted elements. If only one element is removed, an array of one element is returned. If no elements are removed, an empty array is returned.
 
+## Example
+
+```vb
+Public Sub SpliceExample()
+    Dim result() As Variant
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
+    
+    MyArray.Push "Banana", "Orange", "Apple", "Mango"
+    MyArray.Splice 2, 0, "Lemon", "Kiwi"
+    result = MyArray.Items
+    ' expected output:
+    ' result =  "Banana", "Orange", "Lemon", "Kiwi", "Apple", "Mango"
+End Sub
+
+```
+
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.splice>
 * <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Splice>
