@@ -2819,7 +2819,7 @@ Private Sub Includes_JaggedArrayContains_ReturnsTrue()
     sut.Items = testArray
     
     'Act:
-    actual = sut.Includes("Buzz")
+    actual = sut.Includes("Buzz", recurse:=True)
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
@@ -2841,7 +2841,7 @@ Private Sub Includes_JaggedArrayDoesntContains_ReturnsFalse()
     sut.Items = testArray
     
     'Act:
-    actual = sut.Includes("wibble")
+    actual = sut.Includes("wibble", recurse:=True)
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
 TestExit:
@@ -2922,6 +2922,30 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+
+'@TestMethod("BetterArray_IncludesType")
+Private Sub IncludesType_JaggedArrayContainsType_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim expected As Boolean
+    Dim actual As Boolean
+    Dim searchType As String
+    testArray = Gen.GetArray(AG_DOUBLE)
+    expected = True
+    sut.Items = testArray
+    searchType = "Double"
+    
+    'Act:
+    actual = sut.IncludesType(searchType, recurse:=True)
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 '''''''''''''''''
 ' Method - Keys '

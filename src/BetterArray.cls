@@ -397,12 +397,12 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     ToString = result
 End Function
 
-' TODO: add param for recursion
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes( _
         ByVal searchElement As Variant, _
-        Optional ByVal fromIndex As Long = MISSING_LONG _
+        Optional ByVal fromIndex As Long = MISSING_LONG, _
+        Optional ByVal recurse As Boolean _
     ) As Boolean
 Attribute Includes.VB_Description = "Determines whether the array includes a certain value among its entries."
     Dim localLength As Long
@@ -425,15 +425,15 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
         currentIndex = localLength + fromIndex
     End If
     
-    Includes = RecursiveIncludes(searchElement, searchArray, currentIndex)
+    Includes = RecursiveIncludes(searchElement, searchArray, currentIndex, recurse:=recurse)
 End Function
 
-' TODO: add param for recursion
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the type of any of the elements in the array matches the typename.")
 Public Function IncludesType( _
         ByVal searchTypeName As String, _
-        Optional ByVal fromIndex As Long = MISSING_LONG _
+        Optional ByVal fromIndex As Long = MISSING_LONG, _
+        Optional ByVal recurse As Boolean _
     ) As Boolean
 Attribute IncludesType.VB_Description = "Determines whether the type of any of the elements in the array matches the typename."
     Dim localLength As Long
@@ -456,7 +456,7 @@ Attribute IncludesType.VB_Description = "Determines whether the type of any of t
         currentIndex = localLength + fromIndex
     End If
     
-    IncludesType = RecursiveIncludes(searchTypeName, searchArray, currentIndex, True)
+    IncludesType = RecursiveIncludes(searchTypeName, searchArray, currentIndex, True, recurse)
 End Function
 
 '@Description("Determines whether all elements in the array match a value.")
@@ -678,8 +678,8 @@ End Function
 '@Ignore ProcedureNotUsed
 '@Description("Extracts the segment of the array located at the specified indices.")
 Public Function ExtractSegment( _
-    Optional ByVal rowIndex As Long = MISSING_LONG, _
-    Optional ByVal columnIndex As Long = MISSING_LONG _
+        Optional ByVal rowIndex As Long = MISSING_LONG, _
+        Optional ByVal columnIndex As Long = MISSING_LONG _
     ) As Variant()
 Attribute ExtractSegment.VB_Description = "Extracts the segment of the array located at the specified indices."
     Dim i As Long
@@ -1154,9 +1154,9 @@ End Function
 
 '@Description("Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
 Public Function Fill( _
-    ByVal value As Variant, _
-    Optional ByVal startIndex As Long = MISSING_LONG, _
-    Optional ByVal endIndex As Long = MISSING_LONG _
+        ByVal value As Variant, _
+        Optional ByVal startIndex As Long = MISSING_LONG, _
+        Optional ByVal endIndex As Long = MISSING_LONG _
     ) As BetterArray
 Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value."
     Dim localItems() As Variant
@@ -1886,7 +1886,8 @@ Private Function RecursiveIncludes( _
         ByVal searchElement As Variant, _
         ByRef searchArray() As Variant, _
         Optional ByVal fromIndex As Long, _
-        Optional ByVal compareTypeNames As Boolean _
+        Optional ByVal compareTypeNames As Boolean, _
+        Optional ByVal recurse As Boolean _
     ) As Boolean
 Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed array includes the search element."
     Dim localLowerBound As Long
@@ -1905,10 +1906,15 @@ Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed a
                 Exit Function
             End If
         End If
-        If IsArray(searchArray(i)) Then
+        If IsArray(searchArray(i)) And recurse Then
             Dim passThru() As Variant
             passThru = searchArray(i)
-            If RecursiveIncludes(searchElement, passThru, compareTypeNames:=compareTypeNames) Then
+            If RecursiveIncludes( _
+                    searchElement, _
+                    passThru, _
+                    compareTypeNames:=compareTypeNames, _
+                    recurse:=recurse _
+                ) Then
                 RecursiveIncludes = True
                 Exit Function
             End If
