@@ -5826,3 +5826,326 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayInsertAtIndex2Delete0Insert2_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+
+    expected = Array("Banana", "Orange", "Lemon", "Kiwi", "Apple", "Mango")
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    ReDim expectedResult(0)
+    
+    'Act:
+    actualResult = sut.Splice(2, 0, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayInsertAtIndex2Delete1Insert2_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+
+    expected = Array("Banana", "Orange", "Lemon", "Kiwi", "Mango")
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    expectedResult = Array("Apple")
+    
+    'Act:
+    actualResult = sut.Splice(2, 1, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayInsertAtIndex2Delete2Insert0_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+
+    expected = Array("Banana", "Orange", "Kiwi")
+    testArray = Array("Banana", "Orange", "Apple", "Mango", "Kiwi")
+    sut.Items = testArray
+    expectedResult = Array("Apple", "Mango")
+    
+    'Act:
+    actualResult = sut.Splice(2, 2)
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete0Insert2_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+        
+    sut.LowerBound = 1
+    
+    ReDim expected(1 To 6)
+    expected(1) = "Banana"
+    expected(2) = "Orange"
+    expected(3) = "Lemon"
+    expected(4) = "Kiwi"
+    expected(5) = "Apple"
+    expected(6) = "Mango"
+    
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    ReDim expectedResult(0)
+    
+    'Act:
+    actualResult = sut.Splice(3, 0, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete1Insert2_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    sut.LowerBound = 1
+    ReDim expected(1 To 5)
+    expected(1) = "Banana"
+    expected(2) = "Orange"
+    expected(3) = "Lemon"
+    expected(4) = "Kiwi"
+    expected(5) = "Mango"
+    
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    expectedResult = Array("Apple")
+    
+    'Act:
+    actualResult = sut.Splice(3, 1, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete2Insert0_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    sut.LowerBound = 1
+    
+    ReDim expected(1 To 3)
+    expected(1) = "Banana"
+    expected(2) = "Orange"
+    expected(3) = "Kiwi"
+    
+    testArray = Array("Banana", "Orange", "Apple", "Mango", "Kiwi")
+    sut.Items = testArray
+    expectedResult = Array("Apple", "Mango")
+    
+    'Act:
+    actualResult = sut.Splice(3, 2)
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete0Insert2_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    sut.LowerBound = -1
+    
+    ReDim expected(-1 To 4)
+    expected(-1) = "Banana"
+    expected(0) = "Orange"
+    expected(1) = "Lemon"
+    expected(2) = "Kiwi"
+    expected(3) = "Apple"
+    expected(4) = "Mango"
+
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    ReDim expectedResult(0)
+    
+    'Act:
+    actualResult = sut.Splice(1, 0, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete1Insert2_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    sut.LowerBound = -1
+    ReDim expected(-1 To 3)
+    expected(-1) = "Banana"
+    expected(0) = "Orange"
+    expected(1) = "Lemon"
+    expected(2) = "Kiwi"
+    expected(3) = "Mango"
+    
+    testArray = Array("Banana", "Orange", "Apple", "Mango")
+    sut.Items = testArray
+    expectedResult = Array("Apple")
+    
+    'Act:
+    actualResult = sut.Splice(1, 1, "Lemon", "Kiwi")
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete2Insert0_Success()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    Dim actualResult() As Variant
+    Dim expectedResult() As Variant
+    
+    sut.LowerBound = -1
+    ReDim expected(-1 To 1)
+    expected(-1) = "Banana"
+    expected(0) = "Orange"
+    expected(1) = "Kiwi"
+    
+    testArray = Array("Banana", "Orange", "Apple", "Mango", "Kiwi")
+    sut.Items = testArray
+    expectedResult = Array("Apple", "Mango")
+    
+    'Act:
+    actualResult = sut.Splice(1, 2)
+    actual = sut.Items
+
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    Assert.SequenceEquals expectedResult, actualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
