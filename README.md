@@ -2,10 +2,6 @@
 
 A VBA class providing a more flexible and user-friendly Array.
 
-# UNDER CONSTRUCTION
-
-This library is a work in progress.
-
 ## Documentation
 
 [READ THE DOCS](https://senipah.github.io/VBA-Better-Array/) for information on how to get started with VBA Better Array.

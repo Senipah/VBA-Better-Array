@@ -6,8 +6,6 @@ nav_order: 2
 
 # Installation
 
-#### Note - This library is unfinished and is in a pre-release state.
-
 Each release has two separate `.zip` archives:
 
 [Standalone](https://github.com/Senipah/VBA-Better-Array/raw/master/releases/latest/Standalone.Zip)
