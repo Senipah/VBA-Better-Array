@@ -1291,7 +1291,7 @@ End Function
 Public Function ResetToDefault() As BetterArray
 Attribute ResetToDefault.VB_Description = "Clears the current array and resets capacity to default value"
     this.LowerBound = 0
-    InternalItems = GetEmptyArray()
+    ReDim this.Items(this.LowerBound To DEFAULT_CAPACITY + this.LowerBound)
     this.Length = 0
     Me.Capacity = DEFAULT_CAPACITY
     this.ArrayType = BA_UNALLOCATED
@@ -1304,7 +1304,8 @@ Public Function Clear() As BetterArray
 Attribute Clear.VB_Description = "Clears all entries in the current array but retains existing capacity."
     Dim oldCapacity As Long
     oldCapacity = this.Capacity
-    InternalItems = GetEmptyArray()
+    ReDim this.Items(this.LowerBound To oldCapacity + this.LowerBound)
+    this.ArrayType = BA_UNALLOCATED
     this.Length = 0
     Me.Capacity = oldCapacity
     Set Clear = Me
