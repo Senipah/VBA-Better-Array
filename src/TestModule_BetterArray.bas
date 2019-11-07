@@ -30,7 +30,7 @@ Private Const TEST_ARRAY_LENGTH As Long = 10
 Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an ExcelProvider instance had failed." & _
         " Once resolved ensure to end any orphan Excel processes running on this system."
 
-' TODO: Expected error tests for all public methods with custom errors
+' TODO: Ensure test coverage of all paths - ongoing
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -1145,8 +1145,6 @@ End Sub
 '''''''''''''''''''
 ' Method - Concat '
 '''''''''''''''''''
-'TODO: Concat test cases
-
 '@TestMethod("BetterArray_Concat")
 Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
@@ -1658,8 +1656,6 @@ End Sub
 ' Method - CopyFromCollection '
 '''''''''''''''''''''''''''''''
 
-'TODO: CopyFromCollection test cases
-
 '@TestMethod("BetterArray_CopyFromCollection")
 Private Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     On Error GoTo TestFail
@@ -1721,8 +1717,6 @@ End Sub
 '''''''''''''''''''''
 ' Method - ToString '
 '''''''''''''''''''''
-
-'TODO: ToString test cases
 
 '@TestMethod("BetterArray_ToString")
 Private Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
@@ -2076,8 +2070,6 @@ End Sub
 ' Method - Sort '
 '''''''''''''''''
 
-'TODO: Sort test cases
-
 '@TestMethod("BetterArray_Sort")
 Private Sub Sort_OneDimArray_ArrayIsSorted()
     On Error GoTo TestFail
@@ -2143,8 +2135,6 @@ End Sub
 '''''''''''''''''''''''
 ' Method - CopyWithin '
 '''''''''''''''''''''''
-
-'TODO: CopyWithin test cases
 
 '@TestMethod("BetterArray_CopyWithin")
 Private Sub CopyWithin_OneDimArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
@@ -2405,8 +2395,6 @@ End Sub
 ' Method - Filter '
 '''''''''''''''''''
 
-'TODO: Filter test cases
-
 '@TestMethod("BetterArray_Filter")
 Private Sub Filter_OneDimExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
@@ -2492,7 +2480,6 @@ Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArrayn()
 
     sut.Items = testArray
     'Act:
-    ' TODO: make sure documents state that for jagged & multi recurse must be true.
     actual = sut.Filter("Bar", True, True).Items
     testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
@@ -2654,7 +2641,6 @@ Private Sub FilterType_JaggedArrayInclude_ReturnsFilteredArray()
 
     sut.Items = testArray
     'Act:
-    ' TODO: make sure documents state that for jagged & multi recurse must be true.
     actual = sut.FilterType("string", True, True).Items
     testResult = SequenceEquals_JaggedArray(expected, actual)
     'Assert:
@@ -3076,8 +3062,6 @@ End Sub
 ' Method - Max '
 ''''''''''''''''
 
-'TODO: Max test cases
-
 '@TestMethod("BetterArray_Max")
 Private Sub Max_OneDimArrayNumericInternal_ReturnsLargest()
     On Error GoTo TestFail
@@ -3264,7 +3248,6 @@ End Sub
 ' Method - Min '
 ''''''''''''''''
 
-'TODO: Min test cases
 '@TestMethod("BetterArray_Min")
 Private Sub Min_OneDimArrayNumericInternal_ReturnsSmallest()
     On Error GoTo TestFail
@@ -3449,8 +3432,6 @@ End Sub
 ''''''''''''''''''
 ' Method - Slice '
 ''''''''''''''''''
-
-'TODO: Slice test cases
 
 '@TestMethod("BetterArray_Slice")
 Private Sub Slice_OneDimNoEndArg_ReturnsCopy()
@@ -3657,7 +3638,6 @@ End Sub
 ''''''''''''''''''''
 ' Method - Reverse '
 ''''''''''''''''''''
-'TODO: Reverse test cases
 
 '@TestMethod("BetterArray_Reverse")
 Private Sub Reverse_OneDimArray_ArrayIsReversed()
@@ -3841,8 +3821,6 @@ End Sub
 ' Method - Shuffle '
 ''''''''''''''''''''
 
-'TODO: Shuffle test cases
-
 '@TestMethod("BetterArray_Shuffle")
 Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
@@ -3937,8 +3915,6 @@ End Sub
 '''''''''''''''''''''''''
 ' Method - ToExcelRange '
 '''''''''''''''''''''''''
-
-'TODO: add more test cases for ToExcelRange
 
 '@TestMethod("BetterArray_ToExcelRange")
 Private Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
@@ -4129,8 +4105,6 @@ End Sub
 ''''''''''''''''''''''''''''
 ' Method - ParseFromString '
 ''''''''''''''''''''''''''''
-
-'TODO: add more test cases for ParseFromString
 
 '@TestMethod("BetterArray_ParseFromString")
 Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
@@ -4885,9 +4859,6 @@ End Sub
 ' Method - IndexOf '
 ''''''''''''''''''''''
 
-' TODO: Implement, Document & Test indexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
-
 '@TestMethod("BetterArray_IndexOf")
 Private Sub IndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
     On Error GoTo TestFail
@@ -4966,7 +4937,6 @@ End Sub
 ''''''''''''''''''''''
 ' Method - Unique '
 ''''''''''''''''''''''
-' TODO: Implement, Document & Test Unique
 
 '@TestMethod("BetterArray_Unique")
 Private Sub Unique_OneDimArray_ReturnsUniqueList()
@@ -5029,12 +4999,9 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
-''''''''''''''''''''''
+'''''''''''''''''''
 ' Method - Remove '
-''''''''''''''''''''''
-
-' TODO: Implement remove method to delete entry by index
-
+'''''''''''''''''''
 
 '@TestMethod("BetterArray_Remove")
 Private Sub Remove_OneDimArray_RemovesElementAtIndex()
@@ -5248,9 +5215,6 @@ End Sub
 ''''''''''''''''''
 ' Method - Every '
 ''''''''''''''''''
-' TODO: Implement, Document & Test Every method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
-
 
 '@TestMethod("BetterArray_Every")
 Private Sub Every_OneDimArrayOfSameString_ReturnsTrue()
@@ -5568,9 +5532,6 @@ End Sub
 ' Method - Fill  '
 ''''''''''''''''''''''
 
-' TODO: Implement, Document & Test Fill method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
-
 '@TestMethod("BetterArray_Fill")
 Private Sub Fill_OneDimArray2To4_SpecifiedIndicesFilled()
     On Error GoTo TestFail
@@ -5678,10 +5639,6 @@ End Sub
 ''''''''''''''''''''''
 ' Method - LastIndexOf '
 ''''''''''''''''''''''
-    
-
-' TODO: Implement, Document & Test lastIndexOf method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 
 '@TestMethod("BetterArray_LastIndexOf")
 Private Sub LastIndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
@@ -5762,9 +5719,6 @@ End Sub
 ''''''''''''''''''''''
 ' Method - Splice '
 ''''''''''''''''''''''
-
-' TODO: Implement, Document & Test splice method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 '@TestMethod("BetterArray_Splice")
 Private Sub Splice_OneDimArrayInsertAtIndex1_Success()

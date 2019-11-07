@@ -215,7 +215,7 @@ Attribute Items.VB_Description = "Stores the passed array."
         End If
     Else
         ' If Values is not an array then clear our internal array and push the Values arg
-        ' TODO: Document and write tests
+        ' NOTE: this possibly violates PoLA - assess for refactor
         Me.Clear.Push values
         Exit Property
     End If
@@ -459,8 +459,6 @@ Attribute IncludesType.VB_Description = "Determines whether the type of any of t
     IncludesType = RecursiveIncludes(searchTypeName, searchArray, currentIndex, True)
 End Function
 
-' TODO: Implement, Document & Test Every method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
 '@Description("Determines whether all elements in the array match a value.")
 Public Function Every( _
         ByVal searchElement As Variant, _
@@ -491,7 +489,6 @@ Attribute Every.VB_Description = "Determines whether all elements in the array m
     Every = RecursiveEvery(searchElement, searchArray, currentIndex)
 End Function
 
-' TODO: Implement, Document & Test EveryType method
 '@Description("Determines whether the type of all elements match the provided typename.")
 '@Ignore ProcedureNotUsed
 Public Function EveryType( _
@@ -636,7 +633,6 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     
 End Function
 
-' TODO: Implement, Document & Test FromExcelRange method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Stores the values contained in an Excel range in the internal array")
 Public Function FromExcelRange( _
@@ -774,7 +770,6 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
     ExtractSegment = result
 End Function
 
-' TODO: Implement, Document & Test ToExcelRange method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes the values stored in the array to an excel worksheet starting at the specified range.")
 Public Function ToExcelRange( _
@@ -1044,8 +1039,6 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
     Remove = this.Length
 End Function
 
-' TODO: Implement, Document & Test splice method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 '@Description("changes the contents of the array by removing or replacing existing elements and/or adding new elements in place.")
 Public Function Splice( _
         ByVal startIndex As Long, _
@@ -1159,8 +1152,6 @@ End Function
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
 
-' TODO: Implement, Document & Test Fill method
-' https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
 '@Description("Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
 Public Function Fill( _
     ByVal value As Variant, _
@@ -1200,7 +1191,6 @@ Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of
     Set Fill = Me
 End Function
 
-' TODO: Document
 '@Ignore FunctionReturnValueNotUsed
 '@Description("Parses a string representing an array and stores the outcome.")
 Public Function ParseFromString( _
@@ -1255,7 +1245,6 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
     Set ParseFromString = Me
 End Function
 
-' TODO: Document & Test
 '@Ignore ProcedureNotUsed
 Public Function Transpose() As BetterArray
     Dim result() As Variant
@@ -1286,8 +1275,6 @@ Public Function Transpose() As BetterArray
     Set Transpose = Me
 End Function
 
-
-' TODO: Document & Test - Clone
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new BetterArray instance containing the same values as the current instance.")
 Public Function Clone() As BetterArray
@@ -1299,7 +1286,6 @@ Attribute Clone.VB_Description = "Returns a new BetterArray instance containing 
     Set Clone = result
 End Function
 
-' TODO: Document & Test - ResetToDefault
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Clears the current array and resets capacity to default value")
 Public Function ResetToDefault() As BetterArray
@@ -1312,7 +1298,6 @@ Attribute ResetToDefault.VB_Description = "Clears the current array and resets c
     Set ResetToDefault = Me
 End Function
 
-' TODO: Document & Test - Clear
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Clears all entries in the current array but retains existing capacity.")
 Public Function Clear() As BetterArray
@@ -1511,7 +1496,6 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
 
 End Function
 
-' TODO: add support for 2d arrays. Consider rename?
 '@Ignore ShadowedDeclaration
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
@@ -1573,7 +1557,6 @@ Attribute FilterType.VB_Description = "Filters the stored array to include only 
     Set FilterType = Me
 End Function
 
-' TODO: Check implementation against spec
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
 Public Function Reverse(Optional ByVal recurse As Boolean) As BetterArray
@@ -1595,7 +1578,6 @@ Attribute Reverse.VB_Description = "Reverses the order of elements in the array.
     Set Reverse = Me
 End Function
 
-' TODO: Implement, Document & Test Flatten method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Flattens a Multi-Dimensional or Jagged array into One Dimension arrays.")
 Public Function Flatten() As BetterArray
@@ -1619,7 +1601,6 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
     Set Flatten = Me
 End Function
 
-' TODO: Implement, Document & Test Shuffle method
 '@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("shuffles the order of the stored array.")
 Public Function Shuffle(Optional ByVal recurse As Boolean) As BetterArray
@@ -1641,8 +1622,6 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
     Set Shuffle = Me
 End Function
 
-
-' TODO: Implement, Document & Test Unique
 '@Description("filters the array to contain only unique elements")
 Public Function Unique() As BetterArray
 Attribute Unique.VB_Description = "filters the array to contain only unique elements"
@@ -1790,7 +1769,7 @@ Attribute RecursiveReverse.VB_Description = "reverses the order of the passed ar
     middle = Int(localLength / 2) + lower
     
     Do While lower <> middle
-        ' TODO: check this works with and lb
+        ' TODO: check this works with any lb
         upper = UBound(sourceArray) + LBound(sourceArray) - lower
         If IsArray(sourceArray(lower)) And recurse Then
             passThruArray = sourceArray(lower)
@@ -2305,7 +2284,6 @@ End Function
 '@Description("Converts a 1d array to a 1 column wide 2d array.")
 Private Function Transpose_1DArray(ByRef sourceArray() As Variant) As Variant()
 Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column wide 2d array."
-    'TODO: need check to ensure 1d?
     Dim i As Long
     Dim j As Long
     Dim localUpperBound As Long
