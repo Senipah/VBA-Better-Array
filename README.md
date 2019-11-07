@@ -23,7 +23,7 @@ Refer to the [installation documentation](https://senipah.github.io/VBA-Better-A
 
 ## Contributing
 
-Currently closed to pull requests.
+Please refer to the process outlined in the [Contributing](https://senipah.github.io/VBA-Better-Array/contributing.html) page of the documentation site for instructions on how to contribute to this project. 
 
 ## License
 
