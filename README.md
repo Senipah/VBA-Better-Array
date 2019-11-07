@@ -1,6 +1,6 @@
 # ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/img/logo.png)
 
-A VBA class providing a more modern and user-friendly Array.
+A VBA class providing a more flexible and user-friendly Array.
 
 # UNDER CONSTRUCTION
 
