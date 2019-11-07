@@ -149,10 +149,10 @@ End Property
 Public Property Let LowerBound(ByVal value As Long)
 Attribute LowerBound.VB_Description = "Sets the starting index of the array. If an array is already stored then it will be re-indexed to match the new value"
     this.LowerBoundSet = True
-    If value <> this.LowerBound And value >= 0 Then
+    If value <> this.LowerBound Then
         this.LowerBound = value
         InternalItems = Rebase()
-        this.Capacity = this.Length
+        this.Capacity = GetArrayLength(this.Items)
     End If
 End Property
 
@@ -1051,9 +1051,9 @@ Public Function Splice( _
         ByVal startIndex As Long, _
         ParamArray args() As Variant _
     ) As Variant()
+Attribute Splice.VB_Description = "changes the contents of the array by removing or replacing existing elements and/or adding new elements in place."
     Dim localItems() As Variant
     Dim actualStart As Long
-    Dim insertCount As Long
     Dim actualDeleteCount As Long
     Dim argsCount As Long
     Dim localLength As Long
@@ -1061,10 +1061,12 @@ Public Function Splice( _
     Dim result() As Variant
     Dim i As Long
     Dim tempArray() As Variant
+    Dim itemCount As Long
+    Dim Items() As Variant
     
     localArgs = args
     localItems = InternalItems
-    localLength = this.Length
+    localLength = UBound(localItems) + 1
     If startIndex < LBound(localItems) Then
         actualStart = Max(localLength + startIndex, LBound(localItems))
     Else
@@ -1074,16 +1076,16 @@ Public Function Splice( _
     If argsCount = 0 Then
         ' only a start index has been supplied
         ' we're gonna delete everything
-        insertCount = 0
+        itemCount = 0
         actualDeleteCount = localLength - actualStart
     Else
         ' first arg in args is delete count, second onwards are insertion items
-        insertCount = argsCount - 1
+        itemCount = argsCount - 1
         'deleteCount is first element in args.
         actualDeleteCount = Min(Max(args(LBound(args)), 0), localLength - actualStart)
     End If
     
-    If localLength + insertCount - actualDeleteCount > MAX_ARRAY_LENGTH Then
+    If localLength + itemCount - actualDeleteCount > MAX_ARRAY_LENGTH Then
         RaiseError EC_EXCEEDS_MAX_ARRAY_LENGTH, "Splice"
         Exit Function
     End If
@@ -1101,17 +1103,12 @@ Public Function Splice( _
         ReDim result(0)
     End If
     
-    Dim itemCount As Long
-    Dim Items() As Variant
-    
-    If insertCount > 0 Then
-        ReDim Items(0 To insertCount - 1)
+    If itemCount > 0 Then
+        ReDim Items(0 To itemCount - 1)
         For i = LBound(Items) To UBound(Items)
             Items(i) = args(i + 1)
         Next
     End If
-    
-    itemCount = GetArrayLength(Items)
             
     If itemCount < actualDeleteCount Then
         i = actualStart
@@ -1122,14 +1119,20 @@ Public Function Splice( _
         
         
         i = localLength
+        Dim tempBetterArray As BetterArray
+        Set tempBetterArray = New BetterArray
+        tempBetterArray.Items = localItems
         Do While i > (localLength - actualDeleteCount + itemCount)
+            tempBetterArray.Remove (i - 1)
             ' Perform ? DeletePropertyOrThrow(O, ! ToString(k - 1)).
             i = i - 1
         Loop
+        localItems = tempBetterArray.Items
+        Set tempBetterArray = Nothing
     ElseIf itemCount > actualDeleteCount Then
         i = (localLength - actualDeleteCount)
         tempArray = localItems
-        ReDim Preserve tempArray(i + itemCount - 1) As Variant
+        ReDim Preserve tempArray(this.LowerBound To i + itemCount - 1) As Variant
         Do While i > actualStart
             LetOrSetElement tempArray(i + itemCount - 1), localItems(i + actualDeleteCount - 1)
             i = i - 1
@@ -1137,14 +1140,15 @@ Public Function Splice( _
         localItems = tempArray
     End If
     
-    i = actualStart
-    Dim j As Long
-    For j = LBound(Items) To UBound(Items)
-        localItems(i) = Items(j)
-        i = i + 1
-    Next
+    If itemCount > 0 Then
+        i = actualStart
+        Dim j As Long
+        For j = LBound(Items) To UBound(Items)
+            localItems(i) = Items(j)
+            i = i + 1
+        Next
+    End If
     
-    'ReDim Preserve localItems(this.LowerBound To localLength - actualDeleteCount + itemCount)
     InternalItems = localItems
     
     Splice = result
@@ -2634,18 +2638,15 @@ Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Do
             localType = ArrayType
         End If
     End If
-    Select Case localType
-    Case ArrayTypes.BA_UNALLOCATED
-        Rebase = localItems
-    Case ArrayTypes.BA_MULTIDIMENSION
+    If localType = BA_MULTIDIMENSION Then
         ' ensure all nested arrays have the correct base
         ' if they don't and additional arrays are added via concat the resulting
         ' md array from jaggedToMulti will have unexpected bounds
         ' NOTE: This may need to be applied to jagged too for consistency
         Rebase = RecursiveRebase(localItems, True)
-    Case Else
+    Else
         Rebase = RecursiveRebase(localItems, False)
-    End Select
+    End If
 End Function
 
 '@Description("re-indexes nested arrays to conform to new bounds. Child function of Rebase)
