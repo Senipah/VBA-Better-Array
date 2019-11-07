@@ -35,9 +35,4 @@ Type
 Description
 : The current instance of the BetterArray object with the array's order Shuffled.
 
-
-## Inspiration
-* <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.Shuffle>
-* <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Shuffle>
-
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
