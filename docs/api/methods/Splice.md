@@ -11,7 +11,7 @@ The `Splice()` method changes the contents of an array by removing or replacing 
 
 ## Syntax
 
-*expression*.**Splice**(*startIndex*, *deleteCount*,[*item1*[, *item2*[, ...[, *itemN*]]])
+*expression*.**Splice**(*startIndex*, [*deleteCount*,[*item1*[, *item2*[, ...[, *itemN*]]]])
 
 ### Parameters
 
@@ -33,7 +33,7 @@ Name
 : `deleteCount`
 
 Type
-: `Long`
+: ParamArray `Variant`
 
 Necessity
 : Required
@@ -63,7 +63,7 @@ Type
 : `Variant()`
 
 Description
-: An array containing the deleted elements. If only one element is removed, an array of one element is returned. If no elements are removed, an empty array is returned.
+: A zero-based array containing the deleted elements. If only one element is removed, an array of one element is returned. If no elements are removed, an empty array is returned.
 
 ## Inspiration
 * <http://www.ecma-international.org/ecma-262/10.0/index.html#sec-array.prototype.splice>
