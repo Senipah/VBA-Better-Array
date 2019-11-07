@@ -39,7 +39,7 @@ Public Sub TransposeExample()
     MyArray.Transpose
     result = MyArray.Items
     ' expected output:
-    ' result is a jagged array with the structure "{{"Foo","Bar"},{1,2}}
+    ' result is a jagged array with the structure "[["Foo","Bar"],[1,2]]"
 End Sub
 ```
 
