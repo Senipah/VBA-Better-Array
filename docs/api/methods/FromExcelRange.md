@@ -65,7 +65,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: If present, only the values in this row of the range will be stored.
+: The current instance of the BetterArray object with the values from the `fromRange` argument stored in the internal array.
 
 ## Example
 
