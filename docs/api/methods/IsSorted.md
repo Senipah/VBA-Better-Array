@@ -15,7 +15,7 @@ The `IsSorted()` method tests if the stored array is sorted in ascending order. 
 
 ## Syntax
 
-*expression*.**IsSorted**(`columnIndex`) 
+*expression*.**IsSorted**([`columnIndex`]) 
 
 ### Parameters
 
