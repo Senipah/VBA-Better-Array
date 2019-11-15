@@ -1,27 +1,5 @@
-1e9b4cf pre-release > release
-902bda7 add examples to method docs
-0ee3870 Clear & ResetToDefault: redim this.items
-49c2663 add recurse param to Includes and IncludesType
-0e55179 add recurse param
-2c23034 modern > flexible
-44cf19e remove completed TODO items
-a73b619 describe behaviour if non array passed
-cefe2e8 Changes to LowerBound, Splice & Rebase
-c661632 add more splice tests
-dae0733 correct param typing
-6d6e9f3 remove invalid URLs
-4ea8ed0 fix typo
-d33ce67 link to contributing page
-6605254 define contributing process
-dc4883f add support
-fecc8fb Update issue templates
-d0cc1fd add first splice tests
-95837f7 add splice method
-43b5b8f formatting fixes
-7afbed9 correct ecma URL
-d156227 add param desc to splice doc
-a1744e9 correct capitalisation of params
-8d9f166 apply consistent variable names & mbr access
-21f02a5 create old dir if not present
-a6a2b90 remove backup workflow
-c8a80aa don't track temp if it exists
+8c433ba add ability to filter unique by column
+4c47712 remove unused var in example
+8d80b1d correct syntax example - columnIndex is optional
+e1c290d fix return description
+82ff6be fix transpose example - md parsing curly brace
