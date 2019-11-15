@@ -42,7 +42,6 @@ Description
 
 ```vb
 Public Sub PushExample()
-    Dim result As String
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
     
