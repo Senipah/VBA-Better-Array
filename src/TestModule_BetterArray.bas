@@ -5023,6 +5023,125 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'@TestMethod("BetterArray_Unique")
+Private Sub Unique_JaggedArrayColumnIndexBase0_ReturnsUniqueList()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Buzz", 3) _
+    )
+    expected = Array( _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Buzz", 3) _
+    )
+        
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Unique(2).Items
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Unique")
+Private Sub Unique_JaggedArrayColumnIndexBaseNegativeBase_ReturnsUniqueList()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Buzz", 3) _
+    )
+    ReDim expected(-10 To -7)
+    expected(-10) = Array(1, "Foo", 3)
+    expected(-9) = Array(1, "Bar", 3)
+    expected(-8) = Array(1, "Fizz", 3)
+    expected(-7) = Array(1, "Buzz", 3)
+    
+    sut.LowerBound = -10
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Unique(2).Items
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Unique")
+Private Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected() As Variant
+    Dim actual() As Variant
+    Dim testArray() As Variant
+    
+    testArray = Array( _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Foo", 3), _
+        Array(1, "Bar", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Fizz", 3), _
+        Array(1, "Buzz", 3) _
+    )
+    
+    
+    ReDim expected(10 To 13)
+    expected(10) = Array(1, "Foo", 3)
+    expected(11) = Array(1, "Bar", 3)
+    expected(12) = Array(1, "Fizz", 3)
+    expected(13) = Array(1, "Buzz", 3)
+    
+    sut.LowerBound = 10
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.Unique(2).Items
+    
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
 '''''''''''''''''''
 ' Method - Remove '
 '''''''''''''''''''

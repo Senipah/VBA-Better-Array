@@ -11,11 +11,21 @@ The `Unique()` method removes all duplicate elements from the outermost array su
 
 ## Syntax
 
-*expression*.**Unique**() 
+*expression*.**Unique**([*columnIndex*]) 
 
 ### Parameters
 
-**None**
+Name 
+: `columnIndex`
+
+Type
+: `Long`
+
+Necessity
+: Optional
+
+Description
+: A base-1 index of the column in a jagged or multi-dimension array with 2 dimensions to filter by unique values. If no column index is provided and the array is jagged then Unique will compare all elements in nested arrays for equality when determining which nested arrays are Unique. If the `columnIndex` is greater than the max length of the arrays at the second dimenson the first column at that dimension will be used.
 
 ### Returns
 

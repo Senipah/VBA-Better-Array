@@ -1624,7 +1624,7 @@ Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
 End Function
 
 '@Description("filters the array to contain only unique elements")
-Public Function Unique() As BetterArray
+Public Function Unique(Optional ByVal columnIndex As Long = MISSING_LONG) As BetterArray
 Attribute Unique.VB_Description = "filters the array to contain only unique elements"
     Dim localItems() As Variant
     Dim localType As ArrayTypes
@@ -1634,11 +1634,58 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     localItems = InternalItems()
     localType = this.ArrayType
     Set result = New BetterArray
-    For i = LBound(localItems) To UBound(localItems)
-        If Me.IndexOf(localItems(i)) = i Then
-            result.Push localItems(i)
+    If (localType = BA_JAGGED Or localType = BA_MULTIDIMENSION) And columnIndex <> MISSING_LONG Then
+        Dim localDepth As Long
+        localDepth = GetJaggedArrayDepth(localItems)
+        If localDepth = 2 Then
+            ' if array is 2d we can compare unique based on specified column
+            Dim localColumn As Long
+            Dim comparisonValues() As Variant
+            Dim comparator As BetterArray
+            Set comparator = New BetterArray
+            Dim bounds() As Long
+            
+            bounds = GetMaxBoundsAtDimension(localItems, 2)
+            
+            ' determine column to compare - columnIndex if valid, lbound if not
+            If columnIndex > 0 And columnIndex <= (bounds(1) - bounds(0) + 1) Then
+                localColumn = columnIndex - 1 + bounds(0)
+            Else
+                localColumn = bounds(0)
+            End If
+            
+            ' extract the column
+            comparisonValues = Me.ExtractSegment(columnIndex:=localColumn)
+            ' store the extracted column in a new BetterArray instance
+            comparator.Items = comparisonValues
+            
+            For i = LBound(localItems) To UBound(localItems)
+                If comparator.IndexOf(localItems(i)(localColumn)) = i Then
+                    result.Push localItems(i)
+                End If
+            Next
+            
+        Else
+            ' array has more then two dimensions
+            ' just return unique in outermost array
+            For i = LBound(localItems) To UBound(localItems)
+                If Me.IndexOf(localItems(i)) = i Then
+                    result.Push localItems(i)
+                End If
+            Next
+        
         End If
-    Next
+    Else
+        ' no columnIndex arg or array is one-dimension
+        ' unique in outermost array
+        For i = LBound(localItems) To UBound(localItems)
+            If Me.IndexOf(localItems(i)) = i Then
+                result.Push localItems(i)
+            End If
+        Next
+    End If
+    
+
     Me.Items = result.Items
     this.ArrayType = localType
     Set Unique = Me
@@ -2160,7 +2207,7 @@ Attribute DuckTypeStringArray.VB_Description = "Takes a string array. Returns a 
         Else
             If Left$(element, 1) = Chr$(34) And Right$(element, 1) = Chr$(34) Then
                 'trim string delimiters
-                element = Mid$(element, 2, Len(element) - 2)
+                element = Replace(element, Chr$(34), vbNullString)
             End If
             result(i) = Trim$(element)
         End If
