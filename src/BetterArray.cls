@@ -11,6 +11,7 @@ Attribute VB_Description = "An array class for VBA providing features found in m
 '@Folder("BetterArray")
 '@ModuleDescription("An array class for VBA providing features found in more modern languages ")
 ' Copyright (c) 2019 Nick Morgan. See License: https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE
+'@IgnoreModule ProcedureNotUsed, FunctionReturnValueNotUsed
 
 Option Explicit
 
@@ -74,24 +75,12 @@ End Type
 
 Private this As TFields
 
-''''''''''''''''''''''''''''
-' Constructor & Destructor '
-''''''''''''''''''''''''''''
-
 '@Description("Constructor")
 Private Sub Class_Initialize()
 Attribute Class_Initialize.VB_Description = "Constructor"
     Me.Capacity = DEFAULT_CAPACITY
     this.ArrayType = BA_UNALLOCATED
     PopulateErrorDefinitions
-End Sub
-
-
-'@Ignore EmptyMethod
-'@Description("Destructor")
-Private Sub Class_Terminate()
-Attribute Class_Terminate.VB_Description = "Destructor"
-
 End Sub
 
 '''''''''''''''''''''
@@ -280,7 +269,6 @@ End Property
 ' Public Methods '
 ''''''''''''''''''
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Adds the provided argments to the array at the next available index.")
 Public Function Push(ParamArray args() As Variant) As Variant
 Attribute Push.VB_Description = "Adds the provided argments to the array at the next available index."
@@ -319,7 +307,6 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
     Push = this.Length
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Removes the last element from the array and returns that element.")
 Public Function Pop() As Variant
 Attribute Pop.VB_Description = "Removes the last element from the array and returns that element."
@@ -333,7 +320,6 @@ Attribute Pop.VB_Description = "Removes the last element from the array and retu
     Pop = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Removes the first element from the array and returns that element.")
 Public Function Shift() As Variant
 Attribute Shift.VB_Description = "Removes the first element from the array and returns that element."
@@ -347,7 +333,6 @@ Attribute Shift.VB_Description = "Removes the first element from the array and r
     Shift = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Adds one or more elements to the beginning of an array. Returns the new length of the array.")
 Public Function Unshift(ParamArray args() As Variant) As Long
 Attribute Unshift.VB_Description = "Adds one or more elements to the beginning of an array. Returns the new length of the array."
@@ -366,7 +351,6 @@ Attribute Unshift.VB_Description = "Adds one or more elements to the beginning o
     Unshift = this.Length
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString( _
         Optional ByVal prettyPrint As Boolean, _
@@ -397,7 +381,6 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     ToString = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes( _
         ByVal searchElement As Variant, _
@@ -428,7 +411,6 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
     Includes = RecursiveIncludes(searchElement, searchArray, currentIndex, recurse:=recurse)
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Determines whether the type of any of the elements in the array matches the typename.")
 Public Function IncludesType( _
         ByVal searchTypeName As String, _
@@ -490,7 +472,6 @@ Attribute Every.VB_Description = "Determines whether all elements in the array m
 End Function
 
 '@Description("Determines whether the type of all elements match the provided typename.")
-'@Ignore ProcedureNotUsed
 Public Function EveryType( _
         ByVal searchTypeName As String, _
         Optional ByVal fromIndex As Long = MISSING_LONG _
@@ -521,7 +502,6 @@ Attribute EveryType.VB_Description = "Determines whether the type of all element
     
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array that contains the keys for each index in the array.")
 Public Function Keys() As Variant()
 Attribute Keys.VB_Description = "Returns a new array that contains the keys for each index in the array."
@@ -543,7 +523,6 @@ Attribute Keys.VB_Description = "Returns a new array that contains the keys for 
     Keys = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array")
 Public Function Max(ParamArray args() As Variant) As Variant
 Attribute Max.VB_Description = "Returns the largest value in a list of values. If arguments are provided it will return the largest argument. If no arguments are provided it will return the largest element in the stored array"
@@ -558,7 +537,6 @@ Attribute Max.VB_Description = "Returns the largest value in a list of values. I
     Max = RecursiveMax(localItems)
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array")
 Public Function Min(ParamArray args() As Variant) As Variant
 Attribute Min.VB_Description = "Returns the smallest value in a list of values. If arguments are provided it will return the smallest argument. If no arguments are provided it will return the smallest element in the stored array"
@@ -573,7 +551,6 @@ Attribute Min.VB_Description = "Returns the smallest value in a list of values. 
     Min = RecursiveMin(localItems)
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new array containing the portion of the stored array between the StartIndex and EndIndex")
 Public Function Slice( _
         ByVal startIndex As Long, _
@@ -633,7 +610,6 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Stores the values contained in an Excel range in the internal array")
 Public Function FromExcelRange( _
         ByRef fromRange As Object, _
@@ -675,7 +651,6 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
     Set FromExcelRange = Me
 End Function
 
-'@Ignore ProcedureNotUsed
 '@Description("Extracts the segment of the array located at the specified indices.")
 Public Function ExtractSegment( _
         Optional ByVal rowIndex As Long = MISSING_LONG, _
@@ -770,7 +745,6 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
     ExtractSegment = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes the values stored in the array to an excel worksheet starting at the specified range.")
 Public Function ToExcelRange( _
         ByRef destination As Object, _
@@ -828,7 +802,6 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     Set ToExcelRange = localRange
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Tests if the stored array is sorted in ascending order.")
 Public Function IsSorted(Optional ByVal columnIndex As Long = MISSING_LONG) As Boolean
 Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in ascending order."
@@ -1191,7 +1164,6 @@ Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of
     Set Fill = Me
 End Function
 
-'@Ignore FunctionReturnValueNotUsed
 '@Description("Parses a string representing an array and stores the outcome.")
 Public Function ParseFromString( _
         ByVal sourceString As String, _
@@ -1245,8 +1217,9 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
     Set ParseFromString = Me
 End Function
 
-'@Ignore ProcedureNotUsed
+'@Description("Swaps rows for columns & vice versa.")
 Public Function Transpose() As BetterArray
+Attribute Transpose.VB_Description = "Swaps rows for columns & vice versa."
     Dim result() As Variant
     Dim localItems() As Variant
     Dim localType As ArrayTypes
@@ -1275,7 +1248,6 @@ Public Function Transpose() As BetterArray
     Set Transpose = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Returns a new BetterArray instance containing the same values as the current instance.")
 Public Function Clone() As BetterArray
 Attribute Clone.VB_Description = "Returns a new BetterArray instance containing the same values as the current instance."
@@ -1286,7 +1258,6 @@ Attribute Clone.VB_Description = "Returns a new BetterArray instance containing 
     Set Clone = result
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Clears the current array and resets capacity to default value")
 Public Function ResetToDefault() As BetterArray
 Attribute ResetToDefault.VB_Description = "Clears the current array and resets capacity to default value"
@@ -1298,7 +1269,6 @@ Attribute ResetToDefault.VB_Description = "Clears the current array and resets c
     Set ResetToDefault = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Clears all entries in the current array but retains existing capacity.")
 Public Function Clear() As BetterArray
 Attribute Clear.VB_Description = "Clears all entries in the current array but retains existing capacity."
@@ -1311,7 +1281,6 @@ Attribute Clear.VB_Description = "Clears all entries in the current array but re
     Set Clear = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Joins one or more arrays onto the end of the current array.")
 Public Function Concat(ParamArray args() As Variant) As BetterArray
 Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the current array."
@@ -1356,7 +1325,6 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
     Set Concat = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Writes all of the elements in a Collection objet to the internal array.")
 Public Function CopyFromCollection(ByVal sourceCollection As Collection) As BetterArray
 Attribute CopyFromCollection.VB_Description = "Writes all of the elements in a Collection objet to the internal array."
@@ -1378,7 +1346,6 @@ Attribute CopyFromCollection.VB_Description = "Writes all of the elements in a C
     Set CopyFromCollection = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Sorts the stored array in ascending order.")
 Public Function Sort(Optional ByVal sortColumn As Long = MISSING_LONG) As BetterArray
 Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
@@ -1416,7 +1383,6 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Set Sort = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Copies a section of the stored array to another location in the same array.")
 Public Function CopyWithin( _
         ByVal target As Long, _
@@ -1498,7 +1464,6 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
 End Function
 
 '@Ignore ShadowedDeclaration
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Filters the stored array to include only values that meet the specified criteria.")
 Public Function Filter( _
         ByVal match As Variant, _
@@ -1529,7 +1494,6 @@ End Function
 
 
 '@Description("Filters the stored array to include only values of the specified type.")
-'@Ignore ProcedureNotUsed
 Public Function FilterType( _
         ByVal searchTypeName As String, _
         Optional ByVal include As Boolean, _
@@ -1558,7 +1522,6 @@ Attribute FilterType.VB_Description = "Filters the stored array to include only 
     Set FilterType = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first.")
 Public Function Reverse(Optional ByVal recurse As Boolean) As BetterArray
 Attribute Reverse.VB_Description = "Reverses the order of elements in the array. The first array element becomes the last, and the last array element becomes the first."
@@ -1579,7 +1542,6 @@ Attribute Reverse.VB_Description = "Reverses the order of elements in the array.
     Set Reverse = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("Flattens a Multi-Dimensional or Jagged array into One Dimension arrays.")
 Public Function Flatten() As BetterArray
 Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array into One Dimension arrays."
@@ -1602,7 +1564,6 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
     Set Flatten = Me
 End Function
 
-'@Ignore ProcedureNotUsed, FunctionReturnValueNotUsed
 '@Description("shuffles the order of the stored array.")
 Public Function Shuffle(Optional ByVal recurse As Boolean) As BetterArray
 Attribute Shuffle.VB_Description = "shuffles the order of the stored array."
@@ -2652,7 +2613,6 @@ ErrHandler:
     Err.Clear
 End Function
 
-'@Ignore FunctionReturnValueNotUsed
 '@Description("re-indexes array to conform to new bounds. Does not change length.")
 Private Function Rebase(Optional ByRef sourceArray As Variant, Optional ByVal ArrayType As ArrayTypes) As Variant()
 Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Does not change length."
