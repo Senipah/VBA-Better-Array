@@ -123,7 +123,7 @@ Attribute Length.VB_Description = "Returns the number of entries stored in the a
 End Property
 
 '@Description("Returns largest used index in the array.")
-Public Property Get UpperBound()
+Public Property Get UpperBound() As Long
 Attribute UpperBound.VB_Description = "Returns largest used index in the array."
     If this.ArrayType = BA_UNALLOCATED Then
         UpperBound = -1
@@ -151,7 +151,7 @@ End Property
 
 '@DefaultMember
 '@Description("Returns the element in the array stored at the specified index.")
-Public Property Get Item(ByVal index As Long)
+Public Property Get Item(ByVal index As Long) As Variant
 Attribute Item.VB_Description = "Returns the element in the array stored at the specified index."
 Attribute Item.VB_UserMemId = 0
     If index <= this.Length Then
@@ -800,6 +800,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
                 ColumnSize:=lengthColumns _
             )
             localRange.value = localItems
+        '@Ignore EmptyElseBlock
         Else
             'array must be unalloc
             'do nothing(?)
@@ -846,8 +847,6 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
                 localColumnIndex = CLng(columnIndex)
             End If
             For i = localLowerBound To localUpperBound - 1
-                If i = localLowerBound Then
-                End If
                 If localItems(i, localColumnIndex) > localItems(i + 1, localColumnIndex) Then
                     result = False
                     Exit For
@@ -1811,7 +1810,7 @@ End Function
 
 '@Description("converts all the values in a jagged array to a 1d array.")
 Private Sub RecursiveFlatten( _
-        ByRef sourceArray(), _
+        ByRef sourceArray() As Variant, _
         ByRef results As BetterArray _
     )
 Attribute RecursiveFlatten.VB_Description = "converts all the values in a jagged array to a 1d array."
@@ -2307,6 +2306,7 @@ End Function
 
 '@Description("Converts a 1d array to a 1 column wide 2d array.")
 Private Function Transpose1DArray(ByRef sourceArray() As Variant) As Variant()
+Attribute Transpose1DArray.VB_Description = "Converts a 1d array to a 1 column wide 2d array."
     Dim i As Long
     Dim j As Long
     Dim localUpperBound As Long
@@ -2326,6 +2326,7 @@ End Function
 
 '@Description("Transposes the values in a 2d array. Rows become columns, columns become rows.")
 Private Function Transpose2DArray(ByRef sourceArray() As Variant) As Variant()
+Attribute Transpose2DArray.VB_Description = "Transposes the values in a 2d array. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long
@@ -2349,6 +2350,7 @@ End Function
 
 '@Description("Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows.")
 Private Function TransposeArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
+Attribute TransposeArrayOfArrays.VB_Description = "Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows."
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long

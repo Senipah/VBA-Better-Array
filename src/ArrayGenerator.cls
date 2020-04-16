@@ -99,6 +99,7 @@ Public Function ConcatArraysOfSameStructure( _
     
     UpperBound = -1
     
+    '@Ignore EmptyIfBlock
     If ArrayType = AG_UNALLOCATED Or ArrayType = AG_UNDEFINED Then
         'Handle Exception
     Else
