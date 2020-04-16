@@ -769,7 +769,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
                 localItems = EnsureScalar1DArray(localItems)
                 If transposeValues Then
                     lengthRows = this.Length
-                    localItems = Transpose_1DArray(localItems)
+                    localItems = Transpose1DArray(localItems)
                 Else
                     lengthColumns = this.Length
                 End If
@@ -780,7 +780,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
                 If transposeValues Then
                     lengthRows = UBound(localItems, 2) - LBound(localItems, 2) + 1
                     lengthColumns = UBound(localItems, 1) - LBound(localItems, 1) + 1
-                    localItems = Transpose_2DArray(localItems)
+                    localItems = Transpose2DArray(localItems)
                 Else
                     lengthRows = UBound(localItems, 1) - LBound(localItems, 1) + 1
                     lengthColumns = UBound(localItems, 2) - LBound(localItems, 2) + 1
@@ -1229,12 +1229,12 @@ Attribute Transpose.VB_Description = "Swaps rows for columns & vice versa."
     localType = GetArrayType(localItems)
     Select Case localType
     Case ArrayTypes.BA_ONEDIMENSION
-        result = Transpose_1DArray(localItems)
+        result = Transpose1DArray(localItems)
     Case ArrayTypes.BA_MULTIDIMENSION
         ' Sould Never match as MD arrs stored as jagged internally
-        result = Transpose_2DArray(localItems)
+        result = Transpose2DArray(localItems)
     Case ArrayTypes.BA_JAGGED
-        result = Transpose_ArrayOfArrays(localItems)
+        result = TransposeArrayOfArrays(localItems)
     Case Else
         result = localItems
     End Select
@@ -2297,8 +2297,7 @@ Attribute EnsureScalar1DArray.VB_Description = "Ensures each element of passed a
 End Function
 
 '@Description("Converts a 1d array to a 1 column wide 2d array.")
-Private Function Transpose_1DArray(ByRef sourceArray() As Variant) As Variant()
-Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column wide 2d array."
+Private Function Transpose1DArray(ByRef sourceArray() As Variant) As Variant()
     Dim i As Long
     Dim j As Long
     Dim localUpperBound As Long
@@ -2313,12 +2312,11 @@ Attribute Transpose_1DArray.VB_Description = "Converts a 1d array to a 1 column 
         result(j, localLowerBound) = sourceArray(i)
         j = j + 1
     Next
-    Transpose_1DArray = result
+    Transpose1DArray = result
 End Function
 
 '@Description("Transposes the values in a 2d array. Rows become columns, columns become rows.")
-Private Function Transpose_2DArray(ByRef sourceArray() As Variant) As Variant()
-Attribute Transpose_2DArray.VB_Description = "Transposes the values in a 2d array. Rows become columns, columns become rows."
+Private Function Transpose2DArray(ByRef sourceArray() As Variant) As Variant()
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long
@@ -2337,12 +2335,11 @@ Attribute Transpose_2DArray.VB_Description = "Transposes the values in a 2d arra
             result(currentRow, currentColumn) = sourceArray(currentColumn, currentRow)
         Next
     Next
-    Transpose_2DArray = result
+    Transpose2DArray = result
 End Function
 
 '@Description("Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows.")
-Private Function Transpose_ArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
-Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a jagged array with a depth of 2. Rows become columns, columns become rows."
+Private Function TransposeArrayOfArrays(ByRef sourceArray() As Variant) As Variant()
     Dim currentRow As Long
     Dim LowerBoundRow As Long
     Dim UpperBoundRow As Long
@@ -2381,7 +2378,7 @@ Attribute Transpose_ArrayOfArrays.VB_Description = "Transposes the values in a j
             result(currentRow) = nested
         Next
     End If
-    Transpose_ArrayOfArrays = result
+    TransposeArrayOfArrays = result
 End Function
 
 '@Description("Returns an empty 1d array with 1 slot.")
@@ -3254,4 +3251,3 @@ Attribute CreateMultidimensionalArray.VB_Description = "Returns an empty multidi
     End Select
     CreateMultidimensionalArray = result
 End Function
-
