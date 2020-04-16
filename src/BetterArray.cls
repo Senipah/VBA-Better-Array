@@ -2341,7 +2341,7 @@ Attribute Transpose2DArray.VB_Description = "Transposes the values in a 2d array
     UpperBoundRow = UBound(sourceArray, 2)
     ReDim result(LowerBoundRow To UpperBoundRow, LowerBoundCol To UpperBoundCol)
     For currentRow = LowerBoundRow To UpperBoundRow
-        For currentColumn = LowerBoundCol To UpperBoundRow
+        For currentColumn = LowerBoundCol To UpperBoundCol
             result(currentRow, currentColumn) = sourceArray(currentColumn, currentRow)
         Next
     Next
