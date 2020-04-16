@@ -10,7 +10,8 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'"
 '@Folder("Tests.Dependencies.ExcelProvider")
 '@ModuleDescription("An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'")
-
+'@IgnoreModule FunctionReturnValueDiscarded
+'@IgnoreModule ProcedureNotUsed
 Option Explicit
 
 Private Const ErrCode As Long = vbObjectError + 513

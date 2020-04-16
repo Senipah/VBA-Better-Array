@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'"
 '@Folder("Tests.Dependencies.ArrayGenerator")
 '@ModuleDescription("Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'")
+'@IgnoreModule ProcedureNotUsed
 
 Option Explicit
 
@@ -166,9 +167,9 @@ Private Function GetOneDimensionalArray( _
     ReDim arr(pLowerBound To GetUpperBound(Length))
     For i = LBound(arr) To UBound(arr)
         If vals.IsObjectType Then
-            Set arr(i) = vals.GetRandomValue()
+            Set arr(i) = vals.GetRandomValue
         Else
-            arr(i) = vals.GetRandomValue()
+            arr(i) = vals.GetRandomValue
         End If
     Next
     GetOneDimensionalArray = arr
@@ -185,9 +186,9 @@ Private Function GetMultidimensionalArray( _
     For i = LBound(arr, 1) To UBound(arr, 1)
         For j = LBound(arr, 2) To UBound(arr, 2)
             If vals.IsObjectType Then
-                Set arr(i, j) = vals.GetRandomValue()
+                Set arr(i, j) = vals.GetRandomValue
             Else
-                arr(i, j) = vals.GetRandomValue()
+                arr(i, j) = vals.GetRandomValue
             End If
         Next
     Next
@@ -257,16 +258,5 @@ End Function
 Private Function GetUpperBound(ByVal Length As Long) As Long
     GetUpperBound = Length + pLowerBound - 1
 End Function
-
-
-
-
-
-
-
-
-
-
-
 
 
