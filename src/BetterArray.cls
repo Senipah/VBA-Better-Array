@@ -622,37 +622,43 @@ End Function
 '@Description("Stores the values contained in an Excel range in the internal array")
 Public Function FromExcelRange( _
         ByRef fromRange As Object, _
-        Optional ByVal columnNumber As Long = MISSING_LONG, _
-        Optional ByVal rowNumber As Long = MISSING_LONG _
+        Optional ByVal detectLastRow As Boolean, _
+        Optional ByVal detectLastColumn As Boolean _
     ) As BetterArray
 Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
-    Dim localColumnNumber As Long
-    Dim localRowNumber As Long
-    
+
     If TypeName(fromRange) = "Range" Then
-        If fromRange.Columns.count = 1 Then
-            localColumnNumber = 1
-        Else
-            localColumnNumber = columnNumber
-        End If
+        Dim startColumn As Long
+        Dim endColumn As Long
+        Dim startRow As Long
+        Dim endRow As Long
         
-        If fromRange.Rows.count = 1 Then
-            localRowNumber = 1
-        Else
-            localRowNumber = rowNumber
-        End If
+        With fromRange
+            startColumn = .Column
+            startRow = .Row
+            endColumn = .Column + .Columns.count - 1
+            endRow = .Row + .Rows.count - 1
+        End With
         
-        Me.Items = fromRange.value
-    
-        If localColumnNumber <> MISSING_LONG Then
-            If localRowNumber <> MISSING_LONG Then
-                Me.Items = Me.ExtractSegment(localRowNumber, localColumnNumber)
-            Else
-                Me.Items = Me.ExtractSegment(, localColumnNumber)
+        With fromRange.Parent
+            If detectLastColumn Then
+                endColumn = .Cells.Item(startRow, .Columns.count).End(xlToLeft).Column
             End If
-        ElseIf localRowNumber <> MISSING_LONG Then
-            Me.Items = Me.ExtractSegment(localRowNumber)
+            
+            If detectLastRow Then
+                endRow = .Cells.Item(.Rows.count, startColumn).End(xlUp).Row
+            End If
+            
+            Me.Items = .Range(.Cells(startRow, startColumn), .Cells(endRow, endColumn)).value
+        End With
+        
+        ' convert arrays of single column or row to 1d
+        If startColumn = endColumn And startRow <> endRow Then
+            Me.Items = Me.ExtractSegment(, startColumn)
+        ElseIf startColumn <> endColumn And startRow = endRow Then
+            Me.Items = Me.ExtractSegment(startRow)
         End If
+        
     Else
         RaiseError ErrorCodes.EC_EXPECTED_RANGE_OBJECT, "FromExcelRange()", "FromRange"
     End If

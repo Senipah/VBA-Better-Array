@@ -3935,6 +3935,173 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'''''''''''''''''''''''''''
+' Method - FromExcelRange '
+'''''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_FromExcelRange")
+Public Sub FromExcelRange_NoDetection_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim mockData() As Variant
+    Gen.LowerBound = 1
+    ' Using an array of strings as Excel converts all numbers to double
+    mockData = Gen.GetArray(AG_STRING, AG_MULTIDIMENSION)
+    
+    Dim lastRow As Long
+    lastRow = UBound(mockData, 1)
+    Dim lastColumn As Long
+    lastColumn = UBound(mockData, 2)
+    
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
+    ExcelApp.CurrentWorksheet.Range("A1").Resize(lastRow, lastColumn).value = mockData
+    
+    Dim expected(1 To 2, 1 To 2) As Variant
+    expected(1, 1) = mockData(1, 1)
+    expected(1, 2) = mockData(1, 2)
+    expected(2, 1) = mockData(2, 1)
+    expected(2, 2) = mockData(2, 2)
+    
+    Dim actual() As Variant
+    
+    'Act:
+    sut.FromExcelRange ExcelApp.CurrentWorksheet.Range("A1:B2")
+    actual = sut.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FromExcelRange")
+Private Sub FromExcelRange_ColumnDetection_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim mockData() As Variant
+    Gen.LowerBound = 1
+    ' Using an array of strings as Excel converts all numbers to double
+    mockData = Gen.GetArray(AG_STRING, AG_MULTIDIMENSION)
+    
+    Dim lastRow As Long
+    lastRow = UBound(mockData, 1)
+    Dim lastColumn As Long
+    lastColumn = UBound(mockData, 2)
+    
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
+    ExcelApp.CurrentWorksheet.Range("A1").Resize(lastRow, lastColumn).value = mockData
+    
+    Dim i As Long
+    Dim expected() As Variant
+    ReDim expected(1 To lastRow)
+    For i = 1 To lastRow
+        expected(i) = mockData(1, i)
+    Next
+    
+    Dim actual() As Variant
+    
+    'Act:
+    sut.FromExcelRange ExcelApp.CurrentWorksheet.Range("A1"), False, True
+    actual = sut.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FromExcelRange")
+Private Sub FromExcelRange_RowDetection_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim mockData() As Variant
+    Gen.LowerBound = 1
+    ' Using an array of strings as Excel converts all numbers to double
+    mockData = Gen.GetArray(AG_STRING, AG_MULTIDIMENSION)
+    
+    Dim lastRow As Long
+    lastRow = UBound(mockData, 1)
+    Dim lastColumn As Long
+    lastColumn = UBound(mockData, 2)
+    
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
+    ExcelApp.CurrentWorksheet.Range("A1").Resize(lastRow, lastColumn).value = mockData
+    
+    Dim i As Long
+    Dim expected() As Variant
+    ReDim expected(1 To lastRow)
+    For i = 1 To lastRow
+        expected(i) = mockData(i, 1)
+    Next
+    
+    Dim actual() As Variant
+    
+    'Act:
+    sut.FromExcelRange ExcelApp.CurrentWorksheet.Range("A1"), True, False
+    actual = sut.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_FromExcelRange")
+Private Sub FromExcelRange_ColumnAndRowDetection_Success()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim mockData() As Variant
+    Gen.LowerBound = 1
+    ' Using an array of strings as Excel converts all numbers to double
+    mockData = Gen.GetArray(AG_STRING, AG_MULTIDIMENSION)
+    
+    Dim lastRow As Long
+    lastRow = UBound(mockData, 1)
+    Dim lastColumn As Long
+    lastColumn = UBound(mockData, 2)
+    
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
+    ExcelApp.CurrentWorksheet.Range("A1").Resize(lastRow, lastColumn).value = mockData
+    
+    Dim expected() As Variant
+    expected = mockData
+    
+    Dim actual() As Variant
+    
+    'Act:
+    sut.FromExcelRange ExcelApp.CurrentWorksheet.Range("A1"), True, True
+    actual = sut.Items
+    
+    'Assert:
+    Assert.SequenceEquals expected, actual, "Actual <> expected"
+    
+TestExit:
+    Exit Sub
+TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
 
 '''''''''''''''''''''''''
 ' Method - ToExcelRange '
