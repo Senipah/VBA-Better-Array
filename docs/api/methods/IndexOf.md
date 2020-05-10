@@ -11,7 +11,7 @@ The `IndexOf()` method method returns the first index at which a given element c
 
 ## Syntax
 
-*expression*.**IndexOf**(*searchElement*,[*fromIndex*]) 
+*expression*.**IndexOf**(*searchElement*,[*fromIndex*],[*compType*]) 
 
 ### Parameters
 
@@ -40,6 +40,29 @@ Necessity
 
 Description
 : The index to start the search at. If the index is greater than or equal to the array's length, -9999 is returned, which means the array will not be searched. If the provided index value is a negative number, it is taken as the offset from the end of the array. Note: if the provided index is negative, the array is still searched from front to back. If the provided index is 0, then the whole array will be searched. Default: entire array is searched.
+
+---
+
+Name 
+: `compType`
+
+Type
+: `ComparisonType (Long)`
+
+Necessity
+: Optional
+
+Description
+: The type of comparison to perform. See the comparison type enumerations below. Default is CT_EQUALITY.
+
+#### ComparisonType Enumerations
+
+`CT_EQUALITY`
+: Compares `searchElement` against the element at the current index for equality. This is the default comparison method.
+
+`CT_LIKENESS`
+: `searchElement` is treated as a string pattern and compared against the element as the current index using the `Like` operator. If this option is chosen `searchElement` must be a String type or an error will be raised.
+
 
 ### Returns
 

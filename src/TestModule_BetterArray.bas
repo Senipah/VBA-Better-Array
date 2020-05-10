@@ -5076,6 +5076,63 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    Dim pattern As String
+    
+    expected = 3
+    pattern = "a*a"
+    testArray = Array("Zero", "One", "Two", "aBBBa")
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(pattern, , CT_LIKENESS)
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
+    Const ExpectedError As Long = ErrorCodes.EC_STRING_TYPE_EXPECTED
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    Dim pattern As Collection
+    
+    expected = 3
+    Set pattern = New Collection
+    testArray = Array("Zero", "One", "Two", "aBBBa")
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(pattern, , CT_LIKENESS)
+Assert:
+    Assert.Fail "Expected error was not raised"
+
+TestExit:
+    Exit Sub
+TestFail:
+    If Err.number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
+End Sub
+
+'@TestMethod("BetterArray_IndexOf")
 Private Sub IndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
     On Error GoTo TestFail
     
@@ -5973,6 +6030,63 @@ TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    Dim pattern As String
+    
+    expected = 3
+    pattern = "a*a"
+    testArray = Array("Zero", "One", "Two", "aBBBa")
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(pattern, , CT_LIKENESS)
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
+    Const ExpectedError As Long = ErrorCodes.EC_STRING_TYPE_EXPECTED
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim expected As Long
+    Dim actual As Long
+    Dim testArray() As Variant
+    Dim pattern As Collection
+    
+    expected = 3
+    Set pattern = New Collection
+    testArray = Array("Zero", "One", "Two", "aBBBa")
+    sut.Items = testArray
+    
+    'Act:
+    actual = sut.IndexOf(pattern, , CT_LIKENESS)
+Assert:
+    Assert.Fail "Expected error was not raised"
+
+TestExit:
+    Exit Sub
+TestFail:
+    If Err.number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
 End Sub
 
 '@TestMethod("BetterArray_LastIndexOf")

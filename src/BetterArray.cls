@@ -51,7 +51,13 @@ Public Enum ErrorCodes
     EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION
     EC_EXPECTED_VARIANT_ARRAY
     EC_EXCEEDS_MAX_ARRAY_LENGTH
+    EC_STRING_TYPE_EXPECTED
     EC_END
+End Enum
+
+Public Enum ComparisonType
+    CT_EQUALITY
+    CT_LIKENESS
 End Enum
 
 Private Type ErrorDefinition
@@ -883,15 +889,24 @@ Attribute IsSorted.VB_Description = "Tests if the stored array is sorted in asce
     IsSorted = result
 End Function
 
+
+
 '@Description("returns the first index at which a given element can be found in the array")
 Public Function IndexOf( _
         ByVal searchElement As Variant, _
-        Optional ByVal fromIndex As Long = MISSING_LONG _
+        Optional ByVal fromIndex As Long = MISSING_LONG, _
+        Optional ByVal compType As ComparisonType _
     ) As Long
-Attribute IndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim localItems() As Variant
     Dim relativeStart As Long
     Dim currentIndex As Long
+    
+    If compType = CT_LIKENESS Then
+        Debug.Print TypeName(searchElement)
+        If TypeName(searchElement) <> "String" Then
+            RaiseError EC_STRING_TYPE_EXPECTED, "IndexOf", "searchElement"
+        End If
+    End If
     
     If this.Length = 0 Then
         IndexOf = MISSING_LONG
@@ -920,8 +935,15 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
         End If
     End If
     
+    Dim isMatch As Boolean
     Do While currentIndex <= UBound(localItems)
-        If ElementsAreEqual(searchElement, localItems(currentIndex)) Then
+        Select Case compType
+        Case ComparisonType.CT_LIKENESS
+            isMatch = CStr(localItems(currentIndex)) Like CStr(searchElement)
+        Case Else
+            isMatch = ElementsAreEqual(searchElement, localItems(currentIndex))
+        End Select
+        If isMatch Then
             IndexOf = currentIndex
             Exit Function
         End If
@@ -934,11 +956,18 @@ End Function
 '@Description("returns the first index at which a given element can be found in the array")
 Public Function LastIndexOf( _
         ByVal searchElement As Variant, _
-        Optional ByVal fromIndex As Long = MISSING_LONG _
+        Optional ByVal fromIndex As Long = MISSING_LONG, _
+        Optional ByVal compType As ComparisonType _
     ) As Long
-Attribute LastIndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim localItems() As Variant
     Dim currentIndex As Long
+    
+    If compType = CT_LIKENESS Then
+        Debug.Print TypeName(searchElement)
+        If TypeName(searchElement) <> "String" Then
+            RaiseError EC_STRING_TYPE_EXPECTED, "IndexOf", "searchElement"
+        End If
+    End If
     
     If this.Length = 0 Then
         LastIndexOf = MISSING_LONG
@@ -958,8 +987,15 @@ Attribute LastIndexOf.VB_Description = "returns the first index at which a given
         
     End If
     
+    Dim isMatch As Boolean
     Do While currentIndex >= LBound(localItems)
-        If ElementsAreEqual(searchElement, localItems(currentIndex)) Then
+        Select Case compType
+        Case ComparisonType.CT_LIKENESS
+            isMatch = CStr(localItems(currentIndex)) Like CStr(searchElement)
+        Case Else
+            isMatch = ElementsAreEqual(searchElement, localItems(currentIndex))
+        End Select
+        If isMatch Then
             LastIndexOf = currentIndex
             Exit Function
         End If
@@ -2260,6 +2296,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         source:=source, _
         description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
+    this.ErrorDefinitions(ErrorCodes.EC_STRING_TYPE_EXPECTED) = ErrorDefinitionFactory( _
+    number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
+    source:=source, _
+    description:="Expected a String or String-coercible type." _
+)
 End Sub
 
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
