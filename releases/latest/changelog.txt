@@ -1,2 +1,1 @@
-f60896f FromExcelRange refactor (autoExpand range)
-21fc563 Update FromExcelRange docs for refactor
+612a448 IndexOf & LastIndexOf - Add "Like" comparison
