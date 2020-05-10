@@ -902,7 +902,6 @@ Public Function IndexOf( _
     Dim currentIndex As Long
     
     If compType = CT_LIKENESS Then
-        Debug.Print TypeName(searchElement)
         If TypeName(searchElement) <> "String" Then
             RaiseError EC_STRING_TYPE_EXPECTED, "IndexOf", "searchElement"
         End If
@@ -963,7 +962,6 @@ Public Function LastIndexOf( _
     Dim currentIndex As Long
     
     If compType = CT_LIKENESS Then
-        Debug.Print TypeName(searchElement)
         If TypeName(searchElement) <> "String" Then
             RaiseError EC_STRING_TYPE_EXPECTED, "IndexOf", "searchElement"
         End If
