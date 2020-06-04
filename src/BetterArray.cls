@@ -2785,7 +2785,7 @@ Attribute JaggedToMulti.VB_Description = "Converts jagged arrays to multidimensi
             End If
         Next
     ElseIf localDepth > 2 And localDepth <= 20 Then
-        result = RecursiveJaggedToMulti(sourceArray, localDepth, ensureScalar:=localDepth)
+        result = RecursiveJaggedToMulti(sourceArray, localDepth, ensureScalar:=ensureScalar)
     Else
         RaiseError EC_MAX_DIMENSIONS_LIMIT, "JaggedToMulti()", "sourceArray()"
         result = sourceArray
