@@ -1,1 +1,1 @@
-4b2a270 handle arbitrary lb in shuffle
+bbc5dd0 add test for base 1 shuffle
