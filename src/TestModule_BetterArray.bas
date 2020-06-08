@@ -3869,6 +3869,30 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Shuffle")
+Private Sub Shuffle_OneDimArrayBase1_ArrayIsShuffled()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    Dim sortedArray() As Variant
+    Dim actual() As Variant
+    
+    Gen.LowerBound = 1
+    testArray = Gen.GetArray(AG_DOUBLE)
+    sut.Items = testArray
+    sortedArray = sut.Sort.Items
+    'Act:
+    actual = sut.Shuffle.Items
+
+    'Assert:
+    Assert.NotSequenceEquals sortedArray, actual, "Array is not shufled"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Shuffle")
 Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
