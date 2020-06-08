@@ -1798,7 +1798,7 @@ Attribute RecursiveShuffle.VB_Description = "shuffles the order of the passed ar
             nested = sourceArray(i)
             sourceArray(i) = RecursiveShuffle(nested, recurse)
         End If
-        j = Int(Rnd * (i + 1))
+        j = Int(Rnd * (i - lower) + 1)
         If IsArray(sourceArray(j)) And recurse Then
             nested = sourceArray(j)
             sourceArray(j) = RecursiveShuffle(nested, recurse)
