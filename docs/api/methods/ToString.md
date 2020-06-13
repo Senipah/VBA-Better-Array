@@ -7,7 +7,7 @@ grand_parent: API
 # ToString
 
 ## Description
-The `ToString()` method returns a string representing the array structure and its elements. Arrays are enclosed with square brackets. Elements are comma-separated. Object types are represented as "[Object]". Set the `PrettyPrint` argument to `True` to format the returned string with indentation for easier viewing of long or nested arrays.
+The `ToString()` method returns a string representing the array structure and its elements. By default, arrays are enclosed with curly braces and elements are comma-separated. Object types are represented as "[Object]". Set the `PrettyPrint` argument to `True` to format the returned string with indentation for easier viewing of long or nested arrays.
 
 ## Syntax
 
