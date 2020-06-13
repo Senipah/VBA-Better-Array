@@ -369,14 +369,17 @@ End Function
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString( _
         Optional ByVal prettyPrint As Boolean, _
-        Optional ByVal delimitStrings As Boolean, _
-        Optional ByVal openingDelimiter As String, _
-        Optional ByVal closingDelimiter As String _
+        Optional ByVal separator As String = ",", _
+        Optional ByVal openingDelimiter As String = "{", _
+        Optional ByVal closingDelimiter As String = "}", _
+        Optional ByVal quoteStrings As Boolean _
     ) As String
-Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
     Dim ArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
+    Dim sep As String
+    
+    sep = IIf(prettyPrint, separator & Space(1), separator)
     
     localItems = InternalItems
     ArrayType = GetArrayType(localItems)
@@ -388,9 +391,10 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
         result = RecursiveToString( _
             sourceArray:=localItems, _
             prettyPrint:=prettyPrint, _
-            delimitStrings:=delimitStrings, _
+            separator:=sep, _
             openingDelimiter:=openingDelimiter, _
-            closingDelimiter:=closingDelimiter _
+            closingDelimiter:=closingDelimiter, _
+            quoteStrings:=quoteStrings _
         )
     End If
     ToString = result
@@ -2523,34 +2527,29 @@ End Sub
 Private Function RecursiveToString( _
         ByRef sourceArray() As Variant, _
         ByVal prettyPrint As Boolean, _
-        Optional ByVal tabs As Long = 1, _
-        Optional ByVal delimitStrings As Boolean, _
-        Optional ByVal openingDelimiter As String, _
-        Optional ByVal closingDelimiter As String _
+        ByVal separator As String, _
+        ByVal openingDelimiter As String, _
+        ByVal closingDelimiter As String, _
+        ByVal quoteStrings As Boolean, _
+        Optional ByVal tabs As Long = 1 _
     ) As String
-Attribute RecursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim result As String
-    Dim sep As String
     Dim i As Long
-    Dim opener As String
-    Dim closer As String
+    Dim sep As String
     
-    opener = IIf(openingDelimiter = vbNullString, "{", openingDelimiter)
-    closer = IIf(closingDelimiter = vbNullString, "}", closingDelimiter)
-    
-    result = opener
+    result = openingDelimiter
     For i = LBound(sourceArray) To UBound(sourceArray)
-        sep = IIf(i = UBound(sourceArray), closer, IIf(prettyPrint, ", ", ","))
+        sep = IIf(i = UBound(sourceArray), closingDelimiter, separator)
         If IsArray(sourceArray(i)) Then
             Dim nested() As Variant
             nested = sourceArray(i)
             If prettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
-            result = result & RecursiveToString(nested, prettyPrint, tabs + 1, delimitStrings, opener, closer)
+            result = result & RecursiveToString(nested, prettyPrint, separator, openingDelimiter, closingDelimiter, quoteStrings, tabs + 1)
             result = result & IIf(i = UBound(sourceArray) And prettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
         Else
             result = result & Replace( _
-                    CStr(GetScalarRepresentation(sourceArray(i), delimitStrings)), _
+                    CStr(GetScalarRepresentation(sourceArray(i), quoteStrings)), _
                     ",", _
                     vbNullString _
                 ) & sep
@@ -2562,7 +2561,7 @@ End Function
 '@Description("Returns scalar values as is or appropriate representation if not scalar.")
 Private Function GetScalarRepresentation( _
         ByRef element As Variant, _
-        Optional ByVal delimitStrings As Boolean _
+        Optional ByVal quoteStrings As Boolean _
     ) As Variant
 Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is or appropriate representation if not scalar."
     Dim result As Variant
@@ -2582,9 +2581,9 @@ Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is 
     If IsArray(result) And Not IsEmpty(result) Then
         Dim passThruArray() As Variant
         passThruArray = result
-        result = RecursiveToString(passThruArray, False, delimitStrings:=delimitStrings)
+        result = RecursiveToString(passThruArray, False, ",", "{", "}", quoteStrings)
     End If
-    If Not IsNumeric(result) And delimitStrings Then
+    If Not IsNumeric(result) And quoteStrings Then
         GetScalarRepresentation = Chr$(34) & result & Chr$(34)
     Else
         GetScalarRepresentation = result

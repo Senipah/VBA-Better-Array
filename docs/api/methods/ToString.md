@@ -11,7 +11,7 @@ The `ToString()` method returns a string representing the array structure and it
 
 ## Syntax
 
-*expression*.**ToString**([*prettyPrint*], [*delimitStrings*], [*openingDelimiter*], [*closingDelimiter*])
+*expression*.**ToString**([*prettyPrint*], [*separator*], [*openingDelimiter*], [*closingDelimiter*], [*quoteStrings*])
 
 ### Parameters
 
@@ -30,16 +30,16 @@ Description
 ---
 
 Name 
-: `delimitStrings`
+: `separator`
 
 Type
-: `Boolean`
+: `String`
 
 Necessity
 : Optional
 
 Description
-: If true, any string values stored in the array will additionally be enclosed by opening and closing quotation marks (`"`).
+: If provided, the string passed to `separator` will be used to separate individual elements within the array. If ommitted, the default character of `,` will be used.
 
 ---
 
@@ -68,6 +68,22 @@ Necessity
 
 Description
 : If provided, the string passed to `closingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+
+---
+
+Name 
+: `quoteStrings`
+
+Type
+: `Boolean`
+
+Necessity
+: Optional
+
+Description
+: If true, any string values stored in the array will additionally be enclosed by opening and closing quotation marks (`"`).
+
+
 
 ### Returns
 
