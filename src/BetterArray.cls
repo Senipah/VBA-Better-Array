@@ -374,6 +374,7 @@ Public Function ToString( _
         Optional ByVal closingDelimiter As String = "}", _
         Optional ByVal quoteStrings As Boolean _
     ) As String
+Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
     Dim ArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
@@ -901,6 +902,7 @@ Public Function IndexOf( _
         Optional ByVal fromIndex As Long = MISSING_LONG, _
         Optional ByVal compType As ComparisonType _
     ) As Long
+Attribute IndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim localItems() As Variant
     Dim relativeStart As Long
     Dim currentIndex As Long
@@ -962,6 +964,7 @@ Public Function LastIndexOf( _
         Optional ByVal fromIndex As Long = MISSING_LONG, _
         Optional ByVal compType As ComparisonType _
     ) As Long
+Attribute LastIndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim localItems() As Variant
     Dim currentIndex As Long
     
@@ -1704,10 +1707,268 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
     Set Unique = Me
 End Function
 
+'@Description("Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
+Public Function FromCSV( _
+    ByVal path As String, _
+    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByRef RowDelimiter As String = vbNewLine, _
+    Optional ByRef Quote As String = """", _
+    Optional ByVal IgnoreFirstRow As Boolean _
+) As BetterArray
+Attribute FromCSV.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
+    Dim rawData As String
+    Dim parsed() As Variant
+    Dim localType As ArrayTypes
+    
+    If this.ArrayType = BA_MULTIDIMENSION Then
+        localType = BA_MULTIDIMENSION
+    Else
+        localType = BA_JAGGED
+    End If
+    
+    
+    Open path For Input As #1
+        rawData = Input$(LOF(1), #1)
+    Close #1
+    
+    parsed = ParseCSV( _
+        Expression:=rawData, _
+        ColumnDelimiter:=ColumnDelimiter, _
+        RowDelimiter:=RowDelimiter, _
+        Quote:=Quote, _
+        IgnoreFirstRow:=IgnoreFirstRow, _
+        ReturnJagged:=IIf(localType = BA_JAGGED, True, False), _
+        Base:=this.LowerBound _
+    )
+    
+    this.Length = UBound(parsed)
+    this.Capacity = UBound(parsed)
+    this.ArrayType = localType
+    this.Items = parsed
+    Set FromCSV = Me
+End Function
 
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
+
+'@Description("Parses CSV string into a 2d or jagged array")
+Private Function ParseCSV( _
+    ByRef Expression As String, _
+    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByRef RowDelimiter As String = vbNewLine, _
+    Optional ByRef Quote As String = """", _
+    Optional ByVal IgnoreFirstRow As Boolean, _
+    Optional ByVal ReturnJagged As Boolean, _
+    Optional ByVal Base As Long _
+) As Variant()
+Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array"
+    Const queueSize As Long = 200000
+    Dim buffer As String
+    Dim expressionLength As Long
+    Dim rowDelimiterLength As Long
+    Dim compare As VbCompareMethod
+    Dim countColumns As Long
+    Dim countRows As Long
+    Dim maxRows As Long
+    Dim lineEndIndices() As Long
+    Dim rowDelimIndex As Long
+    Dim quoteDelimIndex As Long
+    Dim bufferIndex As Long
+    Dim inQuote As Boolean
+    Dim rowIndex As Long
+    Dim rowCursor As Long
+    Dim cursorStart As Long
+    Dim columnIndex As Long
+    Dim startIndex As Long
+    Dim results() As Variant
+    Dim jaggedRow() As Variant
+    
+    compare = vbBinaryCompare
+    ' length information
+    expressionLength = LenB(Expression)
+    rowDelimiterLength = LenB(RowDelimiter)
+    
+    If expressionLength = 0 Or rowDelimiterLength = 0 Then
+        ' TODO: Raise Err?
+        ParseCSV = Array()
+        Exit Function
+    End If
+    
+    ' estimate max number of rows - does not account for line breaks within strings
+    maxRows = (Len(Expression) - Len(Replace(Expression, RowDelimiter, vbNullString))) / Len(RowDelimiter)
+    ReDim lineEndIndices(maxRows)
+        
+    ' find first row delimiter
+    rowDelimIndex = InStrB(1, Expression, RowDelimiter, compare)
+    Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
+        rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
+    Loop
+    
+    ' find first quote delimiter
+    quoteDelimIndex = InStrB(1, Expression, Quote, compare)
+    Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
+        quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
+    Loop
+    
+    Do While rowDelimIndex > 0
+        ' see if row delimiter before quote delimiter
+        If rowDelimIndex + rowDelimiterLength <= quoteDelimIndex Or quoteDelimIndex = 0 Then
+            lineEndIndices(countRows) = rowDelimIndex
+            rowDelimIndex = InStrB(rowDelimIndex + rowDelimiterLength, Expression, RowDelimiter, compare)
+            Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
+                rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
+            Loop
+            If countRows Then
+                If countRows Mod queueSize = 0 Then
+                    ' release thread to process OS event queue
+                    '@Ignore FunctionReturnValueDiscarded
+                    DoEvents
+                    Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
+                End If
+                countRows = countRows + 1
+            Else
+                ' calculate number of columns in first row
+                If countColumns < 1 Then
+                    countColumns = 1
+                    For bufferIndex = 0 To (lineEndIndices(0) - 1) \ 2
+                        If inQuote Then
+                            If Mid$(Expression, bufferIndex + 1, 1) = Quote Then
+                                inQuote = False
+                            End If
+                        Else
+                            Select Case Mid$(Expression, bufferIndex + 1, 1)
+                                Case Quote
+                                    inQuote = True
+                                Case ColumnDelimiter
+                                    countColumns = countColumns + 1
+                            End Select
+                        End If
+                    Next bufferIndex
+                End If
+                countRows = 1
+            End If
+        Else
+            ' quote delimiter before row delimiter
+            ' find next quote delim
+            quoteDelimIndex = InStrB(quoteDelimIndex + 2, Expression, Quote, compare)
+            Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
+                quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
+            Loop
+            ' see if closing quote delim found
+            If quoteDelimIndex Then
+                ' find next row delim
+                rowDelimIndex = InStrB(quoteDelimIndex + 2, Expression, RowDelimiter, compare)
+                Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
+                    rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
+                Loop
+                ' if next row delim found
+                If rowDelimIndex Then
+                    ' find next quote delim
+                    quoteDelimIndex = InStrB(quoteDelimIndex + 2, Expression, Quote, compare)
+                    Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
+                        quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
+                    Loop
+                End If
+            End If
+        End If
+    Loop
+    
+    Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
+    
+    lineEndIndices(countRows) = expressionLength + 1
+    bufferIndex = 0
+    inQuote = False
+    buffer = LeftB$(Expression, lineEndIndices(0) - 1 + 2)
+    
+    If IgnoreFirstRow Then
+        startIndex = 1
+    Else
+        startIndex = 0
+    End If
+    
+    If ReturnJagged Then
+        ReDim jaggedRow(Base To Base + countColumns - 1)
+        ReDim results(Base To Base + countRows - 1 - startIndex)
+    Else
+        ReDim results(Base To Base + countRows - 1 - startIndex, Base To Base + countColumns - 1)
+    End If
+    
+    For rowIndex = startIndex To countRows - 1
+        If rowIndex Mod queueSize = 0 And rowIndex Then
+            ' release thread to process OS event queue
+            '@Ignore FunctionReturnValueDiscarded
+            DoEvents
+            Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
+        End If
+        ' start index for columns
+        columnIndex = 0
+        If rowIndex = 0 Then
+            cursorStart = 1
+        Else
+            cursorStart = lineEndIndices(rowIndex - 1) + rowDelimiterLength
+        End If
+        buffer = MidB$(Expression, cursorStart, lineEndIndices(rowIndex) - startIndex + 2)
+        bufferIndex = 0
+        inQuote = False
+        For rowCursor = 0 To (lineEndIndices(rowIndex) - cursorStart) \ 2
+            If inQuote Then
+                Select Case Mid$(buffer, rowCursor + 1, 1)
+                    Case Quote
+                        If Mid$(buffer, rowCursor + 2, 1) = Quote Then
+                            ' skip next char (quote)
+                            rowCursor = rowCursor + 1
+                            ' add quote char
+                            Mid$(buffer, bufferIndex + 1, 1) = Quote
+                            bufferIndex = bufferIndex + 1
+                        Else
+                            inQuote = False
+                        End If
+                    Case Else
+                        ' add this char
+                        Mid$(buffer, bufferIndex + 1, 1) = Mid$(buffer, rowCursor + 1, 1)
+                        bufferIndex = bufferIndex + 1
+                End Select
+            Else
+                Select Case Mid$(buffer, rowCursor + 1, 1)
+                    Case Quote
+                        inQuote = True
+                    Case ColumnDelimiter
+                        ' add this column
+                        If ReturnJagged Then
+                            jaggedRow(Base + columnIndex) = Left$(buffer, bufferIndex)
+                        Else
+                            results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex)
+                        End If
+                        ' max column reached?
+                        columnIndex = columnIndex + 1
+                        If columnIndex >= countColumns Then
+                            Exit For
+                        End If
+                        ' start filling column string buffer from start
+                        bufferIndex = 0
+                    Case Else
+                        ' add this char
+                        If rowCursor > bufferIndex Then
+                            Mid$(buffer, bufferIndex + 1, 1) = Mid$(buffer, rowCursor + 1, 1)
+                        End If
+                        bufferIndex = bufferIndex + 1
+                End Select
+            End If
+        Next rowCursor
+        ' add last column item
+        If columnIndex < countColumns Then
+            If ReturnJagged Then
+                jaggedRow(Base + columnIndex) = Left$(buffer, bufferIndex - 1)
+                results(Base + rowIndex - startIndex) = jaggedRow
+            Else
+                results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex - 1)
+            End If
+        End If
+    Next rowIndex
+    Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
+    ParseCSV = results
+End Function
 
 '@Description("Recursvely fills the array (and nested arrays) with the passed value.")
 Private Function RecursiveFill( _
@@ -2533,6 +2794,7 @@ Private Function RecursiveToString( _
         ByVal quoteStrings As Boolean, _
         Optional ByVal tabs As Long = 1 _
     ) As String
+Attribute RecursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim result As String
     Dim i As Long

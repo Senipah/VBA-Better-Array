@@ -12,3 +12,7 @@ BetterArray.xlsb
 /releases/v*
 /releases/temp
 /build/
+BetterArray.xlsm
+~$BetterArray.xlsm
+SpillExample.xlsm
+~$SpillExample.xlsm

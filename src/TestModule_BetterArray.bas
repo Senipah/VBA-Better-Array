@@ -10,6 +10,7 @@ Option Private Module
 '@IgnoreModule ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
+'@IgnoreModule FunctionReturnValueDiscarded
 
 'Private Assert As Object
 'Move to early bind
@@ -4273,7 +4274,7 @@ Private Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDim
     Dim tempBetterArray As BetterArray
     Dim destination As Object
     Dim returnedRange As Object
-    Dim OutputSheet As Object
+    Dim outputSheet As Object
     Dim ExcelApp As ExcelProvider
     Dim i As Long
     Dim j As Long
@@ -4282,8 +4283,8 @@ Private Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDim
     Dim sourceArray() As Variant
     
     Set ExcelApp = New ExcelProvider
-    Set OutputSheet = ExcelApp.CurrentWorksheet
-    Set destination = OutputSheet.Range("A1")
+    Set outputSheet = ExcelApp.CurrentWorksheet
+    Set destination = outputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
     sourceArray = Gen.GetArray(AG_DOUBLE, AG_JAGGED, depth:=3)
@@ -5131,7 +5132,9 @@ Private Sub IndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
     On Error GoTo TestFail
     
     'Arrange:
+    '@Ignore VariableNotUsed
     Dim expected As Long
+    '@Ignore VariableNotUsed
     Dim actual As Long
     Dim testArray() As Variant
     Dim pattern As Collection
@@ -5935,7 +5938,7 @@ Private Sub Fill_OneDimArray2To4_SpecifiedIndicesFilled()
     
     testArray = Gen.GetArray
     
-    Const FillVal = 0
+    Const FillVal As Long = 0
         
     expected = testArray
     Dim i As Long
@@ -5970,7 +5973,7 @@ Private Sub Fill_OneDimArray1ToEnd_SpecifiedIndicesFilled()
     
     testArray = Gen.GetArray
     
-    Const FillVal = 5
+    Const FillVal As Long = 5
         
     expected = testArray
     Dim i As Long
@@ -6005,7 +6008,7 @@ Private Sub Fill_OneDimArrayAll_SpecifiedIndicesFilled()
     
     testArray = Gen.GetArray
     
-    Const FillVal = 6
+    Const FillVal As Long = 6
         
     expected = testArray
     Dim i As Long
@@ -6088,7 +6091,9 @@ Private Sub LastIndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
     On Error GoTo TestFail
     
     'Arrange:
+    '@Ignore VariableNotUsed
     Dim expected As Long
+    '@Ignore VariableNotUsed
     Dim actual As Long
     Dim testArray() As Variant
     Dim pattern As Collection
