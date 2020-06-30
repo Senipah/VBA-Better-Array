@@ -8,14 +8,7 @@ grand_parent: API
 
 ## Description
 
-The `FromCSV()` method accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array. Fields that contain a special character (comma, CR*, LF*, or double quote*), and are "escaped" by enclosing them in double quotes (Hex 22) are correctly handled as per the [RFC 4180](https://tools.ietf.org/html/rfc4180#page-2) specification. *WIP
-
-    ByRef Path As String, _
-    Optional ByVal ColumnDelimiter As String = ",", _
-    Optional ByRef RowDelimiter As String = vbNewLine, _
-    Optional ByRef Quote As String = """", _
-    Optional ByVal IgnoreFirstRow As Boolean _
-
+The `FromCSV()` method accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array. Fields that contain a special character (comma, CR\*, LF\*, or double quote\*), and are "escaped" by enclosing them in double quotes (Hex 22) are correctly handled as per the [RFC 4180](https://tools.ietf.org/html/rfc4180#page-2) specification. *WIP
 
 ## Syntax
 
