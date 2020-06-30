@@ -1,1 +1,2 @@
-90016fd add separator param toString
+d0cbc23 add FromCSV method
+fa833e1 fix innacuracy in toString docs
