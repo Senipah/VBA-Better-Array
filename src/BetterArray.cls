@@ -389,14 +389,14 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
         If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
             localItems = MultiToJagged(localItems)
         End If
-        result = RecursiveToString( _
+        RecursiveToString _
             sourceArray:=localItems, _
             prettyPrint:=prettyPrint, _
             separator:=sep, _
             openingDelimiter:=openingDelimiter, _
             closingDelimiter:=closingDelimiter, _
-            quoteStrings:=quoteStrings _
-        )
+            quoteStrings:=quoteStrings
+        result = StringBuilder(Final:=True)
     End If
     ToString = result
 End Function
@@ -581,7 +581,7 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Dim relativeStart As Long
     Dim relativeEnd As Long
     Dim oldIndex As Long
-    Dim final As Long
+    Dim Final As Long
     Dim count As Long
     Dim newIndex As Long
     Dim localItems() As Variant
@@ -605,16 +605,16 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
         relativeEnd = endIndex
     End If
     If relativeEnd < LBound(localItems) Then
-        final = Max((localLength + relativeEnd), LBound(localItems))
+        Final = Max((localLength + relativeEnd), LBound(localItems))
     Else
-        final = Min(relativeEnd, localLength + LBound(localItems))
+        Final = Min(relativeEnd, localLength + LBound(localItems))
     End If
     
     newIndex = LBound(localItems)
-    count = Max(final - oldIndex, 0) + LBound(localItems)
+    count = Max(Final - oldIndex, 0) + LBound(localItems)
     If count > newIndex Then
         ReDim result(newIndex To count - 1)
-        Do While oldIndex < final
+        Do While oldIndex < Final
             If oldIndex >= LBound(localItems) And oldIndex <= UBound(localItems) Then
                 LetOrSetElement result(newIndex), localItems(oldIndex)
                 newIndex = newIndex + 1
@@ -1451,7 +1451,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
     Dim relativeEnd As Long
     Dim toIndex As Long
     Dim fromIndex As Long
-    Dim final As Long
+    Dim Final As Long
     Dim count As Long
     Dim direction As Long
     Dim localItems() As Variant
@@ -1487,12 +1487,12 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
         End If
         
         If relativeEnd < 0 Then
-            final = Max((localLength + relativeEnd), 0)
+            Final = Max((localLength + relativeEnd), 0)
         Else
-            final = Min(relativeEnd, localLength)
+            Final = Min(relativeEnd, localLength)
         End If
         
-        count = Min(final - fromIndex, localLength - toIndex)
+        count = Min(Final - fromIndex, localLength - toIndex)
         
         If fromIndex < toIndex And toIndex < fromIndex + count Then
             direction = -1
@@ -2784,8 +2784,52 @@ Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable
     End If
 End Sub
 
+'@Description("Efficiently concatenates string fragments to a byte array buffer")
+Private Function StringBuilder(Optional ByVal Fragment As String = vbNullString, Optional ByVal Final As Boolean, Optional ByVal NewString As Boolean) As String
+Attribute StringBuilder.VB_Description = "Efficiently concatenates string fragments to a byte array buffer"
+    Static buffer() As Byte
+    Static bufferLength As Long
+    Static bufferCapacity As Long
+    Static cursor As Long
+    Static firstIndex As Long
+    
+    Dim fragLength As Long
+    Dim lastIndex As Long
+    Dim i As Long
+
+    fragLength = LenB(Fragment)
+    If cursor < 1 Or NewString Then
+        buffer = Fragment
+        bufferLength = fragLength
+        bufferCapacity = fragLength
+        firstIndex = LBound(buffer)
+        cursor = UBound(buffer)
+    ElseIf fragLength > 0 Then
+        bufferLength = bufferLength + fragLength
+        lastIndex = firstIndex + bufferLength - 1
+        If bufferLength > bufferCapacity Then
+            Do
+                bufferCapacity = bufferCapacity * 2
+            Loop While bufferLength > bufferCapacity
+            ReDim Preserve buffer(firstIndex To firstIndex + bufferCapacity)
+        End If
+        For i = cursor + 1 To lastIndex
+            buffer(i) = AscB(MidB$(Fragment, i - cursor, 1))
+        Next
+        cursor = lastIndex
+    End If
+    
+    If Final Then
+        ReDim Preserve buffer(firstIndex To cursor)
+        StringBuilder = CStr(buffer)
+        Erase buffer
+        cursor = Empty
+    End If
+    
+End Function
+
 '@Description("Recursively parses an array to a string representation.")
-Private Function RecursiveToString( _
+Private Sub RecursiveToString( _
         ByRef sourceArray() As Variant, _
         ByVal prettyPrint As Boolean, _
         ByVal separator As String, _
@@ -2793,32 +2837,37 @@ Private Function RecursiveToString( _
         ByVal closingDelimiter As String, _
         ByVal quoteStrings As Boolean, _
         Optional ByVal tabs As Long = 1 _
-    ) As String
+    )
 Attribute RecursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
-    Dim result As String
     Dim i As Long
     Dim sep As String
     
-    result = openingDelimiter
+    StringBuilder openingDelimiter
     For i = LBound(sourceArray) To UBound(sourceArray)
         sep = IIf(i = UBound(sourceArray), closingDelimiter, separator)
         If IsArray(sourceArray(i)) Then
             Dim nested() As Variant
             nested = sourceArray(i)
-            If prettyPrint Then result = result & vbCrLf & Space(tabWidth * tabs)
-            result = result & RecursiveToString(nested, prettyPrint, separator, openingDelimiter, closingDelimiter, quoteStrings, tabs + 1)
-            result = result & IIf(i = UBound(sourceArray) And prettyPrint, vbCrLf & Space(tabWidth * (tabs - 1)) & sep, sep)
+            If prettyPrint Then
+                StringBuilder vbCrLf & Space(tabWidth * tabs)
+            End If
+            RecursiveToString nested, prettyPrint, separator, openingDelimiter, closingDelimiter, quoteStrings, tabs + 1
+            If i = UBound(sourceArray) And prettyPrint Then
+                StringBuilder vbCrLf
+                StringBuilder Space(tabWidth * (tabs - 1))
+            End If
+            StringBuilder sep
         Else
-            result = result & Replace( _
+            ' ensure no arrays passed to GetScalar as it clears string builder
+            StringBuilder Replace( _
                     CStr(GetScalarRepresentation(sourceArray(i), quoteStrings)), _
                     ",", _
                     vbNullString _
                 ) & sep
         End If
     Next
-    RecursiveToString = result
-End Function
+End Sub
 
 '@Description("Returns scalar values as is or appropriate representation if not scalar.")
 Private Function GetScalarRepresentation( _
@@ -2843,7 +2892,9 @@ Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is 
     If IsArray(result) And Not IsEmpty(result) Then
         Dim passThruArray() As Variant
         passThruArray = result
-        result = RecursiveToString(passThruArray, False, ",", "{", "}", quoteStrings)
+        StringBuilder NewString:=True
+        RecursiveToString passThruArray, False, ",", "{", "}", quoteStrings
+        result = StringBuilder(Final:=True)
     End If
     If Not IsNumeric(result) And quoteStrings Then
         GetScalarRepresentation = Chr$(34) & result & Chr$(34)
