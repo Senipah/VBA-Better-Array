@@ -1,1 +1,2 @@
-8a1db04 fix formatting
+2ca0bce add new internal string builder
+ad27aa3 change scoping of some tests
