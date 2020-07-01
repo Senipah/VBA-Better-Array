@@ -2040,7 +2040,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_IsSorted")
-Public Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
+Private Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
     Const ExpectedError As Long = ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH
     On Error GoTo TestFail
 
@@ -3965,7 +3965,7 @@ End Sub
 '''''''''''''''''''''''''''
 
 '@TestMethod("BetterArray_FromExcelRange")
-Public Sub FromExcelRange_NoDetection_Success()
+Private Sub FromExcelRange_NoDetection_Success()
     On Error GoTo TestFail
     
     'Arrange:
