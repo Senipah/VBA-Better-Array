@@ -1,2 +1,5 @@
-2ca0bce add new internal string builder
-ad27aa3 change scoping of some tests
+ee72f7e add ArrayType public property (& tests)
+9358256 re-order RD folder navigation
+3b61e92 add arraytype docs
+9033379 Add enumeration constant docs
+87a00ce add enumerations to docs
