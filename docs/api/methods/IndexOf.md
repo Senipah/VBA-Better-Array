@@ -53,16 +53,7 @@ Necessity
 : Optional
 
 Description
-: The type of comparison to perform. See the comparison type enumerations below. Default is CT_EQUALITY.
-
-#### ComparisonType Enumerations
-
-`CT_EQUALITY`
-: Compares `searchElement` against the element at the current index for equality. This is the default comparison method.
-
-`CT_LIKENESS`
-: `searchElement` is treated as a string pattern and compared against the element as the current index using the `Like` operator. If this option is chosen `searchElement` must be a String type or an error will be raised.
-
+: The type of comparison to perform. See the [comparison type enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/ComparisonType_Enumeration.html). Default is CT_EQUALITY.
 
 ### Returns
 
