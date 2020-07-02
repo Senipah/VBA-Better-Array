@@ -27,7 +27,7 @@ Private Const MAX_ARRAY_LENGTH As Long = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
 Private Const MISSING_LONG As Long = -9999
 
-Private Enum ArrayTypes
+Public Enum ArrayTypes
     BA_UNDEFINED
     BA_UNALLOCATED
     BA_ONEDIMENSION
@@ -52,6 +52,7 @@ Public Enum ErrorCodes
     EC_EXPECTED_VARIANT_ARRAY
     EC_EXCEEDS_MAX_ARRAY_LENGTH
     EC_STRING_TYPE_EXPECTED
+    EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     EC_END
 End Enum
 
@@ -253,6 +254,31 @@ Attribute Items.VB_Description = "Stores the passed array."
 
 End Property
 
+Public Property Get ArrayType() As ArrayTypes
+    ArrayType = this.ArrayType
+End Property
+
+Public Property Let ArrayType(ByVal NewType As ArrayTypes)
+    Select Case NewType
+    Case ArrayTypes.BA_UNDEFINED
+        RaiseError EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, "ArrayType", "NewType"
+    Case ArrayTypes.BA_UNALLOCATED
+        If this.ArrayType <> BA_UNALLOCATED Then
+            Me.ResetToDefault
+        End If
+    Case ArrayTypes.BA_ONEDIMENSION
+        Select Case this.ArrayType
+        Case ArrayTypes.BA_MULTIDIMENSION, ArrayTypes.BA_JAGGED
+            RaiseError EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, "ArrayType", "NewType"
+        Case Else
+            this.ArrayType = NewType
+        End Select
+    Case Else
+        this.ArrayType = NewType
+    End Select
+End Property
+
+
 ''''''''''''''''''''''
 ' Private Properties '
 ''''''''''''''''''''''
@@ -264,7 +290,11 @@ Attribute InternalItems.VB_Description = "Retrieves the stored items trimmed to 
     If this.ArrayType <> BA_UNALLOCATED And this.ArrayType <> BA_UNDEFINED Then
         result = this.Items
         If this.Capacity > this.Length Then
-            If this.Length > 0 Then ReDim Preserve result(this.LowerBound To Me.UpperBound)
+            If this.Length = 0 Then
+                ReDim Preserve result(this.LowerBound To this.LowerBound)
+            ElseIf this.Length > 0 Then
+                ReDim Preserve result(this.LowerBound To Me.UpperBound)
+            End If
         End If
     Else
         result = GetEmptyArray
@@ -375,7 +405,7 @@ Public Function ToString( _
         Optional ByVal quoteStrings As Boolean _
     ) As String
 Attribute ToString.VB_Description = "Returns a string representing the array structure and its elements."
-    Dim ArrayType As ArrayTypes
+    Dim localArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
     Dim sep As String
@@ -383,10 +413,10 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     sep = IIf(prettyPrint, separator & Space(1), separator)
     
     localItems = InternalItems
-    ArrayType = GetArrayType(localItems)
-    If Not ArrayType = ArrayTypes.BA_UNDEFINED And _
-       Not ArrayType = ArrayTypes.BA_UNALLOCATED Then
-        If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
+    localArrayType = GetArrayType(localItems)
+    If Not localArrayType = ArrayTypes.BA_UNDEFINED And _
+       Not localArrayType = ArrayTypes.BA_UNALLOCATED Then
+        If localArrayType = ArrayTypes.BA_MULTIDIMENSION Then
             localItems = MultiToJagged(localItems)
         End If
         RecursiveToString _
@@ -1406,17 +1436,17 @@ Public Function Sort(Optional ByVal sortColumn As Long = MISSING_LONG) As Better
 Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim localItems() As Variant
     Dim sortedItems() As Variant
-    Dim ArrayType As ArrayTypes
+    Dim localArrayType As ArrayTypes
     
     localItems = InternalItems
-    ArrayType = GetArrayType(localItems)
-    If ArrayType = ArrayTypes.BA_UNALLOCATED Or _
-       ArrayType = ArrayTypes.BA_UNDEFINED Then
+    localArrayType = GetArrayType(localItems)
+    If localArrayType = ArrayTypes.BA_UNALLOCATED Or _
+       localArrayType = ArrayTypes.BA_UNDEFINED Then
         sortedItems = GetEmptyArray
     Else
         If this.Length > 0 Then
-            If ArrayType <> BA_ONEDIMENSION Then
-                If ArrayType = ArrayTypes.BA_MULTIDIMENSION Then
+            If localArrayType <> BA_ONEDIMENSION Then
+                If localArrayType = ArrayTypes.BA_MULTIDIMENSION Then
                     localItems = MultiToJagged(localItems)
                 End If
                 Dim depth As Long
@@ -1429,7 +1459,7 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
                 localItems, _
                 LBound(localItems), _
                 UBound(localItems), _
-                ArrayType, _
+                localArrayType, _
                 IIf(sortColumn = MISSING_LONG, LBound(localItems), sortColumn)
         End If
         sortedItems = localItems
@@ -2560,10 +2590,16 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_STRING_TYPE_EXPECTED) = ErrorDefinitionFactory( _
-    number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
-    source:=source, _
-    description:="Expected a String or String-coercible type." _
-)
+        number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
+        source:=source, _
+        description:="Expected a String or String-coercible type." _
+    )
+    this.ErrorDefinitions(ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, _
+        source:=source, _
+        description:="The stored array cannot be converted to the requested structure." _
+    )
+    
 End Sub
 
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
@@ -2715,15 +2751,15 @@ Private Sub QuickSort( _
         ByRef sourceArray() As Variant, _
         ByVal low As Long, _
         ByVal high As Long, _
-        ByVal ArrayType As ArrayTypes, _
+        ByVal localArrayType As ArrayTypes, _
         Optional ByVal col As Long _
     )
 Attribute QuickSort.VB_Description = "Sorts in place a passed array using the QuickSort algorithm."
     Dim partitionIndex As Long
     If low < high Then
-        partitionIndex = QsPartition(sourceArray, low, high, ArrayType, col)
-        QuickSort sourceArray, low, partitionIndex - 1, ArrayType, col
-        QuickSort sourceArray, partitionIndex + 1, high, ArrayType, col
+        partitionIndex = QsPartition(sourceArray, low, high, localArrayType, col)
+        QuickSort sourceArray, low, partitionIndex - 1, localArrayType, col
+        QuickSort sourceArray, partitionIndex + 1, high, localArrayType, col
     End If
 End Sub
 
@@ -2732,7 +2768,7 @@ Private Function QsPartition( _
         ByRef sourceArray() As Variant, _
         ByVal low As Long, _
         ByVal high As Long, _
-        ByVal ArrayType As ArrayTypes, _
+        ByVal localArrayType As ArrayTypes, _
         Optional ByVal col As Long _
     ) As Long
 Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the next partition index."
@@ -2741,7 +2777,7 @@ Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the
     Dim pivot As Variant
     Dim current As Variant
     
-    If ArrayType = BA_JAGGED Then
+    If localArrayType = BA_JAGGED Then
         pivot = sourceArray(high)(col)
     Else
         pivot = sourceArray(high)
@@ -2749,7 +2785,7 @@ Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the
     
     i = low - 1
     For j = low To high - 1
-        If ArrayType = BA_JAGGED Then
+        If localArrayType = BA_JAGGED Then
             current = sourceArray(j)(col)
         Else
             current = sourceArray(j)
@@ -2979,7 +3015,7 @@ ErrHandler:
 End Function
 
 '@Description("re-indexes array to conform to new bounds. Does not change length.")
-Private Function Rebase(Optional ByRef sourceArray As Variant, Optional ByVal ArrayType As ArrayTypes) As Variant()
+Private Function Rebase(Optional ByRef sourceArray As Variant, Optional ByVal CurrentArrayType As ArrayTypes) As Variant()
 Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Does not change length."
     Dim localItems() As Variant
     Dim localType As ArrayTypes
@@ -2989,10 +3025,10 @@ Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Do
         localType = this.ArrayType
     Else
         localItems = sourceArray
-        If ArrayType = 0 Then
+        If CurrentArrayType = 0 Then
             localType = GetArrayType(localItems)
         Else
-            localType = ArrayType
+            localType = CurrentArrayType
         End If
     End If
     If localType = BA_MULTIDIMENSION Then
