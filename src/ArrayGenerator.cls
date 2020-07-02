@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'"
-'@Folder("Tests.Dependencies.ArrayGenerator")
+'@Folder("BetterArray.Tests.Dependencies.ArrayGenerator")
 '@ModuleDescription("Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'")
 '@IgnoreModule ProcedureNotUsed
 
@@ -24,7 +24,7 @@ Public Enum ValueTypes
     AG_VARIANT
 End Enum
 
-Public Enum ArrayTypes
+Public Enum AG_ArrayTypes
     AG_UNDEFINED
     AG_UNALLOCATED
     AG_ONEDIMENSION
@@ -57,7 +57,7 @@ End Property
 
 Public Function GetArray( _
         Optional ByVal valueType As ValueTypes = ValueTypes.AG_VARIANT, _
-        Optional ByVal ArrayType As ArrayTypes = ArrayTypes.AG_ONEDIMENSION, _
+        Optional ByVal ArrayType As ArrayTypes = AG_ArrayTypes.AG_ONEDIMENSION, _
         Optional ByVal Length As Long = 10, _
         Optional ByVal depth As Long _
     ) As Variant
@@ -149,11 +149,11 @@ Private Function GetArrayOfType( _
     ) As Variant
     Dim result As Variant
     Select Case ArrayType
-    Case ArrayTypes.AG_JAGGED
+    Case AG_ArrayTypes.AG_JAGGED
         result = GetJaggedArray(Length, vals, depth)
-    Case ArrayTypes.AG_MULTIDIMENSION
+    Case AG_ArrayTypes.AG_MULTIDIMENSION
         result = GetMultidimensionalArray(Length, vals)
-    Case ArrayTypes.AG_ONEDIMENSION
+    Case AG_ArrayTypes.AG_ONEDIMENSION
         result = GetOneDimensionalArray(Length, vals)
     End Select
     GetArrayOfType = result

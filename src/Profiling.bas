@@ -2,7 +2,7 @@ Attribute VB_Name = "Profiling"
 Option Explicit
 Option Private Module
 
-'@Folder("Tests.Performance")
+'@Folder("BetterArray.Tests.Performance")
 
 '@IgnoreModule FunctionReturnValueNotUsed
 '@IgnoreModule FunctionReturnValueDiscarded
@@ -62,27 +62,27 @@ Private Sub RatePerformance(ByVal manualTime As Double, ByVal betterArrayTime As
 End Sub
 
 Private Function PushingScalarByRedim(ByVal count As Long) As Double
-    Dim sut() As Variant
+    Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
     
     For i = 0 To count - 1
-        ReDim Preserve sut(i)
-        sut(i) = i
+        ReDim Preserve SUT(i)
+        SUT(i) = i
     Next
     
     PushingScalarByRedim = Timer - startTime
 End Function
 
 Private Function PushingScalarByBetterArray(ByVal count As Long) As Double
-    Dim sut As BetterArray
+    Dim SUT As BetterArray
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
-    Set sut = New BetterArray
+    Set SUT = New BetterArray
     For i = 0 To count - 1
-        sut.Push i
+        SUT.Push i
     Next
     
     PushingScalarByBetterArray = Timer - startTime
@@ -109,28 +109,28 @@ Public Sub PushingArrays()
 End Sub
 
 Private Function PushingArraysByRedim(ByVal count As Long) As Double
-    Dim sut() As Variant
+    Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
     
     For i = 0 To count - 1
-        ReDim Preserve sut(i)
-        sut(i) = Array(1, 2, 3)
+        ReDim Preserve SUT(i)
+        SUT(i) = Array(1, 2, 3)
     Next
     
     PushingArraysByRedim = Timer - startTime
 End Function
 
 Private Function PushingArraysByBetterArray(ByVal count As Long) As Double
-    Dim sut As BetterArray
+    Dim SUT As BetterArray
     Dim startTime As Double
     '@Ignore VariableNotUsed
     Dim i As Long
     startTime = Timer
-    Set sut = New BetterArray
+    Set SUT = New BetterArray
     For i = 0 To count - 1
-        sut.Push Array(1, 2, 3)
+        SUT.Push Array(1, 2, 3)
     Next
     
     PushingArraysByBetterArray = Timer - startTime
@@ -160,19 +160,19 @@ End Sub
 Private Function TransposingByTranspose(ByVal count As Long) As Double
     Dim exl As ExcelProvider
     Dim destination As Range
-    Dim sut() As Variant
+    Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     
     For i = 0 To count - 1
-        ReDim Preserve sut(i)
-        sut(i) = Array(1, 2, 3)
+        ReDim Preserve SUT(i)
+        SUT(i) = Array(1, 2, 3)
     Next
     Set exl = New ExcelProvider
     Set destination = exl.CurrentWorksheet.Range("A1")
     startTime = Timer
     '@Ignore ImplicitDefaultMemberAccess
-    destination.Resize(count, 3) = WorksheetFunction.Transpose(WorksheetFunction.Transpose(sut))
+    destination.Resize(count, 3) = WorksheetFunction.Transpose(WorksheetFunction.Transpose(SUT))
     exl.Visible = True
     TransposingByTranspose = Timer - startTime
 End Function
@@ -181,18 +181,18 @@ End Function
 Private Function TransposingByBetterArray(ByVal count As Long) As Double
     Dim exl As ExcelProvider
     Dim destination As Object
-    Dim sut As BetterArray
+    Dim SUT As BetterArray
     Dim startTime As Double
     '@Ignore VariableNotUsed
     Dim i As Long
-    Set sut = New BetterArray
+    Set SUT = New BetterArray
     For i = 0 To count - 1
-        sut.Push Array(1, 2, 3)
+        SUT.Push Array(1, 2, 3)
     Next
     Set exl = New ExcelProvider
     Set destination = exl.CurrentWorksheet.Range("A1")
     startTime = Timer
-    sut.ToExcelRange destination
+    SUT.ToExcelRange destination
     exl.Visible = True
     TransposingByBetterArray = Timer - startTime
 End Function

@@ -3,7 +3,7 @@ Option Explicit
 Option Private Module
 
 '@TestModule
-'@Folder("Tests.Dependencies.ExcelProvider.Tests")
+'@Folder("BetterArray.Tests.Dependencies.ExcelProvider.Tests")
 
 '@IgnoreModule ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
@@ -19,7 +19,7 @@ Private Assert As AssertClass
 Private Fakes As FakesProvider
 
 ' Module level declaration of system under test
-Private sut As ExcelProvider
+Private SUT As ExcelProvider
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -41,13 +41,13 @@ End Sub
 '@TestInitialize
 Private Sub TestInitialize()
     'this method runs before every test in the module.
-    Set sut = New ExcelProvider
+    Set SUT = New ExcelProvider
 End Sub
 
 '@TestCleanup
 Private Sub TestCleanup()
     'this method runs after every test in the module.
-    Set sut = Nothing
+    Set SUT = Nothing
 End Sub
 
 '@TestMethod("ExcelProvider_Constructor")
@@ -59,7 +59,7 @@ Private Sub Constructor_CanInstantiate_SUTNotNothing()
     'Act:
 
     'Assert:
-    Assert.IsNotNothing sut
+    Assert.IsNotNothing SUT
 
 TestExit:
     Exit Sub
@@ -77,7 +77,7 @@ Private Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
     expected = "Microsoft Excel"
     
     'Act:
-    actual = sut.ExcelApplication.Name
+    actual = SUT.ExcelApplication.Name
     
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
@@ -101,7 +101,7 @@ Private Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
     expected = "Workbook"
     
     'Act:
-    Set returned = sut.CurrentWorkbook
+    Set returned = SUT.CurrentWorkbook
     actual = TypeName(returned)
     
     'Assert:
@@ -125,7 +125,7 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_ReturnsTypeWorksheet()
     expected = "Worksheet"
     
     'Act:
-    Set returned = sut.CurrentWorksheet
+    Set returned = SUT.CurrentWorksheet
     actual = TypeName(returned)
     
     'Assert:
@@ -145,8 +145,8 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook(
     Dim actual As Object
     
     'Act:
-    Set expected = sut.CurrentWorkbook
-    Set actual = sut.CurrentWorksheet
+    Set expected = SUT.CurrentWorkbook
+    Set actual = SUT.CurrentWorksheet
         
     'Assert:
     Assert.AreSame expected, actual.Parent, "actual <> expected"
@@ -169,8 +169,8 @@ Private Sub CurrentWorksheet_CanSetRangeValue_ReturnsCorrectValue()
     expected = "Hello World"
     
     'Act:
-    sut.CurrentWorksheet.Range(address) = expected
-    actual = sut.CurrentWorksheet.Range(address)
+    SUT.CurrentWorksheet.Range(address) = expected
+    actual = SUT.CurrentWorksheet.Range(address)
     
     'Assert:
     Assert.AreEqual actual, expected, "actual <> expected"
