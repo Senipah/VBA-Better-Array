@@ -1,3 +1,1 @@
-64796e9 Changes to `FromCSV` - blank last row optional
-a178a99 fix more broken links
-0eea16b fix broken links
+8af4184 ParseCSV - dont reuse row array
