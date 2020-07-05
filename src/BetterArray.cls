@@ -1941,6 +1941,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     End If
     
     For rowIndex = startIndex To countRows - 1
+        results(Base + rowIndex - startIndex) = jaggedRow
         If rowIndex Mod queueSize = 0 And rowIndex Then
             ' release thread to process OS event queue
             '@Ignore FunctionReturnValueDiscarded
@@ -1983,7 +1984,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
                     Case ColumnDelimiter
                         ' add this column
                         If ReturnJagged Then
-                            jaggedRow(Base + columnIndex) = Left$(buffer, bufferIndex)
+                            results(Base + rowIndex - startIndex)(Base + columnIndex) = Left$(buffer, bufferIndex)
                         Else
                             results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex)
                         End If
@@ -2006,9 +2007,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
         ' add last column item
         If columnIndex < countColumns Then
             If ReturnJagged Then
-                jaggedRow(Base + columnIndex) = Left$(buffer, bufferIndex - 1)
-                results(Base + rowIndex - startIndex) = jaggedRow
-                ' ReDim jaggedRow(Base To Base + countColumns - 1)
+                results(Base + rowIndex - startIndex)(Base + columnIndex) = Left$(buffer, bufferIndex - 1)
             Else
                 results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex - 1)
             End If
