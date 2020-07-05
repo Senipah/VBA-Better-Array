@@ -1760,7 +1760,7 @@ Attribute FromCSV.VB_Description = "Accepts a path argument pointing to a comma-
     Open path For Input As #1
         rawData = Input$(LOF(1), #1)
     Close #1
-    
+       
     parsed = ParseCSV( _
         Expression:=rawData, _
         ColumnDelimiter:=ColumnDelimiter, _
@@ -1771,7 +1771,7 @@ Attribute FromCSV.VB_Description = "Accepts a path argument pointing to a comma-
         Base:=this.LowerBound _
     )
     
-    this.Length = UBound(parsed)
+    this.Length = GetArrayLength(parsed)
     this.Capacity = UBound(parsed)
     this.ArrayType = localType
     this.Items = parsed
@@ -1793,8 +1793,10 @@ Private Function ParseCSV( _
     Optional ByVal Base As Long _
 ) As Variant()
 Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array"
-    Const queueSize As Long = 200000
+    Const queueSize As Long = 50000
     Dim buffer As String
+    Dim expressionLengthB As Long
+    Dim rowDelimiterLengthB As Long
     Dim expressionLength As Long
     Dim rowDelimiterLength As Long
     Dim compare As VbCompareMethod
@@ -1813,21 +1815,25 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     Dim startIndex As Long
     Dim results() As Variant
     Dim jaggedRow() As Variant
+    Dim lastRowDelimiter As Long
+    Dim blankTrailingRows As Long
     
     compare = vbBinaryCompare
     ' length information
-    expressionLength = LenB(Expression)
-    rowDelimiterLength = LenB(RowDelimiter)
+    expressionLength = Len(Expression)
+    rowDelimiterLength = Len(RowDelimiter)
+    expressionLengthB = LenB(Expression)
+    rowDelimiterLengthB = LenB(RowDelimiter)
     
-    If expressionLength = 0 Or rowDelimiterLength = 0 Then
+    If expressionLengthB = 0 Or rowDelimiterLengthB = 0 Then
         ' TODO: Raise Err?
         ParseCSV = Array()
         Exit Function
     End If
     
     ' estimate max number of rows - does not account for line breaks within strings
-    maxRows = (Len(Expression) - Len(Replace(Expression, RowDelimiter, vbNullString))) / Len(RowDelimiter)
-    ReDim lineEndIndices(maxRows)
+    maxRows = (expressionLength - Len(Replace(Expression, RowDelimiter, vbNullString))) / rowDelimiterLength + 1
+    ReDim lineEndIndices(0 To maxRows)
         
     ' find first row delimiter
     rowDelimIndex = InStrB(1, Expression, RowDelimiter, compare)
@@ -1841,11 +1847,21 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
         quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
     Loop
     
+    ' find last row delimiter
+    lastRowDelimiter = InStrRev(Expression, RowDelimiter)
+    rowIndex = expressionLength + 1
+    Do While rowIndex - lastRowDelimiter = rowDelimiterLength
+        rowIndex = lastRowDelimiter
+        lastRowDelimiter = InStrRev(Expression, RowDelimiter, lastRowDelimiter)
+        blankTrailingRows = blankTrailingRows + 1
+    Loop
+    rowIndex = Empty
+    
     Do While rowDelimIndex > 0
         ' see if row delimiter before quote delimiter
-        If rowDelimIndex + rowDelimiterLength <= quoteDelimIndex Or quoteDelimIndex = 0 Then
+        If rowDelimIndex + rowDelimiterLengthB <= quoteDelimIndex Or quoteDelimIndex = 0 Then
             lineEndIndices(countRows) = rowDelimIndex
-            rowDelimIndex = InStrB(rowDelimIndex + rowDelimiterLength, Expression, RowDelimiter, compare)
+            rowDelimIndex = InStrB(rowDelimIndex + rowDelimiterLengthB, Expression, RowDelimiter, compare)
             Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
                 rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
             Loop
@@ -1854,7 +1870,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
                     ' release thread to process OS event queue
                     '@Ignore FunctionReturnValueDiscarded
                     DoEvents
-                    Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
+                    ' Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
                 End If
                 countRows = countRows + 1
             Else
@@ -1904,9 +1920,9 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
         End If
     Loop
     
+    lineEndIndices(countRows) = expressionLengthB + 1
+    countRows = countRows - blankTrailingRows + 1
     Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
-    
-    lineEndIndices(countRows) = expressionLength + 1
     bufferIndex = 0
     inQuote = False
     buffer = LeftB$(Expression, lineEndIndices(0) - 1 + 2)
@@ -1929,15 +1945,16 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
             ' release thread to process OS event queue
             '@Ignore FunctionReturnValueDiscarded
             DoEvents
-            Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
+            ' Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
         End If
         ' start index for columns
         columnIndex = 0
         If rowIndex = 0 Then
             cursorStart = 1
         Else
-            cursorStart = lineEndIndices(rowIndex - 1) + rowDelimiterLength
+            cursorStart = lineEndIndices(rowIndex - 1) + rowDelimiterLengthB
         End If
+        
         buffer = MidB$(Expression, cursorStart, lineEndIndices(rowIndex) - startIndex + 2)
         bufferIndex = 0
         inQuote = False
@@ -1991,6 +2008,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
             If ReturnJagged Then
                 jaggedRow(Base + columnIndex) = Left$(buffer, bufferIndex - 1)
                 results(Base + rowIndex - startIndex) = jaggedRow
+                ' ReDim jaggedRow(Base To Base + countColumns - 1)
             Else
                 results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex - 1)
             End If
