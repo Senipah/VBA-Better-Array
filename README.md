@@ -1,8 +1,8 @@
 # ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/img/logo.png)
 
-A VBA class providing a more flexible and user-friendly Array. 
+### A VBA class providing a more flexible and user-friendly Array. 
 
-Enabling you to easily read in data [from Excel worksheets](https://senipah.github.io/VBA-Better-Array/api/methods/FromExcelRange.html) or [CSV files](https://senipah.github.io/VBA-Better-Array/api/methods/FromCSV.html), [sort](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html) and [slice](https://senipah.github.io/VBA-Better-Array/api/methods/Slice.html) the data and write [to Excel ranges](https://senipah.github.io/VBA-Better-Array/api/methods/ToExcelRange.html).
+VBA-Better-Array is a cross-platform and dependency-free VBA class which enables you to easily [sort](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html), [slice](https://senipah.github.io/VBA-Better-Array/api/methods/Slice.html) and [splice](https://senipah.github.io/VBA-Better-Array/api/methods/Splice.html) your data ([amd much more](https://senipah.github.io/VBA-Better-Array/api/methods/)).
 
 ## Documentation
 
