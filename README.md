@@ -2,7 +2,7 @@
 
 ### A VBA class providing a more flexible and user-friendly Array. 
 
-VBA-Better-Array is a cross-platform and dependency-free VBA class which enables you to easily [sort](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html), [slice](https://senipah.github.io/VBA-Better-Array/api/methods/Slice.html) and [splice](https://senipah.github.io/VBA-Better-Array/api/methods/Splice.html) your data ([amd much more](https://senipah.github.io/VBA-Better-Array/api/methods/)).
+VBA-Better-Array is a cross-platform and dependency-free VBA class which enables you to easily [sort](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html), [slice](https://senipah.github.io/VBA-Better-Array/api/methods/Slice.html) and [splice](https://senipah.github.io/VBA-Better-Array/api/methods/Splice.html) your data ([and much more](https://senipah.github.io/VBA-Better-Array/api/methods/)).
 
 ## Documentation
 
