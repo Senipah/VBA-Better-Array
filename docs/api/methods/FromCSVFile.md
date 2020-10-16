@@ -10,6 +10,8 @@ grand_parent: API
 
 The `FromCSVFile()` method accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array. Fields that contain a special character (comma, CR\*, LF\*, or double quote\*), and are "escaped" by enclosing them in double quotes (Hex 22) are correctly handled as per the [RFC 4180](https://tools.ietf.org/html/rfc4180#page-2) specification.
 
+Also see ws-garcia's [VBA-CSV-interface](https://github.com/ws-garcia/VBA-CSV-interface) library if higher performance is required.
+
 ## Syntax
 
 *expression*.**FromCSVFile**(*Path*, [*ColumnDelimiter*], [*RowDelimiter*], [*Quote*], [*IgnoreFirstRow*], [*DuckType*])

@@ -12,6 +12,8 @@ The `FromCSVString()` method accepts a string argument representing the content 
 
 Behaves the same as the `FromCSVString` method.
 
+Also see ws-garcia's [VBA-CSV-interface](https://github.com/ws-garcia/VBA-CSV-interface) library if higher performance is required.
+
 ## Syntax
 
 *expression*.**FromCSVString**(*CSVString*, [*ColumnDelimiter*], [*RowDelimiter*], [*Quote*], [*IgnoreFirstRow*], [*DuckType*])
