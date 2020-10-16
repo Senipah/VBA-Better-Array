@@ -1,1 +1,6 @@
-8af4184 ParseCSV - dont reuse row array
+2e9b9a3 feat: FromCSV refactor
+056cf40 chore: commit name case change
+680c09b feat: add docs for CSV method refactor
+73b0a32 chore: dont track test data
+4b72702 fix typo
+54f127b readme formattng
