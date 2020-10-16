@@ -197,4 +197,66 @@ Private Function TransposingByBetterArray(ByVal count As Long) As Double
     TransposingByBetterArray = Timer - startTime
 End Function
 
+Public Sub CSV_Test()
+    Const DATA_DIR As String = "csv_data"
+    Const SLUG As String = " Sales Records.csv"
+    Dim i As Long
+    Dim startTime As Single
+    Dim endTime As Single
+    Dim basePath As String
+    Dim filePath As String
+    Dim fileName As String
+    Dim recordCounts() As Variant
+    Dim SUT As BetterArray
+    Set SUT = New BetterArray
+    
+    basePath = ThisWorkbook.path
+    
+    recordCounts = Array(10000)
+            
+    For i = LBound(recordCounts) To UBound(recordCounts)
+        fileName = recordCounts(i) & SLUG
+        filePath = JoinPath(basePath, DATA_DIR, fileName)
+        Debug.Print formatDescriptor("Reading: " & fileName)
+        startTime = Timer
+        SUT.FromCSVFile filePath
+        endTime = Timer
+        Debug.Print "Time taken: " & endTime - startTime
+        SUT.ToExcelRange ThisWorkbook.Sheets.Add.Range("A1")
+    Next
+    
+End Sub
+
+Public Sub CSV_Profiling()
+    Const DATA_DIR As String = "csv_data"
+    Const SLUG As String = " Sales Records.csv"
+    Dim i As Long
+    Dim startTime As Single
+    Dim endTime As Single
+    Dim basePath As String
+    Dim filePath As String
+    Dim fileName As String
+    Dim recordCounts() As Variant
+    Dim SUT As BetterArray
+    Set SUT = New BetterArray
+    
+    basePath = ThisWorkbook.path
+    
+    recordCounts = Array(10000, 100000, 1500000)
+            
+    For i = LBound(recordCounts) To UBound(recordCounts)
+        fileName = recordCounts(i) & SLUG
+        filePath = JoinPath(basePath, DATA_DIR, fileName)
+        Debug.Print formatDescriptor("Reading: " & fileName)
+        startTime = Timer
+        SUT.FromCSVFile filePath
+        endTime = Timer
+        Debug.Print "Time taken: " & endTime - startTime
+    Next
+    
+End Sub
+
+Private Function JoinPath(ParamArray args() As Variant) As String
+    JoinPath = Strings.Join(CVar(args), "\")
+End Function
 

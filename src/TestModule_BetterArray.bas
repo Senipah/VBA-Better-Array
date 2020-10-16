@@ -6860,9 +6860,9 @@ TestFail:
 End Sub
 
 
-''''''''''''''''''''''
+'''''''''''''''''''
 ' Method - Splice '
-''''''''''''''''''''''
+'''''''''''''''''''
 
 '@TestMethod("BetterArray_Splice")
 Private Sub Splice_OneDimArrayInsertAtIndex1_Success()
@@ -7247,3 +7247,53 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
+
+''''''''''''''''''''''''''
+' Method - FromCSVString '
+''''''''''''''''''''''''''
+
+'@TestMethod("BetterArray_FromCSVString")
+Private Sub FromCSVString_Simple10RowWithHeaders_ReturnsJagged()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Const TEST_DATA As String = _
+        "Region,Country A,Item Type,Sales Channel,Order Priority,Order Date,Order ID,Ship Date,Units Sold,Unit Price,Unit Cost,Total Revenue,Total Cost,Total Profit" & vbCrLf & _
+        "Sub-Saharan Africa,Chad,Office Supplies,Online,L,1/27/2011,292494523,2/12/2011,4484,651.21,524.96,2920025.64,2353920.64,566105.00" & vbCrLf & _
+        "Europe , Latvia, Beverages, Online, C, 12 / 28 / 2015, 361825549, 1 / 23 / 2016, 1075, 47.45, 31.79, 51008.75, 34174.25, 16834.5" & vbCrLf & _
+        "Middle East and North Africa,Pakistan,Vegetables,Offline,C,1/13/2011,141515767,2/1/2011,6515,154.06,90.93,1003700.90,592408.95,411291.95" & vbCrLf & _
+        "Sub-Saharan Africa,Democratic Republic of the Congo,Household,Online,C,9/11/2012,500364005,10/6/2012,7683,668.27,502.54,5134318.41,3861014.82,1273303.59" & vbCrLf & _
+        "Europe,Czech Republic,Beverages,Online,C,10/27/2015,127481591,12/5/2015,3491,47.45,31.79,165647.95,110978.89,54669.06" & vbCrLf & _
+        "Sub-Saharan Africa,South Africa,Beverages,Offline,H,7/10/2012,482292354,8/21/2012,9880,47.45,31.79,468806.00,314085.20,154720.80" & vbCrLf & _
+        "Asia , Laos, Vegetables, Online, L, 2 / 20 / 2011, 844532620, 3 / 20 / 2011, 4825, 154.06, 90.93, 743339.5, 438737.25, 304602.25" & vbCrLf & _
+        "Asia,China,Baby Food,Online,C,4/10/2017,564251220,5/12/2017,3330,255.28,159.42,850082.40,530868.60,319213.80" & vbCrLf & _
+        "Sub-Saharan Africa,Eritrea,Meat,Online,L,11/21/2014,411809480,1/10/2015,2431,421.89,364.69,1025614.59,886561.39,139053.20"
+
+    Dim expected() As Variant
+    Dim actual() As Variant
+    ReDim expected(0 To 9)
+
+    expected(0) = Array("Region", "Country A", "Item Type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit")
+    expected(1) = Array("Sub-Saharan Africa", "Chad", "Office Supplies", "Online", "L", "1/27/2011", "292494523", "2/12/2011", "4484", "651.21", "524.96", "2920025.64", "2353920.64", "566105.00")
+    expected(2) = Array("Europe", "Latvia", "Beverages", "Online", "C", "12 / 28 / 2015", "361825549", "1 / 23 / 2016", "1075", "47.45", "31.79", "51008.75", "34174.25", "16834.5")
+    expected(3) = Array("Middle East and North Africa", "Pakistan", "Vegetables", "Offline", "C", "1/13/2011", "141515767", "2/1/2011", "6515", "154.06", "90.93", "1003700.90", "592408.95", "411291.95")
+    expected(4) = Array("Sub-Saharan Africa", "Democratic Republic of the Congo", "Household", "Online", "C", "9/11/2012", "500364005", "10/6/2012", "7683", "668.27", "502.54", "5134318.41", "3861014.82", "1273303.59")
+    expected(5) = Array("Europe", "Czech Republic", "Beverages", "Online", "C", "10/27/2015", "127481591", "12/5/2015", "3491", "47.45", "31.79", "165647.95", "110978.89", "54669.06")
+    expected(6) = Array("Sub-Saharan Africa", "South Africa", "Beverages", "Offline", "H", "7/10/2012", "482292354", "8/21/2012", "9880", "47.45", "31.79", "468806.00", "314085.20", "154720.80")
+    expected(7) = Array("Asia", "Laos", "Vegetables", "Online", "L", "2 / 20 / 2011", "844532620", "3 / 20 / 2011", "4825", "154.06", "90.93", "743339.5", "438737.25", "304602.25")
+    expected(8) = Array("Asia", "China", "Baby Food", "Online", "C", "4/10/2017", "564251220", "5/12/2017", "3330", "255.28", "159.42", "850082.40", "530868.60", "319213.80")
+    expected(9) = Array("Sub-Saharan Africa", "Eritrea", "Meat", "Online", "L", "11/21/2014", "411809480", "1/10/2015", "2431", "421.89", "364.69", "1025614.59", "886561.39", "139053.20")
+           
+    'Act:
+    actual = SUT.FromCSVString(TEST_DATA).Items
+
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+

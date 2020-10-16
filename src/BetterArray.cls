@@ -63,7 +63,7 @@ End Enum
 
 Private Type ErrorDefinition
     number As Long
-    source As String
+    Source As String
     description As String
 End Type
 
@@ -80,6 +80,12 @@ Private Type TFields
     ArrayType As ArrayTypes
     ErrorDefinitions(EC_START To EC_END) As ErrorDefinition
     LowerBoundSet As Boolean
+End Type
+
+Private Type TString
+    Text As String
+    Length As Long
+    ByteLength As Long
 End Type
 
 Private this As TFields
@@ -675,15 +681,15 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
         Dim endRow As Long
         
         With fromRange
-            startColumn = .Column
+            startColumn = .column
             startRow = .Row
-            endColumn = .Column + .Columns.count - 1
+            endColumn = .column + .Columns.count - 1
             endRow = .Row + .Rows.count - 1
         End With
         
         With fromRange.Parent
             If detectLastColumn Then
-                endColumn = .Cells.Item(startRow, .Columns.count).End(xlToLeft).Column
+                endColumn = .Cells.Item(startRow, .Columns.count).End(xlToLeft).column
             End If
             
             If detectLastRow Then
@@ -1738,282 +1744,303 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
 End Function
 
 '@Description("Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
-Public Function FromCSV( _
+Public Function FromCSVFile( _
     ByVal path As String, _
     Optional ByVal ColumnDelimiter As String = ",", _
-    Optional ByRef RowDelimiter As String = vbNewLine, _
-    Optional ByRef Quote As String = """", _
-    Optional ByVal IgnoreFirstRow As Boolean _
+    Optional ByVal RowDelimiter As String = vbCrLf, _
+    Optional ByVal Quote As String = """", _
+    Optional ByVal IgnoreFirstRow As Boolean, _
+    Optional ByVal DuckType As Boolean _
 ) As BetterArray
-Attribute FromCSV.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
+Attribute FromCSVFile.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim rawData As String
-    Dim parsed() As Variant
+       
+    Open path For Input As #1
+        rawData = Input$(LOF(1), #1)
+    Close #1
+       
+    Set FromCSVFile = FromCSVString( _
+        CSVString:=rawData, _
+        ColumnDelimiter:=ColumnDelimiter, _
+        RowDelimiter:=RowDelimiter, _
+        Quote:=Quote, _
+        IgnoreFirstRow:=IgnoreFirstRow, _
+        DuckType:=DuckType _
+    )
+End Function
+
+'@Description("Accepts a string argument representing the contents of a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
+Public Function FromCSVString( _
+    ByVal CSVString As String, _
+    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByVal RowDelimiter As String = vbCrLf, _
+    Optional ByVal Quote As String = """", _
+    Optional ByVal IgnoreFirstRow As Boolean, _
+    Optional ByVal DuckType As Boolean _
+) As BetterArray
+Attribute FromCSVString.VB_Description = "Accepts a string argument representing the contents of a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim localType As ArrayTypes
+    Dim parsed() As Variant
     
     If this.ArrayType = BA_MULTIDIMENSION Then
         localType = BA_MULTIDIMENSION
     Else
         localType = BA_JAGGED
     End If
-    
-    
-    Open path For Input As #1
-        rawData = Input$(LOF(1), #1)
-    Close #1
-       
+     
     parsed = ParseCSV( _
-        Expression:=rawData, _
+        Expression:=CSVString, _
         ColumnDelimiter:=ColumnDelimiter, _
         RowDelimiter:=RowDelimiter, _
         Quote:=Quote, _
         IgnoreFirstRow:=IgnoreFirstRow, _
         ReturnJagged:=IIf(localType = BA_JAGGED, True, False), _
-        Base:=this.LowerBound _
+        Base:=this.LowerBound, _
+        DuckType:=DuckType _
     )
-    
+
     this.Length = GetArrayLength(parsed)
     this.Capacity = UBound(parsed)
     this.ArrayType = localType
     this.Items = parsed
-    Set FromCSV = Me
+
+    Set FromCSVString = Me
 End Function
 
 '''''''''''''''''''
 ' Private Methods '
 '''''''''''''''''''
 
+'@Description("Populates TString Types")
+Private Function StringFactory(ByRef Expression As String) As TString
+Attribute StringFactory.VB_Description = "Populates TString Types"
+    Dim result As TString
+    result.Text = Expression
+    result.Length = Len(Expression)
+    result.ByteLength = LenB(Expression)
+    StringFactory = result
+End Function
+
+'@Description("Returns the next byte position in the string of the specified delimiter")
+Private Function NextDelimBytePos(ByRef Expression As TString, ByRef Delimiter As TString, Optional ByRef startIndex As Long = 1) As Long
+Attribute NextDelimBytePos.VB_Description = "Returns the next byte position in the string of the specified delimiter"
+    Dim result As Long
+    result = InStrB(startIndex, Expression.Text, Delimiter.Text, vbBinaryCompare)
+    Do Until (result And 1) Or (result = 0)
+        result = InStrB(result + 1, Expression.Text, Delimiter.Text, vbBinaryCompare)
+    Loop
+    NextDelimBytePos = result
+End Function
+
+'@Description("Splits the provided string into rows based on the provided row delimiter")
+Private Function GetCSVRows( _
+    ByRef Expr As TString, _
+    ByRef RowDelim As TString, _
+    ByRef LiteralDelim As TString _
+) As String()
+Attribute GetCSVRows.VB_Description = "Splits the provided string into rows based on the provided row delimiter"
+    Dim rowDelimIndex As Long
+    Dim lastRowDelim As Long
+    Dim rowIndex As Long
+    Dim blankTrailingRows As Long
+    Dim maxRows As Long
+    Dim lineEndIndices() As Long
+    Dim literalDelimIndex As Long
+    Dim countRows As Long
+    Dim i As Long
+    Dim cursor As Long
+    Dim CSVRows() As String
+
+    ' find first row delimiter
+    rowDelimIndex = NextDelimBytePos(Expr, RowDelim)
+
+    ' find last row delimiter
+    lastRowDelim = InStrRev(Expr.Text, RowDelim.Text)
+    rowIndex = Expr.Length + 1
+    Do While rowIndex - lastRowDelim = RowDelim.Length
+        rowIndex = lastRowDelim
+        lastRowDelim = InStrRev(Expr.Text, RowDelim.Text, lastRowDelim)
+        blankTrailingRows = blankTrailingRows + 1
+    Loop
+    rowIndex = Empty
+
+    ' estimate max number of rows - does not account for line breaks within strings
+    maxRows = (Expr.Length - Len(Replace(Expr.Text, RowDelim.Text, vbNullString))) / RowDelim.Length + 1
+    ReDim lineEndIndices(0 To maxRows)
+        
+    ' find first quote delimiter
+    literalDelimIndex = NextDelimBytePos(Expr, LiteralDelim)
+    
+    Do While rowDelimIndex > 0
+        ' see if row delimiter before quote delimiter
+        If rowDelimIndex + RowDelim.ByteLength <= literalDelimIndex Or literalDelimIndex = 0 Then
+            ' no preceding literalDelim - iterate row count
+            lineEndIndices(countRows) = rowDelimIndex
+            rowDelimIndex = NextDelimBytePos(Expr, RowDelim, rowDelimIndex + RowDelim.ByteLength)
+            countRows = countRows + 1
+        Else
+            ' quote delimiter before row delimiter
+            ' find next quote delim
+            literalDelimIndex = NextDelimBytePos(Expr, LiteralDelim, literalDelimIndex + 2)
+           ' see if closing quote delim found
+            If literalDelimIndex Then
+                ' find next row delim
+                rowDelimIndex = NextDelimBytePos(Expr, RowDelim, literalDelimIndex + 2)
+                ' if next row delim found
+                If rowDelimIndex Then
+                    ' find next quote delim
+                    literalDelimIndex = NextDelimBytePos(Expr, LiteralDelim, literalDelimIndex + 2)
+                End If
+            End If
+        End If
+    Loop
+    
+    lineEndIndices(countRows) = Expr.ByteLength + 1
+    countRows = countRows - blankTrailingRows + 1
+    ReDim CSVRows(0 To countRows - 1)
+    cursor = 1
+    For i = 0 To countRows - 1
+        CSVRows(i) = MidB$(Expr.Text, cursor, lineEndIndices(i) - cursor)
+        cursor = lineEndIndices(i) + RowDelim.ByteLength
+    Next
+    GetCSVRows = CSVRows
+End Function
+
+'@Description("Counts the number of delimited columns in a provided string")
+Private Function CountCSVColumns(ByRef FirstRow As String, ByRef LiteralDelim As TString, ByVal ColumnDelimiter As String) As Long
+Attribute CountCSVColumns.VB_Description = "Counts the number of delimited columns in a provided string"
+    ' Each line should contain the same number of fields
+    ' https://www.loc.gov/preservation/digital/formats/fdd/fdd000323.shtml
+    ' so we can just count the columnd in the first row
+    Dim i As Long
+    Dim inQuote As Boolean
+    Dim countColumns As Long
+    Dim char As String
+    countColumns = 1
+    For i = 0 To Len(FirstRow)
+        char = Mid$(FirstRow, i + 1, 1)
+        Select Case char
+            Case LiteralDelim.Text
+                inQuote = Not inQuote
+            Case ColumnDelimiter
+                If Not inQuote Then
+                    countColumns = countColumns + 1
+                End If
+        End Select
+    Next
+    CountCSVColumns = countColumns
+End Function
+
 '@Description("Parses CSV string into a 2d or jagged array")
 Private Function ParseCSV( _
     ByRef Expression As String, _
-    Optional ByVal ColumnDelimiter As String = ",", _
-    Optional ByRef RowDelimiter As String = vbNewLine, _
-    Optional ByRef Quote As String = """", _
-    Optional ByVal IgnoreFirstRow As Boolean, _
-    Optional ByVal ReturnJagged As Boolean, _
-    Optional ByVal Base As Long _
+    ByVal ColumnDelimiter As String, _
+    ByVal RowDelimiter As String, _
+    ByRef Quote As String, _
+    ByVal IgnoreFirstRow As Boolean, _
+    ByVal ReturnJagged As Boolean, _
+    ByVal Base As Long, _
+    ByVal DuckType As Boolean _
 ) As Variant()
 Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array"
-    Const queueSize As Long = 50000
-    Dim buffer As String
-    Dim expressionLengthB As Long
-    Dim rowDelimiterLengthB As Long
-    Dim expressionLength As Long
-    Dim rowDelimiterLength As Long
-    Dim compare As VbCompareMethod
+    ' CSV is a simple format for representing a rectangular array (matrix) of numeric and textual values.
+    ' It an example of a "flat file" format.
+    ' It is a delimited data format that has fields/columns separated by the comma character %x2C (Hex 2C)
+    ' and records/rows/lines separated by characters indicating a line break.
+    ' RFC 4180 stipulates the use of CRLF pairs to denote line breaks, where CR is %x0D (Hex 0D) and LF is %x0A (Hex 0A).
+    ' Each line should contain the same number of fields.
+    ' Fields that contain a special character (comma, CR, LF, or double quote), must be "escaped" by enclosing them in double quotes (Hex 22).
+    ' An optional header line may appear as the first line of the file with the same format as normal record lines.
+    ' This header will contain names corresponding to the fields in the file and should contain the same number of fields as the records in the rest of the file.
+    ' CSV commonly employs US-ASCII as character set, but other character sets are permitted.
+    ' https://www.loc.gov/preservation/digital/formats/fdd/fdd000323.shtml
+
+    Dim i As Long
+    Dim j As Long
+    Dim cursor As Long
+    Dim columnIndex As Long
     Dim countColumns As Long
     Dim countRows As Long
-    Dim maxRows As Long
-    Dim lineEndIndices() As Long
-    Dim rowDelimIndex As Long
-    Dim quoteDelimIndex As Long
-    Dim bufferIndex As Long
+    Dim lastRow As Long
+    Dim lastColumn As Long
+    Dim startRow As Long
     Dim inQuote As Boolean
-    Dim rowIndex As Long
-    Dim rowCursor As Long
-    Dim cursorStart As Long
-    Dim columnIndex As Long
-    Dim startIndex As Long
-    Dim results() As Variant
+    Dim buffer As String
+    Dim char As String
+    Dim frag As String
+    Dim CSVRows() As String
     Dim jaggedRow() As Variant
-    Dim lastRowDelimiter As Long
-    Dim blankTrailingRows As Long
+    Dim results() As Variant
+    Dim element As Variant
+    Dim Expr As TString
+    Dim RowDelim As TString
+    Dim LiteralDelim As TString
     
-    compare = vbBinaryCompare
-    ' length information
-    expressionLength = Len(Expression)
-    rowDelimiterLength = Len(RowDelimiter)
-    expressionLengthB = LenB(Expression)
-    rowDelimiterLengthB = LenB(RowDelimiter)
+    Expr = StringFactory(Expression)
+    RowDelim = StringFactory(RowDelimiter)
+    LiteralDelim = StringFactory(Quote)
     
-    If expressionLengthB = 0 Or rowDelimiterLengthB = 0 Then
+    If Expr.ByteLength = 0 Or RowDelim.ByteLength = 0 Then
         ' TODO: Raise Err?
         ParseCSV = Array()
         Exit Function
     End If
-    
-    ' estimate max number of rows - does not account for line breaks within strings
-    maxRows = (expressionLength - Len(Replace(Expression, RowDelimiter, vbNullString))) / rowDelimiterLength + 1
-    ReDim lineEndIndices(0 To maxRows)
+
+    CSVRows = GetCSVRows(Expr, RowDelim, LiteralDelim)
         
-    ' find first row delimiter
-    rowDelimIndex = InStrB(1, Expression, RowDelimiter, compare)
-    Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
-        rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
-    Loop
-    
-    ' find first quote delimiter
-    quoteDelimIndex = InStrB(1, Expression, Quote, compare)
-    Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
-        quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
-    Loop
-    
-    ' find last row delimiter
-    lastRowDelimiter = InStrRev(Expression, RowDelimiter)
-    rowIndex = expressionLength + 1
-    Do While rowIndex - lastRowDelimiter = rowDelimiterLength
-        rowIndex = lastRowDelimiter
-        lastRowDelimiter = InStrRev(Expression, RowDelimiter, lastRowDelimiter)
-        blankTrailingRows = blankTrailingRows + 1
-    Loop
-    rowIndex = Empty
-    
-    Do While rowDelimIndex > 0
-        ' see if row delimiter before quote delimiter
-        If rowDelimIndex + rowDelimiterLengthB <= quoteDelimIndex Or quoteDelimIndex = 0 Then
-            lineEndIndices(countRows) = rowDelimIndex
-            rowDelimIndex = InStrB(rowDelimIndex + rowDelimiterLengthB, Expression, RowDelimiter, compare)
-            Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
-                rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
-            Loop
-            If countRows Then
-                If countRows Mod queueSize = 0 Then
-                    ' release thread to process OS event queue
-                    '@Ignore FunctionReturnValueDiscarded
-                    DoEvents
-                    ' Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
-                End If
-                countRows = countRows + 1
-            Else
-                ' calculate number of columns in first row
-                If countColumns < 1 Then
-                    countColumns = 1
-                    For bufferIndex = 0 To (lineEndIndices(0) - 1) \ 2
-                        If inQuote Then
-                            If Mid$(Expression, bufferIndex + 1, 1) = Quote Then
-                                inQuote = False
-                            End If
-                        Else
-                            Select Case Mid$(Expression, bufferIndex + 1, 1)
-                                Case Quote
-                                    inQuote = True
-                                Case ColumnDelimiter
-                                    countColumns = countColumns + 1
-                            End Select
-                        End If
-                    Next bufferIndex
-                End If
-                countRows = 1
-            End If
-        Else
-            ' quote delimiter before row delimiter
-            ' find next quote delim
-            quoteDelimIndex = InStrB(quoteDelimIndex + 2, Expression, Quote, compare)
-            Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
-                quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
-            Loop
-            ' see if closing quote delim found
-            If quoteDelimIndex Then
-                ' find next row delim
-                rowDelimIndex = InStrB(quoteDelimIndex + 2, Expression, RowDelimiter, compare)
-                Do Until (rowDelimIndex And 1) Or (rowDelimIndex = 0)
-                    rowDelimIndex = InStrB(rowDelimIndex + 1, Expression, RowDelimiter, compare)
-                Loop
-                ' if next row delim found
-                If rowDelimIndex Then
-                    ' find next quote delim
-                    quoteDelimIndex = InStrB(quoteDelimIndex + 2, Expression, Quote, compare)
-                    Do Until (quoteDelimIndex And 1) Or (quoteDelimIndex = 0)
-                        quoteDelimIndex = InStrB(quoteDelimIndex + 1, Expression, Quote, compare)
-                    Loop
-                End If
-            End If
-        End If
-    Loop
-    
-    lineEndIndices(countRows) = expressionLengthB + 1
-    countRows = countRows - blankTrailingRows + 1
-    Debug.Print "Found " & Format$(countRows, "#,###") & " rows of data"
-    bufferIndex = 0
-    inQuote = False
-    buffer = LeftB$(Expression, lineEndIndices(0) - 1 + 2)
+    countColumns = CountCSVColumns(CSVRows(0), LiteralDelim, ColumnDelimiter)
+    countRows = UBound(CSVRows) - LBound(CSVRows) + 1
     
     If IgnoreFirstRow Then
-        startIndex = 1
+        startRow = 1
     Else
-        startIndex = 0
+        startRow = 0
     End If
     
+    lastRow = Base + countRows - 1 - startRow
+    lastColumn = Base + countColumns - 1
     If ReturnJagged Then
-        ReDim jaggedRow(Base To Base + countColumns - 1)
-        ReDim results(Base To Base + countRows - 1 - startIndex)
+        ReDim jaggedRow(Base To lastColumn)
+        ReDim results(Base To lastRow)
     Else
-        ReDim results(Base To Base + countRows - 1 - startIndex, Base To Base + countColumns - 1)
+        ReDim results(Base To lastRow, Base To lastColumn)
     End If
     
-    For rowIndex = startIndex To countRows - 1
-        results(Base + rowIndex - startIndex) = jaggedRow
-        If rowIndex Mod queueSize = 0 And rowIndex Then
-            ' release thread to process OS event queue
-            '@Ignore FunctionReturnValueDiscarded
-            DoEvents
-            ' Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
-        End If
-        ' start index for columns
-        columnIndex = 0
-        If rowIndex = 0 Then
-            cursorStart = 1
-        Else
-            cursorStart = lineEndIndices(rowIndex - 1) + rowDelimiterLengthB
-        End If
-        
-        buffer = MidB$(Expression, cursorStart, lineEndIndices(rowIndex) - startIndex + 2)
-        bufferIndex = 0
-        inQuote = False
-        For rowCursor = 0 To (lineEndIndices(rowIndex) - cursorStart) \ 2
-            If inQuote Then
-                Select Case Mid$(buffer, rowCursor + 1, 1)
-                    Case Quote
-                        If Mid$(buffer, rowCursor + 2, 1) = Quote Then
-                            ' skip next char (quote)
-                            rowCursor = rowCursor + 1
-                            ' add quote char
-                            Mid$(buffer, bufferIndex + 1, 1) = Quote
-                            bufferIndex = bufferIndex + 1
-                        Else
-                            inQuote = False
-                        End If
-                    Case Else
-                        ' add this char
-                        Mid$(buffer, bufferIndex + 1, 1) = Mid$(buffer, rowCursor + 1, 1)
-                        bufferIndex = bufferIndex + 1
-                End Select
-            Else
-                Select Case Mid$(buffer, rowCursor + 1, 1)
-                    Case Quote
-                        inQuote = True
-                    Case ColumnDelimiter
-                        ' add this column
-                        If ReturnJagged Then
-                            results(Base + rowIndex - startIndex)(Base + columnIndex) = Left$(buffer, bufferIndex)
-                        Else
-                            results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex)
-                        End If
-                        ' max column reached?
-                        columnIndex = columnIndex + 1
-                        If columnIndex >= countColumns Then
-                            Exit For
-                        End If
-                        ' start filling column string buffer from start
-                        bufferIndex = 0
-                    Case Else
-                        ' add this char
-                        If rowCursor > bufferIndex Then
-                            Mid$(buffer, bufferIndex + 1, 1) = Mid$(buffer, rowCursor + 1, 1)
-                        End If
-                        bufferIndex = bufferIndex + 1
-                End Select
+    For i = startRow To lastRow
+        columnIndex = Base
+        buffer = CSVRows(i)
+        cursor = 1
+        For j = 0 To Len(buffer)
+            char = Mid$(buffer, j + 1, 1)
+            If char = LiteralDelim.Text Then
+                inQuote = Not inQuote
+            ElseIf char = ColumnDelimiter Or j = Len(buffer) Then
+                If Not inQuote Then
+                    frag = Mid$(buffer, cursor, j - cursor + 1)
+                    If DuckType Then
+                        element = DuckTypeElement(frag)
+                    Else
+                        element = UnquoteString(frag)
+                    End If
+                    If ReturnJagged Then
+                        jaggedRow(columnIndex) = element
+                    Else
+                        results(i - startRow, columnIndex) = element
+                    End If
+                    j = j + 1
+                    cursor = j + 1
+                    columnIndex = columnIndex + 1
+                    frag = vbNullString
+                End If
             End If
-        Next rowCursor
-        ' add last column item
-        If columnIndex < countColumns Then
-            If ReturnJagged Then
-                results(Base + rowIndex - startIndex)(Base + columnIndex) = Left$(buffer, bufferIndex - 1)
-            Else
-                results(Base + rowIndex - startIndex, Base + columnIndex) = Left$(buffer, bufferIndex - 1)
-            End If
+        Next
+        If ReturnJagged Then
+            results(i - startRow) = jaggedRow
+            ReDim jaggedRow(Base To lastColumn)
         End If
-    Next rowIndex
-    Debug.Print Format$(rowIndex, "#,###") & " rows parsed"
+    Next
+    
+    Debug.Print Format$(lastRow, "#,###") & " rows parsed"
     ParseCSV = results
 End Function
 
@@ -2499,6 +2526,38 @@ Attribute ParseArraySegmentFromString.VB_Description = "Returns an array from a 
     ParseArraySegmentFromString = DuckTypeStringArray(segment)
 End Function
 
+Private Function UnquoteString(ByRef element As String) As String
+    Dim localElement As String
+    localElement = element
+    If Left$(element, 1) = Chr$(34) And Right$(element, 1) = Chr$(34) Then
+        'trim string delimiters
+        localElement = Mid$(element, 2, Len(element) - 2)
+    End If
+    UnquoteString = Trim$(localElement)
+End Function
+
+Private Function DuckTypeElement(ByRef element As String) As Variant
+    Dim result As Variant
+    Dim localElement As String
+    localElement = element
+    If UCase$(localElement) = "TRUE" Or UCase$(element) = "FALSE" Then
+        result = CBool(localElement)
+    ElseIf IsNumeric(localElement) Then
+        Const Epsilon As Double = 2 ^ -52
+        Dim diff As Double
+        ' check if integer
+        diff = Abs(Fix(localElement) - localElement)
+        If diff > Epsilon Then
+            result = CDbl(localElement)
+        Else
+            result = CLng(localElement)
+        End If
+    Else
+        result = UnquoteString(localElement)
+    End If
+    DuckTypeElement = result
+End Function
+
 '@Description("Takes a string array. Returns a Variant array with the elements converted to an appropriate type")
 Private Function DuckTypeStringArray(ByRef sourceArray() As String) As Variant()
 Attribute DuckTypeStringArray.VB_Description = "Takes a string array. Returns a Variant array with the elements converted to an appropriate type"
@@ -2506,32 +2565,12 @@ Attribute DuckTypeStringArray.VB_Description = "Takes a string array. Returns a 
     Dim localLowerBound As Long
     Dim localUpperBound As Long
     Dim result() As Variant
-    Dim element As String
     
     localLowerBound = LBound(sourceArray)
     localUpperBound = UBound(sourceArray)
     ReDim result(localLowerBound To localUpperBound)
     For i = localLowerBound To localUpperBound
-        element = sourceArray(i)
-        If UCase$(element) = "TRUE" Or UCase$(element) = "FALSE" Then
-            result(i) = CBool(element)
-        ElseIf IsNumeric(element) Then
-            Const Epsilon As Double = 2 ^ -52
-            Dim diff As Double
-            ' check if integer
-            diff = Abs(Fix(element) - element)
-            If diff > Epsilon Then
-                result(i) = CDbl(element)
-            Else
-                result(i) = CLng(element)
-            End If
-        Else
-            If Left$(element, 1) = Chr$(34) And Right$(element, 1) = Chr$(34) Then
-                'trim string delimiters
-                element = Replace(element, Chr$(34), vbNullString)
-            End If
-            result(i) = Trim$(element)
-        End If
+        result(i) = DuckTypeElement(sourceArray(i))
     Next
     DuckTypeStringArray = result
 End Function
@@ -2539,81 +2578,81 @@ End Function
 '@Description("Populates the ErrorDefinitions array.")
 Private Sub PopulateErrorDefinitions()
 Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefinitions array."
-    Dim source As String
-    source = TypeName(Me)
+    Dim Source As String
+    Source = TypeName(Me)
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_RANGE_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_RANGE_OBJECT, _
-        source:=source, _
+        Source:=Source, _
         description:="Range Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_MAX_DIMENSIONS_LIMIT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_MAX_DIMENSIONS_LIMIT, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot convert structure of arrays with more than 20 dimensions." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT, _
-        source:=source, _
+        Source:=Source, _
         description:="Valid Collection Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot sort on arrays with more than 2 dimensions" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_JAGGED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_JAGGED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected jagged array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected multidimension array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_NULL_STRING) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_NULL_STRING, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot parse from a null string. Expected string with length greater than 0." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNALLOCATED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot operate on unallocated array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNDEFINED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Array is undefined." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, _
-        source:=source, _
+        Source:=Source, _
         description:="Unable to perform the requested operation on a multidimensional array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_VARIANT_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Unable to perform the requested operation on a typed array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH, _
-        source:=source, _
+        Source:=Source, _
         description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_STRING_TYPE_EXPECTED) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected a String or String-coercible type." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, _
-        source:=source, _
+        Source:=Source, _
         description:="The stored array cannot be converted to the requested structure." _
     )
     
@@ -2622,13 +2661,13 @@ End Sub
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
 Private Function ErrorDefinitionFactory( _
         ByVal number As Long, _
-        ByVal source As String, _
+        ByVal Source As String, _
         ByVal description As String _
     ) As ErrorDefinition
 Attribute ErrorDefinitionFactory.VB_Description = "Returns an ErrorDefinition Type populated with the provided arguments."
     Dim result As ErrorDefinition
     result.number = number
-    result.source = source
+    result.Source = Source
     result.description = description
     ErrorDefinitionFactory = result
 End Function
@@ -2645,7 +2684,7 @@ Attribute RaiseError.VB_Description = "Raises an application error based on the 
     If argName <> vbNullString Then localArgName = "Argument " & argName & ": "
     currentError = this.ErrorDefinitions(errorCode)
     Err.Raise currentError.number, _
-              currentError.source & "." & caller, _
+              currentError.Source & "." & caller, _
               localArgName & currentError.description
 End Sub
 
@@ -2828,12 +2867,12 @@ Attribute Swap.VB_Description = "Swaps the location of two elements in an array.
 End Sub
 
 '@Description("Sets or lets the value of a variable by reference depending on the type of the element to be assigned")
-Private Sub LetOrSetElement(ByRef destination As Variant, ByRef source As Variant)
+Private Sub LetOrSetElement(ByRef destination As Variant, ByRef Source As Variant)
 Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
-    If IsObject(source) Then
-        Set destination = source
+    If IsObject(Source) Then
+        Set destination = Source
     Else
-        destination = source
+        destination = Source
     End If
 End Sub
 
