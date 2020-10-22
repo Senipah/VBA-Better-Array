@@ -1,24 +1,11 @@
 Attribute VB_Name = "Profiling"
+'@Folder("BetterArray.Tests.Misc")
+
 Option Explicit
 Option Private Module
 
-'@Folder("BetterArray.Tests.Performance")
-
 '@IgnoreModule FunctionReturnValueNotUsed
 '@IgnoreModule FunctionReturnValueDiscarded
-Private Function formatDescriptor(ByVal descriptor As String) As String
-    Dim result As String
-    Dim corner As String
-    Dim vertice As String
-    Dim horizon As String
-    corner = "+"
-    vertice = "|"
-    horizon = "-"
-    result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
-           & vertice & " " & descriptor & " " & vertice & vbCrLf _
-           & corner & String(Len(descriptor) + 2, horizon) & corner
-    formatDescriptor = result
-End Function
 
 Public Sub PushingScalar()
     Const maxEntries As Long = 1000000
@@ -38,27 +25,6 @@ Public Sub PushingScalar()
         DoEvents
     Loop
     
-End Sub
-
-Private Sub RatePerformance(ByVal manualTime As Double, ByVal betterArrayTime As Double)
-    Const descriptor As String = "Time taken with "
-    Const resultStart As String = "BetterArray is "
-    Const resultEnd As String = " Than the manual method."
-    Dim diff As Double
-    
-    
-    diff = manualTime - betterArrayTime
-    If diff <> 0 And betterArrayTime <> 0 Then diff = diff / betterArrayTime
-    Debug.Print descriptor & "manual method: " & manualTime
-    Debug.Print descriptor & "BetterArray: " & betterArrayTime
-    If diff <> 0 Then
-        Debug.Print resultStart _
-                    & Format$(Abs(diff), "Percent") _
-                    & IIf(diff > 0, " faster", " slower") _
-                    & resultEnd
-    Else
-        Debug.Print "Effectively same speed."
-    End If
 End Sub
 
 Private Function PushingScalarByRedim(ByVal count As Long) As Double
@@ -87,7 +53,6 @@ Private Function PushingScalarByBetterArray(ByVal count As Long) As Double
     
     PushingScalarByBetterArray = Timer - startTime
 End Function
-
 
 Public Sub PushingArrays()
     Const maxEntries As Long = 1000000
@@ -135,7 +100,6 @@ Private Function PushingArraysByBetterArray(ByVal count As Long) As Double
     
     PushingArraysByBetterArray = Timer - startTime
 End Function
-
 
 Public Sub TransposingJaggedToExcel()
     Const maxEntries As Long = 100000
@@ -197,66 +161,26 @@ Private Function TransposingByBetterArray(ByVal count As Long) As Double
     TransposingByBetterArray = Timer - startTime
 End Function
 
-Public Sub CSV_Test()
-    Const DATA_DIR As String = "csv_data"
-    Const SLUG As String = " Sales Records.csv"
-    Dim i As Long
-    Dim startTime As Single
-    Dim endTime As Single
-    Dim basePath As String
-    Dim filePath As String
-    Dim fileName As String
-    Dim recordCounts() As Variant
-    Dim SUT As BetterArray
-    Set SUT = New BetterArray
-    
-    basePath = ThisWorkbook.path
-    
-    recordCounts = Array(10000)
-            
-    For i = LBound(recordCounts) To UBound(recordCounts)
-        fileName = recordCounts(i) & SLUG
-        filePath = JoinPath(basePath, DATA_DIR, fileName)
-        Debug.Print formatDescriptor("Reading: " & fileName)
-        startTime = Timer
-        SUT.FromCSVFile filePath
-        endTime = Timer
-        Debug.Print "Time taken: " & endTime - startTime
-        SUT.ToExcelRange ThisWorkbook.Sheets.Add.Range("A1")
-    Next
-    
-End Sub
-
 Public Sub CSV_Profiling()
     Const DATA_DIR As String = "csv_data"
     Const SLUG As String = " Sales Records.csv"
     Dim i As Long
-    Dim startTime As Single
-    Dim endTime As Single
     Dim basePath As String
-    Dim filePath As String
     Dim fileName As String
     Dim recordCounts() As Variant
     Dim SUT As BetterArray
     Set SUT = New BetterArray
     
-    basePath = ThisWorkbook.path
+    basePath = ThisWorkbook.Path
     
-    recordCounts = Array(10000, 100000, 1500000)
+    ' recordCounts = Array(10000, 100000, 1500000)
+    ' recordCounts = Array(10000, 100000)
+    recordCounts = Array(1500000)
             
     For i = LBound(recordCounts) To UBound(recordCounts)
         fileName = recordCounts(i) & SLUG
-        filePath = JoinPath(basePath, DATA_DIR, fileName)
-        Debug.Print formatDescriptor("Reading: " & fileName)
-        startTime = Timer
-        SUT.FromCSVFile filePath
-        endTime = Timer
-        Debug.Print "Time taken: " & endTime - startTime
+        ReadCSV SUT, JoinPath(basePath, DATA_DIR), fileName
     Next
-    
 End Sub
 
-Private Function JoinPath(ParamArray args() As Variant) As String
-    JoinPath = Strings.Join(CVar(args), "\")
-End Function
 
