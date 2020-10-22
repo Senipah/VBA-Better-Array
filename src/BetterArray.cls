@@ -63,7 +63,7 @@ End Enum
 
 Private Type ErrorDefinition
     number As Long
-    Source As String
+    source As String
     description As String
 End Type
 
@@ -416,7 +416,7 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     Dim localItems() As Variant
     Dim SEP As String
     
-    SEP = IIf(prettyPrint, separator & Space(1), separator)
+    SEP = IIf(prettyPrint, separator & SPACE(1), separator)
     
     localItems = InternalItems
     localArrayType = GetArrayType(localItems)
@@ -2527,10 +2527,10 @@ End Function
 
 Private Function UnquoteString(ByRef element As String) As String
     Dim localElement As String
-    localElement = element
-    If Left$(element, 1) = Chr$(34) And Right$(element, 1) = Chr$(34) Then
+    localElement = Trim$(element)
+    If Asc(Left$(localElement, 1)) = 34 And Asc(Right$(localElement, 1)) = 34 Then
         'trim string delimiters
-        localElement = Mid$(element, 2, Len(element) - 2)
+        localElement = Mid$(localElement, 2, Len(localElement) - 2)
     End If
     UnquoteString = Trim$(localElement)
 End Function
@@ -2577,81 +2577,81 @@ End Function
 '@Description("Populates the ErrorDefinitions array.")
 Private Sub PopulateErrorDefinitions()
 Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefinitions array."
-    Dim Source As String
-    Source = TypeName(Me)
+    Dim source As String
+    source = TypeName(Me)
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_RANGE_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_RANGE_OBJECT, _
-        Source:=Source, _
+        source:=source, _
         description:="Range Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_MAX_DIMENSIONS_LIMIT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_MAX_DIMENSIONS_LIMIT, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot convert structure of arrays with more than 20 dimensions." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT, _
-        Source:=Source, _
+        source:=source, _
         description:="Valid Collection Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot sort on arrays with more than 2 dimensions" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_JAGGED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_JAGGED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected jagged array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected multidimension array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_NULL_STRING) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_NULL_STRING, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot parse from a null string. Expected string with length greater than 0." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNALLOCATED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Cannot operate on unallocated array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNDEFINED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Array is undefined." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, _
-        Source:=Source, _
+        source:=source, _
         description:="Unable to perform the requested operation on a multidimensional array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_VARIANT_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
-        Source:=Source, _
+        source:=source, _
         description:="Unable to perform the requested operation on a typed array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH, _
-        Source:=Source, _
+        source:=source, _
         description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_STRING_TYPE_EXPECTED) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
-        Source:=Source, _
+        source:=source, _
         description:="Expected a String or String-coercible type." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, _
-        Source:=Source, _
+        source:=source, _
         description:="The stored array cannot be converted to the requested structure." _
     )
     
@@ -2660,13 +2660,13 @@ End Sub
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
 Private Function ErrorDefinitionFactory( _
         ByVal number As Long, _
-        ByVal Source As String, _
+        ByVal source As String, _
         ByVal description As String _
     ) As ErrorDefinition
 Attribute ErrorDefinitionFactory.VB_Description = "Returns an ErrorDefinition Type populated with the provided arguments."
     Dim result As ErrorDefinition
     result.number = number
-    result.Source = Source
+    result.source = source
     result.description = description
     ErrorDefinitionFactory = result
 End Function
@@ -2683,7 +2683,7 @@ Attribute RaiseError.VB_Description = "Raises an application error based on the 
     If argName <> vbNullString Then localArgName = "Argument " & argName & ": "
     currentError = this.ErrorDefinitions(errorCode)
     Err.Raise currentError.number, _
-              currentError.Source & "." & caller, _
+              currentError.source & "." & caller, _
               localArgName & currentError.description
 End Sub
 
@@ -2866,12 +2866,12 @@ Attribute Swap.VB_Description = "Swaps the location of two elements in an array.
 End Sub
 
 '@Description("Sets or lets the value of a variable by reference depending on the type of the element to be assigned")
-Private Sub LetOrSetElement(ByRef destination As Variant, ByRef Source As Variant)
+Private Sub LetOrSetElement(ByRef destination As Variant, ByRef source As Variant)
 Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
-    If IsObject(Source) Then
-        Set destination = Source
+    If IsObject(source) Then
+        Set destination = source
     Else
-        destination = Source
+        destination = source
     End If
 End Sub
 
@@ -2941,12 +2941,12 @@ Attribute RecursiveToString.VB_Description = "Recursively parses an array to a s
             Dim nested() As Variant
             nested = sourceArray(i)
             If prettyPrint Then
-                StringBuilder vbCrLf & Space(tabWidth * tabs)
+                StringBuilder vbCrLf & SPACE(tabWidth * tabs)
             End If
             RecursiveToString nested, prettyPrint, separator, openingDelimiter, closingDelimiter, quoteStrings, tabs + 1
             If i = UBound(sourceArray) And prettyPrint Then
                 StringBuilder vbCrLf
-                StringBuilder Space(tabWidth * (tabs - 1))
+                StringBuilder SPACE(tabWidth * (tabs - 1))
             End If
             StringBuilder SEP
         Else
@@ -2988,7 +2988,7 @@ Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is 
         result = StringBuilder(Final:=True)
     End If
     If Not IsNumeric(result) And quoteStrings Then
-        GetScalarRepresentation = Chr$(34) & result & Chr$(34)
+        GetScalarRepresentation = chr$(34) & result & chr$(34)
     Else
         GetScalarRepresentation = result
     End If
