@@ -7101,3 +7101,50 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'@TestMethod("BetterArray_FromCSVString")
+Private Sub FromCSVString_RFC4180_ReturnsJagged()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    '@Ignore UseMeaningfulName
+    Dim line1 As String
+    '@Ignore UseMeaningfulName
+    Dim line2 As String
+    '@Ignore UseMeaningfulName
+    Dim line3 As String
+    Dim CSVData As String
+    line1 = _
+        WrapQuote("Field with " & vbCrLf & "multiple lines") & " ," & _
+        WrapQuote("Another field " & vbCrLf & "with some " & vbCrLf & "line breaks inside") & " , " & _
+        WrapQuote("Include some  comma, for test, and some [" & WrapQuote() & "] Quotes") & " , " & _
+        WrapQuote("Normal field here") & vbCrLf
+    line2 = "1, 2, 3 ,4 " & vbCrLf
+    line3 = "Field 1, Field 2 , Field 3 , Field 4"
+    CSVData = line1 & line2 & line3
+
+    Dim expected() As Variant
+    Dim actual() As Variant
+    ReDim expected(0 To 2)
+
+    expected(0) = Array( _
+        "Field with " & vbCrLf & "multiple lines", _
+        "Another field " & vbCrLf & "with some " & vbCrLf & "line breaks inside", _
+        "Include some  comma, for test, and some [" & WrapQuote() & "] Quotes", _
+        "Normal field here" _
+    )
+    expected(1) = Array("1", "2", "3", "4")
+    expected(2) = Array("Field 1", "Field 2", "Field 3", "Field 4")
+           
+    'Act:
+    actual = SUT.FromCSVString(CSVData).Items
+
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+

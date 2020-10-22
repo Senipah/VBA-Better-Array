@@ -8,6 +8,12 @@ Option Explicit
     Private Const SEP As String = "\"
 #End If
 
+Public Function WrapQuote(Optional ByVal source As String = vbNullString) As String
+    Dim quoteChar As String
+    quoteChar = chr(34)
+    WrapQuote = quoteChar & source & quoteChar
+End Function
+
 Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
     Dim startTime As Single
     Dim endTime As Single
