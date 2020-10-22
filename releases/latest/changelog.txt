@@ -1,4 +1,2 @@
-1293b4a fix: don't iterate index - just cursor
-4836874 chore: don't track WIP book
-60ca02b chore: extrack util funcs to separate module
-c2f4be8 feat: add links to ws-garcias lib
+15937ec fix: trim strings before unquoting when parsin csv
+ab52ad2 chore: add RFC4180 Test for FromCSVString
