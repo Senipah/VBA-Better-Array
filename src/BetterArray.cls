@@ -414,9 +414,9 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     Dim localArrayType As ArrayTypes
     Dim result As String
     Dim localItems() As Variant
-    Dim sep As String
+    Dim SEP As String
     
-    sep = IIf(prettyPrint, separator & Space(1), separator)
+    SEP = IIf(prettyPrint, separator & Space(1), separator)
     
     localItems = InternalItems
     localArrayType = GetArrayType(localItems)
@@ -428,7 +428,7 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
         RecursiveToString _
             sourceArray:=localItems, _
             prettyPrint:=prettyPrint, _
-            separator:=sep, _
+            separator:=SEP, _
             openingDelimiter:=openingDelimiter, _
             closingDelimiter:=closingDelimiter, _
             quoteStrings:=quoteStrings
@@ -1745,7 +1745,7 @@ End Function
 
 '@Description("Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
 Public Function FromCSVFile( _
-    ByVal path As String, _
+    ByVal Path As String, _
     Optional ByVal ColumnDelimiter As String = ",", _
     Optional ByVal RowDelimiter As String = vbCrLf, _
     Optional ByVal Quote As String = """", _
@@ -1755,7 +1755,7 @@ Public Function FromCSVFile( _
 Attribute FromCSVFile.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim rawData As String
        
-    Open path For Input As #1
+    Open Path For Input As #1
         rawData = Input$(LOF(1), #1)
     Close #1
        
@@ -1987,7 +1987,6 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     End If
 
     CSVRows = GetCSVRows(Expr, RowDelim, LiteralDelim)
-        
     countColumns = CountCSVColumns(CSVRows(0), LiteralDelim, ColumnDelimiter)
     countRows = UBound(CSVRows) - LBound(CSVRows) + 1
     
@@ -2027,8 +2026,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
                     Else
                         results(i - startRow, columnIndex) = element
                     End If
-                    j = j + 1
-                    cursor = j + 1
+                    cursor = j + 2
                     columnIndex = columnIndex + 1
                     frag = vbNullString
                 End If
@@ -2036,7 +2034,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
         Next
         If ReturnJagged Then
             results(i - startRow) = jaggedRow
-            ReDim jaggedRow(Base To lastColumn)
+            ' ReDim jaggedRow(Base To lastColumn)
         End If
     Next
     
@@ -2396,6 +2394,7 @@ Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
 End Function
 
 '@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
+'@Ignore ShadowedDeclaration
 Private Function ElementsAreEqual( _
         ByVal expected As Variant, _
         ByVal actual As Variant _
@@ -2933,11 +2932,11 @@ Private Sub RecursiveToString( _
 Attribute RecursiveToString.VB_Description = "Recursively parses an array to a string representation."
     Const tabWidth As Long = 2
     Dim i As Long
-    Dim sep As String
+    Dim SEP As String
     
     StringBuilder openingDelimiter
     For i = LBound(sourceArray) To UBound(sourceArray)
-        sep = IIf(i = UBound(sourceArray), closingDelimiter, separator)
+        SEP = IIf(i = UBound(sourceArray), closingDelimiter, separator)
         If IsArray(sourceArray(i)) Then
             Dim nested() As Variant
             nested = sourceArray(i)
@@ -2949,14 +2948,14 @@ Attribute RecursiveToString.VB_Description = "Recursively parses an array to a s
                 StringBuilder vbCrLf
                 StringBuilder Space(tabWidth * (tabs - 1))
             End If
-            StringBuilder sep
+            StringBuilder SEP
         Else
             ' ensure no arrays passed to GetScalar as it clears string builder
             StringBuilder Replace( _
                     CStr(GetScalarRepresentation(sourceArray(i), quoteStrings)), _
                     ",", _
                     vbNullString _
-                ) & sep
+                ) & SEP
         End If
     Next
 End Sub
