@@ -352,7 +352,7 @@ Attribute Push.VB_Description = "Adds the provided argments to the array at the 
         Else
             LetOrSetElement this.Items(this.Length + this.LowerBound), element
         End If
-        this.Length = this.Length + 1
+        inc this.Length
     Next
     Push = this.Length
 End Function
@@ -653,8 +653,8 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
         Do While oldIndex < Final
             If oldIndex >= LBound(localItems) And oldIndex <= UBound(localItems) Then
                 LetOrSetElement result(newIndex), localItems(oldIndex)
-                newIndex = newIndex + 1
-                oldIndex = oldIndex + 1
+                inc newIndex
+                inc oldIndex
             End If
         Loop
         If this.ArrayType = BA_MULTIDIMENSION Then
@@ -988,7 +988,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
             IndexOf = currentIndex
             Exit Function
         End If
-        currentIndex = currentIndex + 1
+        inc currentIndex
     Loop
     
     IndexOf = MISSING_LONG
@@ -1040,7 +1040,7 @@ Attribute LastIndexOf.VB_Description = "returns the first index at which a given
             LastIndexOf = currentIndex
             Exit Function
         End If
-        currentIndex = currentIndex - 1
+        dec currentIndex
     Loop
     
     LastIndexOf = MISSING_LONG
@@ -1153,7 +1153,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         i = 0
         Do While i < actualDeleteCount
             LetOrSetElement result(i), localItems(actualStart + i)
-            i = i + 1
+            inc i
         Loop
     Else
         ' return empty array if nothing to be deleted
@@ -1171,7 +1171,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         i = actualStart
         Do While i < (localLength - actualDeleteCount)
             LetOrSetElement localItems(i + itemCount), localItems(i + actualDeleteCount)
-            i = i + 1
+            inc i
         Loop
         
         
@@ -1182,7 +1182,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         Do While i > (localLength - actualDeleteCount + itemCount)
             tempBetterArray.Remove (i - 1)
             ' Perform ? DeletePropertyOrThrow(O, ! ToString(k - 1)).
-            i = i - 1
+            dec i
         Loop
         localItems = tempBetterArray.Items
         Set tempBetterArray = Nothing
@@ -1192,7 +1192,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         ReDim Preserve tempArray(this.LowerBound To i + itemCount - 1) As Variant
         Do While i > actualStart
             LetOrSetElement tempArray(i + itemCount - 1), localItems(i + actualDeleteCount - 1)
-            i = i - 1
+            dec i
         Loop
         localItems = tempArray
     End If
@@ -1202,7 +1202,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         Dim j As Long
         For j = LBound(tempItems) To UBound(tempItems)
             localItems(i) = tempItems(j)
-            i = i + 1
+            inc i
         Next
     End If
     
@@ -1532,8 +1532,8 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
         
         If fromIndex < toIndex And toIndex < fromIndex + count Then
             direction = -1
-            fromIndex = fromIndex + count - 1
-            toIndex = toIndex + count - 1
+            inc fromIndex, count - 1
+            inc toIndex, count - 1
         Else
             direction = 1
         End If
@@ -1542,9 +1542,9 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             If fromIndex >= LBound(localItems) And fromIndex <= UBound(localItems) Then
                 localItems(toIndex) = localItems(fromIndex)
             End If
-            fromIndex = fromIndex + direction
-            toIndex = toIndex + direction
-            count = count - 1
+            inc fromIndex, direction
+            inc toIndex, direction
+            dec count
         Loop
         
         Me.Items = localItems
@@ -1811,6 +1811,18 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
+'@Description("Increments an index")
+Private Function inc(ByRef index As Long, Optional ByVal value As Long = 1) As Long
+    index = index + value
+    inc = index
+End Function
+
+'@Description("Decrements an index")
+Private Function dec(ByRef index As Long, Optional ByVal value As Long = 1) As Long
+    index = index - value
+    dec = index
+End Function
+
 '@Description("Populates TString Types")
 Private Function StringFactory(ByRef Expression As String) As TString
 Attribute StringFactory.VB_Description = "Populates TString Types"
@@ -1860,7 +1872,7 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
     Do While rowIndex - lastRowDelim = RowDelim.Length
         rowIndex = lastRowDelim
         lastRowDelim = InStrRev(Expr.Text, RowDelim.Text, lastRowDelim)
-        blankTrailingRows = blankTrailingRows + 1
+        inc blankTrailingRows
     Loop
     rowIndex = Empty
 
@@ -1877,7 +1889,7 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
             ' no preceding literalDelim - iterate row count
             lineEndIndices(countRows) = rowDelimIndex
             rowDelimIndex = NextDelimBytePos(Expr, RowDelim, rowDelimIndex + RowDelim.ByteLength)
-            countRows = countRows + 1
+            inc countRows
         Else
             ' quote delimiter before row delimiter
             ' find next quote delim
@@ -1896,7 +1908,7 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
     Loop
     
     lineEndIndices(countRows) = Expr.ByteLength + 1
-    countRows = countRows - blankTrailingRows + 1
+    dec countRows, blankTrailingRows - 1
     ReDim CSVRows(0 To countRows - 1)
     cursor = 1
     For i = 0 To countRows - 1
@@ -1924,7 +1936,7 @@ Attribute CountCSVColumns.VB_Description = "Counts the number of delimited colum
                 inQuote = Not inQuote
             Case ColumnDelimiter
                 If Not inQuote Then
-                    countColumns = countColumns + 1
+                    inc countColumns
                 End If
         End Select
     Next
@@ -2027,7 +2039,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
                         results(i - startRow, columnIndex) = element
                     End If
                     cursor = j + 2
-                    columnIndex = columnIndex + 1
+                    inc columnIndex
                     frag = vbNullString
                 End If
             End If
@@ -2174,7 +2186,7 @@ Attribute RecursiveReverse.VB_Description = "reverses the order of the passed ar
             sourceArray(upper) = RecursiveReverse(passThruArray, recurse)
         End If
         Swap sourceArray, lower, upper
-        lower = lower + 1
+        inc lower
     Loop
     RecursiveReverse = sourceArray
 End Function
@@ -2485,7 +2497,7 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
             Else
                 localResult = GetEmptyArray
             End If
-            cursor = cursor + 1
+            inc cursor
             localResult(i) = ParseDelimitedArrayString( _
                 sourceString, _
                 valueSeparator, _
@@ -2493,11 +2505,11 @@ Attribute ParseDelimitedArrayString.VB_Description = "Recursively parses nested 
                 closer, _
                 cursor _
             )
-            i = i + 1
+            inc i
         End If
         currentChar = Mid$(sourceString, cursor, 1)
         Do Until currentChar = opener
-            cursor = cursor + 1
+            inc cursor
             currentChar = Mid$(sourceString, cursor, 1)
             If currentChar = closer Or cursor >= Len(sourceString) Then
                 breakLoop = True
@@ -2720,7 +2732,7 @@ Attribute Transpose1DArray.VB_Description = "Converts a 1d array to a 1 column w
     j = localLowerBound
     For i = localLowerBound To localUpperBound
         result(j, localLowerBound) = sourceArray(i)
-        j = j + 1
+        inc j
     Next
     Transpose1DArray = result
 End Function
@@ -2847,7 +2859,7 @@ Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the
         End If
     
         If current <= pivot Then
-            i = i + 1
+            inc i
             Swap sourceArray, i, j
         End If
     Next
@@ -2896,7 +2908,7 @@ Attribute StringBuilder.VB_Description = "Efficiently concatenates string fragme
         firstIndex = LBound(buffer)
         cursor = UBound(buffer)
     ElseIf fragLength > 0 Then
-        bufferLength = bufferLength + fragLength
+        inc bufferLength, fragLength
         lastIndex = firstIndex + bufferLength - 1
         If bufferLength > bufferCapacity Then
             Do
@@ -3275,7 +3287,7 @@ Attribute RecursiveMultiToJagged.VB_Description = "Recursively Converts multidim
         Else
             localCrumbs = crumbs
         End If
-        localCurrentDepth = localCurrentDepth + 1
+        inc localCurrentDepth
         localLowerBound = LBound(sourceArray, localCurrentDepth)
         localUpperBound = UBound(sourceArray, localCurrentDepth)
         boundOffset = this.LowerBound - localLowerBound
@@ -3329,7 +3341,7 @@ Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
         localResult = result
     End If
 
-    localCurrentDepth = localCurrentDepth + 1
+    inc localCurrentDepth
     localLowerBound = LBound(sourceArray)
     localUpperBound = UBound(sourceArray)
     For i = localLowerBound To localUpperBound
@@ -3371,7 +3383,7 @@ Attribute GetJaggedArrayDepth.VB_Description = "Returns a number representing ho
     Dim depth As Long
     
     If IsArray(sourceArray) Then
-        depth = depth + 1
+        inc depth
         localLowerBound = LBound(sourceArray)
         localUpperBound = UBound(sourceArray)
         For i = localLowerBound To localUpperBound
@@ -3382,7 +3394,7 @@ Attribute GetJaggedArrayDepth.VB_Description = "Returns a number representing ho
                 If currentDepth > maxDepth Then maxDepth = currentDepth
             End If
         Next
-        depth = depth + maxDepth
+        inc depth, maxDepth
     End If
     GetJaggedArrayDepth = depth
 End Function
@@ -3472,7 +3484,7 @@ Attribute GetMultidimensionalArrayDepth.VB_Description = "Returns a number repre
     
     On Error Resume Next
     Do
-        i = i + 1
+        inc i
         void = UBound(sourceArray, i)
     Loop Until Err.number <> 0
     Err.Clear
