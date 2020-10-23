@@ -1,2 +1,1 @@
-15937ec fix: trim strings before unquoting when parsin csv
-ab52ad2 chore: add RFC4180 Test for FromCSVString
+d47263a chore: add testutils.bas to build script
