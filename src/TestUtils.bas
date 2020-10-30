@@ -8,10 +8,10 @@ Option Explicit
     Private Const SEP As String = "\"
 #End If
 
-Public Function WrapQuote(Optional ByVal source As String = vbNullString) As String
+Public Function WrapQuote(Optional ByVal Source As String = vbNullString) As String
     Dim quoteChar As String
     quoteChar = chr(34)
-    WrapQuote = quoteChar & source & quoteChar
+    WrapQuote = quoteChar & Source & quoteChar
 End Function
 
 Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
@@ -19,7 +19,7 @@ Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileNam
     Dim endTime As Single
     Dim filePath As String
     filePath = JoinPath(Path, fileName)
-    Debug.Print formatDescriptor("Reading: " & fileName)
+    Debug.Print ConsoleHeader("Reading: " & fileName)
     startTime = Timer
     '@Ignore FunctionReturnValueDiscarded
     Arr.FromCSVFile filePath
@@ -38,8 +38,8 @@ Public Function JoinPath(ParamArray args() As Variant) As String
 End Function
 
 Private Function TrimSeparator(ByVal Path As String) As String
-    If Right$(Path, 1) = SEP Then
-        TrimSeparator = Left$(Path, Len(Path) - 1)
+    If right$(Path, 1) = SEP Then
+        TrimSeparator = left$(Path, Len(Path) - 1)
     Else
         TrimSeparator = Path
     End If
@@ -55,7 +55,7 @@ Private Function lastCol(ByVal target As Worksheet, Optional ByVal rowNum As Lon
     lastCol = target.Cells.Item(rowNum, target.Columns.count).End(xlToLeft).column
 End Function
 
-Public Function formatDescriptor(ByVal descriptor As String) As String
+Public Function ConsoleHeader(ByVal descriptor As String) As String
     Dim result As String
     Dim corner As String
     Dim vertice As String
@@ -66,8 +66,19 @@ Public Function formatDescriptor(ByVal descriptor As String) As String
     result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
            & vertice & " " & descriptor & " " & vertice & vbCrLf _
            & corner & String(Len(descriptor) + 2, horizon) & corner
-    formatDescriptor = result
+    ConsoleHeader = result
 End Function
+
+Public Function SectionHeader(ByVal descriptor As String) As String
+    Dim result As String
+    Dim edge As String
+    edge = "'"
+    result = edge & String(Len(descriptor) + 2, edge) & edge & vbCrLf _
+           & edge & " " & descriptor & " " & edge & vbCrLf _
+           & edge & String(Len(descriptor) + 2, edge) & edge
+    SectionHeader = result
+End Function
+
 
 Public Sub RatePerformance(ByVal manualTime As Double, ByVal betterArrayTime As Double)
     Const descriptor As String = "Time taken with "

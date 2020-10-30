@@ -17,7 +17,7 @@ Public Sub PushingScalar()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
+        Debug.Print ConsoleHeader(Replace(descriptor, "{count}", CStr(i)))
         manualTime = PushingScalarByRedim(i)
         betterArrayTime = PushingScalarByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
@@ -64,7 +64,7 @@ Public Sub PushingArrays()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
+        Debug.Print ConsoleHeader(Replace(descriptor, "{count}", CStr(i)))
         manualTime = PushingArraysByRedim(i)
         betterArrayTime = PushingArraysByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
@@ -111,7 +111,7 @@ Public Sub TransposingJaggedToExcel()
     
     i = 10
     Do While i <= maxEntries
-        Debug.Print formatDescriptor(Replace(descriptor, "{count}", CStr(i)))
+        Debug.Print ConsoleHeader(Replace(descriptor, "{count}", CStr(i)))
         manualTime = TransposingByTranspose(i)
         betterArrayTime = TransposingByBetterArray(i)
         RatePerformance manualTime, betterArrayTime
@@ -182,5 +182,4 @@ Public Sub CSV_Profiling()
         ReadCSV SUT, JoinPath(basePath, DATA_DIR), fileName
     Next
 End Sub
-
 
