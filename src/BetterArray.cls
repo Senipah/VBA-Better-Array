@@ -2051,8 +2051,6 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
             ' ReDim jaggedRow(Base To lastColumn)
         End If
     Next
-    
-    Debug.Print Format$(lastRow, "#,###") & " rows parsed"
     ParseCSV = results
 End Function
 
@@ -2544,11 +2542,15 @@ Private Function UnquoteString(ByRef element As String) As String
 Attribute UnquoteString.VB_Description = "Trims enclosing quote chars from string if present"
     Dim localElement As String
     localElement = Trim$(element)
-    If Asc(left$(localElement, 1)) = 34 And Asc(right$(localElement, 1)) = 34 Then
-        'trim string delimiters
-        localElement = Mid$(localElement, 2, Len(localElement) - 2)
+    If localElement = vbNullString Then
+        UnquoteString = vbNullString
+    Else
+        If Asc(left$(localElement, 1)) = 34 And Asc(right$(localElement, 1)) = 34 Then
+            'trim string delimiters
+            localElement = Mid$(localElement, 2, Len(localElement) - 2)
+        End If
+        UnquoteString = Trim$(localElement)
     End If
-    UnquoteString = Trim$(localElement)
 End Function
 
 '@Description("Takes a string. Returns a Variant with the element converted to an appropriate type")

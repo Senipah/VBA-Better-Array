@@ -7147,4 +7147,36 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
 
+'@TestMethod("BetterArray_FromCSVString")
+Private Sub FromCSVString_NullString_ReturnsJagged()
+    On Error GoTo TestFail
+        
+    'Arrange:
+    Dim CSVData As String
+    CSVData = _
+        WrapQuote() & "," & vbCrLf & _
+        "," & WrapQuote() & " " & vbCrLf & _
+        "Field1,Field2" & vbCrLf
+
+    Dim expected() As Variant
+    Dim actual() As Variant
+    ReDim expected(0 To 2)
+
+    expected(0) = Array(vbNullString, vbNullString)
+    expected(1) = Array(vbNullString, vbNullString)
+    expected(2) = Array("Field1", "Field2")
+           
+    'Act:
+    actual = SUT.FromCSVString(CSVData).Items
+
+    'Assert:
+    Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
 
