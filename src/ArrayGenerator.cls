@@ -224,16 +224,16 @@ End Function
 Private Function LocalMultiDimConcat( _
         ByVal startingIndex As Long, _
         ByRef result() As Variant, _
-        ByRef source() As Variant _
+        ByRef Source() As Variant _
     ) As Long
     Dim i As Long
     Dim j As Long
-    For i = LBound(source) To UBound(source)
-        For j = LBound(source, 2) To UBound(source, 2)
-            If IsObject(source(i, j)) Then
-                Set result(i + startingIndex, j) = source(i, j)
+    For i = LBound(Source) To UBound(Source)
+        For j = LBound(Source, 2) To UBound(Source, 2)
+            If IsObject(Source(i, j)) Then
+                Set result(i + startingIndex, j) = Source(i, j)
             Else
-                result(i + startingIndex, j) = source(i, j)
+                result(i + startingIndex, j) = Source(i, j)
             End If
         Next
     Next
@@ -243,14 +243,14 @@ End Function
 Private Function LocalConcat( _
         ByVal startingIndex As Long, _
         ByRef result() As Variant, _
-        ByRef source() As Variant _
+        ByRef Source() As Variant _
     ) As Long
     Dim i As Long
-    For i = LBound(source) To UBound(source)
-        If IsObject(source(i)) Then
-            Set result(i + startingIndex) = source(i)
+    For i = LBound(Source) To UBound(Source)
+        If IsObject(Source(i)) Then
+            Set result(i + startingIndex) = Source(i)
         Else
-            result(i + startingIndex) = source(i)
+            result(i + startingIndex) = Source(i)
         End If
     Next
     LocalConcat = startingIndex + i
