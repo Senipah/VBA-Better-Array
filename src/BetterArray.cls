@@ -63,7 +63,7 @@ End Enum
 
 Private Type ErrorDefinition
     number As Long
-    source As String
+    Source As String
     description As String
 End Type
 
@@ -609,8 +609,8 @@ End Function
 
 '@Description("Returns a new array containing the portion of the stored array between the StartIndex and EndIndex")
 Public Function Slice( _
-        ByVal startIndex As Long, _
-        Optional ByVal endIndex As Long = MISSING_LONG _
+        ByVal StartIndex As Long, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As Variant()
 Attribute Slice.VB_Description = "Returns a new array containing the portion of the stored array between the StartIndex and EndIndex"
     Dim localLength As Long
@@ -625,7 +625,7 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     
     localItems = InternalItems
     localLength = this.Length
-    relativeStart = startIndex
+    relativeStart = StartIndex
     If relativeStart < LBound(localItems) Then
         If relativeStart < 0 Then
             oldIndex = Max((localLength + relativeStart), LBound(localItems))
@@ -635,10 +635,10 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     Else
         oldIndex = Min(relativeStart, localLength)
     End If
-    If endIndex = MISSING_LONG Then
+    If EndIndex = MISSING_LONG Then
         relativeEnd = localLength + LBound(localItems)
     Else
-        relativeEnd = endIndex
+        relativeEnd = EndIndex
     End If
     If relativeEnd < LBound(localItems) Then
         Final = Max((localLength + relativeEnd), LBound(localItems))
@@ -1105,7 +1105,7 @@ End Function
 
 '@Description("changes the contents of the array by removing or replacing existing elements and/or adding new elements in place.")
 Public Function Splice( _
-        ByVal startIndex As Long, _
+        ByVal StartIndex As Long, _
         ParamArray args() As Variant _
     ) As Variant()
 Attribute Splice.VB_Description = "changes the contents of the array by removing or replacing existing elements and/or adding new elements in place."
@@ -1124,10 +1124,10 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
     localArgs = args
     localItems = InternalItems
     localLength = UBound(localItems) + 1
-    If startIndex < LBound(localItems) Then
-        actualStart = Max(localLength + startIndex, LBound(localItems))
+    If StartIndex < LBound(localItems) Then
+        actualStart = Max(localLength + StartIndex, LBound(localItems))
     Else
-        actualStart = Min(startIndex, localLength)
+        actualStart = Min(StartIndex, localLength)
     End If
     argsCount = GetArrayLength(localArgs)
     If argsCount = 0 Then
@@ -1219,8 +1219,8 @@ End Function
 '@Description("Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
 Public Function Fill( _
         ByVal value As Variant, _
-        Optional ByVal startIndex As Long = MISSING_LONG, _
-        Optional ByVal endIndex As Long = MISSING_LONG _
+        Optional ByVal StartIndex As Long = MISSING_LONG, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As BetterArray
 Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value."
     Dim localItems() As Variant
@@ -1228,27 +1228,27 @@ Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of
     Dim relativeEnd As Long
     
     localItems = InternalItems
-    If startIndex = MISSING_LONG Then
+    If StartIndex = MISSING_LONG Then
         relativeStart = LBound(localItems)
     Else
-        If startIndex < 0 Then
-            relativeStart = Max(Me.UpperBound + startIndex, LBound(localItems))
-        ElseIf startIndex < LBound(localItems) Then
+        If StartIndex < 0 Then
+            relativeStart = Max(Me.UpperBound + StartIndex, LBound(localItems))
+        ElseIf StartIndex < LBound(localItems) Then
             relativeStart = LBound(localItems)
         Else
-            relativeStart = Min(startIndex, Me.UpperBound)
+            relativeStart = Min(StartIndex, Me.UpperBound)
         End If
     End If
     
-    If endIndex = MISSING_LONG Then
+    If EndIndex = MISSING_LONG Then
         relativeEnd = Me.UpperBound
     Else
-        If endIndex < 0 And endIndex < LBound(localItems) Then
-            relativeEnd = Max(Me.UpperBound + endIndex, LBound(localItems))
-        ElseIf endIndex < LBound(localItems) Then
+        If EndIndex < 0 And EndIndex < LBound(localItems) Then
+            relativeEnd = Max(Me.UpperBound + EndIndex, LBound(localItems))
+        ElseIf EndIndex < LBound(localItems) Then
             relativeEnd = Me.UpperBound
         Else
-            relativeEnd = Min(endIndex, Me.UpperBound)
+            relativeEnd = Min(EndIndex, Me.UpperBound)
         End If
     End If
     InternalItems = RecursiveFill(localItems, value, relativeStart, relativeEnd)
@@ -1272,8 +1272,8 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
         If arrayOpenDelimiter = vbNullString And arrayClosingDelimiter = vbNullString Then
             Dim firstChar As String
             Dim lastChar As String
-            firstChar = Left$(sourceString, 1)
-            lastChar = Right$(sourceString, 1)
+            firstChar = left$(sourceString, 1)
+            lastChar = right$(sourceString, 1)
             ' no array delimiters supplied
             ' see if the diff in ascii values are for first and last chars are less than 3
             ' this covers () [] {} <>
@@ -1477,8 +1477,8 @@ End Function
 '@Description("Copies a section of the stored array to another location in the same array.")
 Public Function CopyWithin( _
         ByVal target As Long, _
-        Optional ByVal startIndex As Long = MISSING_LONG, _
-        Optional ByVal endIndex As Long = MISSING_LONG _
+        Optional ByVal StartIndex As Long = MISSING_LONG, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As BetterArray
 Attribute CopyWithin.VB_Description = "Copies a section of the stored array to another location in the same array."
     Dim localLength As Long
@@ -1508,7 +1508,7 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             toIndex = Min(relativeTarget, localLength)
         End If
         
-        relativeStart = IIf(startIndex = MISSING_LONG, LBound(localItems), startIndex)
+        relativeStart = IIf(StartIndex = MISSING_LONG, LBound(localItems), StartIndex)
         
         If relativeStart < 0 Then
             fromIndex = Max((localLength + relativeStart), 0)
@@ -1516,10 +1516,10 @@ Attribute CopyWithin.VB_Description = "Copies a section of the stored array to a
             fromIndex = Min(relativeStart, localLength)
         End If
         
-        If endIndex = MISSING_LONG Then
+        If EndIndex = MISSING_LONG Then
             relativeEnd = localLength
         Else
-            relativeEnd = endIndex
+            relativeEnd = EndIndex
         End If
         
         If relativeEnd < 0 Then
@@ -1813,12 +1813,14 @@ End Function
 
 '@Description("Increments an index")
 Private Function inc(ByRef index As Long, Optional ByVal value As Long = 1) As Long
+Attribute inc.VB_Description = "Increments an index"
     index = index + value
     inc = index
 End Function
 
 '@Description("Decrements an index")
 Private Function dec(ByRef index As Long, Optional ByVal value As Long = 1) As Long
+Attribute dec.VB_Description = "Decrements an index"
     index = index - value
     dec = index
 End Function
@@ -1834,10 +1836,10 @@ Attribute StringFactory.VB_Description = "Populates TString Types"
 End Function
 
 '@Description("Returns the next byte position in the string of the specified delimiter")
-Private Function NextDelimBytePos(ByRef Expression As TString, ByRef Delimiter As TString, Optional ByRef startIndex As Long = 1) As Long
+Private Function NextDelimBytePos(ByRef Expression As TString, ByRef Delimiter As TString, Optional ByRef StartIndex As Long = 1) As Long
 Attribute NextDelimBytePos.VB_Description = "Returns the next byte position in the string of the specified delimiter"
     Dim result As Long
-    result = InStrB(startIndex, Expression.Text, Delimiter.Text, vbBinaryCompare)
+    result = InStrB(StartIndex, Expression.Text, Delimiter.Text, vbBinaryCompare)
     Do Until (result And 1) Or (result = 0)
         result = InStrB(result + 1, Expression.Text, Delimiter.Text, vbBinaryCompare)
     Loop
@@ -2058,23 +2060,23 @@ End Function
 Private Function RecursiveFill( _
         ByRef sourceArray() As Variant, _
         ByVal value As Variant, _
-        Optional ByVal startIndex As Long = MISSING_LONG, _
-        Optional ByVal endIndex As Long = MISSING_LONG _
+        Optional ByVal StartIndex As Long = MISSING_LONG, _
+        Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As Variant()
 Attribute RecursiveFill.VB_Description = "Recursvely fills the array (and nested arrays) with the passed value."
     Dim relativeStart As Long
     Dim relativeEnd As Long
     Dim i As Long
     
-    If startIndex = MISSING_LONG Then
+    If StartIndex = MISSING_LONG Then
         relativeStart = LBound(sourceArray)
     Else
-        relativeStart = startIndex
+        relativeStart = StartIndex
     End If
-    If endIndex = MISSING_LONG Then
+    If EndIndex = MISSING_LONG Then
         relativeEnd = UBound(sourceArray)
     Else
-        relativeEnd = endIndex
+        relativeEnd = EndIndex
     End If
     For i = relativeStart To relativeEnd
         If IsArray(sourceArray(i)) Then
@@ -2537,17 +2539,21 @@ Attribute ParseArraySegmentFromString.VB_Description = "Returns an array from a 
     ParseArraySegmentFromString = DuckTypeStringArray(segment)
 End Function
 
+'@Description("Trims enclosing quote chars from string if present")
 Private Function UnquoteString(ByRef element As String) As String
+Attribute UnquoteString.VB_Description = "Trims enclosing quote chars from string if present"
     Dim localElement As String
     localElement = Trim$(element)
-    If Asc(Left$(localElement, 1)) = 34 And Asc(Right$(localElement, 1)) = 34 Then
+    If Asc(left$(localElement, 1)) = 34 And Asc(right$(localElement, 1)) = 34 Then
         'trim string delimiters
         localElement = Mid$(localElement, 2, Len(localElement) - 2)
     End If
     UnquoteString = Trim$(localElement)
 End Function
 
+'@Description("Takes a string. Returns a Variant with the element converted to an appropriate type")
 Private Function DuckTypeElement(ByRef element As String) As Variant
+Attribute DuckTypeElement.VB_Description = "Takes a string. Returns a Variant with the element converted to an appropriate type"
     Dim result As Variant
     Dim localElement As String
     localElement = element
@@ -2589,81 +2595,81 @@ End Function
 '@Description("Populates the ErrorDefinitions array.")
 Private Sub PopulateErrorDefinitions()
 Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefinitions array."
-    Dim source As String
-    source = TypeName(Me)
+    Dim Source As String
+    Source = TypeName(Me)
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_RANGE_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_RANGE_OBJECT, _
-        source:=source, _
+        Source:=Source, _
         description:="Range Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_MAX_DIMENSIONS_LIMIT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_MAX_DIMENSIONS_LIMIT, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot convert structure of arrays with more than 20 dimensions." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_COLLECTION_OBJECT, _
-        source:=source, _
+        Source:=Source, _
         description:="Valid Collection Object Expected" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot sort on arrays with more than 2 dimensions" _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_JAGGED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_JAGGED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected jagged array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_MULTIDIMENSION_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected multidimension array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_NULL_STRING) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_NULL_STRING, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot parse from a null string. Expected string with length greater than 0." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNALLOCATED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNALLOCATED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Cannot operate on unallocated array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_UNDEFINED_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_UNDEFINED_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Array is undefined." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_INVALID_MULTIDIMENSIONAL_ARRAY_OPERATION, _
-        source:=source, _
+        Source:=Source, _
         description:="Unable to perform the requested operation on a multidimensional array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXPECTED_VARIANT_ARRAY) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXPECTED_VARIANT_ARRAY, _
-        source:=source, _
+        Source:=Source, _
         description:="Unable to perform the requested operation on a typed array." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_EXCEEDS_MAX_ARRAY_LENGTH, _
-        source:=source, _
+        Source:=Source, _
         description:="The requested operation would result in an array which exceeds the maximum possible length." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_STRING_TYPE_EXPECTED) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_STRING_TYPE_EXPECTED, _
-        source:=source, _
+        Source:=Source, _
         description:="Expected a String or String-coercible type." _
     )
     this.ErrorDefinitions(ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE) = ErrorDefinitionFactory( _
         number:=ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE, _
-        source:=source, _
+        Source:=Source, _
         description:="The stored array cannot be converted to the requested structure." _
     )
     
@@ -2672,13 +2678,13 @@ End Sub
 '@Description("Returns an ErrorDefinition Type populated with the provided arguments.")
 Private Function ErrorDefinitionFactory( _
         ByVal number As Long, _
-        ByVal source As String, _
+        ByVal Source As String, _
         ByVal description As String _
     ) As ErrorDefinition
 Attribute ErrorDefinitionFactory.VB_Description = "Returns an ErrorDefinition Type populated with the provided arguments."
     Dim result As ErrorDefinition
     result.number = number
-    result.source = source
+    result.Source = Source
     result.description = description
     ErrorDefinitionFactory = result
 End Function
@@ -2695,7 +2701,7 @@ Attribute RaiseError.VB_Description = "Raises an application error based on the 
     If argName <> vbNullString Then localArgName = "Argument " & argName & ": "
     currentError = this.ErrorDefinitions(errorCode)
     Err.Raise currentError.number, _
-              currentError.source & "." & caller, _
+              currentError.Source & "." & caller, _
               localArgName & currentError.description
 End Sub
 
@@ -2878,12 +2884,12 @@ Attribute Swap.VB_Description = "Swaps the location of two elements in an array.
 End Sub
 
 '@Description("Sets or lets the value of a variable by reference depending on the type of the element to be assigned")
-Private Sub LetOrSetElement(ByRef destination As Variant, ByRef source As Variant)
+Private Sub LetOrSetElement(ByRef destination As Variant, ByRef Source As Variant)
 Attribute LetOrSetElement.VB_Description = "Sets or lets the value of a variable by reference depending on the type of the element to be assigned"
-    If IsObject(source) Then
-        Set destination = source
+    If IsObject(Source) Then
+        Set destination = Source
     Else
-        destination = source
+        destination = Source
     End If
 End Sub
 
