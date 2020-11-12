@@ -166,7 +166,7 @@ Public Sub CSV_Profiling()
     Const SLUG As String = " Sales Records.csv"
     Dim i As Long
     Dim basePath As String
-    Dim fileName As String
+    Dim filename As String
     Dim recordCounts() As Variant
     Dim SUT As BetterArray
     Set SUT = New BetterArray
@@ -178,8 +178,8 @@ Public Sub CSV_Profiling()
     recordCounts = Array(1500000)
             
     For i = LBound(recordCounts) To UBound(recordCounts)
-        fileName = recordCounts(i) & SLUG
-        ReadCSV SUT, JoinPath(basePath, DATA_DIR), fileName
+        filename = recordCounts(i) & SLUG
+        ReadCSV SUT, JoinPath(basePath, DATA_DIR), filename
     Next
 End Sub
 

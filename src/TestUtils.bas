@@ -8,21 +8,21 @@ Option Explicit
     Private Const SEP As String = "\"
 #End If
 
-Public Function WrapQuote(Optional ByVal Source As String = vbNullString) As String
+Public Function WrapQuote(Optional ByVal source As String = vbNullString) As String
     Dim quoteChar As String
     quoteChar = chr(34)
-    WrapQuote = quoteChar & Source & quoteChar
+    WrapQuote = quoteChar & source & quoteChar
 End Function
 
-Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
+Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal filename As String)
     Dim startTime As Single
     Dim endTime As Single
-    Dim filePath As String
-    filePath = JoinPath(Path, fileName)
-    Debug.Print ConsoleHeader("Reading: " & fileName)
+    Dim filepath As String
+    filepath = JoinPath(Path, filename)
+    Debug.Print ConsoleHeader("Reading: " & filename)
     startTime = Timer
     '@Ignore FunctionReturnValueDiscarded
-    Arr.FromCSVFile filePath
+    Arr.FromCSVFile filepath
     endTime = Timer
     Debug.Print "Time taken: " & endTime - startTime
 End Sub
@@ -56,27 +56,27 @@ Private Function lastCol(ByVal target As Worksheet, Optional ByVal rowNum As Lon
 End Function
 
 Public Function ConsoleHeader(ByVal descriptor As String) As String
-    Dim result As String
+    Dim Result As String
     Dim corner As String
     Dim vertice As String
     Dim horizon As String
     corner = "+"
     vertice = "|"
     horizon = "-"
-    result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
+    Result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
            & vertice & " " & descriptor & " " & vertice & vbCrLf _
            & corner & String(Len(descriptor) + 2, horizon) & corner
-    ConsoleHeader = result
+    ConsoleHeader = Result
 End Function
 
 Public Function SectionHeader(ByVal descriptor As String) As String
-    Dim result As String
+    Dim Result As String
     Dim edge As String
     edge = "'"
-    result = edge & String(Len(descriptor) + 2, edge) & edge & vbCrLf _
+    Result = edge & String(Len(descriptor) + 2, edge) & edge & vbCrLf _
            & edge & " " & descriptor & " " & edge & vbCrLf _
            & edge & String(Len(descriptor) + 2, edge) & edge
-    SectionHeader = result
+    SectionHeader = Result
 End Function
 
 
@@ -195,7 +195,7 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
-    Dim result As Boolean
+    Dim Result As Boolean
     Dim i As Long
     
     On Error GoTo ErrHandler
@@ -211,14 +211,14 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
                         Exit For
                     End If
                 Next
-                result = currentlyEqual
+                Result = currentlyEqual
             End If
         End If
     ElseIf IsEmpty(expected) Or IsEmpty(actual) Then
-        If IsEmpty(expected) And IsEmpty(actual) Then result = True
+        If IsEmpty(expected) And IsEmpty(actual) Then Result = True
     ElseIf IsObject(expected) Or IsObject(actual) Then
         If IsObject(expected) And IsObject(actual) Then
-            If expected Is actual Then result = True
+            If expected Is actual Then Result = True
         End If
     ElseIf IsNumeric(expected) Or IsNumeric(actual) Then
         If IsNumeric(expected) And IsNumeric(actual) Then
@@ -229,13 +229,13 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
                     Abs(actual), _
                     Abs(expected) _
                 ) * Epsilon) Then
-                result = True
+                Result = True
             End If
         End If
     ElseIf expected = actual Then
-        result = True
+        Result = True
     End If
-    ElementsAreEqual = result
+    ElementsAreEqual = Result
     Exit Function
 ErrHandler:
     ElementsAreEqual = False
@@ -251,13 +251,13 @@ Public Function arraysAreReversed( _
     Dim i As Long
     Dim localUpperBound As Long
     Dim localLowerBound As Long
-    Dim result As Boolean
+    Dim Result As Boolean
     
     On Error GoTo ErrHandler
     
     localUpperBound = UBound(original)
     localLowerBound = LBound(original)
-    result = True
+    Result = True
     
     For i = localLowerBound To localUpperBound
         If IsArray(original(i)) Then
@@ -268,7 +268,7 @@ Public Function arraysAreReversed( _
                 reversedArray = reversed(localUpperBound + localLowerBound - i)
                 If recurse Then
                     If Not arraysAreReversed(originalArray, reversedArray) Then
-                        result = False
+                        Result = False
                         Exit For
                     End If
                 Else
@@ -278,7 +278,7 @@ Public Function arraysAreReversed( _
                     End If
                 End If
             Else
-                result = False
+                Result = False
                 Exit For
             End If
         Else
@@ -286,12 +286,12 @@ Public Function arraysAreReversed( _
                     original(i), _
                     reversed(localUpperBound + localLowerBound - i) _
                 ) Then
-                result = False
+                Result = False
                 Exit For
             End If
         End If
     Next
-    arraysAreReversed = result
+    arraysAreReversed = Result
     Exit Function
 ErrHandler:
     arraysAreReversed = False
