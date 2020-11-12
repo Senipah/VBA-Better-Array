@@ -2543,7 +2543,7 @@ Private Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
     Dim testArray() As Variant
     '@Ignore VariableNotUsed
     Dim actual As Boolean
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED, depth:=3)
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED, Depth:=3)
     SUT.Items = testArray
     'Act
     actual = SUT.IsSorted
@@ -2567,7 +2567,7 @@ End Sub
 '''''''''''''''''
 
 '@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArray_ArrayIsSorted()
+Private Sub Sort_OneDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2576,6 +2576,7 @@ Private Sub Sort_OneDimArray_ArrayIsSorted()
     
     testArray = Gen.GetArray()
     SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
     'Act:
     SUT.Sort
     actual = SUT.IsSorted
@@ -2589,7 +2590,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArray_ArrayIsSorted()
+Private Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2597,6 +2598,7 @@ Private Sub Sort_MultiDimArray_ArrayIsSorted()
     Dim testArray() As Variant
     testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
     'Act:
     SUT.Sort
     actual = SUT.IsSorted()
@@ -2609,7 +2611,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArray_ArrayIsSorted()
+Private Sub Sort_JaggedArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2617,6 +2619,72 @@ Private Sub Sort_JaggedArray_ArrayIsSorted()
     Dim testArray() As Variant
     testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
     SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayQuicksortIterative_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayQuicksortIterative_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
     'Act:
     SUT.Sort
     actual = SUT.IsSorted()
@@ -4782,7 +4850,7 @@ Private Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDim
     Set destination = outputSheet.Range("A1")
     
     ' Use Array of Doubles as all values returned from an Excel range are of type Double
-    sourceArray = Gen.GetArray(AG_DOUBLE, AG_JAGGED, depth:=3)
+    sourceArray = Gen.GetArray(AG_DOUBLE, AG_JAGGED, Depth:=3)
     
     For i = LBound(sourceArray) To UBound(sourceArray)
         For j = LBound(sourceArray(i)) To UBound(sourceArray(i))
@@ -4891,7 +4959,7 @@ Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     Dim testResult As Boolean
     
     Set tempBetterArray = New BetterArray
-    expected = Gen.GetArray(AG_BYTE, AG_JAGGED, depth:=3)
+    expected = Gen.GetArray(AG_BYTE, AG_JAGGED, Depth:=3)
     tempBetterArray.Items = expected
     sourceString = tempBetterArray.ToString()
     
