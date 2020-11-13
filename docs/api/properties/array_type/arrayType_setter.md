@@ -26,7 +26,7 @@ Setting as value of `BA_UNALLOCATED` will clear the existing array. This is the 
 
 ### Parameters
 
-Name 
+Name
 : `NewType`
 
 Type
@@ -43,4 +43,4 @@ Description
 
 **None**
 
-[Back to ArrayType overview](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items)
+[Back to ArrayType overview](https://senipah.github.io/VBA-Better-Array/api/properties/array_types/ArrayType)
