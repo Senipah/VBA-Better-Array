@@ -4,7 +4,7 @@ Option Explicit
 Option Private Module
 
 '@TestModule
-'@Folder("BetterArray.Tests")
+'@Folder("VBABetterArray.Tests")
 '@ModuleDescription("Unit Tests for 'BetterArray.cls'")
 
 '@IgnoreModule ProcedureNotUsed

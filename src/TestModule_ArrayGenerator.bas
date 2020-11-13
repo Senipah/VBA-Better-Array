@@ -3,7 +3,7 @@ Option Explicit
 Option Private Module
 
 '@TestModule
-'@Folder("BetterArray.Tests.Dependencies.ArrayGenerator.Tests")
+'@Folder("VBABetterArray.Tests.Dependencies.ArrayGenerator.Tests")
 
 '@IgnoreModule ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed

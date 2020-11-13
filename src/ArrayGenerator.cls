@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'"
-'@Folder("BetterArray.Tests.Dependencies.ArrayGenerator")
+'@Folder("VBABetterArray.Tests.Dependencies.ArrayGenerator")
 '@ModuleDescription("Used to generate arrays of specified length and type. Dependency for 'TestModule_BetterArray'")
 '@IgnoreModule ProcedureNotUsed
 

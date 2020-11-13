@@ -1,5 +1,5 @@
 Attribute VB_Name = "Profiling"
-'@Folder("BetterArray.Tests.Misc")
+'@Folder("VBABetterArray.Tests.Misc")
 
 Option Explicit
 Option Private Module

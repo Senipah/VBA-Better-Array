@@ -1,6 +1,6 @@
 Attribute VB_Name = "SortingTests"
 Option Explicit
-'@Folder("BetterArray.WIP.Sorting")
+'@Folder("VBABetterArray.WIP.Sorting")
 '@IgnoreModule FunctionReturnValueDiscarded
 
 Private Enum DataSizes

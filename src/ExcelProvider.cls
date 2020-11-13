@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'"
-'@Folder("BetterArray.Tests.Dependencies.ExcelProvider")
+'@Folder("VBABetterArray.Tests.Dependencies.ExcelProvider")
 '@ModuleDescription("An RAII container providing access to an Excel application. Dependency for 'TestModule_BetterArray'")
 '@IgnoreModule FunctionReturnValueDiscarded
 '@IgnoreModule ProcedureNotUsed

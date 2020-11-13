@@ -1,6 +1,6 @@
 Attribute VB_Name = "TestUtils"
 Option Explicit
-'@Folder("BetterArray.Tests.Utils")
+'@Folder("VBABetterArray.Tests.Utils")
 
 #If Mac Then
     Private Const SEP As String = "/"

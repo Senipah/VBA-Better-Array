@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "IValuesList implementation for random value generation. Dependency of 'ArrayGenerator'"
-'@Folder("BetterArray.Tests.Dependencies.IValuesList.Implementations")
+'@Folder("VBABetterArray.Tests.Dependencies.IValuesList.Implementations")
 '@ModuleDescription("IValuesList implementation for random value generation. Dependency of 'ArrayGenerator'")
 
 Option Explicit

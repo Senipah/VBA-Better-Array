@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Attribute VB_Description = "An array class for VBA providing features found in more modern languages "
-'@Folder("BetterArray")
+'@Folder("VBABetterArray")
 '@ModuleDescription("An array class for VBA providing features found in more modern languages ")
 ' Copyright (c) 2019 Nick Morgan. See License: https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE
 '@IgnoreModule FunctionReturnValueDiscarded, ProcedureNotUsed
