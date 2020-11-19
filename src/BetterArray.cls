@@ -53,6 +53,7 @@ Public Enum ErrorCodes
     EC_EXCEEDS_MAX_ARRAY_LENGTH
     EC_STRING_TYPE_EXPECTED
     EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
+    EC_CANNOT_SORT_OBJECTS
     EC_END
 End Enum
 
@@ -62,6 +63,7 @@ Public Enum ComparisonType
 End Enum
 
 Public Enum SortMethods
+    SM_TIMSORT
     SM_QUICKSORT_RECURSIVE
     SM_QUICKSORT_ITERATIVE
 End Enum
@@ -331,6 +333,7 @@ Attribute InternalItems.VB_Description = "Retrieves the stored items trimmed to 
 End Property
 
 '@Description("Assigns the passed array to this.items")
+'@Ignore MisleadingByRefParameter
 Private Property Let InternalItems(ByRef value() As Variant)
 Attribute InternalItems.VB_Description = "Assigns the passed array to this.items"
     this.Items = value
@@ -1465,6 +1468,15 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
     Dim localItems() As Variant
     Dim sortedItems() As Variant
     Dim localArrayType As ArrayTypes
+    Dim localSortColumn As Long
+    Dim firstChildLowerBound As Long
+    
+    Set Sort = Me
+    
+    If Me.IncludesType("Object") Then
+        RaiseError EC_CANNOT_SORT_OBJECTS, "Sort"
+        Exit Function
+    End If
     
     localItems = InternalItems
     localArrayType = GetArrayType(localItems)
@@ -1482,18 +1494,21 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
                 If Depth > 2 Then
                     RaiseError EC_EXCEEDS_MAX_SORT_DEPTH, "Sort"
                 End If
+                firstChildLowerBound = LBound(localItems(LBound(localItems)))
+                If SortColumn = MISSING_LONG Then
+                    localSortColumn = firstChildLowerBound
+                Else
+                    localSortColumn = SortColumn - 1 + firstChildLowerBound
+                End If
             End If
             ApplySortMethod _
                 localItems, _
-                LBound(localItems), _
-                UBound(localItems), _
                 localArrayType, _
-                IIf(SortColumn = MISSING_LONG, LBound(localItems), SortColumn)
+                localSortColumn
         End If
         sortedItems = localItems
     End If
     Me.Items = sortedItems
-    Set Sort = Me
 End Function
 
 '@Description("Copies a section of the stored array to another location in the same array.")
@@ -1720,11 +1735,9 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
             Dim bounds() As Long
             
             bounds = GetMaxBoundsAtDimension(localItems, 2)
-            
+            localColumn = columnIndex - 1 + bounds(0)
             ' determine column to compare - columnIndex if valid, lbound if not
-            If columnIndex > 0 And columnIndex <= (bounds(1) - bounds(0) + 1) Then
-                localColumn = columnIndex - 1 + bounds(0)
-            Else
+            If localColumn < bounds(0) Or localColumn > bounds(1) Then
                 localColumn = bounds(0)
             End If
             
@@ -2329,7 +2342,11 @@ Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed a
             If InStr( _
                     UCase$(TypeName(searchArray(i))), _
                     UCase$(CStr(searchElement)) _
-                ) > 0 Then
+                ) > 0 _
+                Or _
+                UCase$(CStr(searchElement)) = "OBJECT" And _
+                IsObject(searchArray(i)) _
+                Then
                 RecursiveIncludes = True
                 Exit Function
             End If
@@ -2696,6 +2713,11 @@ Attribute PopulateErrorDefinitions.VB_Description = "Populates the ErrorDefiniti
         source:=source, _
         description:="The stored array cannot be converted to the requested structure." _
     )
+    this.ErrorDefinitions(ErrorCodes.EC_CANNOT_SORT_OBJECTS) = ErrorDefinitionFactory( _
+        number:=ErrorCodes.EC_CANNOT_SORT_OBJECTS, _
+        source:=source, _
+        description:="The array contains Objects which cannot be sorted." _
+    )
     
 End Sub
 
@@ -2846,28 +2868,220 @@ End Function
 '@Description("Used to apply the correct specified sort algorithm.")
 Private Sub ApplySortMethod( _
         ByRef sourceArray() As Variant, _
-        ByVal Low As Long, _
-        ByVal High As Long, _
         ByVal localArrayType As ArrayTypes, _
         Optional ByVal col As Long _
     )
 Attribute ApplySortMethod.VB_Description = "Used to apply the correct specified sort algorithm."
     Select Case this.SortMethod
+        Case SortMethods.SM_TIMSORT
+            TimSort sourceArray, localArrayType, col
         Case SortMethods.SM_QUICKSORT_RECURSIVE
             QuickSortRecursive _
                 sourceArray, _
-                Low, _
-                High, _
+                LBound(sourceArray), _
+                UBound(sourceArray), _
                 localArrayType, _
                 col
         Case SortMethods.SM_QUICKSORT_ITERATIVE
             QuickSortIterative _
                 sourceArray, _
-                Low, _
-                High, _
+                LBound(sourceArray), _
+                UBound(sourceArray), _
                 localArrayType, _
                 col
     End Select
+End Sub
+
+Private Function GetComparisonItem( _
+    ByRef source As Variant, _
+    ByVal index As Long, _
+    ByVal col As Long, _
+    ByVal localArrayType As ArrayTypes _
+) As Variant
+    If IsObject(source(index)) Then
+        GetComparisonItem = ObjPtr(source(index))
+    Else
+        If localArrayType = BA_JAGGED Then
+            GetComparisonItem = source(index)(col)
+        Else
+            GetComparisonItem = source(index)
+        End If
+    End If
+End Function
+
+'@Description("Sorts the passed array in place using InsertionSort.")
+Private Sub InsertionSort( _
+    ByRef source() As Variant, _
+    ByVal leftIndex As Variant, _
+    ByVal rightIndex As Variant, _
+    ByVal localArrayType As ArrayTypes, _
+    Optional ByVal col As Long _
+)
+Attribute InsertionSort.VB_Description = "Sorts the passed array in place using InsertionSort."
+    Dim i As Long
+    Dim j As Long
+    Dim pivot As Variant
+    Dim pivotCompVal As Variant
+    Dim current As Variant
+    Dim currentCompval As Variant
+        
+    ' Loop from the element indicated by
+    ' `left` until the element indicated by `right`
+            
+    For i = leftIndex + 1 To rightIndex
+        ' This is the element we want to position in its
+        ' correct place
+        LetOrSetElement pivot, source(i)
+        pivotCompVal = GetComparisonItem(source, i, col, localArrayType)
+        ' Initialize the variable that will be used to
+        ' find the correct position of the element referenced
+        ' by `key_item`
+        j = i - 1
+        ' Run through the list of items (the left
+        ' portion of the array) and find the correct position
+        ' of the element referenced by `key_item`. Do this only
+        ' if the `key_item` is smaller than its adjacent values.
+        Do While j >= leftIndex
+            LetOrSetElement current, source(j)
+            currentCompval = GetComparisonItem(source, j, col, localArrayType)
+            If currentCompval > pivotCompVal Then
+                ' Shift the value one position to the left
+                ' and reposition `j` to point to the next element
+                ' (from right to left)
+                LetOrSetElement source(j + 1), current
+                dec j
+            Else
+                Exit Do
+            End If
+        Loop
+    
+        ' When you finish shifting the elements, position
+        ' the `key_item` in its correct location
+        '@Ignore UnassignedVariableUsage
+        LetOrSetElement source(j + 1), pivot
+    Next
+End Sub
+
+'@Description("Sorts the passed array in place using MergeSort.")
+Private Sub MergeSort( _
+    ByRef source() As Variant, _
+    ByVal StartIndex As Long, _
+    ByVal MidIndex As Long, _
+    ByVal EndIndex As Long, _
+    ByVal localArrayType As ArrayTypes, _
+    Optional ByVal col As Long _
+)
+Attribute MergeSort.VB_Description = "Sorts the passed array in place using MergeSort."
+    ' Original array is broken in two parts
+    ' left and right array
+    Dim lowLength As Long
+    Dim highLength As Long
+    Dim i As Long
+    Dim lowIndex As Long
+    Dim highIndex As Long
+    Dim lowPartition() As Variant
+    Dim highPartition() As Variant
+    '@Ignore VariableNotAssigned
+    Dim lowItem As Variant
+    '@Ignore VariableNotAssigned
+    Dim highItem As Variant
+    
+    lowLength = MidIndex - StartIndex + 1
+    highLength = EndIndex - MidIndex
+        
+    ReDim lowPartition(0 To Max(lowLength - 1, 0))
+    ReDim highPartition(0 To Max(highLength - 1, 0))
+    
+    i = 0
+    Do While i < lowLength
+        LetOrSetElement lowPartition(i), source(StartIndex + i)
+        inc i
+    Loop
+    
+    i = 0
+    Do While i < highLength
+        LetOrSetElement highPartition(i), source(MidIndex + 1 + i)
+        inc i
+    Loop
+    
+    ' After comparing, we
+    ' merge those two array
+    ' in larger sub array
+    i = StartIndex
+    Do While lowIndex < lowLength And highIndex < highLength
+        lowItem = GetComparisonItem(lowPartition, lowIndex, col, localArrayType)
+        highItem = GetComparisonItem(highPartition, highIndex, col, localArrayType)
+        If lowItem <= highItem Then
+            LetOrSetElement source(i), lowPartition(lowIndex)
+            inc lowIndex
+        Else
+            LetOrSetElement source(i), highPartition(highIndex)
+            inc highIndex
+        End If
+        inc i
+    Loop
+    
+    ' Copy remaining elements of left, if any
+    Do While lowIndex < lowLength
+        LetOrSetElement source(i), lowPartition(lowIndex)
+        inc lowIndex
+        inc i
+    Loop
+    Do While highIndex < highLength
+        LetOrSetElement source(i), highPartition(highIndex)
+        inc highIndex
+        inc i
+    Loop
+    
+End Sub
+
+'@Description("Iterative Timsort")
+Public Sub TimSort( _
+    ByRef source() As Variant, _
+    ByVal localArrayType As ArrayTypes, _
+    Optional ByVal col As Long _
+)
+Attribute TimSort.VB_Description = "Iterative Timsort"
+    Const MIN_RUN As Long = 32
+    Dim i As Long
+    Dim sourceLength As Long
+    sourceLength = GetArrayLength(source)
+    ' Sort individual subarrays of size RUN
+    For i = LBound(source) To UBound(source) Step MIN_RUN
+        InsertionSort source, i, Min((i + MIN_RUN - 1), UBound(source)), localArrayType, col
+    Next
+    
+    ' Now you can start merging the sorted slices.
+    ' Start from `min_run`, doubling the size on
+    ' each iteration until you surpass the length of
+    ' the array.
+    Dim Size As Long
+    Dim start As Long
+    Dim midpoint As Long
+    Dim endpoint As Long
+    
+    Size = MIN_RUN
+    Do While Size < sourceLength
+        ' Determine the arrays that will
+        ' be merged together
+        start = LBound(source)
+        Do While start < UBound(source)
+            ' Compute the `midpoint` (where the first array ends
+            ' and the second starts) and the `endpoint` (where
+            ' the second array ends)
+            midpoint = Min(start + Size - 1, sourceLength - 1)
+            endpoint = Min(start + Size * 2 - 1, sourceLength - 1)
+            ' Merge the two subarrays.
+            ' The `left` array should go from `start` to
+            ' `midpoint + 1`, while the `right` array should
+            ' go from `midpoint + 1` to `end + 1`.
+            MergeSort source, start, midpoint, endpoint, localArrayType, col
+            inc start, Size * 2
+        Loop
+        ' Each iteration should double the size of your arrays
+        inc Size, Size
+    Loop
+
 End Sub
 
 '@Description("Sorts in place a passed array using a Recursive implementation of the QuickSort algorithm.")
@@ -2957,20 +3171,11 @@ Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the
     Dim pivot As Variant
     Dim current As Variant
     
-    If localArrayType = BA_JAGGED Then
-        pivot = sourceArray(High)(col)
-    Else
-        pivot = sourceArray(High)
-    End If
+    pivot = GetComparisonItem(sourceArray, High, col, localArrayType)
     
     i = Low - 1
     For j = Low To High - 1
-        If localArrayType = BA_JAGGED Then
-            current = sourceArray(j)(col)
-        Else
-            current = sourceArray(j)
-        End If
-    
+        current = GetComparisonItem(sourceArray, j, col, localArrayType)
         If current <= pivot Then
             inc i
             Swap sourceArray, i, j
@@ -3215,7 +3420,6 @@ Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Do
         ' ensure all nested arrays have the correct base
         ' if they don't and additional arrays are added via concat the resulting
         ' md array from jaggedToMulti will have unexpected bounds
-        ' NOTE: This may need to be applied to jagged too for consistency
         Rebase = RecursiveRebase(localItems, True)
     Else
         Rebase = RecursiveRebase(localItems, False)

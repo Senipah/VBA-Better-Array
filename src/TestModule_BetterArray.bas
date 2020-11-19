@@ -2567,6 +2567,32 @@ End Sub
 '''''''''''''''''
 
 '@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayObjects_Throws()
+    Const ExpectedError As Long = ErrorCodes.EC_CANNOT_SORT_OBJECTS
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(AG_OBJECT)
+    SUT.Items = testArray
+    'Act:
+    SUT.Sort
+    
+Assert:
+    Assert.Fail "Expected error was not raised"
+
+TestExit:
+    Exit Sub
+TestFail:
+    If Err.number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
+End Sub
+
+'@TestMethod("BetterArray_Sort")
 Private Sub Sort_OneDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
@@ -2590,6 +2616,55 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
 Private Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
@@ -2602,6 +2677,54 @@ Private Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
     'Act:
     SUT.Sort
     actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
     'Assert:
     Assert.IsTrue actual, "Array not sorted"
 TestExit:
@@ -2632,6 +2755,55 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_RECURSIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
 Private Sub Sort_OneDimArrayQuicksortIterative_ArrayIsSorted()
     On Error GoTo TestFail
     
@@ -2655,6 +2827,55 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
 Private Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
     On Error GoTo TestFail
     
@@ -2667,6 +2888,54 @@ Private Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
     'Act:
     SUT.Sort
     actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
     'Assert:
     Assert.IsTrue actual, "Array not sorted"
 TestExit:
@@ -2695,6 +2964,291 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
 End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_QUICKSORT_ITERATIVE
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayTimSort_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayTimSort10kEntries_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(Length:=10000)
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    Dim x() As Variant
+    x = SUT.Items
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayTimSortNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_OneDimArrayTimSortPositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray()
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayTimSort_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayTimSortNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_MultiDimArrayTimSortPositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayTimSort_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted()
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayTimSortNegativeBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    SUT.LowerBound = -10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayTimSortPositiveBase_ArrayIsSorted()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim actual As Boolean
+    Dim testArray() As Variant
+    
+    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    SUT.LowerBound = 10
+    SUT.Items = testArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort
+    actual = SUT.IsSorted
+    
+    'Assert:
+    Assert.IsTrue actual, "Array not sorted"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
 
 '''''''''''''''''''''''
 ' Method - CopyWithin '
@@ -5895,6 +6449,10 @@ Private Sub Unique_JaggedArrayColumnIndexBaseNegativeBase_ReturnsUniqueList()
         Array(1, "Fizz", 3), _
         Array(1, "Buzz", 3) _
     )
+'    Dim expectedRow1(-10 To -7)
+'    Dim expectedRow2(-10 To -7)
+'    Dim expectedRow3(-10 To -7)
+'    expectedRow1
     ReDim expected(-10 To -7)
     expected(-10) = Array(1, "Foo", 3)
     expected(-9) = Array(1, "Bar", 3)

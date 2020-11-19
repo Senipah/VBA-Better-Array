@@ -1,6 +1,6 @@
 Attribute VB_Name = "SortingTests"
 Option Explicit
-'@Folder("VBABetterArray.WIP.Sorting")
+'@Folder("VBABetterArray.Tests.Misc")
 '@IgnoreModule FunctionReturnValueDiscarded
 
 Private Enum DataSizes
@@ -9,6 +9,7 @@ Private Enum DataSizes
     Large = 1500000
 End Enum
 
+'@Ignore ProcedureNotUsed
 Private Function Sum1DArray(ByRef source() As Variant) As Long
     Dim i As Long
     Dim total As Long
@@ -48,22 +49,28 @@ End Function
 Public Sub TestSmall()
     SpeedTestQSRecursive1DSML
     SpeedTestQSIterative1DSML
+    SpeedTestTimsort1DSML
     SpeedTestQSRecursive2DSML
     SpeedTestQSIterative2DSML
+    SpeedTestTimsort2DSML
 End Sub
 
 Public Sub TestMedium()
     SpeedTestQSRecursive1DMED
     SpeedTestQSIterative1DMED
+    SpeedTestTimsort1DMED
     SpeedTestQSRecursive2DMED
     SpeedTestQSIterative2DMED
+    SpeedTestTimsort2DMED
 End Sub
 
 Public Sub TestLarge()
     SpeedTestQSRecursive1DLRG
     SpeedTestQSIterative1DLRG
+    SpeedTestTimsort1DLRG
     SpeedTestQSRecursive2DLRG
     SpeedTestQSIterative2DLRG
+    SpeedTestTimsort2DLRG
 End Sub
 
 Public Sub SpeedTestQSRecursive1DSML()
@@ -90,6 +97,18 @@ Public Sub SpeedTestQSIterative1DLRG()
     Iterative1DTest Large
 End Sub
 
+Public Sub SpeedTestTimsort1DSML()
+    TimSort1DTest Small
+End Sub
+
+Public Sub SpeedTestTimsort1DMED()
+    TimSort1DTest Medium
+End Sub
+
+Public Sub SpeedTestTimsort1DLRG()
+    TimSort1DTest Large
+End Sub
+
 Public Sub SpeedTestQSRecursive2DSML()
     Recursive2DTest Small
 End Sub
@@ -114,6 +133,18 @@ Public Sub SpeedTestQSIterative2DLRG()
     Iterative2DTest Large
 End Sub
 
+Public Sub SpeedTestTimsort2DSML()
+    TimSort2DTest Small
+End Sub
+
+Public Sub SpeedTestTimsort2DMED()
+    TimSort2DTest Medium
+End Sub
+
+Public Sub SpeedTestTimsort2DLRG()
+    TimSort2DTest Large
+End Sub
+
 Private Sub Recursive1DTest(ByVal Size As DataSizes)
     Dim SUT As BetterArray
     Set SUT = ArrayFactory(AG_LONG, AG_ONEDIMENSION, Size)
@@ -128,6 +159,13 @@ Private Sub Iterative1DTest(ByVal Size As DataSizes)
     TestSortMethod SUT, SM_QUICKSORT_ITERATIVE
 End Sub
 
+Private Sub TimSort1DTest(ByVal Size As DataSizes)
+    Dim SUT As BetterArray
+    Set SUT = ArrayFactory(AG_LONG, AG_ONEDIMENSION, Size)
+    Debug.Print ConsoleHeader("Sorting 1D array of " & Size & " Rows using TimSort")
+    TestSortMethod SUT, SM_TIMSORT
+End Sub
+
 Private Sub Recursive2DTest(ByVal Size As DataSizes)
     Dim SUT As BetterArray
     Set SUT = ArrayFactory(AG_LONG, AG_JAGGED, Size)
@@ -140,6 +178,13 @@ Private Sub Iterative2DTest(ByVal Size As DataSizes)
     Set SUT = ArrayFactory(AG_LONG, AG_JAGGED, Size)
     Debug.Print ConsoleHeader("Sorting 2D array of " & Size & " Rows using Iterative Quicksort")
     TestSortMethod SUT, SM_QUICKSORT_ITERATIVE, 1
+End Sub
+
+Private Sub TimSort2DTest(ByVal Size As DataSizes)
+    Dim SUT As BetterArray
+    Set SUT = ArrayFactory(AG_LONG, AG_JAGGED, Size)
+    Debug.Print ConsoleHeader("Sorting 2D array of " & Size & " Rows using TimSort")
+    TestSortMethod SUT, SM_TIMSORT, 1
 End Sub
 
 Private Sub TestSortMethod(ByVal SUT As BetterArray, ByVal Algorithm As SortMethods, Optional ByVal SortColumn As Variant)
@@ -186,33 +231,4 @@ Private Sub QSIterativeCSVSort(ByVal Size As DataSizes)
     TestSortMethod SUT, SM_QUICKSORT_ITERATIVE, 2
 End Sub
 
-
-Public Sub SortingDriver()
-    Dim Gen As ArrayGenerator
-    Dim Arr As BetterArray
-    Dim intArray() As Variant
-    
-    Dim startSum As Long
-    Dim sortedSum As Long
-    
-    Set Gen = New ArrayGenerator
-    Set Arr = New BetterArray
-    
-    intArray = Gen.GetArray(AG_LONG, BA_ONEDIMENSION, 10000)
-    startSum = Sum1DArray(intArray)
-    
-    Stop
-    
-    TimSort intArray
-    sortedSum = Sum1DArray(intArray)
-    Debug.Print startSum - sortedSum
-    
-    'Stop
-    
-    Arr.Items = intArray
-    Debug.Print Arr.IsSorted
-    
-    'Stop
-    
-End Sub
 
