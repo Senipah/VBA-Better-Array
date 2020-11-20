@@ -56,27 +56,27 @@ Private Function lastCol(ByVal target As Worksheet, Optional ByVal rowNum As Lon
 End Function
 
 Public Function ConsoleHeader(ByVal descriptor As String) As String
-    Dim Result As String
+    Dim result As String
     Dim corner As String
     Dim vertice As String
     Dim horizon As String
     corner = "+"
     vertice = "|"
     horizon = "-"
-    Result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
+    result = corner & String(Len(descriptor) + 2, horizon) & corner & vbCrLf _
            & vertice & " " & descriptor & " " & vertice & vbCrLf _
            & corner & String(Len(descriptor) + 2, horizon) & corner
-    ConsoleHeader = Result
+    ConsoleHeader = result
 End Function
 
 Public Function SectionHeader(ByVal descriptor As String) As String
-    Dim Result As String
+    Dim result As String
     Dim edge As String
     edge = "'"
-    Result = edge & String(Len(descriptor) + 2, edge) & edge & vbCrLf _
+    result = edge & String(Len(descriptor) + 2, edge) & edge & vbCrLf _
            & edge & " " & descriptor & " " & edge & vbCrLf _
            & edge & String(Len(descriptor) + 2, edge) & edge
-    SectionHeader = Result
+    SectionHeader = result
 End Function
 
 
@@ -195,7 +195,7 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
     ' some roundings in type conversions cause greater diffs than machine epsilon
     Const Epsilon As Double = 0.0000000000001
-    Dim Result As Boolean
+    Dim result As Boolean
     Dim i As Long
     
     On Error GoTo ErrHandler
@@ -211,14 +211,14 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
                         Exit For
                     End If
                 Next
-                Result = currentlyEqual
+                result = currentlyEqual
             End If
         End If
     ElseIf IsEmpty(expected) Or IsEmpty(actual) Then
-        If IsEmpty(expected) And IsEmpty(actual) Then Result = True
+        If IsEmpty(expected) And IsEmpty(actual) Then result = True
     ElseIf IsObject(expected) Or IsObject(actual) Then
         If IsObject(expected) And IsObject(actual) Then
-            If expected Is actual Then Result = True
+            If expected Is actual Then result = True
         End If
     ElseIf IsNumeric(expected) Or IsNumeric(actual) Then
         If IsNumeric(expected) And IsNumeric(actual) Then
@@ -229,13 +229,13 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
                     Abs(actual), _
                     Abs(expected) _
                 ) * Epsilon) Then
-                Result = True
+                result = True
             End If
         End If
     ElseIf expected = actual Then
-        Result = True
+        result = True
     End If
-    ElementsAreEqual = Result
+    ElementsAreEqual = result
     Exit Function
 ErrHandler:
     ElementsAreEqual = False
@@ -251,13 +251,13 @@ Public Function arraysAreReversed( _
     Dim i As Long
     Dim localUpperBound As Long
     Dim localLowerBound As Long
-    Dim Result As Boolean
+    Dim result As Boolean
     
     On Error GoTo ErrHandler
     
     localUpperBound = UBound(original)
     localLowerBound = LBound(original)
-    Result = True
+    result = True
     
     For i = localLowerBound To localUpperBound
         If IsArray(original(i)) Then
@@ -268,7 +268,7 @@ Public Function arraysAreReversed( _
                 reversedArray = reversed(localUpperBound + localLowerBound - i)
                 If recurse Then
                     If Not arraysAreReversed(originalArray, reversedArray) Then
-                        Result = False
+                        result = False
                         Exit For
                     End If
                 Else
@@ -278,7 +278,7 @@ Public Function arraysAreReversed( _
                     End If
                 End If
             Else
-                Result = False
+                result = False
                 Exit For
             End If
         Else
@@ -286,12 +286,12 @@ Public Function arraysAreReversed( _
                     original(i), _
                     reversed(localUpperBound + localLowerBound - i) _
                 ) Then
-                Result = False
+                result = False
                 Exit For
             End If
         End If
     Next
-    arraysAreReversed = Result
+    arraysAreReversed = result
     Exit Function
 ErrHandler:
     arraysAreReversed = False

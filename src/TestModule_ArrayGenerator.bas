@@ -1551,15 +1551,15 @@ Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray(1, 1) As Variant
+    Dim FirstArray(1, 1) As Variant
     Dim secondArray(1, 1) As Variant
     Dim expected(3, 1) As Variant
     Dim actual() As Variant
     
-    firstArray(0, 0) = 0
-    firstArray(0, 1) = "A"
-    firstArray(1, 0) = 1
-    firstArray(1, 1) = "B"
+    FirstArray(0, 0) = 0
+    FirstArray(0, 1) = "A"
+    FirstArray(1, 0) = 1
+    FirstArray(1, 1) = "B"
     secondArray(0, 0) = 2
     secondArray(0, 1) = "C"
     secondArray(1, 0) = 3
@@ -1575,7 +1575,7 @@ Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
     expected(3, 1) = "D"
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, firstArray, secondArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, FirstArray, secondArray)
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Actual <> Expected"
@@ -1592,16 +1592,16 @@ Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray(1, 1) As Variant
+    Dim FirstArray(1, 1) As Variant
     Dim secondArray(1, 1) As Variant
     Dim thirdArray(1, 1) As Variant
     Dim expected(5, 1) As Variant
     Dim actual() As Variant
     
-    firstArray(0, 0) = 0
-    firstArray(0, 1) = "A"
-    firstArray(1, 0) = 1
-    firstArray(1, 1) = "B"
+    FirstArray(0, 0) = 0
+    FirstArray(0, 1) = "A"
+    FirstArray(1, 0) = 1
+    FirstArray(1, 1) = "B"
     secondArray(0, 0) = 2
     secondArray(0, 1) = "C"
     secondArray(1, 0) = 3
@@ -1625,7 +1625,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
     expected(5, 1) = "F"
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, firstArray, secondArray, thirdArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, FirstArray, secondArray, thirdArray)
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Actual <> Expected"
@@ -1641,13 +1641,13 @@ Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray(1) As Variant
+    Dim FirstArray(1) As Variant
     Dim secondArray(1) As Variant
     Dim expected(3) As Variant
     Dim actual() As Variant
     
-    firstArray(0) = 0
-    firstArray(1) = 1
+    FirstArray(0) = 0
+    FirstArray(1) = 1
     secondArray(0) = 2
     secondArray(1) = 3
     
@@ -1657,7 +1657,7 @@ Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
     expected(3) = 3
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_ONEDIMENSION, firstArray, secondArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_ONEDIMENSION, FirstArray, secondArray)
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Actual <> Expected"
@@ -1674,14 +1674,14 @@ Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray(1) As Variant
+    Dim FirstArray(1) As Variant
     Dim secondArray(1) As Variant
     Dim thirdArray(1) As Variant
     Dim expected(5) As Variant
     Dim actual() As Variant
     
-    firstArray(0) = 0
-    firstArray(1) = 1
+    FirstArray(0) = 0
+    FirstArray(1) = 1
     secondArray(0) = 2
     secondArray(1) = 3
     thirdArray(0) = 4
@@ -1695,7 +1695,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
     expected(5) = 5
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_ONEDIMENSION, firstArray, secondArray, thirdArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_ONEDIMENSION, FirstArray, secondArray, thirdArray)
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Actual <> Expected"
@@ -1712,18 +1712,18 @@ Private Sub ConcatArraysOfSameStructure_TwoJaggedArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray() As Variant
+    Dim FirstArray() As Variant
     Dim secondArray() As Variant
     Dim expected() As Variant
     Dim actual() As Variant
     Dim i As Long
     
-    firstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
+    FirstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
     secondArray = Array(Array(6, 7, 8), Array(9, 10, 11))
     expected = Array(Array(0, 1, 2), Array(3, 4, 5), Array(6, 7, 8), Array(9, 10, 11))
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_JAGGED, FirstArray, secondArray)
     
     'Assert:
     For i = LBound(expected) To UBound(expected)
@@ -1742,21 +1742,21 @@ Private Sub ConcatArraysOfSameStructures_ThreeJaggedArrays_ConcatSuccess()
     On Error GoTo TestFail
 
     'Arrange:
-    Dim firstArray() As Variant
+    Dim FirstArray() As Variant
     Dim secondArray() As Variant
     Dim thirdArray() As Variant
     Dim expected() As Variant
     Dim actual() As Variant
     Dim i As Long
     
-    firstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
+    FirstArray = Array(Array(0, 1, 2), Array(3, 4, 5))
     secondArray = Array(Array(6, 7, 8), Array(9, 10, 11))
     thirdArray = Array(Array(12, 13, 14), Array(15, 16, 17))
     expected = Array(Array(0, 1, 2), Array(3, 4, 5), Array(6, 7, 8), _
         Array(9, 10, 11), Array(12, 13, 14), Array(15, 16, 17))
     
     'Act:
-    actual = SUT.ConcatArraysOfSameStructure(AG_JAGGED, firstArray, secondArray, thirdArray)
+    actual = SUT.ConcatArraysOfSameStructure(AG_JAGGED, FirstArray, secondArray, thirdArray)
     
     'Assert:
     For i = LBound(expected) To UBound(expected)

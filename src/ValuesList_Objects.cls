@@ -25,10 +25,10 @@ Public Property Get IValuesList_IsObjectType() As Boolean
 End Property
 
 Public Function IValuesList_GetRandomValue() As Variant
-    Dim Result As Collection
-    Set Result = New Collection
-    Result.Add Rand(-1000, 1000)
-    Set IValuesList_GetRandomValue = Result
+    Dim result As Collection
+    Set result = New Collection
+    result.Add Rand(-1000, 1000)
+    Set IValuesList_GetRandomValue = result
 End Function
 
 Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long

@@ -38,12 +38,12 @@ Private Function GetCSVTestData(ByVal Size As DataSizes) As BetterArray
 End Function
 
 Private Function ArrayFactory(ByVal ValueType As ValueTypes, ByVal ArrayType As AG_ArrayTypes, ByVal Length As Long, Optional ByVal Depth As Long) As BetterArray
-    Dim Result As BetterArray
-    Set Result = New BetterArray
+    Dim result As BetterArray
+    Set result = New BetterArray
     With New ArrayGenerator
-        Result.Items = .GetArray(ValueType, ArrayType, Length, Depth)
+        result.Items = .GetArray(ValueType, ArrayType, Length, Depth)
     End With
-    Set ArrayFactory = Result
+    Set ArrayFactory = result
 End Function
 
 Public Sub TestSmall()
