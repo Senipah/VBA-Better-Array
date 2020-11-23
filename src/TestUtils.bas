@@ -8,18 +8,30 @@ Option Explicit
     Private Const SEP As String = "\"
 #End If
 
-Public Function WrapQuote(Optional ByVal source As String = vbNullString) As String
-    Dim quoteChar As String
-    quoteChar = chr(34)
-    WrapQuote = quoteChar & source & quoteChar
+Public Function CSVDataOutputPath(Optional ByVal fileName As String = "output.csv") As String
+    Const DATA_DIR As String = "csv_data"
+    CSVDataOutputPath = JoinPath(ThisWorkbook.Path, DATA_DIR, fileName)
 End Function
 
-Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal filename As String)
+Public Sub PrintExpectedActualStringsToConsole(ByVal expected As String, ByVal actual As String)
+    Debug.Print ConsoleHeader("Expected")
+    Debug.Print expected
+    Debug.Print ConsoleHeader("Actual")
+    Debug.Print actual
+End Sub
+
+Public Function WrapQuoteUtil(Optional ByVal source As String = vbNullString) As String
+    Dim quoteChar As String
+    quoteChar = chr(34)
+    WrapQuoteUtil = quoteChar & source & quoteChar
+End Function
+
+Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
     Dim startTime As Single
     Dim endTime As Single
     Dim filepath As String
-    filepath = JoinPath(Path, filename)
-    Debug.Print ConsoleHeader("Reading: " & filename)
+    filepath = JoinPath(Path, fileName)
+    Debug.Print ConsoleHeader("Reading: " & fileName)
     startTime = Timer
     '@Ignore FunctionReturnValueDiscarded
     Arr.FromCSVFile filepath
@@ -38,8 +50,8 @@ Public Function JoinPath(ParamArray args() As Variant) As String
 End Function
 
 Private Function TrimSeparator(ByVal Path As String) As String
-    If right$(Path, 1) = SEP Then
-        TrimSeparator = left$(Path, Len(Path) - 1)
+    If Right$(Path, 1) = SEP Then
+        TrimSeparator = Left$(Path, Len(Path) - 1)
     Else
         TrimSeparator = Path
     End If
