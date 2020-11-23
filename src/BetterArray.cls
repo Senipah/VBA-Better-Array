@@ -26,6 +26,8 @@ Private Const DEFAULT_CAPACITY As Long = 4
 Private Const MAX_ARRAY_LENGTH As Long = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
 Private Const MISSING_LONG As Long = -9999
+Private Const CHR_QUOTE As String = """"
+Private Const CHR_COMMA As String = ","
 
 Public Enum ArrayTypes
     BA_UNDEFINED
@@ -430,7 +432,7 @@ End Function
 '@Description("Returns a string representing the array structure and its elements.")
 Public Function ToString( _
         Optional ByVal prettyPrint As Boolean, _
-        Optional ByVal separator As String = ",", _
+        Optional ByVal separator As String = CHR_COMMA, _
         Optional ByVal openingDelimiter As String = "{", _
         Optional ByVal closingDelimiter As String = "}", _
         Optional ByVal quoteStrings As Boolean _
@@ -1281,7 +1283,7 @@ End Function
 '@Description("Parses a string representing an array and stores the outcome.")
 Public Function ParseFromString( _
         ByVal sourceString As String, _
-        Optional ByVal valueSeparator As String = ",", _
+        Optional ByVal valueSeparator As String = CHR_COMMA, _
         Optional ByVal arrayOpenDelimiter As String, _
         Optional ByVal arrayClosingDelimiter As String _
     ) As BetterArray
@@ -1295,8 +1297,8 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
         If arrayOpenDelimiter = vbNullString And arrayClosingDelimiter = vbNullString Then
             Dim firstChar As String
             Dim lastChar As String
-            firstChar = left$(sourceString, 1)
-            lastChar = right$(sourceString, 1)
+            firstChar = Left$(sourceString, 1)
+            lastChar = Right$(sourceString, 1)
             ' no array delimiters supplied
             ' see if the diff in ascii values are for first and last chars are less than 3
             ' this covers () [] {} <>
@@ -1397,6 +1399,7 @@ End Function
 
 '@Description("Joins one or more arrays onto the end of the current array.")
 Public Function Concat(ParamArray args() As Variant) As BetterArray
+Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the current array."
     Dim i As Long
     Dim result() As Variant
     Dim stored() As Variant
@@ -1768,18 +1771,15 @@ End Function
 '@Description("Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
 Public Function FromCSVFile( _
     ByVal Path As String, _
-    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
     Optional ByVal RowDelimiter As String = vbCrLf, _
-    Optional ByVal Quote As String = """", _
+    Optional ByVal Quote As String = CHR_QUOTE, _
     Optional ByVal IgnoreFirstRow As Boolean, _
     Optional ByVal DuckType As Boolean _
 ) As BetterArray
 Attribute FromCSVFile.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim rawData As String
-       
-    Open Path For Input As #1
-        rawData = Input$(LOF(1), #1)
-    Close #1
+    rawData = ReadStringFromFile(Path)
        
     Set FromCSVFile = FromCSVString( _
         CSVString:=rawData, _
@@ -1794,9 +1794,9 @@ End Function
 '@Description("Accepts a string argument representing the contents of a comma-separated values (CSV) file and stores the delimited values contained within to the internal array.")
 Public Function FromCSVString( _
     ByVal CSVString As String, _
-    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
     Optional ByVal RowDelimiter As String = vbCrLf, _
-    Optional ByVal Quote As String = """", _
+    Optional ByVal Quote As String = CHR_QUOTE, _
     Optional ByVal IgnoreFirstRow As Boolean, _
     Optional ByVal DuckType As Boolean _
 ) As BetterArray
@@ -1830,20 +1830,17 @@ Attribute FromCSVString.VB_Description = "Accepts a string argument representing
 End Function
 
 Public Function ToCSVString( _
-    Optional ByVal ColumnDelimiter As String = ",", _
+    Optional ByRef Headers As Variant, _
+    Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
     Optional ByVal RowDelimiter As String = vbCrLf, _
-    Optional ByVal Quote As String = """", _
-    Optional ByRef headers As Variant _
+    Optional ByVal Quote As String = CHR_QUOTE, _
+    Optional ByVal EncloseAllInQuotes As Boolean, _
+    Optional ByVal DateFormat As String, _
+    Optional ByVal NumberFormat As String _
 ) As String
-    Dim expected As String
-
     Dim localItems() As Variant
     Dim Depth As Long
-    Dim transposeValues As Boolean
-    Dim lengthRows As Long
-    Dim lengthColumns As Long
     Dim encodedRecords() As String
-    Dim i As Long
     Dim result As String
     Dim headersArray() As Variant
     
@@ -1854,16 +1851,57 @@ Public Function ToCSVString( _
             '1d array
             localItems = ConvertOneDimensionArrayToJagged(localItems)
         End If
-        If Not IsMissing(headers) Then
-            If IsArray(headers) Then
-                headersArray = Array(headers)
+        If Not IsMissing(Headers) Then
+            If IsArray(Headers) Then
+                headersArray = Array(Headers)
                 localItems = InternalConcat(headersArray, localItems)
             End If
         End If
-        encodedRecords = EncodeCSVRecords(localItems)
-        result = BuildCSVString(encodedRecords)
+        encodedRecords = EncodeCSVRecords(localItems, ColumnDelimiter, RowDelimiter, EncloseAllInQuotes, DateFormat, NumberFormat)
+        result = BuildCSVString(encodedRecords, ColumnDelimiter, RowDelimiter)
     End If
     ToCSVString = result
+End Function
+
+Public Function ToCSVFile( _
+    ByVal Path As String, _
+    Optional ByRef Headers As Variant, _
+    Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
+    Optional ByVal RowDelimiter As String = vbCrLf, _
+    Optional ByVal Quote As String = CHR_QUOTE, _
+    Optional ByVal EncloseAllInQuotes As Boolean, _
+    Optional ByVal DateFormat As String, _
+    Optional ByVal NumberFormat As String _
+) As String
+    Dim content As String
+    ' test if path valid - if not handle err
+    
+    ' get ouput string
+    If IsMissing(Headers) Then
+        content = Me.ToCSVString( _
+            ColumnDelimiter:=ColumnDelimiter, _
+            RowDelimiter:=RowDelimiter, _
+            Quote:=Quote, _
+            EncloseAllInQuotes:=EncloseAllInQuotes, _
+            DateFormat:=DateFormat, _
+            NumberFormat:=NumberFormat _
+        )
+    Else
+        content = Me.ToCSVString( _
+            Headers, _
+            ColumnDelimiter, _
+            RowDelimiter, _
+            Quote, _
+            EncloseAllInQuotes, _
+            DateFormat, _
+            NumberFormat _
+        )
+    End If
+    
+    ' write output
+    PrintStringToFile Path, content
+    
+    ToCSVFile = content
 End Function
 
 
@@ -1871,15 +1909,46 @@ End Function
 ' Private Methods '
 '''''''''''''''''''
 
-Private Function BuildCSVString(records() As String, Optional SEP As String = ",") As String
+Private Function ReadStringFromFile(ByVal Path As String) As String
+    Dim file As Long
+    Dim byteCount As Long
+    Dim result As String
+    If Dir(Path) <> vbNullString Then
+        file = FreeFile
+        Open Path For Input Access Read Lock Read As file
+            byteCount = LOF(file)
+            result = Input$(byteCount, file)
+        Close file
+    End If
+    ReadStringFromFile = result
+End Function
+
+Private Sub PrintStringToFile(ByVal Path As String, ByVal content As String)
+    Dim file As Long
+    file = FreeFile
+    Open Path For Output Access Write As file
+        Print #file, content
+    Close file
+End Sub
+
+Private Function WrapQuote(Optional ByVal source As String = vbNullString) As String
+    WrapQuote = CHR_QUOTE & source & CHR_QUOTE
+End Function
+
+Private Function BuildCSVString( _
+    ByRef records() As String, _
+    ByVal ColumnDelimiter As String, _
+    ByVal RowDelimiter As String _
+) As String
     Dim i As Long
     Dim j As Long
-    StringBuilder NewString:=True
     Dim lastRow As Long
     Dim lastCol As Long
     Dim validRow As Boolean
+    
     lastRow = UBound(records)
     lastCol = UBound(records, 2)
+    StringBuilder NewString:=True
     For i = LBound(records) To UBound(records)
         'skip entirely blank rows
         validRow = False
@@ -1894,10 +1963,10 @@ Private Function BuildCSVString(records() As String, Optional SEP As String = ",
                 StringBuilder records(i, j)
                 If j = lastCol Then
                     If i <> lastRow Then
-                        StringBuilder vbCrLf
+                        StringBuilder RowDelimiter
                     End If
                 Else
-                    StringBuilder SEP
+                    StringBuilder ColumnDelimiter
                 End If
             Next
         End If
@@ -1905,7 +1974,14 @@ Private Function BuildCSVString(records() As String, Optional SEP As String = ",
     BuildCSVString = StringBuilder(Final:=True)
 End Function
 
-Private Function EncodeCSVRecords(records() As Variant) As String()
+Private Function EncodeCSVRecords( _
+    ByRef records() As Variant, _
+    ByVal ColumnDelimiter As String, _
+    ByVal RowDelimiter As String, _
+    ByVal EncloseAllInQuotes As Boolean, _
+    ByVal DateFormat As String, _
+    ByVal NumberFormat As String _
+) As String()
     Dim firstDimBounds() As Long
     Dim secondDimBounds() As Long
     Dim i As Long
@@ -1923,25 +1999,107 @@ Private Function EncodeCSVRecords(records() As Variant) As String()
         If IsArray(records(i)) Then
             For j = LBound(records(i)) To UBound(records(i))
                 currentField = GetScalarRepresentation(records(i)(j))
-                result(i, j) = currentField
+                result(i, j) = EncodeCSVField( _
+                    currentField, _
+                    ColumnDelimiter, _
+                    RowDelimiter, _
+                    EncloseAllInQuotes, _
+                    DateFormat, _
+                    NumberFormat _
+                )
             Next
         End If
     Next
     EncodeCSVRecords = result
 End Function
 
-Private Function EncodeCSVField(ByVal field As Variant) As String
+Private Function EncodeCSVField( _
+    ByVal field As Variant, _
+    ByVal ColumnDelimiter As String, _
+    ByVal RowDelimiter As String, _
+    ByVal EncloseAllInQuotes As Boolean, _
+    ByVal DateFormat As String, _
+    ByVal NumberFormat As String _
+) As String
+    ' https://tools.ietf.org/html/rfc4180#section-2
     Dim localField As String
+    
+    If IsDate(field) And DateFormat <> vbNullString Then
+        On Error Resume Next
+        localField = Format$(field, DateFormat)
+        On Error GoTo 0
+    ElseIf IsNumeric(field) And NumberFormat <> vbNullString Then
+        On Error Resume Next
+        localField = Format$(field, NumberFormat)
+        On Error GoTo 0
+    End If
+    If localField = vbNullString Then
+        localField = CStr(field)
+    End If
+    localField = EscapeCharInString(localField, CHR_QUOTE, CHR_QUOTE)
+    If EncloseAllInQuotes Or _
+        VBA.Strings.InStr(localField, RowDelimiter) Or _
+        VBA.Strings.InStr(localField, ColumnDelimiter) Then
+        localField = WrapQuote(localField)
+    End If
+    
     EncodeCSVField = localField
+    Exit Function
 End Function
 
-Private Function InternalConcat(ParamArray args() As Variant)
+Private Function EscapeCharInString( _
+    ByVal destination As String, _
+    ByVal target As String, _
+    ByVal escape As String, _
+    Optional ByVal bothSides As Boolean _
+) As String
+    Dim index As Long
+    Dim targetLength As Long
+    Dim escapeLength As String
+    Dim result As String
+    
+    targetLength = Len(target)
+    escapeLength = Len(escape)
+    result = destination
+    index = 1
+    Do
+        index = VBA.Strings.InStr(index, destination, target)
+        If index Then
+            result = InsertIntoStringAtIndex(result, escape, index)
+            inc index, escapeLength + targetLength
+            If bothSides Then
+                result = InsertIntoStringAtIndex(result, escape, index)
+            End If
+        End If
+    Loop While index > 0
+    
+    EscapeCharInString = result
+End Function
+
+Private Function InsertIntoStringAtIndex( _
+    ByVal destination As String, _
+    ByVal source As String, _
+    ByVal index As Long _
+) As String
+    Dim front As String
+    Dim back As String
+    If index > 1 Then
+        front = Left$(destination, index)
+    End If
+    
+    If index < Len(destination) Then
+        back = Right$(destination, Len(destination) - index)
+    End If
+    InsertIntoStringAtIndex = front & source & back
+End Function
+
+Private Function InternalConcat(ParamArray args() As Variant) As Variant()
     Dim first() As Variant
     first = Array()
-    InternalConcat = ConcatDelegate(first, args())
+    InternalConcat = ConcatDelegate(first, args)
 End Function
 
-Private Function ConcatDelegate(first() As Variant, ParamArray args() As Variant)
+Private Function ConcatDelegate(ByRef first() As Variant, ParamArray args() As Variant) As Variant()
     ' NOTE don't call this internally as a utility. use InternalConcat
     Dim i As Long
     Dim cursor As Long
@@ -1994,7 +2152,7 @@ Private Sub InsertArrayAtIndex(ByRef destination() As Variant, ByRef source() As
     End If
 End Sub
 
-Private Function GetTotalLengthOfNestedArrays(source() As Variant) As Long
+Private Function GetTotalLengthOfNestedArrays(ByRef source() As Variant) As Long
     Dim i As Long
     Dim result As Long
     Dim current() As Variant
@@ -2749,7 +2907,7 @@ Attribute UnquoteString.VB_Description = "Trims enclosing quote chars from strin
     If localElement = vbNullString Then
         UnquoteString = vbNullString
     Else
-        If Asc(left$(localElement, 1)) = 34 And Asc(right$(localElement, 1)) = 34 Then
+        If Asc(Left$(localElement, 1)) = 34 And Asc(Right$(localElement, 1)) = 34 Then
             'trim string delimiters
             localElement = Mid$(localElement, 2, Len(localElement) - 2)
         End If
@@ -2936,6 +3094,7 @@ End Function
 
 '@Description("Converts a 1d array to a 1 column wide jagged array.")
 Private Function ConvertOneDimensionArrayToJagged(ByRef sourceArray() As Variant) As Variant()
+Attribute ConvertOneDimensionArrayToJagged.VB_Description = "Converts a 1d array to a 1 column wide jagged array."
     Dim i As Long
     Dim localUpperBound As Long
     Dim localLowerBound As Long
@@ -3073,7 +3232,7 @@ Attribute ApplySortMethod.VB_Description = "Used to apply the correct specified 
 End Sub
 
 Private Function GetComparisonItem( _
-    ByRef source As Variant, _
+    ByRef source() As Variant, _
     ByVal index As Long, _
     ByVal col As Long, _
     ByVal localArrayType As ArrayTypes _
@@ -3463,7 +3622,7 @@ Attribute RecursiveToString.VB_Description = "Recursively parses an array to a s
             ' ensure no arrays passed to GetScalar as it clears string builder
             StringBuilder Replace( _
                     CStr(GetScalarRepresentation(sourceArray(i), quoteStrings)), _
-                    ",", _
+                    separator, _
                     vbNullString _
                 ) & SEP
         End If
@@ -3494,7 +3653,7 @@ Attribute GetScalarRepresentation.VB_Description = "Returns scalar values as is 
         Dim passThruArray() As Variant
         passThruArray = result
         StringBuilder NewString:=True
-        RecursiveToString passThruArray, False, ",", "{", "}", quoteStrings
+        RecursiveToString passThruArray, False, CHR_COMMA, "{", "}", quoteStrings
         result = StringBuilder(Final:=True)
     End If
     If Not IsNumeric(result) And quoteStrings Then

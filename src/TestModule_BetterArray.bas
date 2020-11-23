@@ -3051,8 +3051,6 @@ Private Sub Sort_OneDimArrayTimSort10kEntries_ArrayIsSorted()
     'Act:
     SUT.Sort
     actual = SUT.IsSorted
-    Dim x() As Variant
-    x = SUT.Items
     'Assert:
     Assert.IsTrue actual, "Array not sorted"
 TestExit:
@@ -7740,10 +7738,10 @@ Private Sub FromCSVString_RFC4180_ReturnsJagged()
     Dim line3 As String
     Dim CSVData As String
     line1 = _
-        WrapQuote("Field with " & vbCrLf & "multiple lines") & " ," & _
-        WrapQuote("Another field " & vbCrLf & "with some " & vbCrLf & "line breaks inside") & " , " & _
-        WrapQuote("Include some  comma, for test, and some [" & WrapQuote() & "] Quotes") & " , " & _
-        WrapQuote("Normal field here") & vbCrLf
+        WrapQuoteUtil("Field with " & vbCrLf & "multiple lines") & " ," & _
+        WrapQuoteUtil("Another field " & vbCrLf & "with some " & vbCrLf & "line breaks inside") & " , " & _
+        WrapQuoteUtil("Include some  comma, for test, and some [" & WrapQuoteUtil() & "] Quotes") & " , " & _
+        WrapQuoteUtil("Normal field here") & vbCrLf
     line2 = "1, 2, 3 ,4 " & vbCrLf
     line3 = "Field 1, Field 2 , Field 3 , Field 4"
     CSVData = line1 & line2 & line3
@@ -7755,7 +7753,7 @@ Private Sub FromCSVString_RFC4180_ReturnsJagged()
     expected(0) = Array( _
         "Field with " & vbCrLf & "multiple lines", _
         "Another field " & vbCrLf & "with some " & vbCrLf & "line breaks inside", _
-        "Include some  comma, for test, and some [" & WrapQuote() & "] Quotes", _
+        "Include some  comma, for test, and some [" & WrapQuoteUtil() & "] Quotes", _
         "Normal field here" _
     )
     expected(1) = Array("1", "2", "3", "4")
@@ -7780,8 +7778,8 @@ Private Sub FromCSVString_NullString_ReturnsJagged()
     'Arrange:
     Dim CSVData As String
     CSVData = _
-        WrapQuote() & "," & vbCrLf & _
-        "," & WrapQuote() & " " & vbCrLf & _
+        WrapQuoteUtil() & "," & vbCrLf & _
+        "," & WrapQuoteUtil() & " " & vbCrLf & _
         "Field1,Field2" & vbCrLf
 
     Dim expected() As Variant
@@ -7825,12 +7823,12 @@ Private Sub ToCSVString_Simple10RowWithHeaders_ValidStringReturned()
         "Asia,China,Baby Food,Online,C,4/10/2017,564251220,5/12/2017,3330,255.28,159.42,850082.40,530868.60,319213.80" & vbCrLf & _
         "Sub-Saharan Africa,Eritrea,Meat,Online,L,11/21/2014,411809480,1/10/2015,2431,421.89,364.69,1025614.59,886561.39,139053.20"
 
-    Dim headers() As Variant
+    Dim Headers() As Variant
     Dim testDatum() As Variant
     Dim actual As String
     ReDim testDatum(0 To 8)
 
-    headers = Array("Region", "Country", "Item Type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit")
+    Headers = Array("Region", "Country", "Item Type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit")
     testDatum(0) = Array("Sub-Saharan Africa", "Chad", "Office Supplies", "Online", "L", "1/27/2011", "292494523", "2/12/2011", "4484", "651.21", "524.96", "2920025.64", "2353920.64", "566105.00")
     testDatum(1) = Array("Europe", "Latvia", "Beverages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", "51008.75", "34174.25", "16834.50")
     testDatum(2) = Array("Middle East and North Africa", "Pakistan", "Vegetables", "Offline", "C", "1/13/2011", "141515767", "2/1/2011", "6515", "154.06", "90.93", "1003700.90", "592408.95", "411291.95")
@@ -7843,7 +7841,7 @@ Private Sub ToCSVString_Simple10RowWithHeaders_ValidStringReturned()
 
     'Act:
     SUT.Items = testDatum
-    actual = SUT.ToCSVString(headers:=headers)
+    actual = SUT.ToCSVString(Headers:=Headers)
     
     'Assert:
     Assert.AreEqual expected, actual, "Actual <> expected"
@@ -7942,6 +7940,68 @@ TestFail:
 End Sub
 
 
+'@TestMethod("BetterArray_ToCSVString")
+Private Sub ToCSVString_Simple2RowNoHeadersDatesAndDoubles_ValidStringReturned()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Const expected As String = _
+        "Sub-Saharan Africa,Chad,Office Supplies,Online,L,1/27/2011,""292,494,523.00"",12/02/2011,""4,484.00"",651.21,524.96,""2,920,025.64"",""2,353,920.64"",""566,105.00""" & vbCrLf & _
+        "Europe,Latvia,Beverages,Online,C,12/28/2015,""361,825,549.00"",1/23/2016,""1,075.00"",47.45,31.79,""51,008.75"",""34,174.25"",""16,834.50"""
+
+        
+    Dim testDatum() As Variant
+    Dim actual As String
+    ReDim testDatum(0 To 1)
+
+    testDatum(0) = Array("Sub-Saharan Africa", "Chad", "Office Supplies", "Online", "L", CDate("1/27/2011"), "292494523", CDate("2/12/2011"), 4484, 651.21, 524.96, 2920025.64, 2353920.64, 566105#)
+    testDatum(1) = Array("Europe", "Latvia", "Beverages", "Online", "C", CDate("12/28/2015"), "361825549", CDate("1/23/2016"), 1075, 47.45, 31.79, 51008.75, 34174.25, 16834.5)
+    
+    'Act:
+    SUT.Items = testDatum
+    actual = SUT.ToCSVString(DateFormat:="m/dd/yyyy", NumberFormat:="#,##0.00")
+       
+    ' TestUtils.PrintExpectedActualStringsToConsole expected, actual
+       
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
+
+
+'@TestMethod("BetterArray_ToCSVString")
+Private Sub ToCSVString_Simple2RowNoHeadersEscapeCommasQuotesAndCRLF_ValidStringReturned()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Const expected As String = _
+        """Sub-Saharan, Africa"",Chad,""Office" & vbCrLf & "Supplies"",Online,L,1/27/2011,292494523,2/12/2011,4484,651.21,524.96,2920025.64,2353920.64,566105.00" & vbCrLf & _
+        "Europe,Latvia,Bever""""ages,Online,C,12/28/2015,361825549,1/23/2016,1075,47.45,31.79,51008.75,34174.25,16834.50"
+
+        
+    Dim testDatum() As Variant
+    Dim actual As String
+    ReDim testDatum(0 To 1)
+    
+    testDatum(0) = Array("Sub-Saharan, Africa", "Chad", "Office" & vbCrLf & "Supplies", "Online", "L", "1/27/2011", "292494523", "2/12/2011", "4484", "651.21", "524.96", "2920025.64", "2353920.64", "566105.00")
+    testDatum(1) = Array("Europe", "Latvia", "Bever""ages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", 51008.75, "34174.25", "16834.50")
+
+    'Act:
+    SUT.Items = testDatum
+    actual = SUT.ToCSVString()
+    
+    'Assert:
+    Assert.AreEqual expected, actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+End Sub
 
 
 
