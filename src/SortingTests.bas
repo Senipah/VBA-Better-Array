@@ -22,15 +22,15 @@ End Function
 Private Function GetCSVTestData(ByVal Size As DataSizes) As BetterArray
     Const DATA_DIR As String = "csv_data"
     Const SLUG As String = " Sales Records.csv"
-    Dim filename As String
+    Dim fileName As String
     Dim filepath As String
-    Dim basePath As String
+    Dim basepath As String
     Dim datum As BetterArray
     
     Set datum = New BetterArray
-    basePath = ThisWorkbook.Path
-    filename = CStr(Size) & SLUG
-    filepath = JoinPath(basePath, DATA_DIR, filename)
+    basepath = ThisWorkbook.Path
+    fileName = CStr(Size) & SLUG
+    filepath = JoinPath(basepath, DATA_DIR, fileName)
     '@Ignore FunctionReturnValueDiscarded
     datum.FromCSVFile filepath
     Debug.Print "Parsed "; datum.Length; " rows from CSV file"
