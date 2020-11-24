@@ -20,7 +20,7 @@ Also see ws-garcia's [VBA-CSV-interface](https://github.com/ws-garcia/VBA-CSV-in
 
 ### Parameters
 
-Name 
+Name
 : `CSVString`
 
 Type
@@ -34,7 +34,7 @@ Description
 
 ---
 
-Name 
+Name
 : `ColumnDelimiter`
 
 Type
@@ -48,7 +48,7 @@ Description
 
 ---
 
-Name 
+Name
 : `RowDelimiter`
 
 Type
@@ -58,11 +58,11 @@ Necessity
 : Optional
 
 Description
-: The character(s) used to delimit rows within the CSV file. If omitted, the character stored in the constant `vbNewLine` is used.
+: The character(s) used to delimit rows within the CSV file. If omitted, we try to guess the appropriate line ending and if we cannot default to vbCrLf.
 
 ---
 
-Name 
+Name
 : `Quote`
 
 Type
@@ -76,7 +76,7 @@ Description
 
 ---
 
-Name 
+Name
 : `IgnoreFirstRow`
 
 Type
@@ -90,7 +90,7 @@ Description
 
 ---
 
-Name 
+Name
 : `DuckType`
 
 Type

@@ -56,7 +56,7 @@ Necessity
 : Optional
 
 Description
-: The character(s) used to delimit rows within the CSV file. If omitted, the character stored in the constant `vbNewLine` is used.
+: The character(s) used to delimit rows within the CSV file. If omitted, we try to guess the appropriate line ending and if we cannot default to vbCrLf.
 
 ---
 
