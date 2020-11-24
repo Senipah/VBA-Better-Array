@@ -575,7 +575,7 @@ Private Sub ArrayType_UnallocToUndefined_ThrowsError()
     Dim newType As ArrayTypes
     newType = ArrayTypes.BA_UNDEFINED
     'Act:
-    SUT.ArrayType = newType
+    SUT.arrayType = newType
 
 Assert:
     Assert.Fail "Expected error was not raised"
@@ -606,13 +606,13 @@ Private Sub ArrayType_UnallocToUnalloc_Success()
     ReDim expected(SUT.lowerBound)
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -637,13 +637,13 @@ Private Sub ArrayType_UnallocToOneDimension_Success()
     ReDim expected(SUT.lowerBound)
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -669,13 +669,13 @@ Private Sub ArrayType_UnallocToMultiDimension_Success()
     ReDim expected(SUT.lowerBound)
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -700,13 +700,13 @@ Private Sub ArrayType_UnallocToJagged_Success()
     ReDim expected(SUT.lowerBound)
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -729,13 +729,13 @@ Private Sub ArrayType_OneDimensionToUndefined_ThrowsError()
     
     startingType = ArrayTypes.BA_ONEDIMENSION
     newType = ArrayTypes.BA_UNDEFINED
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
-    Assert.AreEqual newType, SUT.ArrayType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
+    Assert.AreEqual newType, SUT.arrayType
 Assert:
     Assert.Fail "Expected error was not raised"
 
@@ -764,17 +764,17 @@ Private Sub ArrayType_OneDimensionToUnalloc_Success()
     startingType = ArrayTypes.BA_ONEDIMENSION
     newType = ArrayTypes.BA_UNALLOCATED
     ReDim expected(SUT.lowerBound)
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -797,18 +797,18 @@ Private Sub ArrayType_OneDimensionToOneDimension_Success()
     
     startingType = ArrayTypes.BA_ONEDIMENSION
     newType = ArrayTypes.BA_ONEDIMENSION
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     expected = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -832,18 +832,18 @@ Private Sub ArrayType_OneDimensionToMultiDimension_Success()
     
     startingType = ArrayTypes.BA_ONEDIMENSION
     newType = ArrayTypes.BA_MULTIDIMENSION
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     expected = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -867,18 +867,18 @@ Private Sub ArrayType_OneDimensionToJagged_Success()
     
     startingType = ArrayTypes.BA_ONEDIMENSION
     newType = ArrayTypes.BA_JAGGED
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     expected = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -901,13 +901,13 @@ Private Sub ArrayType_MultiDimensionToUndefined_ThrowsError()
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_UNDEFINED
     
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
-    Assert.AreEqual newType, SUT.ArrayType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
+    Assert.AreEqual newType, SUT.arrayType
 
 Assert:
     Assert.Fail "Expected error was not raised"
@@ -937,17 +937,17 @@ Private Sub ArrayType_MultiDimensionToUnalloc_Success()
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_UNALLOCATED
     ReDim expected(SUT.lowerBound)
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -970,13 +970,13 @@ Private Sub ArrayType_MultiDimensionToOneDimension_ThrowsError()
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_ONEDIMENSION
     
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
-    Assert.AreEqual newType, SUT.ArrayType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
+    Assert.AreEqual newType, SUT.arrayType
 
 Assert:
     Assert.Fail "Expected error was not raised"
@@ -1005,18 +1005,18 @@ Private Sub ArrayType_MultiDimensionToMultiDimension_Success()
     
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_MULTIDIMENSION
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     expected = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -1039,17 +1039,17 @@ Private Sub ArrayType_MultiDimensionToJagged_Success()
     
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_JAGGED
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.IsTrue SequenceEqualsMutiVsJagged(testArray, actual)
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -1073,13 +1073,13 @@ Private Sub ArrayType_JaggedToUndefined_ThrowsError()
     startingType = ArrayTypes.BA_JAGGED
     newType = ArrayTypes.BA_UNDEFINED
     
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
-    Assert.AreEqual newType, SUT.ArrayType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
+    Assert.AreEqual newType, SUT.arrayType
 
 Assert:
     Assert.Fail "Expected error was not raised"
@@ -1110,17 +1110,17 @@ Private Sub ArrayType_JaggedToUnalloc_Success()
     startingType = ArrayTypes.BA_MULTIDIMENSION
     newType = ArrayTypes.BA_UNALLOCATED
     ReDim expected(SUT.lowerBound)
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.SequenceEquals expected, actual, "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual 0&, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -1143,13 +1143,13 @@ Private Sub ArrayType_JaggedToOneDimension_ThrowsError()
     startingType = ArrayTypes.BA_JAGGED
     newType = ArrayTypes.BA_ONEDIMENSION
     
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
-    Assert.AreEqual newType, SUT.ArrayType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
+    Assert.AreEqual newType, SUT.arrayType
 Assert:
     Assert.Fail "Expected error was not raised"
 
@@ -1176,17 +1176,17 @@ Private Sub ArrayType_JaggedToMultiDimension_Success()
     
     startingType = ArrayTypes.BA_JAGGED
     newType = ArrayTypes.BA_MULTIDIMENSION
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.IsTrue SequenceEqualsMutiVsJagged(actual, testArray)
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -1209,18 +1209,18 @@ Private Sub ArrayType_JaggedToJagged_Success()
     
     startingType = ArrayTypes.BA_JAGGED
     newType = ArrayTypes.BA_JAGGED
-    testArray = Gen.GetArray(ArrayType:=startingType)
+    testArray = Gen.GetArray(arrayType:=startingType)
     SUT.Items = testArray
     expected = testArray
     
     'Act:
-    Assert.AreEqual startingType, SUT.ArrayType
-    SUT.ArrayType = newType
+    Assert.AreEqual startingType, SUT.arrayType
+    SUT.arrayType = newType
     actual = SUT.Items
     
     'Assert:
     Assert.IsTrue SequenceEquals_JaggedArray(expected, actual), "Expected undefined to return empty array"
-    Assert.AreEqual newType, SUT.ArrayType, "Actual type <> Expected"
+    Assert.AreEqual newType, SUT.arrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
 TestExit:
@@ -1757,7 +1757,7 @@ Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     Dim actualUpperBound As Long
     
     expectedLength = TEST_ARRAY_LENGTH
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION, Length:=expectedLength)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION, Length:=expectedLength)
     expectedUpperBound = UBound(expected)
     
     'Act:
@@ -1790,8 +1790,8 @@ Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     Dim actualUpperBound As Long
     
     expectedLength = TEST_ARRAY_LENGTH * 2
-    FirstArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
-    secondArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    FirstArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
+    secondArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     expected = Gen.ConcatArraysOfSameStructure(AG_MULTIDIMENSION, FirstArray, secondArray)
     expectedUpperBound = UBound(expected)
     
@@ -1824,7 +1824,7 @@ Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = Gen.GetArray(arrayType:=AG_JAGGED)
     expectedLength = Gen.GetArrayLength(expected)
     expectedUpperBound = UBound(expected)
     
@@ -1859,8 +1859,8 @@ Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    FirstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
-    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    FirstArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(arrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, FirstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -1898,8 +1898,8 @@ Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    FirstArray = Gen.GetArray(ArrayType:=AG_JAGGED)
-    secondArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
+    FirstArray = Gen.GetArray(arrayType:=AG_JAGGED)
+    secondArray = Gen.GetArray(arrayType:=AG_ONEDIMENSION)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, FirstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -2102,8 +2102,8 @@ Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     Dim actualUpperBound As Long
     Dim testResult As Boolean
     
-    FirstArray = Gen.GetArray(ArrayType:=AG_ONEDIMENSION)
-    secondArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    FirstArray = Gen.GetArray(arrayType:=AG_ONEDIMENSION)
+    secondArray = Gen.GetArray(arrayType:=AG_JAGGED)
     
     expected = Gen.ConcatArraysOfSameStructure(AG_JAGGED, FirstArray, secondArray)
     expectedLength = Gen.GetArrayLength(expected)
@@ -2543,7 +2543,7 @@ Private Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
     Dim testArray() As Variant
     '@Ignore VariableNotUsed
     Dim actual As Boolean
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED, Depth:=3)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED, Depth:=3)
     SUT.Items = testArray
     'Act
     actual = SUT.IsSorted
@@ -2671,7 +2671,7 @@ Private Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
     'Act:
@@ -2693,7 +2693,7 @@ Private Sub Sort_MultiDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
@@ -2717,7 +2717,7 @@ Private Sub Sort_MultiDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
@@ -2740,7 +2740,7 @@ Private Sub Sort_JaggedArrayQuicksortRecursive_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
     'Act:
@@ -2762,7 +2762,7 @@ Private Sub Sort_JaggedArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
@@ -2786,7 +2786,7 @@ Private Sub Sort_JaggedArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_RECURSIVE
@@ -2882,7 +2882,7 @@ Private Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
     'Act:
@@ -2904,7 +2904,7 @@ Private Sub Sort_MultiDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
@@ -2928,7 +2928,7 @@ Private Sub Sort_MultiDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
@@ -2951,7 +2951,7 @@ Private Sub Sort_JaggedArrayQuicksortIterative_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
     'Act:
@@ -2973,7 +2973,7 @@ Private Sub Sort_JaggedArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
@@ -2997,7 +2997,7 @@ Private Sub Sort_JaggedArrayQuicksortIterativePositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_QUICKSORT_ITERATIVE
@@ -3116,7 +3116,7 @@ Private Sub Sort_MultiDimArrayTimSort_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
     'Act:
@@ -3138,7 +3138,7 @@ Private Sub Sort_MultiDimArrayTimSortNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
@@ -3162,7 +3162,7 @@ Private Sub Sort_MultiDimArrayTimSortPositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
@@ -3185,7 +3185,7 @@ Private Sub Sort_JaggedArrayTimSort_ArrayIsSorted()
     'Arrange:
     Dim actual As Boolean
     Dim testArray() As Variant
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
     'Act:
@@ -3207,7 +3207,7 @@ Private Sub Sort_JaggedArrayTimSortNegativeBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.lowerBound = -10
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
@@ -3231,7 +3231,7 @@ Private Sub Sort_JaggedArrayTimSortPositiveBase_ArrayIsSorted()
     Dim actual As Boolean
     Dim testArray() As Variant
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.lowerBound = 10
     SUT.Items = testArray
     SUT.SortMethod = SM_TIMSORT
@@ -3469,7 +3469,7 @@ Private Sub CopyWithin_JaggedArrayElement3ToIndex0_SelectionCopiedLengthUnchange
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     expected = testArray
     expected(0) = expected(3)
     SUT.Items = testArray
@@ -4130,7 +4130,7 @@ Private Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     Dim testArray() As Variant
     Dim i As Long
     
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     ReDim expected(LBound(testArray) To UBound(testArray))
     For i = LBound(testArray) To UBound(testArray)
         expected(i) = i
@@ -4156,7 +4156,7 @@ Private Sub Keys_JaggedArray_ReturnsCorrectKeys()
     Dim testArray() As Variant
     Dim i As Long
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     ReDim expected(LBound(testArray) To UBound(testArray))
     For i = LBound(testArray) To UBound(testArray)
         expected(i) = i
@@ -4715,7 +4715,7 @@ Private Sub Slice_JaggedNoEndArg_ReturnsCopy()
     Dim expected() As Variant
     Dim actual() As Variant
     Dim testResult As Boolean
-    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = Gen.GetArray(arrayType:=AG_JAGGED)
 
     SUT.Items = expected
     'Act:
@@ -4835,7 +4835,7 @@ Private Sub Reverse_MultiDimArray_ArrayIsReversed()
     Dim testResult As Boolean
     Dim i As Long
 
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     'Act:
     actual = SUT.Reverse.Items
@@ -4868,7 +4868,7 @@ Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
     Dim testResult As Boolean
     Dim i As Long
     
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     'Act:
     actual = SUT.Reverse(True).Items
@@ -4900,7 +4900,7 @@ Private Sub Reverse_JaggedArray_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = expected
     'Act:
     actual = SUT.Reverse.Items
@@ -4922,7 +4922,7 @@ Private Sub Reverse_JaggedArrayRecurse_ArrayIsReversed()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = expected
     'Act:
     actual = SUT.Reverse(True).Items
@@ -5041,7 +5041,7 @@ Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     Dim actual() As Variant
     Dim testResult As Boolean
     
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     sortedArray = SUT.Sort.Items
     'Act:
@@ -5332,7 +5332,7 @@ Private Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     Set ExcelApp = New ExcelProvider
     Set destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     transposed = False
     
@@ -5364,7 +5364,7 @@ Private Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     Set ExcelApp = New ExcelProvider
     Set destination = ExcelApp.CurrentWorksheet.Range("A1")
     
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     transposed = True
     
@@ -5872,7 +5872,7 @@ Private Sub ExtractSegment_JaggedArrayNoArgs_FullArrayReturned()
     Dim expected() As Variant
     Dim actual() As Variant
         
-    expected = Gen.GetArray(ArrayType:=AG_JAGGED)
+    expected = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = expected
     
     'Act:
@@ -5897,7 +5897,7 @@ Private Sub ExtractSegment_JaggedArrayJustRowArg_ArrayReturned()
     Dim testArray() As Variant
     Dim rowIndex As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     rowIndex = 2
     expected = testArray(rowIndex)
@@ -5924,7 +5924,7 @@ Private Sub ExtractSegment_JaggedArrayJustColArg_ArrayReturned()
     Dim columnIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     columnIndex = 3
     ReDim expected(LBound(testArray) To UBound(testArray))
@@ -5954,7 +5954,7 @@ Private Sub ExtractSegment_JaggedDimArrayRowAndColArgs_ArrayReturned()
     Dim rowIndex As Long
     Dim columnIndex As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     rowIndex = 2
     columnIndex = 3
@@ -5979,7 +5979,7 @@ Private Sub ExtractSegment_MultiDimArrayNoArgs_FullArrayReturned()
     Dim expected() As Variant
     Dim actual() As Variant
         
-    expected = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    expected = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = expected
     
     'Act:
@@ -6005,7 +6005,7 @@ Private Sub ExtractSegment_MultiDimArrayJustRowArg_ArrayReturned()
     Dim rowIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     rowIndex = 2
     ReDim expected(LBound(testArray, 2) To UBound(testArray, 2))
@@ -6035,7 +6035,7 @@ Private Sub ExtractSegment_MultiDimArrayJustColArg_ArrayReturned()
     Dim columnIndex As Long
     Dim i As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     columnIndex = 3
     ReDim expected(LBound(testArray) To UBound(testArray))
@@ -6065,7 +6065,7 @@ Private Sub ExtractSegment_MultiDimDimArrayRowAndColArgs_ArrayReturned()
     Dim rowIndex As Long
     Dim columnIndex As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     rowIndex = 2
     columnIndex = 3
@@ -6128,7 +6128,7 @@ Private Sub Transpose_JaggedArray_ArrayTransposed()
     Dim i As Long
     Dim j As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     
     ReDim expected(0 To TEST_ARRAY_LENGTH - 1)
@@ -6163,7 +6163,7 @@ Private Sub Transpose_MultiDimArray_ArrayTransposed()
     Dim i As Long
     Dim j As Long
         
-    testArray = Gen.GetArray(ArrayType:=AG_MULTIDIMENSION)
+    testArray = Gen.GetArray(arrayType:=AG_MULTIDIMENSION)
     SUT.Items = testArray
     
     ReDim expected(LBound(testArray, 2) To UBound(testArray, 2), _
@@ -6310,7 +6310,7 @@ Private Sub IndexOf_JaggedArray_ReturnsCorrectIndex()
     
     expected = 3
         
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
     
     'Act:
@@ -6452,12 +6452,19 @@ Private Sub Unique_JaggedArrayColumnIndexBaseNegativeBase_ReturnsUniqueList()
 '    Dim expectedRow3(-10 To -7)
 '    expectedRow1
     ReDim expected(-10 To -7)
+    
+    
     expected(-10) = Array(1, "Foo", 3)
     expected(-9) = Array(1, "Bar", 3)
     expected(-8) = Array(1, "Fizz", 3)
     expected(-7) = Array(1, "Buzz", 3)
     
     SUT.lowerBound = -10
+    
+    ' rebase nested items
+    SUT.Items = expected
+    expected = SUT.Items
+
     SUT.Items = testArray
     
     'Act:
@@ -6499,6 +6506,11 @@ Private Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
     expected(13) = Array(1, "Buzz", 3)
     
     SUT.lowerBound = 10
+    
+    ' rebase expected itms
+    SUT.Items = expected
+    expected = SUT.Items
+    
     SUT.Items = testArray
     
     'Act:
@@ -7273,7 +7285,7 @@ Private Sub LastIndexOf_JaggedArray_ReturnsCorrectIndex()
 
     expected = 3
 
-    testArray = Gen.GetArray(ArrayType:=AG_JAGGED)
+    testArray = Gen.GetArray(arrayType:=AG_JAGGED)
     SUT.Items = testArray
 
     'Act:
