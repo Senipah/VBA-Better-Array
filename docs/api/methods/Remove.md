@@ -15,14 +15,14 @@ The `Remove()` method removes the element at the specified index from the array.
 
 ### Parameters
 
-Name 
-: `index`
+Name
+: `Index`
 
 Type
 : `Long`
 
 Necessity
-: Requied
+: Required
 
 Description
 : The index of the the element to be removed from the array.
@@ -42,10 +42,10 @@ Public Sub RemoveExample()
     Dim result As Long
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     result = MyArray.Remove(2)
-    
+
     ' expected output:
     ' result  = 3 - the new length of MyArray
     ' MyArray now contains "Banana", "Orange", "Mango"

@@ -12,11 +12,11 @@ The `Fill()` method method fills (modifies) all the elements of an array from a 
 
 ## Syntax
 
-*expression*.**Fill**(*value*, [*startIndex*], [*endIndex*])
+*expression*.**Fill**(*value*, [*StartIndex*], [*EndIndex*])
 
 ### Parameters
 
-Name 
+Name
 : `value`
 
 Type
@@ -31,7 +31,7 @@ Description
 ---
 
 Name
-: `startIndex`
+: `StartIndex`
 
 Type
 : `Long`
@@ -44,8 +44,8 @@ Description
 
 ---
 
-Name 
-: `endIndex`
+Name
+: `EndIndex`
 
 Type
 : `Boolean`

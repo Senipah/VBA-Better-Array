@@ -8,19 +8,19 @@ grand_parent: API
 # FilterType
 
 ## Description
-The `FilterType()` method filters and returns the current array based on the specified filter criteria. 
+The `FilterType()` method filters and returns the current array based on the specified filter criteria.
 
 #### Note
 Provides ability to filter on any type of array (unlike the VBA version which only works with `String` arrays).
 
 ## Syntax
 
-*expression*.**FilterType**(*match*, [*exclude*], [*recurse*])
+*expression*.**FilterType**(*SearchTypeName*, [*Exclude*], [*Recurse*])
 
 ### Parameters
 
-Name 
-: `searchTypeName`
+Name
+: `SearchTypeName`
 
 Type
 : `String`
@@ -34,7 +34,7 @@ Description
 ---
 
 Name
-: `exclude`
+: `Exclude`
 
 Type
 : `Boolean`
@@ -47,8 +47,8 @@ Description
 
 ---
 
-Name 
-: `recurse`
+Name
+: `Recurse`
 
 Type
 : `Boolean`
@@ -65,7 +65,7 @@ Type
 : BetterArray `Object`
 
 Description
-: The current instance of the BetterArray object with the filter applied to the stored array. 
+: The current instance of the BetterArray object with the filter applied to the stored array.
 
 ## Example
 
@@ -74,7 +74,7 @@ Public Sub FilterTypeExample()
     Dim MyArray As BetterArray
     Dim result() As Variant
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Foo", 1.23, "Fizz", "Buzz"
     MyArray.FilterType "Double"
 

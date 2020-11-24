@@ -8,18 +8,18 @@ grand_parent: API
 
 ## Description
 The `Max()` method returns the largest value in a list of values.  If no argments are passed the `Max()` method will use the stored array. Returns `Empty` if array is uninitialized, or only contains non-scalar variables. If operating on a jagged or multi-dimensional array, the value returned will be the largest value in all of the arrays combined.
-  
+
 #### Note
 Multi-dimensional arrays assigned to the `.Items` property are converted to jagged arrays internally and will be treated as such by the `Max()` method.
 
 ## Syntax
 
-*expression*.**Max**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Max**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
-Name 
-: `args`
+Name
+: `Args`
 
 Type
 : ParamArray `Variant`
@@ -45,7 +45,7 @@ Public Sub MaxExample()
     Dim result As Long
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push 10, 1, 3, 5, 9, 12, 2, 8, 7
     result = MyArray.Max()
     ' expected output:

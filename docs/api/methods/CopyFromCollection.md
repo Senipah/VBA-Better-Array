@@ -11,12 +11,12 @@ The `CopyFromCollection()` method writes the elements stored in a `Collection` o
 
 ## Syntax
 
-*expression*.**Concat**(*sourceCollection*)
+*expression*.**Concat**(*SourceCollection*)
 
 ### Parameters
 
-Name 
-: `sourceCollection`
+Name
+: `SourceCollection`
 
 Type
 : `Collection` / `Object`
@@ -33,7 +33,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: The current instance of the BetterArray object with the values from the passed `Collection` stored in the array. 
+: The current instance of the BetterArray object with the values from the passed `Collection` stored in the array.
 
 ## Example
 
@@ -42,7 +42,7 @@ Public Sub CopyFromCollectionExample()
     Dim MyCollection As Collection
     Dim MyArray As BetterArray
     Dim result() As Variant
-    
+
     Set MyCollection = New Collection
     Set MyArray = New BetterArray
 
@@ -50,11 +50,11 @@ Public Sub CopyFromCollectionExample()
     MyCollection.Add "Bar"
     MyCollection.Add "Fizz"
     MyCollection.Add "Buzz"
-    
+
     MyArray.CopyFromCollection MyCollection
-    
+
     result = MyArray.Items
-    
+
     ' expected output:
     ' result is an array with the values: "Foo", "Bar", "Fizz", "Buzz"
 End Sub

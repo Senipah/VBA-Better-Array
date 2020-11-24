@@ -11,12 +11,12 @@ The `Concat()` method joins one or more arrays onto the end of the current array
 
 ## Syntax
 
-*expression*.**Concat**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Concat**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
-Name 
-: `args`
+Name
+: `Args`
 
 Type
 : ParamArray `Variant`
@@ -25,7 +25,7 @@ Necessity
 : Optional
 
 Description
-: The array(s) to be added to the end of the array. 
+: The array(s) to be added to the end of the array.
 
 ### Returns
 
@@ -33,7 +33,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: The current instance of the BetterArray object with the passed arrays having been added to the end. 
+: The current instance of the BetterArray object with the passed arrays having been added to the end.
 
 ## Example
 
@@ -43,16 +43,16 @@ Public Sub ConcatExample()
     Dim secondItems() As Variant
     Dim result() As Variant
     Dim MyArray As BetterArray
-    
+
     Set MyArray = New BetterArray
     firstItems = Array("Foo", "Bar")
     secondItems = Array("Fizz", "Buzz")
-    
+
     MyArray.Items = firstItems
     MyArray.Concat secondItems
-    
+
     result = MyArray.Items
-    
+
     ' expected output:
     ' result is an array with the values: "Foo", "Bar", "Fizz", "Buzz"
 End Sub

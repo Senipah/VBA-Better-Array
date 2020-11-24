@@ -11,12 +11,12 @@ The `Unshift()` method adds one or more elements to the beginning of an array an
 
 ## Syntax
 
-*expression*.**Unshift**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Unshift**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
-Name 
-: `args`
+Name
+: `Args`
 
 Type
 : ParamArray `Variant`
@@ -42,7 +42,7 @@ Public Sub UnshiftExample()
     Dim result() As Variant
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     MyArray.Unshift "Lemon", "Pineapple"
     result = MyArray.Items

@@ -13,12 +13,12 @@ The `ToExcelRange()` method writes the values stored in the array to an excel wo
 
 ## Syntax
 
-*expression*.**ToExcelRange**(*destination*, [*transposeValues*])
+*expression*.**ToExcelRange**(*Destination*, [*TransposeValues*])
 
 ### Parameters
 
-Name 
-: `destination`
+Name
+: `Destination`
 
 Type
 : `Range` / `Object`
@@ -31,8 +31,8 @@ Description
 
 ---
 
-Name 
-: `transposeValues`
+Name
+: `TransposeValues`
 
 Type
 : `Boolean`
@@ -58,7 +58,7 @@ Public Sub ToExcelRangeExample()
     Dim result() As Variant
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     MyArray.ToExcelRange ThisWorkbook.Sheets.Add.Range("A1"), True
     ' expected output:

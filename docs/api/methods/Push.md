@@ -14,12 +14,12 @@ Internal array capacity will be doubled automatically every time the length of t
 
 ## Syntax
 
-*expression*.**Push**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Push**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
-Name 
-: `args`
+Name
+: `Args`
 
 Type
 : ParamArray `Variant`
@@ -44,7 +44,7 @@ Description
 Public Sub PushExample()
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     ' MyArray now contains "Banana", "Orange", "Apple", "Mango"
 End Sub

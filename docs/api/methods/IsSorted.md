@@ -7,7 +7,7 @@ grand_parent: API
 # IsSorted
 
 ## Description
-The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `columnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the aray is sorted by the values in that column. 
+The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `ColumnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the aray is sorted by the values in that column.
 
 #### Note
 
@@ -15,12 +15,12 @@ The `IsSorted()` method tests if the stored array is sorted in ascending order. 
 
 ## Syntax
 
-*expression*.**IsSorted**([`columnIndex`]) 
+*expression*.**IsSorted**([`ColumnIndex`])
 
 ### Parameters
 
-Name 
-: `columnIndex`
+Name
+: `ColumnIndex`
 
 Type
 : `Long`
@@ -46,13 +46,13 @@ Public Sub IsSortedExample()
     Dim result As Boolean
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push 1, 4, 2, 5, 3, 6
     result = MyArray.IsSorted
     Debug.Print result
     ' expected output:
     ' result is False
-    
+
     MyArray.Clear
     MyArray.Push 1, 2, 3, 4, 5, 6
     result = MyArray.IsSorted

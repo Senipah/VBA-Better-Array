@@ -8,19 +8,19 @@ grand_parent: API
 # Filter
 
 ## Description
-The `Filter()` method filters and returns the current array based on the specified filter criteria. 
+The `Filter()` method filters and returns the current array based on the specified filter criteria.
 
 #### Note
 Provides ability to filter on any type of array (unlike the VBA version which only works with `String` arrays).
 
 ## Syntax
 
-*expression*.**Filter**(*match*, [*exclude*], [*recurse*])
+*expression*.**Filter**(*Match*, [*Exclude*], [*Recurse*])
 
 ### Parameters
 
-Name 
-: `match`
+Name
+: `Match`
 
 Type
 : `Variant`
@@ -29,12 +29,12 @@ Necessity
 : Required
 
 Description
-: The value to compare against. 
+: The value to compare against.
 
 ---
 
 Name
-: `exclude`
+: `Exclude`
 
 Type
 : `Boolean`
@@ -47,8 +47,8 @@ Description
 
 ---
 
-Name 
-: `recurse`
+Name
+: `Recurse`
 
 Type
 : `Boolean`
@@ -65,7 +65,7 @@ Type
 : BetterArray `Object`
 
 Description
-: The current instance of the BetterArray object with the filter applied to the stored array. 
+: The current instance of the BetterArray object with the filter applied to the stored array.
 
 ## Example
 
@@ -74,7 +74,7 @@ Public Sub FilterExample()
     Dim MyArray As BetterArray
     Dim result() As Variant
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Foo", "Bar", "Fizz", "Buzz"
     MyArray.Filter "Bar"
 

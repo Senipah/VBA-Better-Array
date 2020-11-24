@@ -9,18 +9,18 @@ grand_parent: API
 
 ## Description
 The `Min()` method returns the smallest value in a list of values.  If no argments are passed the `Min()` method will use the stored array. Returns `Empty` if array is uninitialized, or only contains non-scalar variables. If operating on a jagged or multi-dimensional array, the value returned will be the smallest value in all of the arrays combined.
-  
+
 #### Note
 Multi-dimensional arrays assigned to the `.Items` property are converted to jagged arrays internally and will be treated as such by the `Min()` method.
 
 ## Syntax
 
-*expression*.**Min**([*args1*[, *args2*[, ...[, *argsN*]]]])
+*expression*.**Min**([*Args1*[, *Args2*[, ...[, *ArgsN*]]]])
 
 ### Parameters
 
-Name 
-: `args`
+Name
+: `Args`
 
 Type
 : ParamArray `Variant`
@@ -46,7 +46,7 @@ Public Sub MinExample()
     Dim result As Long
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push 10, 1, 3, 5, 9, 12, 2, 8, 7
     result = MyArray.Min
     ' expected output:

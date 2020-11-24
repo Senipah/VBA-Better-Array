@@ -9,19 +9,14 @@ grand_parent: API
 ## Description
 The `ParseFromString()` method is used to deserialize a string representation of an array, such as that created by the `ToString()` method, back into an array.
 
-        ByVal sourceString As String, _
-        Optional ByVal valueSeparator As String = CHR_COMMA, _
-        Optional ByVal arrayOpenDelimiter As String, _
-        Optional ByVal arrayClosingDelimiter As String _
-
 ## Syntax
 
-*expression*.**ParseFromString**(*sourceString*, [*valueSeparator*], [*arrayOpenDelimiter*], [*arrayClosingDelimiter*])
+*expression*.**ParseFromString**(*SourceString*, [*ValueSeparator*], [*ArrayOpenDelimiter*], [*ArrayClosingDelimiter*])
 
 ### Parameters
 
 Name
-: `sourceString`
+: `SourceString`
 
 Type
 : `String`
@@ -35,7 +30,7 @@ Description
 ---
 
 Name
-: `valueSeparator`
+: `ValueSeparator`
 
 Type
 : `String`
@@ -49,7 +44,7 @@ Description
 ---
 
 Name
-: `arrayOpenDelimiter`
+: `ArrayOpenDelimiter`
 
 Type
 : `String`
@@ -58,12 +53,12 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `openingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
+: If provided, the string passed to `ArrayOpenDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
 
 ---
 
 Name
-: `arrayClosingDelimiter`
+: `ArrayClosingDelimiter`
 
 Type
 : `String`
@@ -72,7 +67,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `closingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+: If provided, the string passed to `ArrayClosingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
 
 
 ### Returns
@@ -81,7 +76,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: The current instance of the BetterArray object with the values from the `sourceString` argument stored in the internal array.
+: The current instance of the BetterArray object with the values from the `SourceString` argument stored in the internal array.
 
 
 ## Example
@@ -89,10 +84,10 @@ Description
 ```vb
 Public Sub ParseFromString()
     Const ArrayString As String = "{Banana,Orange,Apple,Mango}"
-    Dim myArray As BetterArray
-    Set myArray = New BetterArray
+    Dim MyArray As BetterArray
+    Set MyArray = New BetterArray
 
-    myArray.ParseFromString ArrayString
+    MyArray.ParseFromString ArrayString
 End Sub
 ```
 

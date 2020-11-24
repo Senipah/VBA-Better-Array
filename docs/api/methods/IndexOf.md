@@ -7,16 +7,16 @@ grand_parent: API
 # IndexOf
 
 ## Description
-The `IndexOf()` method method returns the first index at which a given element can be found in the array, or -9999 if it is not present. 
+The `IndexOf()` method method returns the first index at which a given element can be found in the array, or -9999 if it is not present.
 
 ## Syntax
 
-*expression*.**IndexOf**(*searchElement*,[*fromIndex*],[*compType*]) 
+*expression*.**IndexOf**(*SearchElement*,[*FromIndex*],[*CompType*])
 
 ### Parameters
 
-Name 
-: `searchElement`
+Name
+: `SearchElement`
 
 Type
 : `Variant`
@@ -29,8 +29,8 @@ Description
 
 ---
 
-Name 
-: `fromIndex`
+Name
+: `FromIndex`
 
 Type
 : `Long`
@@ -43,8 +43,8 @@ Description
 
 ---
 
-Name 
-: `compType`
+Name
+: `CompType`
 
 Type
 : `ComparisonType (Long)`
@@ -70,7 +70,7 @@ Public Sub IndexOfExample()
     Dim result As Long
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     result = MyArray.IndexOf("Apple")
     ' expected output:

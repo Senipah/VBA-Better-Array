@@ -11,12 +11,12 @@ The `Slice()` method returns a shallow copy of a portion of an array into a new 
 
 ## Syntax
 
-*expression*.**Slice**(*startIndex*, [*endIndex*])
+*expression*.**Slice**(*StartIndex*, [*EndIndex*])
 
 ### Parameters
 
-Name 
-: `startIndex`
+Name
+: `StartIndex`
 
 Type
 : `Long`
@@ -29,8 +29,8 @@ Description
 
 ---
 
-Name 
-: `endIndex`
+Name
+: `EndIndex`
 
 Type
 : `Long`
@@ -40,7 +40,7 @@ Necessity
 
 Description
 : The index before which to end extraction. Slice extracts up to but not including end.
-For example, `Slice(1,4)` extracts the element at index 1 through the element indexed at 4 (elements indexed 1, 2, and 3). A negative index can be used, indicating an offset from the end of the sequence. `Slice(2,-1)` extracts the third element through the second-to-last element in the sequence. If `endIndex` is omitted or is greater than the `UpperBound` value, Slice extracts through the end of the sequence (the `UpperBound` value).
+For example, `Slice(1,4)` extracts the element at index 1 through the element indexed at 4 (elements indexed 1, 2, and 3). A negative index can be used, indicating an offset from the end of the sequence. `Slice(2,-1)` extracts the third element through the second-to-last element in the sequence. If `EndIndex` is omitted or is greater than the `UpperBound` value, Slice extracts through the end of the sequence (the `UpperBound` value).
 
 ### Returns
 
@@ -57,7 +57,7 @@ Public Sub SliceExample()
     Dim citrus() As Variant
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Lemon", "Apple", "Mango"
     citrus = MyArray.Slice(1, 3)
     ' expected output:

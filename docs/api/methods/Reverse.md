@@ -11,12 +11,12 @@ The `Reverse()` method reverses the order of elements in the array. The first ar
 
 ## Syntax
 
-*expression*.**Reverse**([*recurse*])
+*expression*.**Reverse**([*Recurse*])
 
 ### Parameters
 
-Name 
-: `recurse`
+Name
+: `Recurse`
 
 Type
 : `Boolean`
@@ -42,7 +42,7 @@ Public Sub ReverseExample()
     Dim result() As Variant
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     MyArray.Reverse
     result = MyArray.Items

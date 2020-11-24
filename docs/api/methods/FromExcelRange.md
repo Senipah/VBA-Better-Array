@@ -8,11 +8,11 @@ grand_parent: API
 
 ## Description
 
-The `FromExcelRange()` method accepts an Excel Range object as an argument and stores the values contained within the range to the internal array. If the Range object contains only one row or column, the values will be stored and returned as a one-dimension array. 
+The `FromExcelRange()` method accepts an Excel Range object as an argument and stores the values contained within the range to the internal array. If the Range object contains only one row or column, the values will be stored and returned as a one-dimension array.
 
-If the Range contains both multiple Rows and Columns the default behaviour is that the array returned by accessing the `Items` get accessor will be returned as a multi-dimension array. 
+If the Range contains both multiple Rows and Columns the default behaviour is that the array returned by accessing the `Items` get accessor will be returned as a multi-dimension array.
 
-If `detectLastColumn` is set to true, the range will be expanded along the first row of the `fromRange` until the last column containing data is found. If `detectLastRow` is set to true, the range will be expanded down the first column of the `fromRange` until the last row containing data is found. 
+If `DetectLastColumn` is set to true, the range will be expanded along the first row of the `FromRange` until the last column containing data is found. If `DetectLastRow` is set to true, the range will be expanded down the first column of the `FromRange` until the last row containing data is found.
 
 For example, assume you have a table of data starting at "A2" of a worksheet with 100 rows and 50 columns of data. Supplying the argument:
 
@@ -40,12 +40,12 @@ Would store in `MyArray` a two-dimensional array with all entries in the range `
 
 ## Syntax
 
-*expression*.**FromExcelRange**(*fromRange*, [*detectLastRow*], [*detectLastColumn*])
+*expression*.**FromExcelRange**(*FromRange*, [*DetectLastRow*], [*DetectLastColumn*])
 
 ### Parameters
 
-Name 
-: `fromRange`
+Name
+: `FromRange`
 
 Type
 : `Range` / `Object`
@@ -58,8 +58,8 @@ Description
 
 ---
 
-Name 
-: `detectLastRow`
+Name
+: `DetectLastRow`
 
 Type
 : `Boolean`
@@ -72,8 +72,8 @@ Description
 
 ---
 
-Name 
-: `detectLastColumn`
+Name
+: `DetectLastColumn`
 
 Type
 : `Boolean`
@@ -90,7 +90,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: The current instance of the BetterArray object with the values from the `fromRange` argument (expanded as determined by the `detectLastColumn` and `detectLastColumn` arguments) stored in the internal array.
+: The current instance of the BetterArray object with the values from the `FromRange` argument (expanded as determined by the `DetectLastColumn` and `DetectLastColumn` arguments) stored in the internal array.
 
 ## Example
 
@@ -98,7 +98,7 @@ Description
 Public Sub FromExcelRangeExample()
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.FromExcelRange ActiveSheet.UsedRange
 
     ' expected output:

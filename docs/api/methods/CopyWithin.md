@@ -7,7 +7,7 @@ grand_parent: API
 # CopyWithin
 
 ## Description
-The `CopyWithin()` method copies part of an array to another location in the same array without modifying its length. The `CopyWithin` method takes up to three Parameters `target`, `startIndex` and `endIndex`.
+The `CopyWithin()` method copies part of an array to another location in the same array without modifying its length. The `CopyWithin` method takes up to three Parameters `target`, `StartIndex` and `EndIndex`.
 
 #### Note
 The end argument is optional with the length of the this object as its default value. If target is negative, it is treated as length + target where length is the length of the array. If start is negative, it is treated as length + start. If end is negative, it is treated as length + end.
@@ -15,11 +15,11 @@ The end argument is optional with the length of the this object as its default v
 
 ## Syntax
 
-*expression*.**CopyWithin**(*target*, [*startIndex*], [*endIndex*])
+*expression*.**CopyWithin**(*target*, [*StartIndex*], [*EndIndex*])
 
 ### Parameters
 
-Name 
+Name
 : `target`
 
 Type
@@ -29,12 +29,12 @@ Necessity
 : Required
 
 Description
-: The index at which to copy the sequence to. If negative, `target` will be counted from the end. If `target` is at or greater than the array's `Length` property, nothing will be copied. If `target` is positioned after `startIndex`, the copied sequence will be trimmed to fit the array's `Length` property.
+: The index at which to copy the sequence to. If negative, `target` will be counted from the end. If `target` is at or greater than the array's `Length` property, nothing will be copied. If `target` is positioned after `StartIndex`, the copied sequence will be trimmed to fit the array's `Length` property.
 
 ---
 
 Name
-: `startIndex`
+: `StartIndex`
 
 Type
 : `Long`
@@ -43,12 +43,12 @@ Necessity
 : Optional
 
 Description
-: The index at which to start copying elements from. If negative, `startIndex` will be counted from the end. If `startIndex` is omitted, `CopyWithin` will copy from the LowerBound index of the array. 
+: The index at which to start copying elements from. If negative, `StartIndex` will be counted from the end. If `StartIndex` is omitted, `CopyWithin` will copy from the LowerBound index of the array.
 
 ---
 
 Name
-: `endIndex`
+: `EndIndex`
 
 Type
 : `Long`
@@ -57,8 +57,8 @@ Necessity
 : Optional
 
 Description
-: The index at which to end copying elements from. `CopyWithin` copies up to but not including `endIndex`. If negative, `endIndex` will be counted from the end.
-If `endIndex` is omitted, `CopyWithin` will copy until the last index (default to the array's `Length` property).
+: The index at which to end copying elements from. `CopyWithin` copies up to but not including `EndIndex`. If negative, `EndIndex` will be counted from the end.
+If `EndIndex` is omitted, `CopyWithin` will copy until the last index (default to the array's `Length` property).
 
 ### Returns
 
@@ -66,7 +66,7 @@ Type
 : `BetterArray` / `Object`
 
 Description
-: The current instance of the BetterArray object with the stored array modified. 
+: The current instance of the BetterArray object with the stored array modified.
 
 
 ## Example
@@ -75,12 +75,12 @@ Description
 Public Sub CopyWithinExample()
     Dim MyArray As BetterArray
     Dim result() As Variant
-    
+
     Set MyArray = New BetterArray
     MyArray.Push "a", "b", "c", "d", "e"
     MyArray.CopyWithin 0, 3, 4
     result = MyArray.Items
-    
+
     ' expected output:
     ' result is an array with the values: "d", "b", "c", "d", "e"
 End Sub

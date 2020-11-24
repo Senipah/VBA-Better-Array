@@ -18,7 +18,7 @@ Also see ws-garcia's [VBA-CSV-interface](https://github.com/ws-garcia/VBA-CSV-in
 
 ### Parameters
 
-Name 
+Name
 : `Path`
 
 Type
@@ -32,7 +32,7 @@ Description
 
 ---
 
-Name 
+Name
 : `ColumnDelimiter`
 
 Type
@@ -46,7 +46,7 @@ Description
 
 ---
 
-Name 
+Name
 : `RowDelimiter`
 
 Type
@@ -60,7 +60,7 @@ Description
 
 ---
 
-Name 
+Name
 : `Quote`
 
 Type
@@ -74,7 +74,7 @@ Description
 
 ---
 
-Name 
+Name
 : `IgnoreFirstRow`
 
 Type
@@ -88,7 +88,7 @@ Description
 
 ---
 
-Name 
+Name
 : `DuckType`
 
 Type
@@ -118,14 +118,14 @@ Description
 Public Sub FromCSVFileExample()
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     Dim path As String
     path = Strings.Join(Array(Environ("USERPROFILE"), "Desktop", "Data", "Sales Records.csv"), "\")
-    
-    Dim outputSheet As Worksheet
-    Set outputSheet = ThisWorkbook.Sheets.Add
-    MyArray.FromCSVFile(path).ToExcelRange outputSheet.Range("A1")
-    
+
+    Dim OutputSheet As Worksheet
+    Set OutputSheet = ThisWorkbook.Sheets.Add
+    MyArray.FromCSVFile(path).ToExcelRange OutputSheet.Range("A1")
+
     ' expected output:
     ' The data in the CSV was parsed into an array and written to a new worksheet in Excel
 End Sub

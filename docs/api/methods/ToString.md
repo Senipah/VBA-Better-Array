@@ -11,12 +11,12 @@ The `ToString()` method returns a string representing the array structure and it
 
 ## Syntax
 
-*expression*.**ToString**([*prettyPrint*], [*separator*], [*openingDelimiter*], [*closingDelimiter*], [*quoteStrings*])
+*expression*.**ToString**([*PrettyPrint*], [*Separator*], [*OpeningDelimiter*], [*ClosingDelimiter*], [*QuoteStrings*])
 
 ### Parameters
 
-Name 
-: `prettyPrint`
+Name
+: `PrettyPrint`
 
 Type
 : `Boolean`
@@ -29,8 +29,8 @@ Description
 
 ---
 
-Name 
-: `separator`
+Name
+: `Separator`
 
 Type
 : `String`
@@ -43,8 +43,8 @@ Description
 
 ---
 
-Name 
-: `openingDelimiter`
+Name
+: `OpeningDelimiter`
 
 Type
 : `String`
@@ -53,12 +53,12 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `openingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
+: If provided, the string passed to `OpeningDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
 
 ---
 
-Name 
-: `closingDelimiter`
+Name
+: `ClosingDelimiter`
 
 Type
 : `String`
@@ -67,12 +67,12 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `closingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+: If provided, the string passed to `ClosingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
 
 ---
 
-Name 
-: `quoteStrings`
+Name
+: `QuoteStrings`
 
 Type
 : `Boolean`
@@ -100,7 +100,7 @@ Public Sub ToStringExample()
     Dim result As String
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     result = MyArray.ToString
     Debug.Print result

@@ -11,12 +11,12 @@ The `Includes()` method determines whether the array includes a certain value am
 
 ## Syntax
 
-*expression*.**Includes**(*searchElement*, [*fromIndex*])
+*expression*.**Includes**(*SearchElement*, [*FromIndex*])
 
 ### Parameters
 
-Name 
-: `searchElement`
+Name
+: `SearchElement`
 
 Type
 : `Variant`
@@ -29,8 +29,8 @@ Description
 
 ---
 
-Name 
-: `fromIndex`
+Name
+: `FromIndex`
 
 Type
 : `Long`
@@ -39,11 +39,11 @@ Necessity
 : Optional
 
 Description
-: The position in this array at which to begin searching for `searchElement`; the first character to be searched is found at `fromIndex` for positive values of `fromIndex`, or at the array's `Length` property + `fromIndex` for negative values of `fromIndex` (using the absolute value of `fromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `LowerBound` property.
+: The position in this array at which to begin searching for `SearchElement`; the first character to be searched is found at `FromIndex` for positive values of `FromIndex`, or at the array's `Length` property + `FromIndex` for negative values of `FromIndex` (using the absolute value of `FromIndex` as the number of characters from the end of the array at which to start the search). Defaults to the array's `LowerBound` property.
 
 ---
 
-Name 
+Name
 : `recurse`
 
 Type
@@ -62,7 +62,7 @@ Type
 : `Boolean`
 
 Description
-: `True` if the array includes `searchElement`, `False` if not.
+: `True` if the array includes `SearchElement`, `False` if not.
 
 ## Example
 
@@ -71,7 +71,7 @@ Public Sub IncludesExample()
     Dim result As Boolean
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Foo", "Bar", "Fizz", "Buzz"
     result = MyArray.Includes("Bar")
     ' expected output:

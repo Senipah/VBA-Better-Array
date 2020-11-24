@@ -7,16 +7,16 @@ grand_parent: API
 # IndexOf
 
 ## Description
-The `LastIndexOf()` method method returns the last index at which a given element can be found in the array, or -9999 if it is not present. 
+The `LastIndexOf()` method method returns the last index at which a given element can be found in the array, or -9999 if it is not present.
 
 ## Syntax
 
-*expression*.**LastIndexOf**(*searchElement*,[*fromIndex*],[*compType*]) 
+*expression*.**LastIndexOf**(*SearchElement*,[*FromIndex*],[*CompType*])
 
 ### Parameters
 
-Name 
-: `searchElement`
+Name
+: `SearchElement`
 
 Type
 : `Variant`
@@ -29,8 +29,8 @@ Description
 
 ---
 
-Name 
-: `fromIndex`
+Name
+: `FromIndex`
 
 Type
 : `Long`
@@ -43,8 +43,8 @@ Description
 
 ---
 
-Name 
-: `compType`
+Name
+: `CompType`
 
 Type
 : `ComparisonType (Long)`
@@ -58,10 +58,10 @@ Description
 #### ComparisonType Enumerations
 
 `CT_EQUALITY`
-: Compares `searchElement` against the element at the current index for equality. This is the default comparison method.
+: Compares `SearchElement` against the element at the current index for equality. This is the default comparison method.
 
 `CT_LIKENESS`
-: `searchElement` is treated as a string pattern and compared against the element as the current index using the `Like` operator. If this option is chosen `searchElement` must be a String type or an error will be raised.
+: `SearchElement` is treated as a string pattern and compared against the element as the current index using the `Like` operator. If this option is chosen `SearchElement` must be a String type or an error will be raised.
 
 
 ### Returns
@@ -79,7 +79,7 @@ Public Sub LastIndexOfExample()
     Dim result As Long
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Apple", "Banana", "Orange", "Apple", "Mango"
     result = MyArray.LastIndexOf("Apple")
     ' expected output:
