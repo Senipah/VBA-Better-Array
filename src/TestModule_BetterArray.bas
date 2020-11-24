@@ -5268,8 +5268,8 @@ Private Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     'Act:
     Set ReturnedRange = SUT.ToExcelRange(Destination)
     Dim i As Long
-    For i = 1 To ReturnedRange.Columns.Count
-        Actual(i - 1) = ReturnedRange.Cells.Item(1, i).Value
+    For i = 1 To ReturnedRange.Rows.Count
+        Actual(i - 1) = ReturnedRange.Cells.Item(i, 1).Value
     Next
     
     'Assert:
@@ -5302,8 +5302,8 @@ Private Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     'Act:
     Set ReturnedRange = SUT.ToExcelRange(Destination, True)
     Dim i As Long
-    For i = 1 To ReturnedRange.Rows.Count
-        Actual(i - 1) = ReturnedRange.Cells.Item(i, 1).Value
+    For i = 1 To ReturnedRange.Columns.Count
+        Actual(i - 1) = ReturnedRange.Cells.Item(1, i).Value
     Next
     
 

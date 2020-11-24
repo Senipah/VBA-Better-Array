@@ -705,15 +705,15 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
         Dim EndRow As Long
         
         With FromRange
-            StartColumn = .column
+            StartColumn = .Column
             StartRow = .Row
-            EndColumn = .column + .Columns.Count - 1
+            EndColumn = .Column + .Columns.Count - 1
             EndRow = .Row + .Rows.Count - 1
         End With
         
         With FromRange.Parent
             If DetectLastColumn Then
-                EndColumn = .Cells.Item(StartRow, .Columns.Count).End(xlToLeft).column
+                EndColumn = .Cells.Item(StartRow, .Columns.Count).End(xlToLeft).Column
             End If
             
             If DetectLastRow Then
@@ -837,41 +837,45 @@ Public Function ToExcelRange( _
         Optional ByVal TransposeValues As Boolean _
     ) As Object
 Attribute ToExcelRange.VB_Description = "Writes the values stored in the array to an excel worksheet starting at the specified range."
+    Const TARGET_APPLICATION As String = "Microsoft Excel"
+    Const TARGET_OBJECT As String = "Range"
     Dim LocalRange As Object
     Dim LocalItems() As Variant
     Dim Depth As Long
     Dim LengthRows As Long
     Dim LengthColumns As Long
+    Dim AvailableRows As Long
+    Dim AvailableColumns As Long
+    Dim DestType As String
+    Dim DestApplication As String
+       
+    On Error Resume Next
+        DestType = TypeName(Destination)
+        DestApplication = Destination.Application.Name
+    On Error GoTo 0
     
-    LengthRows = 1 'default
-    LengthColumns = 1 'default
-    
-    If TypeName(Destination) = "Range" Then
+    If DestType = TARGET_OBJECT And DestApplication = TARGET_APPLICATION Then
+        AvailableRows = Destination.Parent.Rows.Count - Destination.Row + 1
+        AvailableColumns = Destination.Parent.Columns.Count - Destination.Column + 1
         LocalItems = InternalItems
         Depth = GetJaggedArrayDepth(LocalItems)
         If Depth > 0 Then 'check array is allocated
             If Depth = 1 Then
                 '1d array
-                LocalItems = EnsureScalar1DArray(LocalItems)
-                If TransposeValues Then
-                    LengthRows = This.Length
-                    LocalItems = Transpose1DArray(LocalItems)
-                Else
-                    LengthColumns = This.Length
-                End If
-            ElseIf Depth > 1 Then
-                'jagged array - multidim arrays should also be stored as jagged internally
-                Const OutputDepth As Long = 2 'need 2 dimensions for tabular representation output
-                LocalItems = JaggedToMulti(LocalItems, OutputDepth, EnsureScalar:=True)
-                If TransposeValues Then
-                    LengthRows = UBound(LocalItems, 2) - LBound(LocalItems, 2) + 1
-                    LengthColumns = UBound(LocalItems, 1) - LBound(LocalItems, 1) + 1
-                    LocalItems = Transpose2DArray(LocalItems)
-                Else
-                    LengthRows = UBound(LocalItems, 1) - LBound(LocalItems, 1) + 1
-                    LengthColumns = UBound(LocalItems, 2) - LBound(LocalItems, 2) + 1
-                End If
+                LocalItems = ConvertOneDimensionArrayToJagged(LocalItems)
             End If
+            'jagged array - multidim arrays should also be stored as jagged internally
+            Const OutputDepth As Long = 2 'need 2 dimensions for tabular representation output
+            LocalItems = JaggedToMulti(LocalItems, OutputDepth, EnsureScalar:=True)
+            If TransposeValues Then
+                LocalItems = Transpose2DArray(LocalItems)
+            End If
+            
+            LocalItems = TrimColumnsMultidimensionArray(LocalItems, AvailableColumns)
+            LocalItems = TrimRowsMultidimensionArray(LocalItems, AvailableRows)
+            LengthRows = UBound(LocalItems, 1) - LBound(LocalItems, 1) + 1
+            LengthColumns = UBound(LocalItems, 2) - LBound(LocalItems, 2) + 1
+                        
             Set LocalRange = Destination.Resize( _
                 RowSize:=LengthRows, _
                 ColumnSize:=LengthColumns _
@@ -1828,6 +1832,7 @@ Attribute FromCSVString.VB_Description = "Accepts a string argument representing
     Set FromCSVString = Me
 End Function
 
+'@Description("Returns a string representation of the stored array to use as output for a CSV file")
 Public Function ToCSVString( _
     Optional ByRef Headers As Variant, _
     Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
@@ -1837,6 +1842,7 @@ Public Function ToCSVString( _
     Optional ByVal DateFormat As String, _
     Optional ByVal NumberFormat As String _
 ) As String
+Attribute ToCSVString.VB_Description = "Returns a string representation of the stored array to use as output for a CSV file"
     Dim LocalItems() As Variant
     Dim Depth As Long
     Dim EncodedRecords() As String
@@ -1862,6 +1868,7 @@ Public Function ToCSVString( _
     ToCSVString = Result
 End Function
 
+'@Description("Writes stored array to CSV file")
 Public Function ToCSVFile( _
     ByVal Path As String, _
     Optional ByRef Headers As Variant, _
@@ -1872,6 +1879,7 @@ Public Function ToCSVFile( _
     Optional ByVal DateFormat As String, _
     Optional ByVal NumberFormat As String _
 ) As String
+Attribute ToCSVFile.VB_Description = "Writes stored array to CSV file"
     Dim Content As String
     ' test if path valid - if not handle err
     
@@ -1909,7 +1917,9 @@ End Function
 
 '''''''''''''''''''
 
+'@Description("Reads a text file to a string from a specified path")
 Private Function ReadStringFromFile(ByVal Path As String) As String
+Attribute ReadStringFromFile.VB_Description = "Reads a text file to a string from a specified path"
     Dim File As Long
     Dim ByteCount As Long
     Dim Result As String
@@ -1923,7 +1933,9 @@ Private Function ReadStringFromFile(ByVal Path As String) As String
     ReadStringFromFile = Result
 End Function
 
+'@Description("Prints as string to a text file at the specified path")
 Private Sub PrintStringToFile(ByVal Path As String, ByVal Content As String)
+Attribute PrintStringToFile.VB_Description = "Prints as string to a text file at the specified path"
     Dim File As Long
     File = FreeFile
     Open Path For Output Access Write As File
@@ -1931,15 +1943,19 @@ Private Sub PrintStringToFile(ByVal Path As String, ByVal Content As String)
     Close File
 End Sub
 
+'@Description("Surrounds the provided string with quote characters")
 Private Function WrapQuote(Optional ByVal Source As String = vbNullString) As String
+Attribute WrapQuote.VB_Description = "Surrounds the provided string with quote characters"
     WrapQuote = CHR_QUOTE & Source & CHR_QUOTE
 End Function
 
+'@Description("Concatenates all records into a single string to be output as a csv")
 Private Function BuildCSVString( _
     ByRef Records() As String, _
     ByVal ColumnDelimiter As String, _
     ByVal RowDelimiter As String _
 ) As String
+Attribute BuildCSVString.VB_Description = "Concatenates all records into a single string to be output as a csv"
     Dim i As Long
     Dim j As Long
     Dim LastRow As Long
@@ -1974,6 +1990,7 @@ Private Function BuildCSVString( _
     BuildCSVString = StringBuilder(Final:=True)
 End Function
 
+'@Description("Applies RFC 4180 business rules to all fields")
 Private Function EncodeCSVRecords( _
     ByRef Records() As Variant, _
     ByVal ColumnDelimiter As String, _
@@ -1982,6 +1999,7 @@ Private Function EncodeCSVRecords( _
     ByVal DateFormat As String, _
     ByVal NumberFormat As String _
 ) As String()
+Attribute EncodeCSVRecords.VB_Description = "Applies RFC 4180 business rules to all fields"
     Dim FirstDimBounds() As Long
     Dim SecondDimBounds() As Long
     Dim i As Long
@@ -2013,6 +2031,7 @@ Private Function EncodeCSVRecords( _
     EncodeCSVRecords = Result
 End Function
 
+'@Description("Applies RFC 4180 business rules to the encoding of a CSV field")
 Private Function EncodeCSVField( _
     ByVal Field As Variant, _
     ByVal ColumnDelimiter As String, _
@@ -2021,6 +2040,7 @@ Private Function EncodeCSVField( _
     ByVal DateFormat As String, _
     ByVal NumberFormat As String _
 ) As String
+Attribute EncodeCSVField.VB_Description = "Applies RFC 4180 business rules to the encoding of a CSV field"
     ' https://tools.ietf.org/html/rfc4180#section-2
     Dim LocalField As String
     
@@ -2047,12 +2067,14 @@ Private Function EncodeCSVField( _
     Exit Function
 End Function
 
+'@Description("Escapes a substring in a string using a provided Escape substring")
 Private Function EscapeCharInString( _
     ByVal Destination As String, _
     ByVal Target As String, _
     ByVal Escape As String, _
     Optional ByVal BothSides As Boolean _
 ) As String
+Attribute EscapeCharInString.VB_Description = "Escapes a substring in a string using a provided Escape substring"
     Dim Index As Long
     Dim TargetLength As Long
     Dim EscapeLength As String
@@ -2076,11 +2098,13 @@ Private Function EscapeCharInString( _
     EscapeCharInString = Result
 End Function
 
+'@Description("Inserts a substring into a destination string starting at the provided index")
 Private Function InsertIntoStringAtIndex( _
     ByVal Destination As String, _
     ByVal Source As String, _
     ByVal Index As Long _
 ) As String
+Attribute InsertIntoStringAtIndex.VB_Description = "Inserts a substring into a destination string starting at the provided index"
     Dim Front As String
     Dim Back As String
     If Index > 1 Then
@@ -2093,13 +2117,17 @@ Private Function InsertIntoStringAtIndex( _
     InsertIntoStringAtIndex = Front & Source & Back
 End Function
 
+'@Description("Utility function which delegates to ConcatDelegate")
 Private Function InternalConcat(ParamArray Args() As Variant) As Variant()
+Attribute InternalConcat.VB_Description = "Utility function which delegates to ConcatDelegate"
     Dim First() As Variant
     First = Array()
     InternalConcat = ConcatDelegate(First, Args)
 End Function
 
+'@Description("Concatenates Passed Arrays. Do not use as utility function")
 Private Function ConcatDelegate(ByRef First() As Variant, ParamArray Args() As Variant) As Variant()
+Attribute ConcatDelegate.VB_Description = "Concatenates Passed Arrays. Do not use as utility function"
     ' NOTE don't call this internally as a utility. use InternalConcat
     Dim i As Long
     Dim Cursor As Long
@@ -2137,7 +2165,9 @@ Private Function ConcatDelegate(ByRef First() As Variant, ParamArray Args() As V
     ConcatDelegate = Result
 End Function
 
+'@Description("Places the Values in Source within Destination starting at Index")
 Private Sub InsertArrayAtIndex(ByRef Destination() As Variant, ByRef Source() As Variant, ByRef Index As Long)
+Attribute InsertArrayAtIndex.VB_Description = "Places the Values in Source within Destination starting at Index"
     Dim Offset As Long
     Dim SourceLength As Long
     Dim StartingIndex As Long
@@ -2152,7 +2182,9 @@ Private Sub InsertArrayAtIndex(ByRef Destination() As Variant, ByRef Source() As
     End If
 End Sub
 
+'@Description("Returns the combined length of all nested arrays")
 Private Function GetTotalLengthOfNestedArrays(ByRef Source() As Variant) As Long
+Attribute GetTotalLengthOfNestedArrays.VB_Description = "Returns the combined length of all nested arrays"
     Dim i As Long
     Dim Result As Long
     Dim Current() As Variant
@@ -2163,6 +2195,62 @@ Private Function GetTotalLengthOfNestedArrays(ByRef Source() As Variant) As Long
         End If
     Next
     GetTotalLengthOfNestedArrays = Result
+End Function
+
+'@Description("Truncates the number of rows in an array to the given amount")
+Private Function TrimColumnsMultidimensionArray(ByRef Original() As Variant, ByVal AvailableColumns As Long) As Variant()
+Attribute TrimColumnsMultidimensionArray.VB_Description = "Truncates the number of rows in an array to the given amount"
+    Dim i As Long
+    Dim j As Long
+    Dim Result() As Variant
+    Dim OuterBounds(0 To 1) As Long
+    Dim InnerBounds(0 To 1) As Long
+    Dim CountColumns As Long
+    
+    CountColumns = UBound(Original, 2) - LBound(Original, 2) + 1
+    If CountColumns > AvailableColumns Then
+        OuterBounds(0) = LBound(Original, 1)
+        OuterBounds(1) = UBound(Original, 1)
+        InnerBounds(0) = LBound(Original, 2)
+        InnerBounds(1) = InnerBounds(0) + AvailableColumns - 1
+        ReDim Result(OuterBounds(0) To OuterBounds(1), InnerBounds(0) To InnerBounds(1))
+        For i = OuterBounds(0) To OuterBounds(1)
+            For j = InnerBounds(0) To InnerBounds(1)
+                LetOrSetElement Result(i, j), Original(i, j)
+            Next
+        Next
+    Else
+        Result = Original
+    End If
+    TrimColumnsMultidimensionArray = Result
+End Function
+
+'@Description("Truncates the number of rows in an array to the given amount")
+Private Function TrimRowsMultidimensionArray(ByRef Original() As Variant, ByVal AvailableRows As Long) As Variant()
+Attribute TrimRowsMultidimensionArray.VB_Description = "Truncates the number of rows in an array to the given amount"
+    Dim i As Long
+    Dim j As Long
+    Dim Result() As Variant
+    Dim OuterBounds(0 To 1) As Long
+    Dim InnerBounds(0 To 1) As Long
+    Dim CountRows As Long
+    
+    CountRows = UBound(Original, 1) - LBound(Original, 1) + 1
+    If CountRows > AvailableRows Then
+        OuterBounds(0) = LBound(Original, 1)
+        OuterBounds(1) = OuterBounds(0) + AvailableRows - 1
+        InnerBounds(0) = LBound(Original, 2)
+        InnerBounds(1) = UBound(Original, 2)
+        ReDim Result(OuterBounds(0) To OuterBounds(1), InnerBounds(0) To InnerBounds(1))
+        For i = OuterBounds(0) To OuterBounds(1)
+            For j = InnerBounds(0) To InnerBounds(1)
+                LetOrSetElement Result(i, j), Original(i, j)
+            Next
+        Next
+    Else
+        Result = Original
+    End If
+    TrimRowsMultidimensionArray = Result
 End Function
 
 '@Description("Increments an index")
@@ -2195,6 +2283,7 @@ Private Function NextDelimBytePos( _
     ByRef Delimiter As TString, _
     Optional ByRef StartIndex As Long = 1 _
 ) As Long
+Attribute NextDelimBytePos.VB_Description = "Returns the next byte position in the string of the specified delimiter"
     Dim Result As Long
     Result = InStrB(StartIndex, Expression.Text, Delimiter.Text, vbBinaryCompare)
     Do Until (Result And 1) Or (Result = 0)
@@ -3555,6 +3644,7 @@ Private Function StringBuilder( _
     Optional ByVal Final As Boolean, _
     Optional ByVal NewString As Boolean _
 ) As String
+Attribute StringBuilder.VB_Description = "Efficiently concatenates string fragments to a byte array buffer"
     Static Buffer() As Byte
     Static BufferLength As Long
     Static BufferCapacity As Long
