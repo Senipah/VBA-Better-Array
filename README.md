@@ -1,6 +1,6 @@
 # ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/img/logo.png)
 
-![GitHub](https://img.shields.io/github/license/Senipah/VBA-Better-Array?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Senipah/VBA-Better-Array?style=plastic)
+[![GitHub](https://img.shields.io/github/license/Senipah/VBA-Better-Array?style=plastic)](https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Senipah/VBA-Better-Array?style=plastic)](https://github.com/Senipah/VBA-Better-Array/releases/latest)
 
 ### A VBA class providing a more flexible and user-friendly Array.
 
