@@ -1,6 +1,21 @@
-5168a06 fix: test for nullstring in UnquoteString
-f4016d8 chore: track variable case changes
-2669d60 chore: track variable case change
-afea962 chore: ignore some dev files
-b826266 chore: rename some dev functions
-4a3287c chore: inc dec shorthand refactor
+46cb841 chore: enforce PascalCase
+be6476d chore: enforce PascalCase
+ddcf639 feat: refactor items letter to accept typed arrays
+288bfe6 chore: track var case changes
+b26aa79 fix typos
+6d98635 fix: add missing ParseFromString doc
+746e428 feat: add ToCSVFile & ToCSVString
+0be9968 chore: track dev helper funcs
+745b1c7 chore: var name changes
+43ce64f chore: tocsvstring tests
+9b74beb feat: concat refactor. ToCSVString first draft
+2f06ae9 chore: vba changing variable name casing
+d0b836b chore: update Sort docs for TimSort
+6b64e3c feat: add TimSort - make default sort algorithm
+3e13f36 chore: add sort method prop & enum docs
+ef37f63 chore: fix link
+7656c6f chore: rename root RD folder to match namespace
+c7bf7e9 chore: track sort algo profiling module
+559756b chore var case name changes
+c4c78f8 feat: add option to specify width of 2nd dim
+e215b8b feat: add option to select sorting algo and iterqs
