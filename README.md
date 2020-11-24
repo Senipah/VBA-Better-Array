@@ -1,6 +1,8 @@
 # ![VBA Better Array](https://raw.githubusercontent.com/Senipah/VBA-Better-Array/master/docs/assets/img/logo.png)
 
-### A VBA class providing a more flexible and user-friendly Array. 
+![GitHub](https://img.shields.io/github/license/Senipah/VBA-Better-Array?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Senipah/VBA-Better-Array?style=plastic)
+
+### A VBA class providing a more flexible and user-friendly Array.
 
 VBA-Better-Array is a cross-platform and dependency-free VBA class which enables you to easily [sort](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html), [slice](https://senipah.github.io/VBA-Better-Array/api/methods/Slice.html) and [splice](https://senipah.github.io/VBA-Better-Array/api/methods/Splice.html) your data ([and much more](https://senipah.github.io/VBA-Better-Array/api/methods/)).
 
@@ -21,7 +23,7 @@ Refer to the [installation documentation](https://senipah.github.io/VBA-Better-A
 
 ## Contributing
 
-Please refer to the process outlined in the [Contributing](https://senipah.github.io/VBA-Better-Array/contributing.html) page of the documentation site for instructions on how to contribute to this project. 
+Please refer to the process outlined in the [Contributing](https://senipah.github.io/VBA-Better-Array/contributing.html) page of the documentation site for instructions on how to contribute to this project.
 
 ## License
 
