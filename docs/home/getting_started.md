@@ -135,7 +135,7 @@ Public Sub AssigningAnArray()
     originalArray(0) = "Cheese"
     originalArray(1) = "Eggs"
     originalArray(2) = "Ham"
-        
+
     Foods.Items = originalArray
     Foods.Push "Steak"
     ' Foods is now the following list: "Eggs", "Cheese", "Ham", "Steak"
@@ -144,7 +144,7 @@ End Sub
 
 ## Retrieving the stored array
 
-Accessing the [Items](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items.html) property get accessor will return the stored array to you as a `Variant` array.
+Accessing the [Items](https://senipah.github.io/VBA-Better-Array/api/properties/items/Items.html) property get accessor will return the stored array to you as a `Variant()` array.
 
 ```vb
 Public Sub RetrievingAnArray()
@@ -155,13 +155,13 @@ Public Sub RetrievingAnArray()
     Foods.Push "Cheese"
     Foods.Push "Eggs"
     Foods.Push "Ham"
-        
+
     myShoppingList = Foods.Items
 End Sub
 ```
 ## Iterating over the array
 
-The Items property returns an array which is inherently iterable and can be used in a for each if you just want to retrieve all of the values. To mutate all of the values in a better array, iterate by index: 
+The Items property returns an array which is inherently iterable and can be used in a for each if you just want to retrieve all of the values. To mutate all of the values in a better array, iterate by index:
 
 ```vb
 Public Sub Iterating_PlusOne()
@@ -178,7 +178,7 @@ End Sub
 
 ## Mutating the values in Jagged or Multi-dimension arrays
 
-To mutate the value of a stored jagged (array-of-arrays) or multi-dimension array, you must assign the element at the desired index in the outermost array to a local variable, make the desired changes, and then assign the local variable back into the BetterArray instance at the appropriate index. 
+To mutate the value of a stored jagged (array-of-arrays) or multi-dimension array, you must assign the element at the desired index in the outermost array to a local variable, make the desired changes, and then assign the local variable back into the BetterArray instance at the appropriate index.
 
 See the following example:
 
@@ -189,24 +189,24 @@ Public Sub Mutating2DArray()
     Dim result() As Variant
     Dim MyList As BetterArray
     Dim currentElement() As Variant
-    
+
     originalArray(1, 1) = "Foo"
     originalArray(1, 2) = 1
     originalArray(2, 1) = "Bar"
     originalArray(2, 2) = 2
     originalArray(3, 1) = "Fizz"
     originalArray(3, 2) = 3
-    
+
     Set MyList = New BetterArray
     MyList.Items = originalArray
     MyList.Push Array("Buzz", 4)
-    
+
     For i = MyList.LowerBound To MyList.UpperBound
         currentElement = MyList.Item(i)
         currentElement(2) = currentElement(2) + 1
         MyList.Item(i) = currentElement
     Next
-    
+
     result = MyList.Items
     ' result is a 2d array dimensioned as (1 To 4, 1 to 2)
     ' result:
