@@ -29,12 +29,12 @@ End Function
 Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
     Dim startTime As Single
     Dim endTime As Single
-    Dim filepath As String
-    filepath = JoinPath(Path, fileName)
+    Dim Filepath As String
+    Filepath = JoinPath(Path, fileName)
     Debug.Print ConsoleHeader("Reading: " & fileName)
     startTime = Timer
     '@Ignore FunctionReturnValueDiscarded
-    Arr.FromCSVFile filepath
+    Arr.FromCSVFile Filepath
     endTime = Timer
     Debug.Print "Time taken: " & endTime - startTime
 End Sub
@@ -64,7 +64,7 @@ End Function
 
 '@Ignore ProcedureNotUsed
 Private Function LastCol(ByVal Target As Worksheet, Optional ByVal rowNum As Long = 1) As Long
-    LastCol = Target.Cells.Item(rowNum, Target.Columns.Count).End(xlToLeft).column
+    LastCol = Target.Cells.Item(rowNum, Target.Columns.Count).End(xlToLeft).Column
 End Function
 
 Public Function ConsoleHeader(ByVal descriptor As String) As String
@@ -256,7 +256,7 @@ End Function
 
 '@Description("For Unit Tests only. No MD array support)"
 Public Function arraysAreReversed( _
-        ByRef original() As Variant, _
+        ByRef Original() As Variant, _
         ByRef reversed() As Variant, _
         Optional ByVal Recurse As Boolean _
     ) As Boolean
@@ -267,16 +267,16 @@ Public Function arraysAreReversed( _
     
     On Error GoTo ErrHandler
     
-    LocalUpperBound = UBound(original)
-    LocalLowerBound = LBound(original)
+    LocalUpperBound = UBound(Original)
+    LocalLowerBound = LBound(Original)
     Result = True
     
     For i = LocalLowerBound To LocalUpperBound
-        If IsArray(original(i)) Then
+        If IsArray(Original(i)) Then
             If IsArray(reversed(LocalUpperBound + LocalLowerBound - i)) Then
                 Dim originalArray() As Variant
                 Dim reversedArray() As Variant
-                originalArray = original(i)
+                originalArray = Original(i)
                 reversedArray = reversed(LocalUpperBound + LocalLowerBound - i)
                 If Recurse Then
                     If Not arraysAreReversed(originalArray, reversedArray) Then
@@ -295,7 +295,7 @@ Public Function arraysAreReversed( _
             End If
         Else
             If Not ElementsAreEqual( _
-                    original(i), _
+                    Original(i), _
                     reversed(LocalUpperBound + LocalLowerBound - i) _
                 ) Then
                 Result = False
