@@ -10,7 +10,7 @@ grand_parent: API
 
 The `ToCSVFile()` returns an [RFC 4180](https://tools.ietf.org/html/rfc4180#section-2) compliant string representation of the stored array.
 
-It is the same as `ToCSVFile()` but accepts an output path to which the CSV data will be written.
+It is the same as `ToCSVString()` but accepts an output path to which the CSV data will be written.
 
 
 ## Syntax
