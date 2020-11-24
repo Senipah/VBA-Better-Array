@@ -1775,19 +1775,26 @@ End Function
 Public Function FromCSVFile( _
     ByVal Path As String, _
     Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
-    Optional ByVal RowDelimiter As String = vbCrLf, _
+    Optional ByVal RowDelimiter As String, _
     Optional ByVal Quote As String = CHR_QUOTE, _
     Optional ByVal IgnoreFirstRow As Boolean, _
     Optional ByVal DuckType As Boolean _
 ) As BetterArray
 Attribute FromCSVFile.VB_Description = "Accepts a path argument pointing to a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim RawData As String
+    Dim LineEnding As String
+    
     RawData = ReadStringFromFile(Path)
-       
+    If RowDelimiter = vbNullString Then
+        LineEnding = DetectLineEndings(RawData)
+    Else
+        LineEnding = RowDelimiter
+    End If
+    
     Set FromCSVFile = FromCSVString( _
         CSVString:=RawData, _
         ColumnDelimiter:=ColumnDelimiter, _
-        RowDelimiter:=RowDelimiter, _
+        RowDelimiter:=LineEnding, _
         Quote:=Quote, _
         IgnoreFirstRow:=IgnoreFirstRow, _
         DuckType:=DuckType _
@@ -1798,7 +1805,7 @@ End Function
 Public Function FromCSVString( _
     ByVal CSVString As String, _
     Optional ByVal ColumnDelimiter As String = CHR_COMMA, _
-    Optional ByVal RowDelimiter As String = vbCrLf, _
+    Optional ByVal RowDelimiter As String, _
     Optional ByVal Quote As String = CHR_QUOTE, _
     Optional ByVal IgnoreFirstRow As Boolean, _
     Optional ByVal DuckType As Boolean _
@@ -1806,6 +1813,13 @@ Public Function FromCSVString( _
 Attribute FromCSVString.VB_Description = "Accepts a string argument representing the contents of a comma-separated values (CSV) file and stores the delimited values contained within to the internal array."
     Dim LocalType As ArrayTypes
     Dim Parsed() As Variant
+    Dim LineEnding As String
+    
+    If RowDelimiter = vbNullString Then
+        LineEnding = DetectLineEndings(CSVString)
+    Else
+        LineEnding = RowDelimiter
+    End If
     
     If This.ArrayType = BA_MULTIDIMENSION Then
         LocalType = BA_MULTIDIMENSION
@@ -1816,7 +1830,7 @@ Attribute FromCSVString.VB_Description = "Accepts a string argument representing
     Parsed = ParseCSV( _
         Expression:=CSVString, _
         ColumnDelimiter:=ColumnDelimiter, _
-        RowDelimiter:=RowDelimiter, _
+        RowDelimiter:=LineEnding, _
         Quote:=Quote, _
         IgnoreFirstRow:=IgnoreFirstRow, _
         ReturnJagged:=IIf(LocalType = BA_JAGGED, True, False), _
@@ -1916,6 +1930,24 @@ End Function
 ' Private Methods '
 
 '''''''''''''''''''
+'@Description("Tries to guess line endings used in a string")
+Private Function DetectLineEndings(ByVal Source As String) As String
+Attribute DetectLineEndings.VB_Description = "Tries to guess line endings used in a string"
+    If VBA.Strings.InStr(Source, vbCrLf) Then
+        DetectLineEndings = vbCrLf
+        Exit Function
+    End If
+    If VBA.Strings.InStr(Source, vbLf) Then
+        DetectLineEndings = vbLf
+        Exit Function
+    End If
+    If VBA.Strings.InStr(Source, vbCr) Then
+        DetectLineEndings = vbCr
+        Exit Function
+    End If
+    ' default to CRLF
+    DetectLineEndings = vbCrLf
+End Function
 
 '@Description("Reads a text file to a string from a specified path")
 Private Function ReadStringFromFile(ByVal Path As String) As String
