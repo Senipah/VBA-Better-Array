@@ -43,12 +43,12 @@ End Sub
 ' Public Properties '
 '''''''''''''''''''''
 
-Public Property Get lowerBound() As Long
-    lowerBound = pLowerBound
+Public Property Get LowerBound() As Long
+    LowerBound = pLowerBound
 End Property
 
-Public Property Let lowerBound(ByVal value As Long)
-    pLowerBound = value
+Public Property Let LowerBound(ByVal Value As Long)
+    pLowerBound = Value
 End Property
 
 '''''''''''''''''''
@@ -57,74 +57,74 @@ End Property
 
 Public Function GetArray( _
         Optional ByVal ValueType As ValueTypes = ValueTypes.AG_VARIANT, _
-        Optional ByVal arrayType As ArrayTypes = AG_ArrayTypes.AG_ONEDIMENSION, _
+        Optional ByVal ArrayType As ArrayTypes = AG_ArrayTypes.AG_ONEDIMENSION, _
         Optional ByVal Length As Long = 10, _
         Optional ByVal Depth As Long, _
         Optional ByVal ArrayWidth As Long = 10 _
     ) As Variant
-    Dim localLength As Long
-    Dim vals As IValuesList
+    Dim LocalLength As Long
+    Dim Vals As IValuesList
        
-    localLength = IIf(Length <= 0, 1, Length)
+    LocalLength = IIf(Length <= 0, 1, Length)
     
     Select Case ValueType
     Case ValueTypes.AG_BOOLEAN
-        Set vals = New ValuesList_Booleans
+        Set Vals = New ValuesList_Booleans
     Case ValueTypes.AG_BYTE
-        Set vals = New ValuesList_Bytes
+        Set Vals = New ValuesList_Bytes
     Case ValueTypes.AG_DOUBLE
-        Set vals = New ValuesList_Doubles
+        Set Vals = New ValuesList_Doubles
     Case ValueTypes.AG_LONG
-        Set vals = New ValuesList_Longs
+        Set Vals = New ValuesList_Longs
     Case ValueTypes.AG_OBJECT
-        Set vals = New ValuesList_Objects
+        Set Vals = New ValuesList_Objects
     Case ValueTypes.AG_STRING
-        Set vals = New ValuesList_Strings
+        Set Vals = New ValuesList_Strings
     Case ValueTypes.AG_VARIANT
-        Set vals = New ValuesList_Variants
+        Set Vals = New ValuesList_Variants
     End Select
-    GetArray = GetArrayOfType(localLength, vals, arrayType, Depth, ArrayWidth)
+    GetArray = GetArrayOfType(LocalLength, Vals, ArrayType, Depth, ArrayWidth)
 End Function
 
 Public Function ConcatArraysOfSameStructure( _
-        ByVal arrayType As ArrayTypes, _
-        ParamArray args() As Variant _
+        ByVal ArrayType As ArrayTypes, _
+        ParamArray Args() As Variant _
     ) As Variant()
     ' This method is exclusively for use as a test dependency and not for production use
     ' (same disclaimer applies to all methods in this class)
-    Dim arg As Variant
+    Dim Arg As Variant
     Dim Result() As Variant
-    Dim currentArray() As Variant
+    Dim CurrentArray() As Variant
     Dim UpperBound As Long
-    Dim currentIndex As Long
+    Dim CurrentIndex As Long
     
     UpperBound = -1
     
     '@Ignore EmptyIfBlock
-    If arrayType = AG_UNALLOCATED Or arrayType = AG_UNDEFINED Then
+    If ArrayType = AG_UNALLOCATED Or ArrayType = AG_UNDEFINED Then
         'Handle Exception
     Else
-        For Each arg In args
-            If IsArray(arg) Then
-                currentArray = arg
-                UpperBound = UpperBound + GetArrayLength(currentArray)
+        For Each Arg In Args
+            If IsArray(Arg) Then
+                CurrentArray = Arg
+                UpperBound = UpperBound + GetArrayLength(CurrentArray)
             End If
         Next
         
-        If arrayType = AG_MULTIDIMENSION Then
-            ReDim Result(UpperBound, UBound(currentArray, 2))
-            For Each arg In args
-                If IsArray(arg) Then
-                    currentArray = arg
-                    currentIndex = LocalMultiDimConcat(currentIndex, Result, currentArray)
+        If ArrayType = AG_MULTIDIMENSION Then
+            ReDim Result(UpperBound, UBound(CurrentArray, 2))
+            For Each Arg In Args
+                If IsArray(Arg) Then
+                    CurrentArray = Arg
+                    CurrentIndex = LocalMultiDimConcat(CurrentIndex, Result, CurrentArray)
                 End If
             Next
         Else
             ReDim Result(UpperBound)
-            For Each arg In args
-              If IsArray(arg) Then
-                  currentArray = arg
-                  currentIndex = LocalConcat(currentIndex, Result, currentArray)
+            For Each Arg In Args
+              If IsArray(Arg) Then
+                  CurrentArray = Arg
+                  CurrentIndex = LocalConcat(CurrentIndex, Result, CurrentArray)
               End If
             Next
         End If
@@ -134,8 +134,8 @@ Public Function ConcatArraysOfSameStructure( _
 
 End Function
 
-Public Function GetArrayLength(ByRef sourceArray() As Variant) As Long
-    GetArrayLength = UBound(sourceArray) - LBound(sourceArray) + 1
+Public Function GetArrayLength(ByRef SourceArray() As Variant) As Long
+    GetArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
 End Function
 
 '''''''''''''''''''
@@ -144,35 +144,35 @@ End Function
 
 Private Function GetArrayOfType( _
         ByVal Length As Long, _
-        ByVal vals As IValuesList, _
-        ByVal arrayType As ArrayTypes, _
+        ByVal Vals As IValuesList, _
+        ByVal ArrayType As ArrayTypes, _
         ByVal Depth As Long, _
         ByVal ArrayWidth As Long _
     ) As Variant
     Dim Result As Variant
-    Select Case arrayType
+    Select Case ArrayType
     Case AG_ArrayTypes.AG_JAGGED
-        Result = GetJaggedArray(Length, vals, Depth, ArrayWidth)
+        Result = GetJaggedArray(Length, Vals, Depth, ArrayWidth)
     Case AG_ArrayTypes.AG_MULTIDIMENSION
-        Result = GetMultidimensionalArray(Length, vals, ArrayWidth)
+        Result = GetMultidimensionalArray(Length, Vals, ArrayWidth)
     Case AG_ArrayTypes.AG_ONEDIMENSION
-        Result = GetOneDimensionalArray(Length, vals)
+        Result = GetOneDimensionalArray(Length, Vals)
     End Select
     GetArrayOfType = Result
 End Function
 
 Private Function GetOneDimensionalArray( _
         ByVal Length As Long, _
-        ByVal vals As IValuesList _
+        ByVal Vals As IValuesList _
     ) As Variant()
     Dim i As Long
     Dim Arr() As Variant
     ReDim Arr(pLowerBound To GetUpperBound(Length))
     For i = LBound(Arr) To UBound(Arr)
-        If vals.IsObjectType Then
-            Set Arr(i) = vals.GetRandomValue
+        If Vals.IsObjectType Then
+            Set Arr(i) = Vals.GetRandomValue
         Else
-            Arr(i) = vals.GetRandomValue
+            Arr(i) = Vals.GetRandomValue
         End If
     Next
     GetOneDimensionalArray = Arr
@@ -180,7 +180,7 @@ End Function
 
 Private Function GetMultidimensionalArray( _
         ByVal Length As Long, _
-        ByVal vals As IValuesList, _
+        ByVal Vals As IValuesList, _
         ByVal ArrayWidth As Long _
     ) As Variant()
     Dim i As Long
@@ -189,10 +189,10 @@ Private Function GetMultidimensionalArray( _
     ReDim Arr(pLowerBound To GetUpperBound(Length), pLowerBound To GetUpperBound(ArrayWidth))
     For i = LBound(Arr, 1) To UBound(Arr, 1)
         For j = LBound(Arr, 2) To UBound(Arr, 2)
-            If vals.IsObjectType Then
-                Set Arr(i, j) = vals.GetRandomValue
+            If Vals.IsObjectType Then
+                Set Arr(i, j) = Vals.GetRandomValue
             Else
-                Arr(i, j) = vals.GetRandomValue
+                Arr(i, j) = Vals.GetRandomValue
             End If
         Next
     Next
@@ -201,63 +201,63 @@ End Function
 
 Private Function GetJaggedArray( _
         ByVal Length As Long, _
-        ByVal vals As IValuesList, _
+        ByVal Vals As IValuesList, _
         ByVal Depth As Long, _
         ByVal ArrayWidth As Long, _
-        Optional ByVal currentDepth As Long _
+        Optional ByVal CurrentDepth As Long _
     ) As Variant()
     Dim i As Long
-    Dim localDepth As Long
-    Dim localCurrentDepth As Long
+    Dim LocalDepth As Long
+    Dim LocalCurrentDepth As Long
     Dim Result() As Variant
     
     'default to depth of 2
-    localDepth = IIf(Depth > 0, Depth, 2)
-    localCurrentDepth = currentDepth + 1
+    LocalDepth = IIf(Depth > 0, Depth, 2)
+    LocalCurrentDepth = CurrentDepth + 1
     ReDim Result(pLowerBound To GetUpperBound(Length))
     For i = LBound(Result) To UBound(Result)
-        If localCurrentDepth >= (localDepth - 1) Then
-            Result(i) = GetOneDimensionalArray(ArrayWidth, vals)
+        If LocalCurrentDepth >= (LocalDepth - 1) Then
+            Result(i) = GetOneDimensionalArray(ArrayWidth, Vals)
         Else
-            Result(i) = GetJaggedArray(Length, vals, localDepth, ArrayWidth, localCurrentDepth)
+            Result(i) = GetJaggedArray(Length, Vals, LocalDepth, ArrayWidth, LocalCurrentDepth)
         End If
     Next
     GetJaggedArray = Result
 End Function
 
 Private Function LocalMultiDimConcat( _
-        ByVal startingIndex As Long, _
+        ByVal StartingIndex As Long, _
         ByRef Result() As Variant, _
-        ByRef source() As Variant _
+        ByRef Source() As Variant _
     ) As Long
     Dim i As Long
     Dim j As Long
-    For i = LBound(source) To UBound(source)
-        For j = LBound(source, 2) To UBound(source, 2)
-            If IsObject(source(i, j)) Then
-                Set Result(i + startingIndex, j) = source(i, j)
+    For i = LBound(Source) To UBound(Source)
+        For j = LBound(Source, 2) To UBound(Source, 2)
+            If IsObject(Source(i, j)) Then
+                Set Result(i + StartingIndex, j) = Source(i, j)
             Else
-                Result(i + startingIndex, j) = source(i, j)
+                Result(i + StartingIndex, j) = Source(i, j)
             End If
         Next
     Next
-    LocalMultiDimConcat = startingIndex + i
+    LocalMultiDimConcat = StartingIndex + i
 End Function
 
 Private Function LocalConcat( _
-        ByVal startingIndex As Long, _
+        ByVal StartingIndex As Long, _
         ByRef Result() As Variant, _
-        ByRef source() As Variant _
+        ByRef Source() As Variant _
     ) As Long
     Dim i As Long
-    For i = LBound(source) To UBound(source)
-        If IsObject(source(i)) Then
-            Set Result(i + startingIndex) = source(i)
+    For i = LBound(Source) To UBound(Source)
+        If IsObject(Source(i)) Then
+            Set Result(i + StartingIndex) = Source(i)
         Else
-            Result(i + startingIndex) = source(i)
+            Result(i + StartingIndex) = Source(i)
         End If
     Next
-    LocalConcat = startingIndex + i
+    LocalConcat = StartingIndex + i
 End Function
 
 Private Function GetUpperBound(ByVal Length As Long) As Long

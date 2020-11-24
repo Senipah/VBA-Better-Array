@@ -66,8 +66,8 @@ Public Property Get Visible() As Boolean
     Visible = pVisible
 End Property
 
-Public Property Let Visible(ByVal value As Boolean)
-    pVisible = value
+Public Property Let Visible(ByVal Value As Boolean)
+    pVisible = Value
     If Not pExcelApplication Is Nothing Then
         pExcelApplication.Visible = pVisible
     End If

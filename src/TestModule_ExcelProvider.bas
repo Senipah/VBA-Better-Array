@@ -64,7 +64,7 @@ Private Sub Constructor_CanInstantiate_SUTNotNothing()
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 '@TestMethod("ExcelProvider_ExcelApplication")
@@ -72,20 +72,20 @@ Private Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim expected As String
-    Dim actual As String
-    expected = "Microsoft Excel"
+    Dim Expected As String
+    Dim Actual As String
+    Expected = "Microsoft Excel"
     
     'Act:
-    actual = SUT.ExcelApplication.Name
+    Actual = SUT.ExcelApplication.Name
     
     'Assert:
-    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
 
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 
@@ -95,22 +95,22 @@ Private Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
     
     'Arrange:
     Dim returned As Object
-    Dim expected As String
-    Dim actual As String
+    Dim Expected As String
+    Dim Actual As String
     
-    expected = "Workbook"
+    Expected = "Workbook"
     
     'Act:
     Set returned = SUT.CurrentWorkbook
-    actual = TypeName(returned)
+    Actual = TypeName(returned)
     
     'Assert:
-    Assert.AreEqual expected, actual, "Actual <> expected"
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
 
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 '@TestMethod("ExcelProvider_CurrentWorksheet")
@@ -118,22 +118,22 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_ReturnsTypeWorksheet()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim expected As String
-    Dim actual As String
+    Dim Expected As String
+    Dim Actual As String
     Dim returned As Object
     
-    expected = "Worksheet"
+    Expected = "Worksheet"
     
     'Act:
     Set returned = SUT.CurrentWorksheet
-    actual = TypeName(returned)
+    Actual = TypeName(returned)
     
     'Assert:
-    Assert.AreEqual expected, actual, "actual has incorrect type"
+    Assert.AreEqual Expected, Actual, "actual has incorrect type"
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 '@TestMethod("ExcelProvider_CurrentWorksheet")
@@ -141,19 +141,19 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook(
     On Error GoTo TestFail
     
     'Arrange:
-    Dim expected As Object
-    Dim actual As Object
+    Dim Expected As Object
+    Dim Actual As Object
     
     'Act:
-    Set expected = SUT.CurrentWorkbook
-    Set actual = SUT.CurrentWorksheet
+    Set Expected = SUT.CurrentWorkbook
+    Set Actual = SUT.CurrentWorksheet
         
     'Assert:
-    Assert.AreSame expected, actual.Parent, "actual <> expected"
+    Assert.AreSame Expected, Actual.Parent, "actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 '@TestMethod("ExcelProvider_CurrentWorksheet")
@@ -162,22 +162,22 @@ Private Sub CurrentWorksheet_CanSetRangeValue_ReturnsCorrectValue()
     
     'Arrange:
     Dim address As String
-    Dim expected As String
-    Dim actual As String
+    Dim Expected As String
+    Dim Actual As String
     
     address = "A1"
-    expected = "Hello World"
+    Expected = "Hello World"
     
     'Act:
-    SUT.CurrentWorksheet.Range(address) = expected
-    actual = SUT.CurrentWorksheet.Range(address)
+    SUT.CurrentWorksheet.Range(address) = Expected
+    Actual = SUT.CurrentWorksheet.Range(address)
     
     'Assert:
-    Assert.AreEqual actual, expected, "actual <> expected"
+    Assert.AreEqual Actual, Expected, "actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
-    Assert.Fail "Test raised an error: #" & Err.number & " - " & Err.description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
 

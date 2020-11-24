@@ -16,11 +16,11 @@ Implements IValuesList
 
 Private IsObjectType As Boolean
 
-Private values(0 To 1) As Boolean
+Private Values(0 To 1) As Boolean
 
 Private Sub Class_Initialize()
-    values(0) = True
-    values(1) = False
+    Values(0) = True
+    Values(1) = False
     IsObjectType = False
 End Sub
 
@@ -29,7 +29,7 @@ Public Property Get IValuesList_IsObjectType() As Boolean
 End Property
 
 Public Function IValuesList_GetRandomValue() As Variant
-    IValuesList_GetRandomValue = values(Rand(LBound(values), UBound(values)))
+    IValuesList_GetRandomValue = Values(Rand(LBound(Values), UBound(Values)))
 End Function
 
 Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long

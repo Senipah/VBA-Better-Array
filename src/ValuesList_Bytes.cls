@@ -15,12 +15,12 @@ Option Explicit
 Implements IValuesList
 
 Private IsObjectType As Boolean
-Private values(0 To 255) As Byte
+Private Values(0 To 255) As Byte
 
 Private Sub Class_Initialize()
     Dim i As Long
-    For i = LBound(values) To UBound(values)
-        values(i) = i
+    For i = LBound(Values) To UBound(Values)
+        Values(i) = i
     Next
     IsObjectType = False
 End Sub
@@ -30,7 +30,7 @@ Public Property Get IValuesList_IsObjectType() As Boolean
 End Property
 
 Public Function IValuesList_GetRandomValue() As Variant
-    IValuesList_GetRandomValue = values(Rand(LBound(values), UBound(values)))
+    IValuesList_GetRandomValue = Values(Rand(LBound(Values), UBound(Values)))
 End Function
 
 Private Function Rand(ByVal Max As Long, Optional ByVal Min As Long = 0) As Long

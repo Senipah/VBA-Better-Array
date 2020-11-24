@@ -3,9 +3,9 @@ Option Explicit
 '@Folder("VBABetterArray.Tests.Utils")
 
 #If Mac Then
-    Private Const SEP As String = "/"
+    Private Const Sep As String = "/"
 #Else
-    Private Const SEP As String = "\"
+    Private Const Sep As String = "\"
 #End If
 
 Public Function CSVDataOutputPath(Optional ByVal fileName As String = "output.csv") As String
@@ -13,17 +13,17 @@ Public Function CSVDataOutputPath(Optional ByVal fileName As String = "output.cs
     CSVDataOutputPath = JoinPath(ThisWorkbook.Path, DATA_DIR, fileName)
 End Function
 
-Public Sub PrintExpectedActualStringsToConsole(ByVal expected As String, ByVal actual As String)
+Public Sub PrintExpectedActualStringsToConsole(ByVal Expected As String, ByVal Actual As String)
     Debug.Print ConsoleHeader("Expected")
-    Debug.Print expected
+    Debug.Print Expected
     Debug.Print ConsoleHeader("Actual")
-    Debug.Print actual
+    Debug.Print Actual
 End Sub
 
-Public Function WrapQuoteUtil(Optional ByVal source As String = vbNullString) As String
+Public Function WrapQuoteUtil(Optional ByVal Source As String = vbNullString) As String
     Dim quoteChar As String
     quoteChar = chr(34)
-    WrapQuoteUtil = quoteChar & source & quoteChar
+    WrapQuoteUtil = quoteChar & Source & quoteChar
 End Function
 
 Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileName As String)
@@ -39,18 +39,18 @@ Public Sub ReadCSV(ByVal Arr As BetterArray, ByVal Path As String, ByVal fileNam
     Debug.Print "Time taken: " & endTime - startTime
 End Sub
 
-Public Function JoinPath(ParamArray args() As Variant) As String
+Public Function JoinPath(ParamArray Args() As Variant) As String
     Dim i As Long
     Dim argv() As Variant
-    argv = CVar(args)
+    argv = CVar(Args)
     For i = LBound(argv) To UBound(argv)
         argv(i) = TrimSeparator(argv(i))
     Next
-    JoinPath = Strings.Join(argv, SEP)
+    JoinPath = Strings.Join(argv, Sep)
 End Function
 
 Private Function TrimSeparator(ByVal Path As String) As String
-    If Right$(Path, 1) = SEP Then
+    If Right$(Path, 1) = Sep Then
         TrimSeparator = Left$(Path, Len(Path) - 1)
     Else
         TrimSeparator = Path
@@ -58,13 +58,13 @@ Private Function TrimSeparator(ByVal Path As String) As String
 End Function
 
 '@Ignore ProcedureNotUsed
-Private Function lastRow(ByVal target As Worksheet, Optional ByVal columnNum As Long = 1) As Long
-    lastRow = target.Cells.Item(target.Rows.count, columnNum).End(xlUp).Row
+Private Function LastRow(ByVal Target As Worksheet, Optional ByVal columnNum As Long = 1) As Long
+    LastRow = Target.Cells.Item(Target.Rows.Count, columnNum).End(xlUp).Row
 End Function
 
 '@Ignore ProcedureNotUsed
-Private Function lastCol(ByVal target As Worksheet, Optional ByVal rowNum As Long = 1) As Long
-    lastCol = target.Cells.Item(rowNum, target.Columns.count).End(xlToLeft).column
+Private Function LastCol(ByVal Target As Worksheet, Optional ByVal rowNum As Long = 1) As Long
+    LastCol = Target.Cells.Item(rowNum, Target.Columns.Count).End(xlToLeft).column
 End Function
 
 Public Function ConsoleHeader(ByVal descriptor As String) As String
@@ -96,17 +96,17 @@ Public Sub RatePerformance(ByVal manualTime As Double, ByVal betterArrayTime As 
     Const descriptor As String = "Time taken with "
     Const resultStart As String = "BetterArray is "
     Const resultEnd As String = " Than the manual method."
-    Dim diff As Double
+    Dim Diff As Double
     
     
-    diff = manualTime - betterArrayTime
-    If diff <> 0 And betterArrayTime <> 0 Then diff = diff / betterArrayTime
+    Diff = manualTime - betterArrayTime
+    If Diff <> 0 And betterArrayTime <> 0 Then Diff = Diff / betterArrayTime
     Debug.Print descriptor & "manual method: " & manualTime
     Debug.Print descriptor & "BetterArray: " & betterArrayTime
-    If diff <> 0 Then
+    If Diff <> 0 Then
         Debug.Print resultStart _
-                    & Format$(Abs(diff), "Percent") _
-                    & IIf(diff > 0, " faster", " slower") _
+                    & Format$(Abs(Diff), "Percent") _
+                    & IIf(Diff > 0, " faster", " slower") _
                     & resultEnd
     Else
         Debug.Print "Effectively same speed."
@@ -139,22 +139,22 @@ ErrHandler:
 End Function
 
 Public Function SequenceEquals_JaggedArray( _
-        ByRef expected() As Variant, _
-        ByRef actual() As Variant _
+        ByRef Expected() As Variant, _
+        ByRef Actual() As Variant _
     ) As Boolean
     Dim i As Long
     On Error GoTo ErrHandler
-    For i = LBound(expected) To UBound(expected)
-        If IsArray(expected(i)) Then
+    For i = LBound(Expected) To UBound(Expected)
+        If IsArray(Expected(i)) Then
             Dim expectedChild() As Variant
             Dim actualChild() As Variant
-            expectedChild = expected(i)
-            actualChild = actual(i)
+            expectedChild = Expected(i)
+            actualChild = Actual(i)
             If Not SequenceEquals_JaggedArray(expectedChild, actualChild) Then
                 GoTo ErrHandler
             End If
         Else
-            If Not ElementsAreEqual(expected(i), actual(i)) Then
+            If Not ElementsAreEqual(Expected(i), Actual(i)) Then
                 GoTo ErrHandler
             End If
         End If
@@ -168,24 +168,24 @@ End Function
 
 
 Public Function SequenceEquals_JaggedArrayVsRange( _
-        ByRef expected() As Variant, _
-        ByRef actual As Object, _
-        Optional ByVal transposed As Boolean _
+        ByRef Expected() As Variant, _
+        ByRef Actual As Object, _
+        Optional ByVal Transposed As Boolean _
     ) As Boolean
     Dim i As Long
     Dim j As Long
     
     On Error GoTo ErrHandler
     
-    If TypeName(actual) <> "Range" Or actual Is Nothing Then
+    If TypeName(Actual) <> "Range" Or Actual Is Nothing Then
         GoTo ErrHandler
     End If
     
-    For i = 1 To actual.Rows.count
-        For j = 1 To actual.Columns.count
+    For i = 1 To Actual.Rows.Count
+        For j = 1 To Actual.Columns.Count
             If Not ElementsAreEqual( _
-                expected(IIf(transposed, j - 1, i - 1), IIf(transposed, i - 1, j - 1)), _
-                actual.Cells.Item(i, j).value _
+                Expected(IIf(Transposed, j - 1, i - 1), IIf(Transposed, i - 1, j - 1)), _
+                Actual.Cells.Item(i, j).Value _
             ) Then
                 GoTo ErrHandler
             End If
@@ -200,8 +200,8 @@ End Function
 
 '@Description("Compares two values for equality. Doesn't support multidimensional arrays.")
 Public Function ElementsAreEqual( _
-        ByVal expected As Variant, _
-        ByVal actual As Variant _
+        ByVal Expected As Variant, _
+        ByVal Actual As Variant _
     ) As Boolean
 Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. Doesn't support multidimensional arrays."
     ' Using 13dp of precision for EPSILON rather than IEEE 754 standard of 2^-52
@@ -211,40 +211,40 @@ Attribute ElementsAreEqual.VB_Description = "Compares two values for equality. D
     Dim i As Long
     
     On Error GoTo ErrHandler
-    If IsArray(expected) Or IsArray(actual) Then
-        If IsArray(expected) And IsArray(actual) Then
-            If LBound(expected) = LBound(actual) And _
-                    UBound(expected) = UBound(actual) Then
-                Dim currentlyEqual As Boolean
-                currentlyEqual = True
-                For i = LBound(expected) To UBound(actual)
-                    If Not ElementsAreEqual(expected(i), actual(i)) Then
-                        currentlyEqual = False
+    If IsArray(Expected) Or IsArray(Actual) Then
+        If IsArray(Expected) And IsArray(Actual) Then
+            If LBound(Expected) = LBound(Actual) And _
+                    UBound(Expected) = UBound(Actual) Then
+                Dim CurrentlyEqual As Boolean
+                CurrentlyEqual = True
+                For i = LBound(Expected) To UBound(Actual)
+                    If Not ElementsAreEqual(Expected(i), Actual(i)) Then
+                        CurrentlyEqual = False
                         Exit For
                     End If
                 Next
-                Result = currentlyEqual
+                Result = CurrentlyEqual
             End If
         End If
-    ElseIf IsEmpty(expected) Or IsEmpty(actual) Then
-        If IsEmpty(expected) And IsEmpty(actual) Then Result = True
-    ElseIf IsObject(expected) Or IsObject(actual) Then
-        If IsObject(expected) And IsObject(actual) Then
-            If expected Is actual Then Result = True
+    ElseIf IsEmpty(Expected) Or IsEmpty(Actual) Then
+        If IsEmpty(Expected) And IsEmpty(Actual) Then Result = True
+    ElseIf IsObject(Expected) Or IsObject(Actual) Then
+        If IsObject(Expected) And IsObject(Actual) Then
+            If Expected Is Actual Then Result = True
         End If
-    ElseIf IsNumeric(expected) Or IsNumeric(actual) Then
-        If IsNumeric(expected) And IsNumeric(actual) Then
-            Dim diff As Double
-            diff = Abs(expected - actual)
-            If diff <= (IIf( _
-                    Abs(expected) < Abs(actual), _
-                    Abs(actual), _
-                    Abs(expected) _
+    ElseIf IsNumeric(Expected) Or IsNumeric(Actual) Then
+        If IsNumeric(Expected) And IsNumeric(Actual) Then
+            Dim Diff As Double
+            Diff = Abs(Expected - Actual)
+            If Diff <= (IIf( _
+                    Abs(Expected) < Abs(Actual), _
+                    Abs(Actual), _
+                    Abs(Expected) _
                 ) * Epsilon) Then
                 Result = True
             End If
         End If
-    ElseIf expected = actual Then
+    ElseIf Expected = Actual Then
         Result = True
     End If
     ElementsAreEqual = Result
@@ -258,27 +258,27 @@ End Function
 Public Function arraysAreReversed( _
         ByRef original() As Variant, _
         ByRef reversed() As Variant, _
-        Optional ByVal recurse As Boolean _
+        Optional ByVal Recurse As Boolean _
     ) As Boolean
     Dim i As Long
-    Dim localUpperBound As Long
-    Dim localLowerBound As Long
+    Dim LocalUpperBound As Long
+    Dim LocalLowerBound As Long
     Dim Result As Boolean
     
     On Error GoTo ErrHandler
     
-    localUpperBound = UBound(original)
-    localLowerBound = LBound(original)
+    LocalUpperBound = UBound(original)
+    LocalLowerBound = LBound(original)
     Result = True
     
-    For i = localLowerBound To localUpperBound
+    For i = LocalLowerBound To LocalUpperBound
         If IsArray(original(i)) Then
-            If IsArray(reversed(localUpperBound + localLowerBound - i)) Then
+            If IsArray(reversed(LocalUpperBound + LocalLowerBound - i)) Then
                 Dim originalArray() As Variant
                 Dim reversedArray() As Variant
                 originalArray = original(i)
-                reversedArray = reversed(localUpperBound + localLowerBound - i)
-                If recurse Then
+                reversedArray = reversed(LocalUpperBound + LocalLowerBound - i)
+                If Recurse Then
                     If Not arraysAreReversed(originalArray, reversedArray) Then
                         Result = False
                         Exit For
@@ -296,7 +296,7 @@ Public Function arraysAreReversed( _
         Else
             If Not ElementsAreEqual( _
                     original(i), _
-                    reversed(localUpperBound + localLowerBound - i) _
+                    reversed(LocalUpperBound + LocalLowerBound - i) _
                 ) Then
                 Result = False
                 Exit For

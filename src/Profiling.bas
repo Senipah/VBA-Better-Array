@@ -27,13 +27,13 @@ Public Sub PushingScalar()
     
 End Sub
 
-Private Function PushingScalarByRedim(ByVal count As Long) As Double
+Private Function PushingScalarByRedim(ByVal Count As Long) As Double
     Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
     
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         ReDim Preserve SUT(i)
         SUT(i) = i
     Next
@@ -41,13 +41,13 @@ Private Function PushingScalarByRedim(ByVal count As Long) As Double
     PushingScalarByRedim = Timer - startTime
 End Function
 
-Private Function PushingScalarByBetterArray(ByVal count As Long) As Double
+Private Function PushingScalarByBetterArray(ByVal Count As Long) As Double
     Dim SUT As BetterArray
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
     Set SUT = New BetterArray
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         SUT.Push i
     Next
     
@@ -73,13 +73,13 @@ Public Sub PushingArrays()
     Loop
 End Sub
 
-Private Function PushingArraysByRedim(ByVal count As Long) As Double
+Private Function PushingArraysByRedim(ByVal Count As Long) As Double
     Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     startTime = Timer
     
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         ReDim Preserve SUT(i)
         SUT(i) = Array(1, 2, 3)
     Next
@@ -87,14 +87,14 @@ Private Function PushingArraysByRedim(ByVal count As Long) As Double
     PushingArraysByRedim = Timer - startTime
 End Function
 
-Private Function PushingArraysByBetterArray(ByVal count As Long) As Double
+Private Function PushingArraysByBetterArray(ByVal Count As Long) As Double
     Dim SUT As BetterArray
     Dim startTime As Double
     '@Ignore VariableNotUsed
     Dim i As Long
     startTime = Timer
     Set SUT = New BetterArray
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         SUT.Push Array(1, 2, 3)
     Next
     
@@ -121,42 +121,42 @@ Public Sub TransposingJaggedToExcel()
 
 End Sub
 
-Private Function TransposingByTranspose(ByVal count As Long) As Double
+Private Function TransposingByTranspose(ByVal Count As Long) As Double
     Dim exl As ExcelProvider
-    Dim destination As Range
+    Dim Destination As Range
     Dim SUT() As Variant
     Dim startTime As Double
     Dim i As Long
     
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         ReDim Preserve SUT(i)
         SUT(i) = Array(1, 2, 3)
     Next
     Set exl = New ExcelProvider
-    Set destination = exl.CurrentWorksheet.Range("A1")
+    Set Destination = exl.CurrentWorksheet.Range("A1")
     startTime = Timer
     '@Ignore ImplicitDefaultMemberAccess
-    destination.Resize(count, 3) = WorksheetFunction.Transpose(WorksheetFunction.Transpose(SUT))
+    Destination.Resize(Count, 3) = WorksheetFunction.Transpose(WorksheetFunction.Transpose(SUT))
     exl.Visible = True
     TransposingByTranspose = Timer - startTime
 End Function
 
 
-Private Function TransposingByBetterArray(ByVal count As Long) As Double
+Private Function TransposingByBetterArray(ByVal Count As Long) As Double
     Dim exl As ExcelProvider
-    Dim destination As Object
+    Dim Destination As Object
     Dim SUT As BetterArray
     Dim startTime As Double
     '@Ignore VariableNotUsed
     Dim i As Long
     Set SUT = New BetterArray
-    For i = 0 To count - 1
+    For i = 0 To Count - 1
         SUT.Push Array(1, 2, 3)
     Next
     Set exl = New ExcelProvider
-    Set destination = exl.CurrentWorksheet.Range("A1")
+    Set Destination = exl.CurrentWorksheet.Range("A1")
     startTime = Timer
-    SUT.ToExcelRange destination
+    SUT.ToExcelRange Destination
     exl.Visible = True
     TransposingByBetterArray = Timer - startTime
 End Function

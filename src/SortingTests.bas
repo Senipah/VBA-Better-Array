@@ -10,11 +10,11 @@ Private Enum DataSizes
 End Enum
 
 '@Ignore ProcedureNotUsed
-Private Function Sum1DArray(ByRef source() As Variant) As Long
+Private Function Sum1DArray(ByRef Source() As Variant) As Long
     Dim i As Long
     Dim total As Long
-    For i = LBound(source) To UBound(source)
-        total = total + source(i)
+    For i = LBound(Source) To UBound(Source)
+        total = total + Source(i)
     Next
     Sum1DArray = total
 End Function
@@ -37,11 +37,11 @@ Private Function GetCSVTestData(ByVal Size As DataSizes) As BetterArray
     Set GetCSVTestData = datum
 End Function
 
-Private Function ArrayFactory(ByVal ValueType As ValueTypes, ByVal arrayType As AG_ArrayTypes, ByVal Length As Long, Optional ByVal Depth As Long) As BetterArray
+Private Function ArrayFactory(ByVal ValueType As ValueTypes, ByVal ArrayType As AG_ArrayTypes, ByVal Length As Long, Optional ByVal Depth As Long) As BetterArray
     Dim Result As BetterArray
     Set Result = New BetterArray
     With New ArrayGenerator
-        Result.Items = .GetArray(ValueType, arrayType, Length, Depth)
+        Result.Items = .GetArray(ValueType, ArrayType, Length, Depth)
     End With
     Set ArrayFactory = Result
 End Function
