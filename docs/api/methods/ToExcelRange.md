@@ -8,7 +8,7 @@ grand_parent: API
 
 ## Description
 
-The `ToExcelRange()` method writes the values stored in the array to an excel worksheet starting at the specified range."
+The `ToExcelRange()` method writes the values stored in the array to an excel worksheet starting at the specified range. If, after any transposing, the number of rows or columns exceeds the available cells in the destination Worksheet the array will be truncated to fit.
 
 
 ## Syntax
