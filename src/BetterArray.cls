@@ -3524,7 +3524,9 @@ Attribute TimSort.VB_Description = "Iterative Timsort"
     Dim Start As Long
     Dim Midpoint As Long
     Dim Endpoint As Long
+    Dim LastIndex As Long
     
+    LastIndex = UBound(Source)
     Size = MIN_RUN
     Do While Size < SourceLength
         ' Determine the arrays that will
@@ -3534,8 +3536,8 @@ Attribute TimSort.VB_Description = "Iterative Timsort"
             ' Compute the `midpoint` (where the first array ends
             ' and the second starts) and the `endpoint` (where
             ' the second array ends)
-            Midpoint = Min(Start + Size - 1, SourceLength - 1)
-            Endpoint = Min(Start + Size * 2 - 1, SourceLength - 1)
+            Midpoint = Min(Start + Size - 1, LastIndex)
+            Endpoint = Min(Start + Size * 2 - 1, LastIndex)
             ' Merge the two subarrays.
             ' The `left` array should go from `start` to
             ' `midpoint + 1`, while the `right` array should
