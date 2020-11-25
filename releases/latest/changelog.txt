@@ -1,9 +1,1 @@
-197c833 chore: document oversize truncation
-09eae7c chore: update docs - line ending guessing
-aef8ec9 feat: FromCSVFile & String now guess line ending
-baf261f feat: ToExcelRange truncate where exceeds cell cnt
-5bb947c chore: var name case changes
-bcb54a6 fix: badge links
-c492bed fix: typo
-7e3bf90 chore: add badge to readme
-daaf604 rebuild pages
+b7ce410 chore: Timsort - Public -> Private
