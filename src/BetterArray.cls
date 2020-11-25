@@ -3501,7 +3501,7 @@ Attribute MergeSort.VB_Description = "Sorts the passed array in place using Merg
 End Sub
 
 '@Description("Iterative Timsort")
-Public Sub TimSort( _
+Private Sub TimSort( _
     ByRef Source() As Variant, _
     ByVal LocalArrayType As ArrayTypes, _
     Optional ByVal Col As Long _
