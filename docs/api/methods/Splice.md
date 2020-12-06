@@ -25,7 +25,9 @@ Necessity
 : Required
 
 Description
-: The index at which to begin extraction. A negative index can be used, indicating an offset from the end of the sequence. Slice(-2) extracts the last two elements in the sequence. If begin is undefined, slice begins from the value of the `LowerBound` property. If begin is greater than the length of the sequence, an empty array is returned.
+: The index at which to start changing the array.
+If greater than the length of the array, start will be set to the length of the array. In this case, no element will be deleted but the method will behave as an adding function, adding as many element as provided in the `Items` ParamArray argument.
+A negative index can be used, indicating an offset from the end of the sequence
 
 ---
 
@@ -33,7 +35,7 @@ Name
 : `DeleteCount`
 
 Type
-: ParamArray `Variant`
+: `Long`
 
 Necessity
 : Required
@@ -46,7 +48,7 @@ If DeleteCount is omitted, or if its value is equal to or larger the array's (`U
 ---
 
 Name
-: `items`
+: `Items`
 
 Type
 : ParamArray `Variant`
