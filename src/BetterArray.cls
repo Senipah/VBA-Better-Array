@@ -1419,7 +1419,7 @@ Attribute Concat.VB_Description = "Joins one or more arrays onto the end of the 
         Next
     End If
     If This.ArrayType <> BA_UNALLOCATED Then
-        Stored = This.Items
+        Stored = InternalItems
     End If
     Result = ConcatDelegate(Stored, Args)
     Me.Items = Result
