@@ -1,1 +1,4 @@
-f8ee70c fix: Timsort - account for arbitrary bounds
+50e119a fix: concat() retrieve InternalItems not this.InternalItems
+c44d41b chore: ignore debug folder
+b3b0da4 fix: description of StartIndex arg
+3bdc226 fix: broken link to sortmethods enum
