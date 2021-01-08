@@ -1642,6 +1642,52 @@ End Sub
 ' Method - Concat '
 '''''''''''''''''''
 '@TestMethod("BetterArray_Concat")
+Private Sub Concat_AddOneDimArrayToOneDimIssue7Coverage_SuccessAdded()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim ExpectedLength As Long
+    Dim ActualLength As Long
+    Dim ExpectedUpperBound As Long
+    Dim ActualUpperBound As Long
+    
+    ExpectedLength = TEST_ARRAY_LENGTH
+    Expected = Gen.GetArray(Length:=ExpectedLength)
+    ExpectedUpperBound = UBound(Expected)
+    
+    Dim FirstArray(0 To 6) As Variant
+    Dim SecondArray(0 To TEST_ARRAY_LENGTH - (7 + 1)) As Variant
+    Dim i As Long
+    For i = LBound(Expected) To 6
+        FirstArray(i) = Expected(i)
+    Next
+    For i = 7 To UBound(Expected)
+        SecondArray(i - 7) = Expected(i)
+    Next
+    
+    For i = LBound(FirstArray) To UBound(FirstArray)
+        SUT.Push FirstArray(i)
+    Next
+    
+    'Act:
+    Actual = SUT.Concat(SecondArray).Items
+    ActualLength = SUT.Length
+    ActualUpperBound = SUT.UpperBound
+    
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> Expected"
+    Assert.AreEqual ExpectedLength, ActualLength, "Actual length <> expected"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Actual UpperBound <> Expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("BetterArray_Concat")
 Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
