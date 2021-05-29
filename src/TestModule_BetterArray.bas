@@ -246,6 +246,29 @@ End Sub
 '''''''''''''''''
 
 '@TestMethod("BetterArray_Length")
+Private Sub Length_NewUninitArray_EmptyArrayHasLengthZero()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Long
+    Dim Actual As Long
+    
+    Expected = 0
+   
+    'Act:
+    Actual = SUT.Length
+
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual length <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Length")
 Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalArray()
     On Error GoTo TestFail
     
@@ -1387,6 +1410,34 @@ End Sub
 ''''''''''''''''
 
 '@TestMethod("BetterArray_Pop")
+Private Sub Pop_ItemsRemovedByPopUntilEmpty_EmptyArrayHasLengthZero()
+    ' Added for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Long
+    Dim Actual As Long
+    
+    Expected = 0
+    SUT.Push 1, 2
+    
+    'Act:
+    SUT.Pop
+    SUT.Pop
+    Actual = SUT.Length
+
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual length <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("BetterArray_Pop")
 Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     On Error GoTo TestFail
     
@@ -1460,6 +1511,33 @@ End Sub
 ''''''''''''''''''
 ' Method - Shift '
 ''''''''''''''''''
+
+'@TestMethod("BetterArray_Shift")
+Private Sub Shift_ItemsRemovedByShiftUntilEmpty_EmptyArrayHasLengthZero()
+    ' Agged for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Long
+    Dim Actual As Long
+    
+    Expected = 0
+    SUT.Push 1, 2
+    
+    'Act:
+    SUT.Shift
+    SUT.Shift
+    Actual = SUT.Length
+
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual length <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
 
 '@TestMethod("BetterArray_Shift")
 Private Sub Shift_OneDimensionalArray_FirstItemRemoved()

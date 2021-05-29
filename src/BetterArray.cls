@@ -263,7 +263,10 @@ Attribute Items.VB_Description = "Stores the passed array."
     
     InternalItems = LocalValues
     This.Length = GetArrayLength(LocalValues)
-    Me.Capacity = This.Length
+    This.Capacity = This.Length
+    If This.Capacity < DEFAULT_CAPACITY Then
+        Me.Capacity = DEFAULT_CAPACITY
+    End If
 
 End Property
 
@@ -2672,11 +2675,14 @@ End Function
 '@Description("returns the length of the passed array.")
 Private Function GetArrayLength(ByRef SourceArray() As Variant) As Long
 Attribute GetArrayLength.VB_Description = "returns the length of the passed array."
+    Dim Result As Long
+    Result = 0
     If IsArrayAllocated(SourceArray) Then
-        GetArrayLength = UBound(SourceArray) - LBound(SourceArray) + 1
-    Else
-        GetArrayLength = 0
+        If Not IsArrayEmpty(SourceArray) Then
+            Result = UBound(SourceArray) - LBound(SourceArray) + 1
+        End If
     End If
+    GetArrayLength = Result
 End Function
 
 '@Description("converts all the values in a jagged array to a 1d array.")
@@ -3822,6 +3828,17 @@ Attribute GetArrayType.VB_Description = "Returns the type of a passed array."
     GetArrayType = Result
 End Function
 
+'@Description("Tests if an array has a single empty slot.")
+Private Function IsArrayEmpty(ByVal SourceArray As Variant) As Boolean
+    Dim Result As Boolean
+    If LBound(SourceArray) = UBound(SourceArray) Then
+        On Error Resume Next ' Error handler necessary in case of multidimension array
+        Result = (SourceArray(LBound(SourceArray)) = Empty)
+        On Error GoTo 0
+    End If
+    IsArrayEmpty = Result
+End Function
+
 '@Description("Tests if an array has been allocated.")
 Private Function IsArrayAllocated(ByVal SourceArray As Variant) As Boolean
 Attribute IsArrayAllocated.VB_Description = "Tests if an array has been allocated."
@@ -3931,8 +3948,12 @@ Attribute EnsureCapacity.VB_Description = "Increases capacity of internal array 
     If This.Capacity < MinimumCapacity Then
         Dim NewCapacity As Long
         NewCapacity = IIf(This.Capacity = 0, DEFAULT_CAPACITY, This.Capacity * 2)
-            If NewCapacity > MAX_ARRAY_LENGTH Then NewCapacity = MAX_ARRAY_LENGTH
-        If NewCapacity < MinimumCapacity Then NewCapacity = MinimumCapacity
+        If NewCapacity > MAX_ARRAY_LENGTH Then
+            NewCapacity = MAX_ARRAY_LENGTH
+        End If
+        If NewCapacity < MinimumCapacity Then
+            NewCapacity = MinimumCapacity
+        End If
         Me.Capacity = NewCapacity
     End If
 End Sub
