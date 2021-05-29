@@ -1,6 +1,8 @@
 Attribute VB_Name = "TestUtils"
 Option Explicit
 '@Folder("VBABetterArray.Tests.Utils")
+'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed
+'@IgnoreModule FunctionNotUsed
 
 #If Mac Then
     Private Const Sep As String = "/"

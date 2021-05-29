@@ -7,7 +7,7 @@ Option Private Module
 '@Folder("VBABetterArray.Tests")
 '@ModuleDescription("Unit Tests for 'BetterArray.cls'")
 
-'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
 '@IgnoreModule FunctionReturnValueDiscarded
@@ -250,7 +250,6 @@ Private Sub Length_NewUninitArray_EmptyArrayHasLengthZero()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim TestArray() As Variant
     Dim Expected As Long
     Dim Actual As Long
     
@@ -1415,7 +1414,6 @@ Private Sub Pop_ItemsRemovedByPopUntilEmpty_EmptyArrayHasLengthZero()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim TestArray() As Variant
     Dim Expected As Long
     Dim Actual As Long
     
@@ -1518,7 +1516,6 @@ Private Sub Shift_ItemsRemovedByShiftUntilEmpty_EmptyArrayHasLengthZero()
     On Error GoTo TestFail
     
     'Arrange:
-    Dim TestArray() As Variant
     Dim Expected As Long
     Dim Actual As Long
     
@@ -8138,6 +8135,5 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-
 
 

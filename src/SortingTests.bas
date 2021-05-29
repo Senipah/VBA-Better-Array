@@ -2,6 +2,7 @@ Attribute VB_Name = "SortingTests"
 Option Explicit
 '@Folder("VBABetterArray.Tests.Misc")
 '@IgnoreModule FunctionReturnValueDiscarded
+'@IgnoreModule ProcedureNotUsed
 
 Private Enum DataSizes
     Small = 10000

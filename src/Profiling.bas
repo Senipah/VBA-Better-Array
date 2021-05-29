@@ -6,6 +6,7 @@ Option Private Module
 
 '@IgnoreModule FunctionReturnValueNotUsed
 '@IgnoreModule FunctionReturnValueDiscarded
+'@IgnoreModule ProcedureNotUsed
 
 Public Sub PushingScalar()
     Const maxEntries As Long = 1000000

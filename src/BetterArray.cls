@@ -10,11 +10,9 @@ Attribute VB_Exposed = False
 Attribute VB_Description = "An array class for VBA providing features found in more modern languages "
 '@Folder("VBABetterArray")
 '@ModuleDescription("An array class for VBA providing features found in more modern languages ")
-' Copyright (c) 2019 Nick Morgan. See License: https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE
-'@IgnoreModule FunctionReturnValueDiscarded, ProcedureNotUsed
-'@IgnoreModule FunctionReturnValueNotUsed
-'@IgnoreModule FunctionReturnValueDiscarded
-'@IgnoreModule FunctionReturnValueAlwaysDiscarded
+' Copyright (c) 2021 Nick Morgan. See License: https://github.com/Senipah/VBA-Better-Array/blob/master/LICENSE
+'@IgnoreModule AssignmentNotUsed, FunctionReturnValueDiscarded, ProcedureNotUsed, FunctionReturnValueNotUsed, FunctionReturnValueAlwaysDiscarded
+
 Option Explicit
 
 '''''''''''''''''''
@@ -3830,6 +3828,7 @@ End Function
 
 '@Description("Tests if an array has a single empty slot.")
 Private Function IsArrayEmpty(ByVal SourceArray As Variant) As Boolean
+Attribute IsArrayEmpty.VB_Description = "Tests if an array has a single empty slot."
     Dim Result As Boolean
     If LBound(SourceArray) = UBound(SourceArray) Then
         On Error Resume Next ' Error handler necessary in case of multidimension array

@@ -5,9 +5,7 @@ Option Private Module
 '@TestModule
 '@Folder("VBABetterArray.Tests.Dependencies.ArrayGenerator.Tests")
 
-'@IgnoreModule ProcedureNotUsed
-'@IgnoreModule LineLabelNotUsed
-'@IgnoreModule EmptyMethod
+'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed, LineLabelNotUsed, EmptyMethod
 
 'Private Assert As Object
 'Move to early bind
