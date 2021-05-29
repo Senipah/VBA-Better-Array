@@ -1,4 +1,5 @@
-50e119a fix: concat() retrieve InternalItems not this.InternalItems
-c44d41b chore: ignore debug folder
-b3b0da4 fix: description of StartIndex arg
-3bdc226 fix: broken link to sortmethods enum
+84fecbb Chore: apply code inspection
+5907bfd Closes #15
+951b44e fix: broken links on ArrayType Let Accessor
+de09a01 fix: broken links in array type docs
+9fde970 chore: add Concat test coverate for issue 7
