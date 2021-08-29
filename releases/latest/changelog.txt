@@ -1,5 +1,1 @@
-84fecbb Chore: apply code inspection
-5907bfd Closes #15
-951b44e fix: broken links on ArrayType Let Accessor
-de09a01 fix: broken links in array type docs
-9fde970 chore: add Concat test coverate for issue 7
+a7ac777 Closes #17
