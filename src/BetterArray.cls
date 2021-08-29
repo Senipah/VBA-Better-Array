@@ -1124,6 +1124,8 @@ Attribute Remove.VB_Description = "Removes the item at the specified index. Retu
             If This.ArrayType = BA_JAGGED And LocalType = BA_MULTIDIMENSION Then
                 This.ArrayType = LocalType
             End If
+        Else
+            Me.Clear
         End If
     End If
     

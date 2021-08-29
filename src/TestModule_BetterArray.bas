@@ -6648,6 +6648,37 @@ End Sub
 '''''''''''''''''''
 ' Method - Remove '
 '''''''''''''''''''
+'@TestMethod("BetterArray_Remove")
+Private Sub Remove_OneDimArraySingleEntry_ResultsInEmptyArray()
+    On Error GoTo TestFail
+    ' Coverage added following issue 17
+    ' https://github.com/Senipah/VBA-Better-Array/issues/17
+    
+    'Arrange:
+    Const RemoveIndex As Long = 0
+    Dim Expected(0 To 0) As Variant
+    Dim Actual() As Variant
+    Dim TestArray() As Variant
+    Dim ExpectedLength As Long
+    Dim ActualLength As Long
+    
+    TestArray = Array("Foo")
+    ExpectedLength = 0
+    
+    SUT.Items = TestArray
+    
+    'Act:
+    
+    ActualLength = SUT.Remove(RemoveIndex)
+    Actual = SUT.Items
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+    Assert.AreEqual ExpectedLength, ActualLength, "Actual length <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
 
 '@TestMethod("BetterArray_Remove")
 Private Sub Remove_OneDimArray_RemovesElementAtIndex()
