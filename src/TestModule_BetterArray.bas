@@ -7,7 +7,7 @@ Option Private Module
 '@Folder("VBABetterArray.Tests")
 '@ModuleDescription("Unit Tests for 'BetterArray.cls'")
 
-'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed
+'@IgnoreModule VariableNotUsed, AssignmentNotUsed, ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
 '@IgnoreModule FunctionReturnValueDiscarded

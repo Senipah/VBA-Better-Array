@@ -5,7 +5,7 @@ Option Private Module
 '@TestModule
 '@Folder("VBABetterArray.Tests.Dependencies.ExcelProvider.Tests")
 
-'@IgnoreModule ProcedureNotUsed
+'@IgnoreModule VariableNotUsed, ProcedureNotUsed
 '@IgnoreModule LineLabelNotUsed
 '@IgnoreModule EmptyMethod
 
@@ -181,5 +181,4 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-
 

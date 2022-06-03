@@ -5,7 +5,7 @@ Option Private Module
 '@TestModule
 '@Folder("VBABetterArray.Tests.Dependencies.ArrayGenerator.Tests")
 
-'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed, LineLabelNotUsed, EmptyMethod
+'@IgnoreModule VariableNotUsed, AssignmentNotUsed, ProcedureNotUsed, LineLabelNotUsed, EmptyMethod
 
 ' Uncomment for late binding
 Private Assert As Object
@@ -1793,3 +1793,4 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
+

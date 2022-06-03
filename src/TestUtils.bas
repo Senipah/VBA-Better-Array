@@ -1,7 +1,7 @@
 Attribute VB_Name = "TestUtils"
 Option Explicit
 '@Folder("VBABetterArray.Tests.Utils")
-'@IgnoreModule AssignmentNotUsed, ProcedureNotUsed
+'@IgnoreModule IIfSideEffect, AssignmentNotUsed, ProcedureNotUsed
 '@IgnoreModule FunctionNotUsed
 
 #If Mac Then
