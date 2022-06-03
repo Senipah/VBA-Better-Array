@@ -1590,25 +1590,44 @@ End Function
 Public Function Filter( _
         ByVal Match As Variant, _
         Optional ByVal Include As Boolean, _
-        Optional ByVal Recurse As Boolean) As BetterArray
-Attribute Filter.VB_Description = "Filters the stored array to include only values that meet the specified criteria."
+        Optional ByVal Recurse As Boolean, _
+        Optional ByVal ColumnIndex As Long = MISSING_LONG _
+        ) As BetterArray
     Dim Result() As Variant
     Dim LocalItems() As Variant
     Dim LocalType As ArrayTypes
     LocalType = This.ArrayType
-    If LocalType = BA_UNDEFINED Then
+    Select Case LocalType
+    Case ArrayTypes.BA_UNDEFINED
         RaiseError EC_EXPECTED_ARRAY, "Filter"
-    ElseIf LocalType = BA_UNALLOCATED Then
+    Case ArrayTypes.BA_UNALLOCATED
         Result = GetEmptyArray
-    Else
+    Case ArrayTypes.BA_ONEDIMENSION
         LocalItems = InternalItems
-        Result = RecursiveFilter( _
+        Result = FilterOneDimension( _
             LocalItems, _
             Match, _
-            Include, _
-            Recurse _
+            Include _
         )
-    End If
+    Case Else
+        LocalItems = InternalItems
+        If ColumnIndex <> MISSING_LONG Then
+            Result = FilterByColumn( _
+                LocalItems, _
+                Match, _
+                Include, _
+                ColumnIndex _
+            )
+        Else
+            Result = RecursiveFilter( _
+                LocalItems, _
+                Match, _
+                Include, _
+                Recurse _
+            )
+
+        End If
+    End Select
     Me.Items = Result
     If LocalType = BA_MULTIDIMENSION Then This.ArrayType = LocalType
     Set Filter = Me
@@ -1619,26 +1638,50 @@ End Function
 Public Function FilterType( _
         ByVal SearchTypeName As String, _
         Optional ByVal Include As Boolean, _
-        Optional ByVal Recurse As Boolean) As BetterArray
+        Optional ByVal Recurse As Boolean, _
+        Optional ByVal ColumnIndex As Long = MISSING_LONG _
+        ) As BetterArray
 Attribute FilterType.VB_Description = "Filters the stored array to include only values of the specified type."
     Dim Result() As Variant
     Dim LocalItems() As Variant
     Dim LocalType As ArrayTypes
     LocalType = This.ArrayType
-    If LocalType = BA_UNDEFINED Then
-        RaiseError EC_EXPECTED_ARRAY, "Filter"
-    ElseIf LocalType = BA_UNALLOCATED Then
+    
+    Select Case LocalType
+    Case ArrayTypes.BA_UNDEFINED
+        RaiseError EC_EXPECTED_ARRAY, "FilterType"
+    Case ArrayTypes.BA_UNALLOCATED
         Result = GetEmptyArray
-    Else
+    Case ArrayTypes.BA_ONEDIMENSION
         LocalItems = InternalItems
-        Result = RecursiveFilter( _
+        Result = FilterOneDimension( _
             LocalItems, _
             SearchTypeName, _
             Include, _
-            Recurse, _
             True _
         )
-    End If
+    Case Else
+        LocalItems = InternalItems
+        If ColumnIndex <> MISSING_LONG Then
+            Result = FilterByColumn( _
+                LocalItems, _
+                SearchTypeName, _
+                Include, _
+                ColumnIndex, _
+                True _
+            )
+        Else
+            Result = RecursiveFilter( _
+                LocalItems, _
+                SearchTypeName, _
+                Include, _
+                Recurse, _
+                True _
+            )
+
+        End If
+    End Select
+      
     Me.Items = Result
     If LocalType = BA_MULTIDIMENSION Then This.ArrayType = LocalType
     Set FilterType = Me
@@ -2824,6 +2867,76 @@ Attribute RecursiveIncludes.VB_Description = "Recursively checks if the passed a
         End If
     Next
     RecursiveIncludes = False
+End Function
+
+'@Description("Filters a one dimension array.")
+Private Function FilterOneDimension( _
+        ByRef SourceArray() As Variant, _
+        ByVal Match As Variant, _
+        ByVal Include As Boolean, _
+        Optional ByVal CompareTypeNames As Boolean _
+    ) As Variant()
+    Dim Result As BetterArray
+    Dim LocalLowerBound As Long
+    Dim LocalUpperBound As Long
+    Dim i As Long
+    Dim IsMatch As Boolean
+    
+    LocalLowerBound = LBound(SourceArray)
+    LocalUpperBound = UBound(SourceArray)
+    Set Result = New BetterArray
+    Result.LowerBound = This.LowerBound
+    For i = LocalLowerBound To LocalUpperBound
+        If CompareTypeNames Then
+            IsMatch = (InStr( _
+                UCase$(TypeName(SourceArray(i))), _
+                UCase$(CStr(Match)) _
+            ) > 0)
+        Else
+            IsMatch = ElementsAreEqual(Match, SourceArray(i))
+        End If
+        If (Include And IsMatch) Or (Not Include And Not IsMatch) Then
+            Result.Push SourceArray(i)
+        End If
+    Next
+    FilterOneDimension = Result.Items
+End Function
+
+'@Description("Filters a jaggged array by column.")
+Private Function FilterByColumn( _
+        ByRef SourceArray() As Variant, _
+        ByVal Match As Variant, _
+        ByVal Include As Boolean, _
+        ByVal ColumnIndex As Long, _
+        Optional ByVal CompareTypeNames As Boolean _
+    ) As Variant()
+    Dim Result As BetterArray
+    Dim LocalLowerBound As Long
+    Dim LocalUpperBound As Long
+    Dim i As Long
+    Dim IsMatch As Boolean
+    Dim ComparisonElement As Variant
+    
+    LocalLowerBound = LBound(SourceArray)
+    LocalUpperBound = UBound(SourceArray)
+    Set Result = New BetterArray
+    Result.LowerBound = This.LowerBound
+
+    For i = LocalLowerBound To LocalUpperBound
+        LetOrSetElement ComparisonElement, SourceArray(i)(ColumnIndex)
+        If CompareTypeNames Then
+            IsMatch = (InStr( _
+                UCase$(TypeName(ComparisonElement)), _
+                UCase$(CStr(Match)) _
+            ) > 0)
+        Else
+            IsMatch = ElementsAreEqual(Match, ComparisonElement)
+        End If
+        If (Include And IsMatch) Or (Not Include And Not IsMatch) Then
+            Result.Push SourceArray(i)
+        End If
+    Next
+    FilterByColumn = Result.Items
 End Function
 
 '@Description("Recursively filters a passed array.")

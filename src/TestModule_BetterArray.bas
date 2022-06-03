@@ -3705,7 +3705,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArrayn()
+Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3785,6 +3785,226 @@ Private Sub Filter_MultiDimArrayInclude_ReturnsFilteredArray()
     Actual = SUT.Filter("Bar", True, True).Items
     'Assert:
     Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = "Foo"
+    TestArray(1, 2) = "Bar"
+    TestArray(2, 1) = "Fizz"
+    TestArray(2, 2) = "Buzz"
+
+    ReDim Expected(1 To 1, 1 To 2)
+    Expected(1, 1) = "Fizz"
+    Expected(1, 2) = "Buzz"
+
+    SUT.Items = TestArray
+    'Act:
+    SUT.Filter "Bar", False, True, 2
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = "Foo"
+    TestArray(1, 2) = "Bar"
+    TestArray(2, 1) = "Fizz"
+    TestArray(2, 2) = "Buzz"
+
+    ReDim Expected(1 To 1, 1 To 2)
+    Expected(1, 1) = "Foo"
+    Expected(1, 2) = "Bar"
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", True, True, 2).Items
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    Expected = Array(Array("Fizz", "Buzz"))
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", False, False, 1).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    Expected = Array(Array("Foo", "Bar"))
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", True, True, 1).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayExcludeByIncorrectColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = "Foo"
+    TestArray(1, 2) = "Bar"
+    TestArray(2, 1) = "Fizz"
+    TestArray(2, 2) = "Buzz"
+
+    Expected = TestArray
+
+    SUT.Items = TestArray
+    'Act:
+    SUT.Filter "Bar", False, True, 1
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_MultiDimArrayIncludeByIncorrectColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = "Foo"
+    TestArray(1, 2) = "Bar"
+    TestArray(2, 1) = "Fizz"
+    TestArray(2, 2) = "Buzz"
+
+    ReDim Expected(1 To 1)
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", True, True, 1).Items
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_JaggedArrayExcludeIncorrectColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    Expected = TestArray
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", False, False, 0).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Filter")
+Private Sub Filter_JaggedArrayIncludeIncorrectColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    Expected = Array()
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.Filter("Bar", True, True, 0).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:
@@ -3952,6 +4172,117 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = 1.23
+    TestArray(1, 2) = "Bar"
+    TestArray(2, 1) = 123
+    TestArray(2, 2) = 5000
+
+    ReDim Expected(1 To 1, 1 To 2)
+    Expected(1, 1) = 123
+    Expected(1, 2) = 5000
+
+    SUT.Items = TestArray
+    'Act:
+    SUT.FilterType "string", False, True, 2
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 2, 1 To 2)
+    TestArray(1, 1) = "Foo"
+    TestArray(1, 2) = 1.23
+    TestArray(2, 1) = "Fizz"
+    TestArray(2, 2) = "Buzz"
+
+    ReDim Expected(1 To 1, 1 To 2)
+    Expected(1, 1) = "Foo"
+    Expected(1, 2) = 1.23
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.FilterType("double", True, True, 2).Items
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array(1, "Bar"), Array(1.2, -4))
+    Expected = Array(Array(1.2, -4))
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.FilterType("string", False, False, 1).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_FilterType")
+Private Sub FilterType_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array(Array(1, "Bar"), Array(1.2, -4))
+    Expected = Array(Array(1, "Bar"))
+
+    SUT.Items = TestArray
+    'Act:
+    Actual = SUT.FilterType("string", True, True, 1).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
 
 '''''''''''''''''''''
 ' Method - Includes '
