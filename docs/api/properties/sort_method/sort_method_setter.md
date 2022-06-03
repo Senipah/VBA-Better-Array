@@ -9,7 +9,7 @@ nav_order: 2
 
 ## Description
 
-The SortMethod property is used to specify the sorting algorithm used by the [Sort()](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html) method. The SortMethod let accessor accepts a [SortMethods Enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethod Enumeration.html) value as its argument.
+The SortMethod property is used to specify the sorting algorithm used by the [Sort()](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html) method. The SortMethod let accessor accepts a [SortMethods Enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethods_Enumeration.html) value as its argument.
 
 After being set any future calls to [Sort()](https://senipah.github.io/VBA-Better-Array/api/methods/Sort.html) will use the chosen algorithm
 
@@ -29,7 +29,7 @@ Necessity
 : Required
 
 Description
-: The desired [SortMethods Enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethod Enumeration.html) value.
+: The desired [SortMethods Enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethods_Enumeration.html) value.
 
 
 ### Returns

@@ -53,7 +53,7 @@ Necessity
 : Optional
 
 Description
-: The type of comparison to perform. See the [comparison type enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/ComparisonType Enumeration.html). Default is CT_EQUALITY.
+: The type of comparison to perform. See the [comparison type enumeration](https://senipah.github.io/VBA-Better-Array/api/enumerations/ComparisonType_Enumeration.html). Default is CT_EQUALITY.
 
 ### Returns
 

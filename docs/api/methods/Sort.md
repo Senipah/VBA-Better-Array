@@ -10,7 +10,7 @@ grand_parent: API
 
 The `Sort()` method sorts the stored array in ascending order.
 
-The sorting algorithm used depends on the value of the [SortMethod](https://senipah.github.io/VBA-Better-Array/api/properties/sort_method/SortMethod.html) property, which must be one of the [SortMethods Enumerator values](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethods%20Enumeration.html). The default sort method is TimSort (`SM_TIMSORT`).
+The sorting algorithm used depends on the value of the [SortMethod](https://senipah.github.io/VBA-Better-Array/api/properties/sort_method/SortMethod.html) property, which must be one of the [SortMethods Enumerator values](https://senipah.github.io/VBA-Better-Array/api/enumerations/SortMethods_Enumeration.html). The default sort method is TimSort (`SM_TIMSORT`).
 
 If the array has more than one dimension the `SortColumn` argument is used to determine the column in the array to be used for the comparison. `SortColumn` begins at base one, regardless of the bounds of the array at the second dimension.
 
