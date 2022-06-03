@@ -12,14 +12,15 @@ Option Private Module
 '@IgnoreModule EmptyMethod
 '@IgnoreModule FunctionReturnValueDiscarded
 
-'Private Assert As Object
-'Move to early bind
-Private Assert As AssertClass
+' Uncomment for late binding
+Private Assert As Object
+' Move to early bind
+'Private Assert As AssertClass
 
-'Private Fakes As Object
-'Move to early bind
-'@Ignore VariableNotUsed
-Private Fakes As FakesProvider
+' Uncomment for late binding
+Private Fakes As Object
+' Uncomment for early  binding
+'Private Fakes As FakesProvider
 
 ' Module level declaration of system under test
 Private SUT As BetterArray
@@ -36,11 +37,12 @@ Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an Excel
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-'    Set Assert = CreateObject("Rubberduck.AssertClass")
-'    Set Fakes = CreateObject("Rubberduck.FakesProvider")
-    ' Move to early binding
-    Set Assert = New AssertClass
-    Set Fakes = New FakesProvider
+    ' Uncomment for late binding
+    Set Assert = CreateObject("Rubberduck.AssertClass")
+    Set Fakes = CreateObject("Rubberduck.FakesProvider")
+    ' Uncomment for early  binding
+    ' Set Assert = New AssertClass
+    ' Set Fakes = New FakesProvider
 End Sub
 
 '@ModuleCleanup

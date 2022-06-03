@@ -7,14 +7,15 @@ Option Private Module
 
 '@IgnoreModule AssignmentNotUsed, ProcedureNotUsed, LineLabelNotUsed, EmptyMethod
 
-'Private Assert As Object
-'Move to early bind
-Private Assert As AssertClass
+' Uncomment for late binding
+Private Assert As Object
+' Move to early bind
+'Private Assert As AssertClass
 
-'Private Fakes As Object
-'Move to early bind
-'@Ignore VariableNotUsed
-Private Fakes As FakesProvider
+' Uncomment for late binding
+Private Fakes As Object
+' Uncomment for early  binding
+'Private Fakes As FakesProvider
 
 ' Module level declaration of system under test
 Private SUT As ArrayGenerator
@@ -24,11 +25,12 @@ Private Const TEST_ARRAY_LENGTH As Long = 10
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-'    Set Assert = CreateObject("Rubberduck.AssertClass")
-'    Set Fakes = CreateObject("Rubberduck.FakesProvider")
-    ' Move to early binding
-    Set Assert = New AssertClass
-    Set Fakes = New FakesProvider
+    ' Uncomment for late binding
+    Set Assert = CreateObject("Rubberduck.AssertClass")
+    Set Fakes = CreateObject("Rubberduck.FakesProvider")
+    ' Uncomment for early  binding
+    ' Set Assert = New AssertClass
+    ' Set Fakes = New FakesProvider
 End Sub
 
 '@ModuleCleanup
