@@ -1,1 +1,5 @@
-a7ac777 Closes #17
+37edaba feat: add support for filtering by column index
+0bc8a82 chore: ignore RD IIfSideEffect warning
+f84acec fix: use early binding for unit tests - dev wb
+e3d8bfe feat: add script for creation of dev wb frm src
+f2adaed fix: doc enum links
