@@ -53,7 +53,7 @@ Necessity
 : Optional
 
 Description
-: If the array is jagged (an array of arrays) or multidimensional (which are stored internally as jagged arays) and you wish for all nested arrays to be checked then `recurse` must be true - otherwise only the outermost array will be checked. This argument has no effect when operating on a one-dimension array.
+: If the array is jagged (an array of arrays) or multidimensional (which are stored internally as jagged arrays) and you wish for all nested arrays to be checked then `recurse` must be true - otherwise only the outermost array will be checked. This argument has no effect when operating on a one-dimension array.
 
 
 ### Returns

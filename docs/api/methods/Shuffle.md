@@ -7,7 +7,7 @@ grand_parent: API
 # Shuffle
 
 ## Description
-The `Shuffle()` method Shuffles the order of elements in the array using the [Fisher–Yates algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) . 
+The `Shuffle()` method Shuffles the order of elements in the array using the [Fisher–Yates algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
 
 ## Syntax
 
@@ -15,7 +15,7 @@ The `Shuffle()` method Shuffles the order of elements in the array using the [Fi
 
 ### Parameters
 
-Name 
+Name
 : `recurse`
 
 Type
@@ -43,7 +43,7 @@ Public Sub ShiftExample()
     Dim result() As Variant
     Dim MyArray As BetterArray
     Set MyArray = New BetterArray
-    
+
     MyArray.Push "Banana", "Orange", "Apple", "Mango"
     MyArray.Shuffle
     result = MyArray.Items

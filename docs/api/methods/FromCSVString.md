@@ -72,7 +72,7 @@ Necessity
 : Optional
 
 Description
-: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used indicate the opening and closing of an escape sqeuence.
+: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used indicate the opening and closing of an escape sequence.
 
 ---
 
@@ -116,8 +116,3 @@ Description
 
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
-
-
-
-
-

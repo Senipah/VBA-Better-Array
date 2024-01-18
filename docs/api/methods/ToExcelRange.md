@@ -27,7 +27,7 @@ Necessity
 : Required
 
 Description
-: An Excel Range object representing the loction to begin writing the stored values. Will be expanded as necessar to accomodate the size of the array.
+: An Excel Range object representing the location to begin writing the stored values. Will be expanded as necessary to accommodate the size of the array.
 
 ---
 
@@ -68,8 +68,3 @@ End Sub
 ```
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
-
-
-
-
-

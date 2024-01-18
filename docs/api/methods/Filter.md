@@ -57,7 +57,7 @@ Necessity
 : Optional
 
 Description
-: Boolean value indicating whether the filter should be applied recrsively to a jagged or multidimensional array. By default, only the outermost array will be filtered.
+: Boolean value indicating whether the filter should be applied recursively to a jagged or multidimensional array. By default, only the outermost array will be filtered.
 
 ### Returns
 
