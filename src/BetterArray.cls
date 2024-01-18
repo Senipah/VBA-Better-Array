@@ -348,12 +348,12 @@ End Property
 Public Function Push(ParamArray Args() As Variant) As Variant
 Attribute Push.VB_Description = "Adds the provided arguments to the array at the next available index."
     Dim Element As Variant
-
+    
     If This.ArrayType = ArrayTypes.BA_UNALLOCATED Or _
-       This.ArrayType = ArrayTypes.BA_UNDEFINED Then
+        This.ArrayType = ArrayTypes.BA_UNDEFINED Then
         This.ArrayType = ArrayTypes.BA_ONEDIMENSION
     End If
-
+    
     For Each Element In Args
         If This.Length = This.Capacity Then
             EnsureCapacity This.Length + 1
@@ -698,7 +698,7 @@ Public Function FromExcelRange( _
         Optional ByVal DetectLastColumn As Boolean _
     ) As BetterArray
 Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
-
+    
     If TypeName(FromRange) = "Range" Then
         Dim StartColumn As Long
         Dim EndColumn As Long
@@ -752,7 +752,7 @@ Attribute ExtractSegment.VB_Description = "Extracts the segment of the array loc
     Dim Result() As Variant
     
     LocalItems = InternalItems
-
+    
     If RowIndex = MISSING_LONG Then
         If ColumnIndex = MISSING_LONG Then
             ' if no coords provided return full array
@@ -849,7 +849,7 @@ Attribute ToExcelRange.VB_Description = "Writes the values stored in the array t
     Dim AvailableColumns As Long
     Dim DestType As String
     Dim DestApplication As String
-       
+    
     On Error Resume Next
         DestType = TypeName(Destination)
         DestApplication = Destination.Application.Name
@@ -982,9 +982,9 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
         IndexOf = MISSING_LONG
         Exit Function
     End If
-
+    
     LocalItems = InternalItems
-
+    
     If FromIndex = MISSING_LONG Then
         RelativeStart = LBound(LocalItems)
     Else
@@ -1043,7 +1043,7 @@ Attribute LastIndexOf.VB_Description = "returns the first index at which a given
         LastIndexOf = MISSING_LONG
         Exit Function
     End If
-
+    
     LocalItems = InternalItems
     
     If FromIndex = MISSING_LONG Then
@@ -1175,7 +1175,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         RaiseError EC_EXCEEDS_MAX_ARRAY_LENGTH, "Splice"
         Exit Function
     End If
-
+    
     ' get items to be deleted for return val
     If ActualDeleteCount > 0 Then
         ReDim Result(0 To ActualDeleteCount - 1)
@@ -1625,7 +1625,6 @@ Public Function Filter( _
                 Include, _
                 Recurse _
             )
-
         End If
     End Select
     Me.Items = Result
@@ -1678,10 +1677,9 @@ Attribute FilterType.VB_Description = "Filters the stored array to include only 
                 Recurse, _
                 True _
             )
-
         End If
     End Select
-      
+    
     Me.Items = Result
     If LocalType = BA_MULTIDIMENSION Then This.ArrayType = LocalType
     Set FilterType = Me
@@ -1712,7 +1710,7 @@ Public Function Flatten() As BetterArray
 Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array into One Dimension arrays."
     Dim LocalItems() As Variant
     Dim Result As BetterArray
-        
+    
     ' noop on 1d or unalloc
     ' md & jagged both stored as jagged
     Select Case This.ArrayType
@@ -1725,7 +1723,7 @@ Attribute Flatten.VB_Description = "Flattens a Multi-Dimensional or Jagged array
         RecursiveFlatten LocalItems, Result
         Me.Items = Result.Items
     End Select
-
+    
     Set Flatten = Me
 End Function
 
@@ -1799,7 +1797,6 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
                     Result.Push LocalItems(i)
                 End If
             Next
-        
         End If
     Else
         ' no columnIndex arg or array is one-dimension
@@ -1811,7 +1808,6 @@ Attribute Unique.VB_Description = "filters the array to contain only unique elem
         Next
     End If
     
-
     Me.Items = Result.Items
     This.ArrayType = LocalType
     Set Unique = Me
@@ -1872,7 +1868,7 @@ Attribute FromCSVString.VB_Description = "Accepts a string argument representing
     Else
         LocalType = BA_JAGGED
     End If
-     
+    
     Parsed = ParseCSV( _
         Expression:=CSVString, _
         ColumnDelimiter:=ColumnDelimiter, _
@@ -1883,12 +1879,12 @@ Attribute FromCSVString.VB_Description = "Accepts a string argument representing
         Base:=This.LowerBound, _
         DuckType:=DuckType _
     )
-
+    
     This.Length = GetArrayLength(Parsed)
     This.Capacity = UBound(Parsed)
     This.ArrayType = LocalType
     This.Items = Parsed
-
+    
     Set FromCSVString = Me
 End Function
 
@@ -2388,10 +2384,10 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
     Dim i As Long
     Dim Cursor As Long
     Dim CSVRows() As String
-
+    
     ' find first row delimiter
     RowDelimIndex = NextDelimBytePos(Expr, RowDelim)
-
+    
     ' find last row delimiter
     LastRowDelim = InStrRev(Expr.Text, RowDelim.Text)
     RowIndex = Expr.Length + 1
@@ -2401,11 +2397,11 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
         inc BlankTrailingRows
     Loop
     RowIndex = Empty
-
+    
     ' estimate max number of rows - does not account for line breaks within strings
     MaxRows = (Expr.Length - Len(Replace(Expr.Text, RowDelim.Text, vbNullString))) / RowDelim.Length + 1
     ReDim LineEndIndices(0 To MaxRows)
-        
+    
     ' find first quote delimiter
     LiteralDelimIndex = NextDelimBytePos(Expr, LiteralDelim)
     
@@ -2420,7 +2416,7 @@ Attribute GetCSVRows.VB_Description = "Splits the provided string into rows base
             ' quote delimiter before row delimiter
             ' find next quote delim
             LiteralDelimIndex = NextDelimBytePos(Expr, LiteralDelim, LiteralDelimIndex + 2)
-           ' see if closing quote delim found
+            ' see if closing quote delim found
             If LiteralDelimIndex Then
                 ' find next row delim
                 RowDelimIndex = NextDelimBytePos(Expr, RowDelim, LiteralDelimIndex + 2)
@@ -2492,7 +2488,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     ' This header will contain names corresponding to the fields in the file and should contain the same number of fields as the records in the rest of the file.
     ' CSV commonly employs US-ASCII as character set, but other character sets are permitted.
     ' https://www.loc.gov/preservation/digital/formats/fdd/fdd000323.shtml
-
+    
     Dim i As Long
     Dim j As Long
     Dim Cursor As Long
@@ -2523,7 +2519,7 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
         ParseCSV = Array()
         Exit Function
     End If
-
+    
     CSVRows = GetCSVRows(Expr, RowDelim, LiteralDelim)
     CountColumns = CountCSVColumns(CSVRows(0), LiteralDelim, ColumnDelimiter)
     CountRows = UBound(CSVRows) - LBound(CSVRows) + 1
@@ -2626,7 +2622,7 @@ Attribute RecursiveEvery.VB_Description = "Recursively checks if the passed arra
     LocalLowerBound = LBound(SearchArray)
     If FromIndex > LocalLowerBound Then LocalLowerBound = FromIndex
     LocalUpperBound = UBound(SearchArray)
-
+    
     For i = LocalLowerBound To LocalUpperBound
         If IsArray(SearchArray(i)) Then
             Dim PassThru() As Variant
@@ -2921,7 +2917,7 @@ Private Function FilterByColumn( _
     LocalUpperBound = UBound(SourceArray)
     Set Result = New BetterArray
     Result.LowerBound = This.LowerBound
-
+    
     For i = LocalLowerBound To LocalUpperBound
         LetOrSetElement ComparisonElement, SourceArray(i)(ColumnIndex)
         If CompareTypeNames Then
@@ -3511,7 +3507,6 @@ Attribute InsertionSort.VB_Description = "Sorts the passed array in place using 
         
     ' Loop from the element indicated by
     ' `left` until the element indicated by `right`
-            
     For i = LeftIndex + 1 To RightIndex
         ' This is the element we want to position in its
         ' correct place
@@ -3538,7 +3533,7 @@ Attribute InsertionSort.VB_Description = "Sorts the passed array in place using 
                 Exit Do
             End If
         Loop
-    
+
         ' When you finish shifting the elements, position
         ' the `key_item` in its correct location
         '@Ignore UnassignedVariableUsage
@@ -3572,7 +3567,7 @@ Attribute MergeSort.VB_Description = "Sorts the passed array in place using Merg
     
     LowLength = MidIndex - StartIndex + 1
     HighLength = EndIndex - MidIndex
-        
+    
     ReDim LowPartition(0 To Max(LowLength - 1, 0))
     ReDim HighPartition(0 To Max(HighLength - 1, 0))
     
@@ -3730,7 +3725,7 @@ Attribute QuickSortIterative.VB_Description = "Sorts in place a passed array usi
             Stack(inc(Top)) = LocalLow
             Stack(inc(Top)) = PartitionIndex - 1
         End If
-       
+        
         ' If there are elements on right side of pivot,
         ' then push right side to stack
         If PartitionIndex + 1 < LocalHigh Then
@@ -3807,7 +3802,7 @@ Attribute StringBuilder.VB_Description = "Efficiently concatenates string fragme
     Dim FragLength As Long
     Dim LastIndex As Long
     Dim i As Long
-
+    
     FragLength = LenB(Fragment)
     If Cursor < 1 Or NewString Then
         Buffer = Fragment
@@ -4006,7 +4001,7 @@ Private Function Rebase(Optional ByRef SourceArray As Variant, Optional ByVal Cu
 Attribute Rebase.VB_Description = "re-indexes array to conform to new bounds. Does not change length."
     Dim LocalItems() As Variant
     Dim LocalType As ArrayTypes
-
+    
     If IsMissing(SourceArray) Or Not IsArray(SourceArray) Then
         LocalItems = InternalItems
         LocalType = This.ArrayType
@@ -4177,7 +4172,7 @@ Attribute TypedMultiToVariantMulti.VB_Description = "Converts a typed md array t
     End If
     
     TypedMultiToVariantMulti = Result
-        
+    
 End Function
 
 '@Description("Returns an array representing the structure of a Multidimension array")
@@ -4190,24 +4185,24 @@ Attribute MapMultidimensionArray.VB_Description = "Returns an array representing
     Dim LocalMap() As Variant
     Dim LocalDepth As Long
     Dim CurrentBounds(0 To 1) As Long
-
+    
     If Not IsArray(SourceArray) Then Exit Function
-
+    
     If KnownDepth > 0 Then
         LocalDepth = KnownDepth
     Else
         LocalDepth = GetMultidimensionalArrayDepth(SourceArray)
     End If
-
+    
     ' crumbs are base 0
     ReDim LocalMap(0 To LocalDepth - 1)
-
+    
     For i = LBound(LocalMap) To UBound(LocalMap)
         CurrentBounds(0) = LBound(SourceArray, i + 1)
         CurrentBounds(1) = UBound(SourceArray, i + 1)
         LocalMap(i) = CurrentBounds
     Next
-
+    
     MapMultidimensionArray = LocalMap
 End Function
 
@@ -4232,19 +4227,19 @@ Attribute RecursiveTypedMultiToVariantMulti.VB_Description = "Recursively conver
     
     LocalDepth = Depth
     LocalCurrentDepth = CurrentDepth
-
+    
     If IsMissing(Crumbs) Then
         ReDim LocalCrumbs(LocalDepth - 1)
     Else
         LocalCrumbs = Crumbs
     End If
-
+    
     If IsMissing(Result) Then
         LocalResult = CreateMultidimensionalArray(MapMultidimensionArray(SourceArray, LocalDepth))
     Else
         LocalResult = Result
     End If
-
+    
     inc LocalCurrentDepth
     LocalLowerBound = LBound(SourceArray, LocalCurrentDepth)
     LocalUpperBound = UBound(SourceArray, LocalCurrentDepth)
@@ -4268,7 +4263,7 @@ Attribute RecursiveTypedMultiToVariantMulti.VB_Description = "Recursively conver
             )
         End If
     Next
-
+    
     RecursiveTypedMultiToVariantMulti = LocalResult
 End Function
 
@@ -4447,23 +4442,23 @@ Attribute RecursiveJaggedToMulti.VB_Description = "Recursively Converts jagged a
     Dim LocalCurrentDepth As Long
     Dim LocalCrumbs() As Variant
     Dim LocalResult() As Variant
-
-
+    
+    
     LocalDepth = Depth
     LocalCurrentDepth = CurrentDepth
-
+    
     If IsMissing(Crumbs) Then
         ReDim LocalCrumbs(LocalDepth - 1)
     Else
         LocalCrumbs = Crumbs
     End If
-
+    
     If IsMissing(Result) Then
         LocalResult = CreateMultidimensionalArray(MapJaggedArray(SourceArray, KnownDepth:=LocalDepth))
     Else
         LocalResult = Result
     End If
-
+    
     inc LocalCurrentDepth
     LocalLowerBound = LBound(SourceArray)
     LocalUpperBound = UBound(SourceArray)
@@ -4568,22 +4563,22 @@ Attribute MapJaggedArray.VB_Description = "Returns an array representing the str
     Dim i As Long
     Dim LocalMap() As Variant
     Dim LocalDepth As Long
-
+    
     If Not IsArray(SourceArray) Then Exit Function
-
+    
     If KnownDepth > 0 Then
         LocalDepth = KnownDepth
     Else
         LocalDepth = GetJaggedArrayDepth(SourceArray)
     End If
-
+    
     ' crumbs are base 0
     ReDim LocalMap(0 To LocalDepth - 1)
-
+    
     For i = LBound(LocalMap) To UBound(LocalMap)
         LocalMap(i) = GetMaxBoundsAtDimension(SourceArray, i + 1)
     Next
-
+    
     MapJaggedArray = LocalMap
 End Function
 
@@ -4747,7 +4742,7 @@ Attribute LetElementByBreadcrumb.VB_Description = "Assigns an element to a locat
         Crumb(10), Crumb(11), Crumb(12), Crumb(13), Crumb(14), Crumb(15), Crumb(16), Crumb(17), Crumb(18), Crumb(19), Crumb(20)), _
         Element
     End Select
-
+    
     LetElementByBreadcrumb = SourceArray
 End Function
 

@@ -119,7 +119,6 @@ Public Sub TransposingJaggedToExcel()
         i = i * 10
         DoEvents
     Loop
-
 End Sub
 
 Private Function TransposingByTranspose(ByVal Count As Long) As Double
@@ -183,4 +182,3 @@ Public Sub CSV_Profiling()
         ReadCSV SUT, JoinPath(basepath, DATA_DIR), fileName
     Next
 End Sub
-

@@ -231,5 +231,3 @@ Private Sub QSIterativeCSVSort(ByVal Size As DataSizes)
     Set SUT = GetCSVTestData(Size)
     TestSortMethod SUT, SM_QUICKSORT_ITERATIVE, 2
 End Sub
-
-
