@@ -119,7 +119,7 @@ End Sub
 ' Helper Functions '
 ''''''''''''''''''''
 
-Public Function SequenceEqualsMutiVsJagged( _
+Public Function SequenceEqualsMultiVsJagged( _
     ByRef multi() As Variant, _
     ByRef jagged() As Variant _
 ) As Boolean
@@ -134,7 +134,7 @@ Public Function SequenceEqualsMutiVsJagged( _
     Next
     
     On Error GoTo 0
-    SequenceEqualsMutiVsJagged = True
+    SequenceEqualsMultiVsJagged = True
     Exit Function
 ErrHandler:
     On Error GoTo 0

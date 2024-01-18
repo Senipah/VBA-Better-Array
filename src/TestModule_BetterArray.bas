@@ -171,7 +171,7 @@ End Sub
 ''''''''''''''''
 
 '@TestMethod("BetterArray_Items")
-Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Private Sub Items_CanAssignOneDimensionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -194,7 +194,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Items")
-Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Private Sub Items_CanAssignMultiDimensionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -346,7 +346,7 @@ End Sub
 
 
 '@TestMethod("BetterArray_Length")
-Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsOriginalArray()
+Private Sub UpperBound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -362,7 +362,7 @@ Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsO
     Actual = SUT.UpperBound
 
     'Assert:
-    Assert.AreEqual Expected, Actual, "Actual upperbound <> expected"
+    Assert.AreEqual Expected, Actual, "Actual UpperBound <> expected"
 
 TestExit:
     Exit Sub
@@ -425,8 +425,8 @@ Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowe
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual LowerBound <> expected"
     Assert.AreEqual SUT.LowerBound, Actual, "Actual LowerBound <> SUT.LowerBound prop"
-    Assert.AreEqual UBound(TestArray) + 1, UBound(ReturnedItems), "Actual upperbound <> expected"
-    Assert.AreEqual SUT.UpperBound, UBound(ReturnedItems), "Actual upperbound <> SUT.UpperBound prop"
+    Assert.AreEqual UBound(TestArray) + 1, UBound(ReturnedItems), "Actual UpperBound <> expected"
+    Assert.AreEqual SUT.UpperBound, UBound(ReturnedItems), "Actual UpperBound <> SUT.UpperBound prop"
     Assert.AreEqual SUT.Length, TEST_ARRAY_LENGTH, "Actual length does not equal expected"
 
 TestExit:
@@ -1072,7 +1072,7 @@ Private Sub ArrayType_MultiDimensionToJagged_Success()
     Actual = SUT.Items
     
     'Assert:
-    Assert.IsTrue SequenceEqualsMutiVsJagged(TestArray, Actual)
+    Assert.IsTrue SequenceEqualsMultiVsJagged(TestArray, Actual)
     Assert.AreEqual NewType, SUT.ArrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
@@ -1209,7 +1209,7 @@ Private Sub ArrayType_JaggedToMultiDimension_Success()
     Actual = SUT.Items
     
     'Assert:
-    Assert.IsTrue SequenceEqualsMutiVsJagged(Actual, TestArray)
+    Assert.IsTrue SequenceEqualsMultiVsJagged(Actual, TestArray)
     Assert.AreEqual NewType, SUT.ArrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
@@ -1280,7 +1280,7 @@ Private Sub Push_AddToNewBetterArray_ItemAdded()
     'Assert:
     Assert.AreEqual Expected, Actual, "actual <> expected"
     Assert.AreEqual ExpectedLength, ActualLength, "Length value incorrect"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -1397,7 +1397,7 @@ Private Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
     'Assert:
     Assert.AreEqual Expected, Actual, "Element value incorrect"
     Assert.AreEqual ExpectedLength, ActualLength, "Length value incorrect"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -1460,7 +1460,7 @@ Private Sub Pop_OneDimensionalArray_LastItemRemoved()
     'Assert:
     Assert.AreEqual Expected, Actual, "Element value incorrect"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
-    Assert.AreEqual UBound(TestArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual UBound(TestArray) - 1, SUT.UpperBound, "UpperBound value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
 
 TestExit:
@@ -1499,7 +1499,7 @@ Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     Assert.AreEqual Expected, Actual, "Actual <> expected"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual ExpectedLength, ActualLength, "Length value incorrect"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -1561,7 +1561,7 @@ Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual <> expected"
     Assert.AreEqual TEST_ARRAY_LENGTH - 1, SUT.Length, "Length value incorrect"
-    Assert.AreEqual UBound(TestArray) - 1, SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual UBound(TestArray) - 1, SUT.UpperBound, "UpperBound value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
 
 TestExit:
@@ -1595,7 +1595,7 @@ Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     Assert.AreEqual Expected, Actual, "Element value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual ExpectedLength, ActualLength, "Length value incorrect"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
 
 TestExit:
     Exit Sub
@@ -1631,7 +1631,7 @@ Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
 
     'Assert:
     Assert.AreEqual Expected, Actual, "Return value incorrect"
-    Assert.AreEqual (UBound(TestArray) + 1), SUT.UpperBound, "Upperbound value incorrect"
+    Assert.AreEqual (UBound(TestArray) + 1), SUT.UpperBound, "UpperBound value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual TestElement, SUT.Item(SUT.LowerBound), "Element not inserted at correct position"
 
@@ -1665,7 +1665,7 @@ Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
 
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual length <> expected length"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual ExpectedElement, ActualElement, "Actual element <> expected"
 
@@ -1705,7 +1705,7 @@ Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
 
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual length <> expected length"
-    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "Upperbound value incorrect"
+    Assert.AreEqual ExpectedUpperBound, ActualUpperBound, "UpperBound value incorrect"
     Assert.AreEqual ExpectedLowerBound, ActualLowerBound, "LowerBound value incorrect"
     Assert.AreEqual ExpectedElement, ActualElement, "Actual element <> expected"
 
@@ -1806,17 +1806,17 @@ Private Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
     Dim ActualLength As Long
     Dim ExpectedUpperBound As Long
     Dim ActualUpperBound As Long
-    Dim FirstAray() As Variant
+    Dim FirstArray() As Variant
     Dim SecondArray() As Variant
     
-    FirstAray = Array(1, 2, 3)
+    FirstArray = Array(1, 2, 3)
     SecondArray = Array(4, 5, 6)
     Expected = Array(1, 2, 3, 4, 5, 6)
     ExpectedLength = 6
     ExpectedUpperBound = UBound(Expected)
     
     'Act:
-    Actual = SUT.Concat(FirstAray, SecondArray).Items
+    Actual = SUT.Concat(FirstArray, SecondArray).Items
     ActualLength = SUT.Length
     ActualUpperBound = SUT.UpperBound
     
@@ -4797,7 +4797,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Max")
-Private Sub Max_JaggedArray_Returnslargest()
+Private Sub Max_JaggedArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5431,7 +5431,7 @@ Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shufled"
+    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -5455,7 +5455,7 @@ Private Sub Shuffle_OneDimArrayBase1_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shufled"
+    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -5478,7 +5478,7 @@ Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shufled"
+    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -5502,7 +5502,7 @@ Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
     TestResult = SequenceEquals_JaggedArray(SortedArray, Actual)
     'Assert:
-    Assert.IsFalse TestResult, "Array is not shufled"
+    Assert.IsFalse TestResult, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -5973,7 +5973,7 @@ Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     Actual = SUT.ParseFromString(SourceString).Items
     
     ' can't use Assert.SequenceEquals due to type comparison - Bytes Will be Long in actual
-    ' also, Assert.SeqenceEquals doesn't support jagged arrays: https://github.com/rubberduck-vba/Rubberduck/issues/5161
+    ' also, Assert.SequenceEquals doesn't support jagged arrays: https://github.com/rubberduck-vba/Rubberduck/issues/5161
     TestResult = SequenceEquals_JaggedArray(Expected, Actual)
     
     
@@ -6037,7 +6037,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_MultiDimArray_ReturnsFlattenned()
+Private Sub Flatten_MultiDimArray_ReturnsFlattened()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6068,7 +6068,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_JaggedArray_ReturnsFlattenned()
+Private Sub Flatten_JaggedArray_ReturnsFlattened()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6961,7 +6961,7 @@ Private Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
     
     SUT.LowerBound = 10
     
-    ' rebase expected itms
+    ' rebase expected items
     SUT.Items = Expected
     Expected = SUT.Items
     
@@ -7323,7 +7323,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Every")
-Private Sub Every_MiltiDimArrayOfSameString_ReturnsTrue()
+Private Sub Every_MultiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7350,7 +7350,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Every")
-Private Sub Every_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Private Sub Every_MultiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7484,7 +7484,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_MiltiDimArrayOfSameString_ReturnsTrue()
+Private Sub EveryType_MultiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7511,7 +7511,7 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Private Sub EveryType_MultiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8499,5 +8499,3 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-
-
