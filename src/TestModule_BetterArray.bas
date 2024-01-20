@@ -8372,7 +8372,7 @@ Private Sub ToCSVString_Simple10RowNoHeaders_ValidStringReturned()
     
     TestDatum(0) = Array("Region", "Country", "Item Type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit")
     TestDatum(1) = Array("Sub-Saharan Africa", "Chad", "Office Supplies", "Online", "L", "1/27/2011", "292494523", "2/12/2011", "4484", "651.21", "524.96", "2920025.64", "2353920.64", "566105.00")
-    TestDatum(2) = Array("Europe", "Latvia", "Beverages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", 51008.75, "34174.25", "16834.50")
+    TestDatum(2) = Array("Europe", "Latvia", "Beverages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", "51008.75", "34174.25", "16834.50")
     TestDatum(3) = Array("Middle East and North Africa", "Pakistan", "Vegetables", "Offline", "C", "1/13/2011", "141515767", "2/1/2011", "6515", "154.06", "90.93", "1003700.90", "592408.95", "411291.95")
     TestDatum(4) = Array("Sub-Saharan Africa", "Democratic Republic of the Congo", "Household", "Online", "C", "9/11/2012", "500364005", "10/6/2012", "7683", "668.27", "502.54", "5134318.41", "3861014.82", "1273303.59")
     TestDatum(5) = Array("Europe", "Czech Republic", "Beverages", "Online", "C", "10/27/2015", "127481591", "12/5/2015", "3491", "47.45", "31.79", "165647.95", "110978.89", "54669.06")
@@ -8483,7 +8483,7 @@ Private Sub ToCSVString_Simple2RowNoHeadersEscapeCommasQuotesAndCRLF_ValidString
     ReDim TestDatum(0 To 1)
     
     TestDatum(0) = Array("Sub-Saharan, Africa", "Chad", "Office" & vbCrLf & "Supplies", "Online", "L", "1/27/2011", "292494523", "2/12/2011", "4484", "651.21", "524.96", "2920025.64", "2353920.64", "566105.00")
-    TestDatum(1) = Array("Europe", "Latvia", "Bever""ages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", 51008.75, "34174.25", "16834.50")
+    TestDatum(1) = Array("Europe", "Latvia", "Bever""ages", "Online", "C", "12/28/2015", "361825549", "1/23/2016", "1075", "47.45", "31.79", "51008.75", "34174.25", "16834.50")
     
     'Act:
     SUT.Items = TestDatum
