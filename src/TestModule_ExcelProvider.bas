@@ -57,12 +57,12 @@ Private Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
-
+    
     'Act:
-
+    
     'Assert:
     Assert.IsNotNothing SUT
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -83,7 +83,7 @@ Private Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
     
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual <> expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -108,7 +108,7 @@ Private Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
     
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual <> expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -149,7 +149,7 @@ Private Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook(
     'Act:
     Set Expected = SUT.CurrentWorkbook
     Set Actual = SUT.CurrentWorksheet
-        
+    
     'Assert:
     Assert.AreSame Expected, Actual.Parent, "actual <> expected"
 TestExit:
@@ -181,4 +181,3 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-

@@ -60,7 +60,7 @@ Private Sub Constructor_CanInstantiate_SUTNotNothing()
     'Act:
     'Assert:
     Assert.IsNotNothing SUT
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -70,7 +70,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -85,7 +85,7 @@ Private Sub GetArray_BooleansOneDimension_ValuesAreBoolean()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -95,7 +95,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleansMultiDimension_ValuesAreBoolean()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -113,7 +113,7 @@ Private Sub GetArray_BooleansMultiDimension_ValuesAreBoolean()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -123,7 +123,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleansJagged_ValuesAreBoolean()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -141,7 +141,7 @@ Private Sub GetArray_BooleansJagged_ValuesAreBoolean()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -151,7 +151,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -166,7 +166,7 @@ Private Sub GetArray_BytesOneDimension_ValuesAreBytes()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -176,11 +176,11 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_BytesMultiDimension_ValuesAreBytes()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
-
+    
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
     
@@ -195,7 +195,7 @@ Private Sub GetArray_BytesMultiDimension_ValuesAreBytes()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -205,7 +205,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_BytesJagged_ValuesAreBytes()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -223,7 +223,7 @@ Private Sub GetArray_BytesJagged_ValuesAreBytes()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -234,7 +234,7 @@ End Sub
 '@TestMethod("DoublesArrays")
 Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -249,7 +249,7 @@ Private Sub GetArray_DoublesOneDimension_ValuesAreDoubles()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -259,7 +259,7 @@ End Sub
 '@TestMethod("DoublesArrays")
 Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -277,7 +277,7 @@ Private Sub GetArray_DoublesMultiDimension_ValuesAreDoubles()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -287,7 +287,7 @@ End Sub
 '@TestMethod("DoublesArrays")
 Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -305,7 +305,7 @@ Private Sub GetArray_DoublesJagged_ValuesAreDoubles()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -315,7 +315,7 @@ End Sub
 '@TestMethod("LongsArrays")
 Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -330,7 +330,7 @@ Private Sub GetArray_LongsOneDimension_ValuesAreLongs()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -340,11 +340,11 @@ End Sub
 '@TestMethod("LongsArrays")
 Private Sub GetArray_LongsMultiDimension_ValuesAreLongs()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
-
+    
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
     
@@ -359,7 +359,7 @@ Private Sub GetArray_LongsMultiDimension_ValuesAreLongs()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -369,7 +369,7 @@ End Sub
 '@TestMethod("LongsArrays")
 Private Sub GetArray_LongsJagged_ValuesAreLongs()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -387,7 +387,7 @@ Private Sub GetArray_LongsJagged_ValuesAreLongs()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -400,7 +400,7 @@ End Sub
 '@TestMethod("ObjectsArrays")
 Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -415,7 +415,7 @@ Private Sub GetArray_ObjectsOneDimension_ValuesAreObjects()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -425,7 +425,7 @@ End Sub
 '@TestMethod("ObjectsArrays")
 Private Sub GetArray_ObjectsMultiDimension_ValuesAreObjects()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -443,7 +443,7 @@ Private Sub GetArray_ObjectsMultiDimension_ValuesAreObjects()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -453,7 +453,7 @@ End Sub
 '@TestMethod("ObjectsArrays")
 Private Sub GetArray_ObjectsJagged_ValuesAreObjects()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -471,7 +471,7 @@ Private Sub GetArray_ObjectsJagged_ValuesAreObjects()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -484,7 +484,7 @@ End Sub
 '@TestMethod("StringsArrays")
 Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -499,7 +499,7 @@ Private Sub GetArray_StringsOneDimension_ValuesAreStrings()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -509,7 +509,7 @@ End Sub
 '@TestMethod("StringsArrays")
 Private Sub GetArray_StringsMultiDimension_ValuesAreStrings()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -527,7 +527,7 @@ Private Sub GetArray_StringsMultiDimension_ValuesAreStrings()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -537,7 +537,7 @@ End Sub
 '@TestMethod("StringsArrays")
 Private Sub GetArray_StringsJagged_ValuesAreStrings()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -555,7 +555,7 @@ Private Sub GetArray_StringsJagged_ValuesAreStrings()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -567,7 +567,7 @@ End Sub
 '@TestMethod("VariantsArrays")
 Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -586,7 +586,7 @@ Private Sub GetArray_VariantsOneDimension_ValueTypesVary()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -596,7 +596,7 @@ End Sub
 '@TestMethod("VariantsArrays")
 Private Sub GetArray_VariantsMultiDimension_ValueTypesVary()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -618,7 +618,7 @@ Private Sub GetArray_VariantsMultiDimension_ValueTypesVary()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -628,7 +628,7 @@ End Sub
 '@TestMethod("VariantsArrays")
 Private Sub GetArray_VariantsJagged_ValueTypesVary()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim i As Long
     Dim j As Long
@@ -650,7 +650,7 @@ Private Sub GetArray_VariantsJagged_ValueTypesVary()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -661,7 +661,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -672,7 +672,7 @@ Private Sub GetArray_BooleanOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -682,7 +682,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -693,7 +693,7 @@ Private Sub GetArray_BooleanMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -703,7 +703,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -714,7 +714,7 @@ Private Sub GetArray_BooleanJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -724,7 +724,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -735,7 +735,7 @@ Private Sub GetArray_ByteOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -745,7 +745,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -756,7 +756,7 @@ Private Sub GetArray_ByteMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -766,7 +766,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -777,7 +777,7 @@ Private Sub GetArray_ByteJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -788,7 +788,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -799,7 +799,7 @@ Private Sub GetArray_DoubleOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -809,7 +809,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -820,7 +820,7 @@ Private Sub GetArray_DoubleMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -830,7 +830,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -841,7 +841,7 @@ Private Sub GetArray_DoubleJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -851,7 +851,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -862,7 +862,7 @@ Private Sub GetArray_LongOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -872,7 +872,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -883,7 +883,7 @@ Private Sub GetArray_LongMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -893,7 +893,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -904,7 +904,7 @@ Private Sub GetArray_LongJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -914,7 +914,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -925,7 +925,7 @@ Private Sub GetArray_ObjectOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -935,7 +935,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -946,7 +946,7 @@ Private Sub GetArray_ObjectMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -956,7 +956,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -967,7 +967,7 @@ Private Sub GetArray_ObjectJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -977,7 +977,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -988,7 +988,7 @@ Private Sub GetArray_StringOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -998,7 +998,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1009,7 +1009,7 @@ Private Sub GetArray_StringMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1019,7 +1019,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1030,7 +1030,7 @@ Private Sub GetArray_StringJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1040,7 +1040,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantOneDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1051,7 +1051,7 @@ Private Sub GetArray_VariantOneDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1061,7 +1061,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantMultiDimension_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1072,7 +1072,7 @@ Private Sub GetArray_VariantMultiDimension_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1082,7 +1082,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantJagged_ReturnsArray()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1093,7 +1093,7 @@ Private Sub GetArray_VariantJagged_ReturnsArray()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1103,7 +1103,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1114,7 +1114,7 @@ Private Sub GetArray_BooleanOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1124,7 +1124,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1135,7 +1135,7 @@ Private Sub GetArray_BooleanMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1145,7 +1145,7 @@ End Sub
 '@TestMethod("BooleanArrays")
 Private Sub GetArray_BooleanJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1156,7 +1156,7 @@ Private Sub GetArray_BooleanJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1166,7 +1166,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1177,7 +1177,7 @@ Private Sub GetArray_ByteOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1187,7 +1187,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1198,7 +1198,7 @@ Private Sub GetArray_ByteMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1208,7 +1208,7 @@ End Sub
 '@TestMethod("ByteArrays")
 Private Sub GetArray_ByteJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1219,7 +1219,7 @@ Private Sub GetArray_ByteJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1230,7 +1230,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1241,7 +1241,7 @@ Private Sub GetArray_DoubleOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1251,7 +1251,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1262,7 +1262,7 @@ Private Sub GetArray_DoubleMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1272,7 +1272,7 @@ End Sub
 '@TestMethod("DoubleArrays")
 Private Sub GetArray_DoubleJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1283,7 +1283,7 @@ Private Sub GetArray_DoubleJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1293,7 +1293,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1304,7 +1304,7 @@ Private Sub GetArray_LongOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1314,7 +1314,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1325,7 +1325,7 @@ Private Sub GetArray_LongMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1335,7 +1335,7 @@ End Sub
 '@TestMethod("LongArrays")
 Private Sub GetArray_LongJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1346,7 +1346,7 @@ Private Sub GetArray_LongJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1356,7 +1356,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1367,7 +1367,7 @@ Private Sub GetArray_ObjectOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1377,7 +1377,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1388,7 +1388,7 @@ Private Sub GetArray_ObjectMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1398,7 +1398,7 @@ End Sub
 '@TestMethod("ObjectArrays")
 Private Sub GetArray_ObjectJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1409,7 +1409,7 @@ Private Sub GetArray_ObjectJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1420,7 +1420,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1431,7 +1431,7 @@ Private Sub GetArray_StringOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1441,7 +1441,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1452,7 +1452,7 @@ Private Sub GetArray_StringMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1462,7 +1462,7 @@ End Sub
 '@TestMethod("StringArrays")
 Private Sub GetArray_StringJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1473,7 +1473,7 @@ Private Sub GetArray_StringJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1484,7 +1484,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantOneDimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1495,7 +1495,7 @@ Private Sub GetArray_VariantOneDimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1505,7 +1505,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantMultidimension_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1516,7 +1516,7 @@ Private Sub GetArray_VariantMultidimension_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1526,7 +1526,7 @@ End Sub
 '@TestMethod("VariantArrays")
 Private Sub GetArray_VariantJagged_IsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim ReturnedArray() As Variant
     Dim TestResult As Boolean
@@ -1537,7 +1537,7 @@ Private Sub GetArray_VariantJagged_IsCorrectLength()
     
     'Assert:
     Assert.IsTrue TestResult
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1549,7 +1549,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
 Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray(1, 1) As Variant
     Dim SecondArray(1, 1) As Variant
@@ -1579,7 +1579,7 @@ Private Sub ConcatArraysOfSameStructure_TwoMultiDimArrays_ConcatSuccess()
     
     'Assert:
     Assert.SequenceEquals Expected, Actual, "Actual <> Expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1590,7 +1590,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
 Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray(1, 1) As Variant
     Dim SecondArray(1, 1) As Variant
@@ -1629,7 +1629,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeMultiDimArrays_ConcatSuccess()
     
     'Assert:
     Assert.SequenceEquals Expected, Actual, "Actual <> Expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1639,7 +1639,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
 Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray(1) As Variant
     Dim SecondArray(1) As Variant
@@ -1661,7 +1661,7 @@ Private Sub ConcatArraysOfSameStructure_TwoOneDimArrays_ConcatSuccess()
     
     'Assert:
     Assert.SequenceEquals Expected, Actual, "Actual <> Expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1672,7 +1672,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
 Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray(1) As Variant
     Dim SecondArray(1) As Variant
@@ -1699,7 +1699,7 @@ Private Sub ConcatArraysOfSameStructures_ThreeOneDimArrays_ConcatSuccess()
     
     'Assert:
     Assert.SequenceEquals Expected, Actual, "Actual <> Expected"
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1710,7 +1710,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatArraysOfSameStructure")
 Private Sub ConcatArraysOfSameStructure_TwoJaggedArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray() As Variant
     Dim SecondArray() As Variant
@@ -1729,7 +1729,7 @@ Private Sub ConcatArraysOfSameStructure_TwoJaggedArrays_ConcatSuccess()
     For i = LBound(Expected) To UBound(Expected)
         Assert.SequenceEquals Expected(i), Actual(i), "Actual <> Expected"
     Next
-
+    
 TestExit:
     Exit Sub
 TestFail:
@@ -1740,7 +1740,7 @@ End Sub
 '@TestMethod("ArrayGenerator_ConcatTwoDimensionArrays")
 Private Sub ConcatArraysOfSameStructures_ThreeJaggedArrays_ConcatSuccess()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim FirstArray() As Variant
     Dim SecondArray() As Variant
@@ -1773,7 +1773,7 @@ End Sub
 '@TestMethod("ArrayGenerator_GetArrayLength")
 Private Sub GetArrayLength_OneDimArray_ReturnsCorrectLength()
     On Error GoTo TestFail
-
+    
     'Arrange:
     Dim TestArray() As Variant
     Dim Expected As Long
@@ -1793,4 +1793,3 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-

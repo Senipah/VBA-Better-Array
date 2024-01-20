@@ -7,7 +7,7 @@ grand_parent: API
 # IsSorted
 
 ## Description
-The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `ColumnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the aray is sorted by the values in that column.
+The `IsSorted()` method tests if the stored array is sorted in ascending order. If a `ColumnIndex` argument is provided and the array is jagged or multi-dimensional, it will test if the array is sorted by the values in that column.
 
 #### Note
 

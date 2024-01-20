@@ -53,7 +53,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `ArrayOpenDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
+: If provided, the string passed to `ArrayOpenDelimiter` will be used to mark the beginning of arrays. If omitted, the default character of `{` will be used.
 
 ---
 
@@ -67,7 +67,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `ArrayClosingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+: If provided, the string passed to `ArrayClosingDelimiter` will be used to mark the beginning of arrays. If omitted, the default character of `}` will be used.
 
 
 ### Returns

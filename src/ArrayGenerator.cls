@@ -64,7 +64,7 @@ Public Function GetArray( _
     ) As Variant
     Dim LocalLength As Long
     Dim Vals As IValuesList
-       
+    
     LocalLength = IIf(Length <= 0, 1, Length)
     
     Select Case ValueType
@@ -122,10 +122,10 @@ Public Function ConcatArraysOfSameStructure( _
         Else
             ReDim Result(UpperBound)
             For Each Arg In Args
-              If IsArray(Arg) Then
-                  CurrentArray = Arg
-                  CurrentIndex = LocalConcat(CurrentIndex, Result, CurrentArray)
-              End If
+                If IsArray(Arg) Then
+                    CurrentArray = Arg
+                    CurrentIndex = LocalConcat(CurrentIndex, Result, CurrentArray)
+                End If
             Next
         End If
     End If
@@ -263,5 +263,3 @@ End Function
 Private Function GetUpperBound(ByVal Length As Long) As Long
     GetUpperBound = Length + pLowerBound - 1
 End Function
-
-

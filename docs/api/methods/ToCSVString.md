@@ -68,7 +68,7 @@ Necessity
 : Optional
 
 Description
-: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used indicate the opening and closing of an escape sqeuence.
+: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used indicate the opening and closing of an escape sequence.
 
 ---
 
@@ -96,7 +96,7 @@ Necessity
 : Optional
 
 Description
-: If provided, all date values will be formmatted using the value in this argument forwarded to the VBA [Format()](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/format-function-visual-basic-for-applications) function.
+: If provided, all date values will be formatted using the value in this argument forwarded to the VBA [Format()](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/format-function-visual-basic-for-applications) function.
 
 ---
 
@@ -110,7 +110,7 @@ Necessity
 : Optional
 
 Description
-: If provided, all numeric values will be formmatted using the value in this argument forwarded to the VBA [Format()](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/format-function-visual-basic-for-applications) function.
+: If provided, all numeric values will be formatted using the value in this argument forwarded to the VBA [Format()](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/format-function-visual-basic-for-applications) function.
 
 
 
@@ -126,8 +126,3 @@ Description
 
 
 [Back to Docs](https://senipah.github.io/VBA-Better-Array/)
-
-
-
-
-
