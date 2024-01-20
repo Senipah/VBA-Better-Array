@@ -441,7 +441,7 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     Dim LocalItems() As Variant
     Dim Sep As String
     
-    Sep = IIf(PrettyPrint, Separator & SPACE(1), Separator)
+    Sep = IIf(PrettyPrint, Separator & Space(1), Separator)
     
     LocalItems = InternalItems
     LocalArrayType = GetArrayType(LocalItems)
@@ -3856,12 +3856,12 @@ Attribute RecursiveToString.VB_Description = "Recursively parses an array to a s
             Dim Nested() As Variant
             Nested = SourceArray(i)
             If PrettyPrint Then
-                StringBuilder vbCrLf & SPACE(TabWidth * Tabs)
+                StringBuilder vbCrLf & Space(TabWidth * Tabs)
             End If
             RecursiveToString Nested, PrettyPrint, Separator, OpeningDelimiter, ClosingDelimiter, QuoteStrings, Tabs + 1
             If i = UBound(SourceArray) And PrettyPrint Then
                 StringBuilder vbCrLf
-                StringBuilder SPACE(TabWidth * (Tabs - 1))
+                StringBuilder Space(TabWidth * (Tabs - 1))
             End If
             StringBuilder Sep
         Else
