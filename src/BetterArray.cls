@@ -464,6 +464,42 @@ Attribute ToString.VB_Description = "Returns a string representing the array str
     ToString = Result
 End Function
 
+'@Description("Returns the element at a relative index. Supports negative indexes from the end of the array.")
+Public Function At(ByVal RelativeIndex As Long) As Variant
+Attribute At.VB_Description = "Returns the element at a relative index. Supports negative indexes from the end of the array."
+    Dim LocalItems() As Variant
+    Dim ActualIndex As Long
+    Dim Result As Variant
+    
+    If This.Length = 0 Then Exit Function
+    
+    LocalItems = InternalItems
+    If RelativeIndex < 0 Then
+        ActualIndex = This.LowerBound + This.Length + RelativeIndex
+    Else
+        ActualIndex = This.LowerBound + RelativeIndex
+    End If
+    
+    If ActualIndex >= This.LowerBound And ActualIndex <= Me.UpperBound Then
+        LetOrSetElement Result, LocalItems(ActualIndex)
+        At = Result
+    End If
+End Function
+
+'@Description("Determines whether at least one element in the array matches a value.")
+Public Function Some( _
+        ByVal SearchElement As Variant, _
+        Optional ByVal FromIndex As Long = MISSING_LONG, _
+        Optional ByVal Recurse As Boolean _
+    ) As Boolean
+Attribute Some.VB_Description = "Determines whether at least one element in the array matches a value."
+    Some = Includes( _
+        SearchElement:=SearchElement, _
+        FromIndex:=FromIndex, _
+        Recurse:=Recurse _
+    )
+End Function
+
 '@Description("Determines whether the array includes a certain value among its entries.")
 Public Function Includes( _
         ByVal SearchElement As Variant, _

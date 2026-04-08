@@ -4360,6 +4360,174 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+''''''''''''''''
+' Method - At '
+''''''''''''''''
+
+'@TestMethod("BetterArray_At")
+Private Sub At_OneDimArrayBase1Index0_ReturnsFirstElement()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Variant
+    Dim Actual As Variant
+    
+    SUT.LowerBound = 1
+    TestArray = Array("Foo", "Bar", "Fizz")
+    Expected = "Foo"
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.At(0)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_At")
+Private Sub At_OneDimArrayBase1NegativeIndex1_ReturnsLastElement()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Variant
+    Dim Actual As Variant
+    
+    SUT.LowerBound = 1
+    TestArray = Array("Foo", "Bar", "Fizz")
+    Expected = "Fizz"
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.At(-1)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_At")
+Private Sub At_OneDimArrayOutOfRange_ReturnsEmpty()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Actual As Variant
+    TestArray = Array("Foo", "Bar", "Fizz")
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.At(99)
+    
+    'Assert:
+    Assert.IsTrue IsEmpty(Actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+''''''''''''''''''
+' Method - Some '
+''''''''''''''''''
+
+'@TestMethod("BetterArray_Some")
+Private Sub Some_OneDimArrayContainsTarget_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Boolean
+    Dim Actual As Boolean
+    TestArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    Expected = True
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.Some("Bar")
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Some")
+Private Sub Some_OneDimArrayDoesntContainTarget_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Boolean
+    Dim Actual As Boolean
+    TestArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    Expected = False
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.Some("wibble")
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Some")
+Private Sub Some_JaggedArrayContains_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Boolean
+    Dim Actual As Boolean
+    TestArray = Array(Array("Foo", "Bar"), Array("Fizz", "Buzz"))
+    Expected = True
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.Some("Buzz", Recurse:=True)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Some")
+Private Sub Some_EmptyInternal_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected As Boolean
+    Dim Actual As Boolean
+    Expected = False
+    
+    'Act:
+    Actual = SUT.Some("Foo")
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 '''''''''''''''''''''
 ' Method - Includes '
 '''''''''''''''''''''
