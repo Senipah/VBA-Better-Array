@@ -1,3 +1,2 @@
-e581f7f fix: resolve slice and locale parsing/format regressions
-1e0cbe0 fix: correct splice behavior and harden release automation
-8d02224 fix: release shield
+52f5199 fix: harden shuffle and transpose edge cases
+1cfdee0 fix: support multi-area ranges in FromExcelRange
