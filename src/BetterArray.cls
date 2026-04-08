@@ -1461,9 +1461,12 @@ Attribute CopyFromCollection.VB_Description = "Writes all of the elements in a C
     Set CopyFromCollection = Me
 End Function
 
-'@Description("Sorts the stored array in ascending order.")
-Public Function Sort(Optional ByVal SortColumn As Long = MISSING_LONG) As BetterArray
-Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
+'@Description("Sorts the stored array in ascending order by default.")
+Public Function Sort( _
+        Optional ByVal SortColumn As Long = MISSING_LONG, _
+        Optional ByVal Descending As Boolean _
+    ) As BetterArray
+Attribute Sort.VB_Description = "Sorts the stored array in ascending order by default."
     Dim LocalItems() As Variant
     Dim SortedItems() As Variant
     Dim LocalArrayType As ArrayTypes
@@ -1503,7 +1506,8 @@ Attribute Sort.VB_Description = "Sorts the stored array in ascending order."
             ApplySortMethod _
                 LocalItems, _
                 LocalArrayType, _
-                LocalSortColumn
+                LocalSortColumn, _
+                Descending
         End If
         SortedItems = LocalItems
     End If
@@ -3655,26 +3659,29 @@ End Function
 Private Sub ApplySortMethod( _
         ByRef SourceArray() As Variant, _
         ByVal LocalArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        Optional ByVal Col As Long, _
+        Optional ByVal Descending As Boolean _
     )
 Attribute ApplySortMethod.VB_Description = "Used to apply the correct specified sort algorithm."
     Select Case This.SortMethod
         Case SortMethods.SM_TIMSORT
-            TimSort SourceArray, LocalArrayType, Col
+            TimSort SourceArray, LocalArrayType, Col, Descending
         Case SortMethods.SM_QUICKSORT_RECURSIVE
             QuickSortRecursive _
                 SourceArray, _
                 LBound(SourceArray), _
                 UBound(SourceArray), _
                 LocalArrayType, _
-                Col
+                Col, _
+                Descending
         Case SortMethods.SM_QUICKSORT_ITERATIVE
             QuickSortIterative _
                 SourceArray, _
                 LBound(SourceArray), _
                 UBound(SourceArray), _
                 LocalArrayType, _
-                Col
+                Col, _
+                Descending
     End Select
 End Sub
 
@@ -3703,7 +3710,8 @@ Private Sub InsertionSort( _
     ByVal LeftIndex As Variant, _
     ByVal RightIndex As Variant, _
     ByVal LocalArrayType As ArrayTypes, _
-    Optional ByVal Col As Long _
+    Optional ByVal Col As Long, _
+    Optional ByVal Descending As Boolean _
 )
 Attribute InsertionSort.VB_Description = "Sorts the passed array in place using InsertionSort."
     Dim i As Long
@@ -3732,14 +3740,26 @@ Attribute InsertionSort.VB_Description = "Sorts the passed array in place using 
         Do While j >= LeftIndex
             LetOrSetElement Current, Source(j)
             CurrentCompval = GetComparisonItem(Source, j, Col, LocalArrayType)
-            If CurrentCompval > PivotCompVal Then
-                ' Shift the value one position to the left
-                ' and reposition `j` to point to the next element
-                ' (from right to left)
-                LetOrSetElement Source(j + 1), Current
-                dec j
+            If Descending Then
+                If CurrentCompval < PivotCompVal Then
+                    ' Shift the value one position to the left
+                    ' and reposition `j` to point to the next element
+                    ' (from right to left)
+                    LetOrSetElement Source(j + 1), Current
+                    dec j
+                Else
+                    Exit Do
+                End If
             Else
-                Exit Do
+                If CurrentCompval > PivotCompVal Then
+                    ' Shift the value one position to the left
+                    ' and reposition `j` to point to the next element
+                    ' (from right to left)
+                    LetOrSetElement Source(j + 1), Current
+                    dec j
+                Else
+                    Exit Do
+                End If
             End If
         Loop
     
@@ -3757,7 +3777,8 @@ Private Sub MergeSort( _
     ByVal MidIndex As Long, _
     ByVal EndIndex As Long, _
     ByVal LocalArrayType As ArrayTypes, _
-    Optional ByVal Col As Long _
+    Optional ByVal Col As Long, _
+    Optional ByVal Descending As Boolean _
 )
 Attribute MergeSort.VB_Description = "Sorts the passed array in place using MergeSort."
     ' Original array is broken in two parts
@@ -3799,12 +3820,22 @@ Attribute MergeSort.VB_Description = "Sorts the passed array in place using Merg
     Do While LowIndex < LowLength And HighIndex < HighLength
         LowItem = GetComparisonItem(LowPartition, LowIndex, Col, LocalArrayType)
         HighItem = GetComparisonItem(HighPartition, HighIndex, Col, LocalArrayType)
-        If LowItem <= HighItem Then
-            LetOrSetElement Source(i), LowPartition(LowIndex)
-            inc LowIndex
+        If Descending Then
+            If LowItem >= HighItem Then
+                LetOrSetElement Source(i), LowPartition(LowIndex)
+                inc LowIndex
+            Else
+                LetOrSetElement Source(i), HighPartition(HighIndex)
+                inc HighIndex
+            End If
         Else
-            LetOrSetElement Source(i), HighPartition(HighIndex)
-            inc HighIndex
+            If LowItem <= HighItem Then
+                LetOrSetElement Source(i), LowPartition(LowIndex)
+                inc LowIndex
+            Else
+                LetOrSetElement Source(i), HighPartition(HighIndex)
+                inc HighIndex
+            End If
         End If
         inc i
     Loop
@@ -3827,7 +3858,8 @@ End Sub
 Private Sub TimSort( _
     ByRef Source() As Variant, _
     ByVal LocalArrayType As ArrayTypes, _
-    Optional ByVal Col As Long _
+    Optional ByVal Col As Long, _
+    Optional ByVal Descending As Boolean _
 )
 Attribute TimSort.VB_Description = "Iterative Timsort"
     Const MIN_RUN As Long = 32
@@ -3836,7 +3868,7 @@ Attribute TimSort.VB_Description = "Iterative Timsort"
     SourceLength = GetArrayLength(Source)
     ' Sort individual subarrays of size RUN
     For i = LBound(Source) To UBound(Source) Step MIN_RUN
-        InsertionSort Source, i, Min((i + MIN_RUN - 1), UBound(Source)), LocalArrayType, Col
+        InsertionSort Source, i, Min((i + MIN_RUN - 1), UBound(Source)), LocalArrayType, Col, Descending
     Next
     
     ' Now you can start merging the sorted slices.
@@ -3865,7 +3897,7 @@ Attribute TimSort.VB_Description = "Iterative Timsort"
             ' The `left` array should go from `start` to
             ' `midpoint + 1`, while the `right` array should
             ' go from `midpoint + 1` to `end + 1`.
-            MergeSort Source, Start, Midpoint, Endpoint, LocalArrayType, Col
+            MergeSort Source, Start, Midpoint, Endpoint, LocalArrayType, Col, Descending
             inc Start, Size * 2
         Loop
         ' Each iteration should double the size of your arrays
@@ -3880,14 +3912,15 @@ Private Sub QuickSortRecursive( _
         ByVal Low As Long, _
         ByVal High As Long, _
         ByVal LocalArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        Optional ByVal Col As Long, _
+        Optional ByVal Descending As Boolean _
     )
 Attribute QuickSortRecursive.VB_Description = "Sorts in place a passed array using a Recursive implementation of the QuickSort algorithm."
     Dim PartitionIndex As Long
     If Low < High Then
-        PartitionIndex = QsPartition(SourceArray, Low, High, LocalArrayType, Col)
-        QuickSortRecursive SourceArray, Low, PartitionIndex - 1, LocalArrayType, Col
-        QuickSortRecursive SourceArray, PartitionIndex + 1, High, LocalArrayType, Col
+        PartitionIndex = QsPartition(SourceArray, Low, High, LocalArrayType, Col, Descending)
+        QuickSortRecursive SourceArray, Low, PartitionIndex - 1, LocalArrayType, Col, Descending
+        QuickSortRecursive SourceArray, PartitionIndex + 1, High, LocalArrayType, Col, Descending
     End If
 End Sub
 
@@ -3897,7 +3930,8 @@ Private Sub QuickSortIterative( _
         ByVal Low As Long, _
         ByVal High As Long, _
         ByVal LocalArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        Optional ByVal Col As Long, _
+        Optional ByVal Descending As Boolean _
     )
 Attribute QuickSortIterative.VB_Description = "Sorts in place a passed array using an Iterative implementation of the QuickSort algorithm"
     Dim PartitionIndex As Long
@@ -3926,7 +3960,7 @@ Attribute QuickSortIterative.VB_Description = "Sorts in place a passed array usi
         dec Top
         ' Set pivot element at its correct position
         ' in sorted array
-        PartitionIndex = QsPartition(SourceArray, LocalLow, LocalHigh, LocalArrayType, Col)
+        PartitionIndex = QsPartition(SourceArray, LocalLow, LocalHigh, LocalArrayType, Col, Descending)
         
         ' If there are elements on left side of pivot,
         ' then push left side to stack
@@ -3953,7 +3987,8 @@ Private Function QsPartition( _
         ByVal Low As Long, _
         ByVal High As Long, _
         ByVal LocalArrayType As ArrayTypes, _
-        Optional ByVal Col As Long _
+        Optional ByVal Col As Long, _
+        Optional ByVal Descending As Boolean _
     ) As Long
 Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the next partition index."
     Dim i As Long
@@ -3966,9 +4001,16 @@ Attribute QsPartition.VB_Description = "Child function of quickSort. Returns the
     i = Low - 1
     For j = Low To High - 1
         Current = GetComparisonItem(SourceArray, j, Col, LocalArrayType)
-        If Current <= Pivot Then
-            inc i
-            Swap SourceArray, i, j
+        If Descending Then
+            If Current >= Pivot Then
+                inc i
+                Swap SourceArray, i, j
+            End If
+        Else
+            If Current <= Pivot Then
+                inc i
+                Swap SourceArray, i, j
+            End If
         End If
     Next
     Swap SourceArray, i + 1, High

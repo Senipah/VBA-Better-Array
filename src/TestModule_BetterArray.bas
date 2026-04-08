@@ -3370,6 +3370,82 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayTimSortColumnDescending_ArrayIsSortedDescending()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    TestArray = Array( _
+        Array("b", 2), _
+        Array("a", 3), _
+        Array("c", 1) _
+    )
+    Expected = Array( _
+        Array("a", 3), _
+        Array("b", 2), _
+        Array("c", 1) _
+    )
+    SUT.Items = TestArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    Actual = SUT.Sort(2, True).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Sort")
+Private Sub Sort_JaggedArrayTimSortMixedDirectionStable_OrderPreserved()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    ReDim TestArray(1 To 6)
+    TestArray(1) = Array(2, 2, 10, "r1")
+    TestArray(2) = Array(1, 2, 10, "r2")
+    TestArray(3) = Array(1, 1, 10, "r3")
+    TestArray(4) = Array(2, 1, 10, "r4")
+    TestArray(5) = Array(1, 2, 20, "r5")
+    TestArray(6) = Array(2, 1, 20, "r6")
+
+    ReDim Expected(1 To 6)
+    Expected(1) = Array(1, 2, 20, "r5")
+    Expected(2) = Array(2, 1, 20, "r6")
+    Expected(3) = Array(1, 1, 10, "r3")
+    Expected(4) = Array(1, 2, 10, "r2")
+    Expected(5) = Array(2, 1, 10, "r4")
+    Expected(6) = Array(2, 2, 10, "r1")
+
+    SUT.Items = TestArray
+    SUT.SortMethod = SM_TIMSORT
+    'Act:
+    SUT.Sort 2
+    SUT.Sort 1
+    Actual = SUT.Sort(3, True).Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 
 '''''''''''''''''''''''
 ' Method - CopyWithin '

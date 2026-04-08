@@ -1,5 +1,3 @@
-37edaba feat: add support for filtering by column index
-0bc8a82 chore: ignore RD IIfSideEffect warning
-f84acec fix: use early binding for unit tests - dev wb
-e3d8bfe feat: add script for creation of dev wb frm src
-f2adaed fix: doc enum links
+e581f7f fix: resolve slice and locale parsing/format regressions
+1e0cbe0 fix: correct splice behavior and harden release automation
+8d02224 fix: release shield
