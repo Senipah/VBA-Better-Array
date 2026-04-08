@@ -7790,6 +7790,75 @@ End Sub
 '''''''''''''''''''
 
 '@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1Length3InsertNoDelete_PreservesTail()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim ActualResult() As Variant
+    Dim ExpectedResult() As Variant
+    
+    SUT.LowerBound = 1
+    SUT.Push "1", "2", "3"
+    
+    ReDim Expected(1 To 4)
+    Expected(1) = "1"
+    Expected(2) = vbNullString
+    Expected(3) = "2"
+    Expected(4) = "3"
+    ReDim ExpectedResult(0)
+    
+    'Act:
+    ActualResult = SUT.Splice(2, 0, vbNullString)
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+    Assert.AreEqual 4&, SUT.Length, "Actual length <> expected"
+    Assert.SequenceEquals ExpectedResult, ActualResult, "ActualResult <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1Length3InsertTwoNoDelete_PreservesTail()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim ActualResult() As Variant
+    Dim ExpectedResult() As Variant
+    
+    SUT.LowerBound = 1
+    SUT.Push "1", "2", "3"
+    
+    ReDim Expected(1 To 5)
+    Expected(1) = "1"
+    Expected(2) = "2"
+    Expected(3) = "A"
+    Expected(4) = "B"
+    Expected(5) = "3"
+    ReDim ExpectedResult(0)
+    
+    'Act:
+    ActualResult = SUT.Splice(3, 0, "A", "B")
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+    Assert.AreEqual 5&, SUT.Length, "Actual length <> expected"
+    Assert.SequenceEquals ExpectedResult, ActualResult, "ActualResult <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Splice")
 Private Sub Splice_OneDimArrayInsertAtIndex1_Success()
     On Error GoTo TestFail
     

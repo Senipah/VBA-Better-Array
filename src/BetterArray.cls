@@ -1142,36 +1142,43 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
     Dim ActualStart As Long
     Dim ActualDeleteCount As Long
     Dim ArgsCount As Long
-    Dim LocalLength As Long
+    Dim LogicalLength As Long
+    Dim EndExclusive As Long
+    Dim LocalLowerBound As Long
     Dim LocalArgs() As Variant
     Dim Result() As Variant
     Dim i As Long
     Dim TempArray() As Variant
     Dim ItemCount As Long
     Dim TempItems() As Variant
+    Dim FinalLength As Long
     
     LocalArgs = Args
     LocalItems = InternalItems
-    LocalLength = UBound(LocalItems) + 1
-    If StartIndex < LBound(LocalItems) Then
-        ActualStart = Max(LocalLength + StartIndex, LBound(LocalItems))
+    LocalLowerBound = LBound(LocalItems)
+    LogicalLength = This.Length
+    EndExclusive = LocalLowerBound + LogicalLength
+    
+    If StartIndex < LocalLowerBound Then
+        ActualStart = Max(EndExclusive + StartIndex, LocalLowerBound)
     Else
-        ActualStart = Min(StartIndex, LocalLength)
+        ActualStart = Min(StartIndex, EndExclusive)
     End If
+    
     ArgsCount = GetArrayLength(LocalArgs)
     If ArgsCount = 0 Then
         ' only a start index has been supplied
         ' we're gonna delete everything
         ItemCount = 0
-        ActualDeleteCount = LocalLength - ActualStart
+        ActualDeleteCount = EndExclusive - ActualStart
     Else
         ' first arg in args is delete count, second onwards are insertion items
         ItemCount = ArgsCount - 1
         'deleteCount is first element in args.
-        ActualDeleteCount = Min(Max(Args(LBound(Args)), 0), LocalLength - ActualStart)
+        ActualDeleteCount = Min(Max(LocalArgs(LBound(LocalArgs)), 0), EndExclusive - ActualStart)
     End If
     
-    If LocalLength + ItemCount - ActualDeleteCount > MAX_ARRAY_LENGTH Then
+    If LogicalLength + ItemCount - ActualDeleteCount > MAX_ARRAY_LENGTH Then
         RaiseError EC_EXCEEDS_MAX_ARRAY_LENGTH, "Splice"
         Exit Function
     End If
@@ -1198,17 +1205,17 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
             
     If ItemCount < ActualDeleteCount Then
         i = ActualStart
-        Do While i < (LocalLength - ActualDeleteCount)
+        Do While i < (EndExclusive - ActualDeleteCount)
             LetOrSetElement LocalItems(i + ItemCount), LocalItems(i + ActualDeleteCount)
             inc i
         Loop
         
         
-        i = LocalLength
+        i = EndExclusive
         Dim TempBetterArray As BetterArray
         Set TempBetterArray = New BetterArray
         TempBetterArray.Items = LocalItems
-        Do While i > (LocalLength - ActualDeleteCount + ItemCount)
+        Do While i > (EndExclusive - ActualDeleteCount + ItemCount)
             TempBetterArray.Remove (i - 1)
             ' Perform ? DeletePropertyOrThrow(O, ! ToString(k - 1)).
             dec i
@@ -1216,9 +1223,9 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         LocalItems = TempBetterArray.Items
         Set TempBetterArray = Nothing
     ElseIf ItemCount > ActualDeleteCount Then
-        i = (LocalLength - ActualDeleteCount)
+        i = (EndExclusive - ActualDeleteCount)
         TempArray = LocalItems
-        ReDim Preserve TempArray(This.LowerBound To i + ItemCount - 1) As Variant
+        ReDim Preserve TempArray(LocalLowerBound To i + ItemCount - 1) As Variant
         Do While i > ActualStart
             LetOrSetElement TempArray(i + ItemCount - 1), LocalItems(i + ActualDeleteCount - 1)
             dec i
@@ -1230,12 +1237,14 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         i = ActualStart
         Dim j As Long
         For j = LBound(TempItems) To UBound(TempItems)
-            LocalItems(i) = TempItems(j)
+            LetOrSetElement LocalItems(i), TempItems(j)
             inc i
         Next
     End If
     
     InternalItems = LocalItems
+    FinalLength = LogicalLength - ActualDeleteCount + ItemCount
+    This.Length = FinalLength
     
     Splice = Result
 End Function

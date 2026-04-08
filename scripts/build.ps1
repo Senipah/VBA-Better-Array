@@ -26,6 +26,19 @@ $projectRoot = (Get-Item $PSScriptRoot).Parent
 $src = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "src")
 $releases = Get-Item (Join-Path -Path $projectRoot.FullName -ChildPath "releases")
 $latest = Get-Item (Join-Path -Path $releases.FullName -ChildPath "latest")
+
+$releaseFileList = @($standaloneList) + $withTestsList | Select-Object -Unique
+$missingSourceFiles = @()
+foreach ($sourceFile in $releaseFileList) {
+    $sourcePath = Join-Path -Path $src.FullName -ChildPath $sourceFile
+    if (-not (Test-Path -Path $sourcePath -PathType Leaf)) {
+        $missingSourceFiles += $sourcePath
+    }
+}
+if ($missingSourceFiles.Count -gt 0) {
+    throw "Expected release source files were not found:`n$($missingSourceFiles -join "`n")"
+}
+
 $temp = New-Item -ItemType Directory -Force -Path (Join-Path -Path $releases.FullName -ChildPath "temp")
 Set-Location $projectRoot.FullName
 $lastTag = git describe --tags --abbrev=0

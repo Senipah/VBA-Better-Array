@@ -1,10 +1,13 @@
+name: Create Release
+
 on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Create Release
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -12,36 +15,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v4
+
+      - name: Validate release artifacts
+        shell: bash
+        run: |
+          required_files=(
+            "./releases/latest/Standalone.Zip"
+            "./releases/latest/WithTests.Zip"
+            "./releases/latest/changelog.txt"
+          )
+          for file in "${required_files[@]}"; do
+            if [[ ! -f "$file" ]]; then
+              echo "::error file=$file::Missing required release artifact."
+              exit 1
+            fi
+          done
+
+      - name: Create release and upload assets
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: true
           prerelease: false
-      - name: Upload standalone
-        id: upload-standalone 
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./releases/latest/Standalone.Zip
-          asset_name: Standalone.zip
-          asset_content_type: application/zip
-      - name: Upload With Tests
-        id: upload-with-tests 
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./releases/latest/WithTests.Zip
-          asset_name: WithTests.Zip
-          asset_content_type: application/zip
+          files: |
+            releases/latest/Standalone.Zip
+            releases/latest/WithTests.Zip
+            releases/latest/changelog.txt
 
 
