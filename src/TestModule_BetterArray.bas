@@ -7325,6 +7325,56 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected As Long
+    Dim Actual As Long
+    Dim TestArray() As Variant
+    
+    SUT.LowerBound = 10
+    TestArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    SUT.Items = TestArray
+    Expected = 10
+    
+    'Act:
+    Actual = SUT.IndexOf("Foo", 0)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_IndexOf")
+Private Sub IndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected As Long
+    Dim Actual As Long
+    Dim TestArray() As Variant
+    
+    SUT.LowerBound = 1
+    TestArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    SUT.Items = TestArray
+    Expected = 4
+    
+    'Act:
+    Actual = SUT.IndexOf("Buzz", -1)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 ''''''''''''''''''''''
 ' Method - Unique '
 ''''''''''''''''''''''
@@ -8371,6 +8421,56 @@ Private Sub LastIndexOf_JaggedArray_ReturnsCorrectIndex()
     'Act:
     Actual = SUT.LastIndexOf(TestArray(Expected))
 
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected As Long
+    Dim Actual As Long
+    Dim TestArray() As Variant
+    
+    SUT.LowerBound = 10
+    TestArray = Array("Foo", "Bar", "Foo", "Buzz")
+    SUT.Items = TestArray
+    Expected = 10
+    
+    'Act:
+    Actual = SUT.LastIndexOf("Foo", 0)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_LastIndexOf")
+Private Sub LastIndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected As Long
+    Dim Actual As Long
+    Dim TestArray() As Variant
+    
+    SUT.LowerBound = 1
+    TestArray = Array("Foo", "Bar", "Fizz", "Buzz")
+    SUT.Items = TestArray
+    Expected = 4
+    
+    'Act:
+    Actual = SUT.LastIndexOf("Buzz", -1)
+    
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual <> expected"
 TestExit:

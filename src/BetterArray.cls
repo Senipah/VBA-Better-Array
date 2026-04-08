@@ -1064,7 +1064,6 @@ Public Function IndexOf( _
     ) As Long
 Attribute IndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
     Dim LocalItems() As Variant
-    Dim RelativeStart As Long
     Dim CurrentIndex As Long
     
     If CompType = CT_LIKENESS Then
@@ -1079,26 +1078,7 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     End If
 
     LocalItems = InternalItems
-
-    If FromIndex = MISSING_LONG Then
-        RelativeStart = LBound(LocalItems)
-    Else
-        RelativeStart = FromIndex
-    End If
-    
-    If RelativeStart >= LBound(LocalItems) Then
-        CurrentIndex = RelativeStart
-    Else
-        If RelativeStart > 0 Then
-            CurrentIndex = LBound(LocalItems)
-        Else
-            CurrentIndex = UBound(LocalItems) + RelativeStart
-        End If
-        
-        If CurrentIndex < LBound(LocalItems) Then
-            CurrentIndex = LBound(LocalItems)
-        End If
-    End If
+    CurrentIndex = NormalizeFromIndex(FromIndex, This.Length, LBound(LocalItems))
     
     Dim IsMatch As Boolean
     Do While CurrentIndex <= UBound(LocalItems)
@@ -1144,12 +1124,10 @@ Attribute LastIndexOf.VB_Description = "returns the first index at which a given
     If FromIndex = MISSING_LONG Then
         CurrentIndex = UBound(LocalItems)
     Else
-        If FromIndex >= LBound(LocalItems) Then
-            CurrentIndex = Min(FromIndex, UBound(LocalItems))
-        ElseIf FromIndex < 0 Then
-            CurrentIndex = UBound(LocalItems) + FromIndex
+        CurrentIndex = NormalizeFromIndex(FromIndex, This.Length, LBound(LocalItems))
+        If CurrentIndex > UBound(LocalItems) Then
+            CurrentIndex = UBound(LocalItems)
         End If
-        
     End If
     
     Dim IsMatch As Boolean
