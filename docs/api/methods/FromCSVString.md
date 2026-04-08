@@ -10,7 +10,7 @@ grand_parent: API
 
 The `FromCSVString()` method accepts a string argument representing the content of a comma-separated values (CSV) file and stores the delimited values contained within to the internal array. Fields that contain a special character (comma, CR\*, LF\*, or double quote\*), and are "escaped" by enclosing them in double quotes (Hex 22) are correctly handled as per the [RFC 4180](https://tools.ietf.org/html/rfc4180#page-2) specification.
 
-Behaves the same as the `FromCSVString` method.
+Behaves the same as the `FromCSVFile` method, except the source is provided directly as a string.
 
 Also see ws-garcia's [VBA-CSV-interface](https://github.com/ws-garcia/VBA-CSV-interface) library if higher performance is required.
 
@@ -31,6 +31,7 @@ Necessity
 
 Description
 : A string argument representing the content of a comma-separated values (CSV) file.
+Passing an empty string raises error code `EC_NULL_STRING`.
 
 ---
 
@@ -72,7 +73,7 @@ Necessity
 : Optional
 
 Description
-: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used indicate the opening and closing of an escape sqeuence.
+: The character(s) used to escape characters within cells of the CSV file. If omitted, the character `"` (double quote) is used to indicate the opening and closing of an escape sequence.
 
 ---
 

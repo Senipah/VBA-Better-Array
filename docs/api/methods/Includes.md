@@ -11,7 +11,7 @@ The `Includes()` method determines whether the array includes a certain value am
 
 ## Syntax
 
-*expression*.**Includes**(*SearchElement*, [*FromIndex*])
+*expression*.**Includes**(*SearchElement*, [*FromIndex*], [*Recurse*])
 
 ### Parameters
 
@@ -44,7 +44,7 @@ Description
 ---
 
 Name
-: `recurse`
+: `Recurse`
 
 Type
 : `Boolean`
