@@ -8519,6 +8519,40 @@ TestFail:
 End Sub
 
 
+'@TestMethod("BetterArray_Splice")
+Private Sub Splice_OneDimArrayBase1SmallArrayDeleteTail_Success()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    Dim TestArray() As Variant
+    Dim ActualResult() As Variant
+    Dim ExpectedResult() As Variant
+    
+    SUT.LowerBound = 1
+    ReDim Expected(1 To 1)
+    Expected(1) = "Banana"
+    
+    TestArray = Array("Banana", "Orange", "Apple")
+    SUT.Items = TestArray
+    ExpectedResult = Array("Orange", "Apple")
+    
+    'Act:
+    ActualResult = SUT.Splice(2, 2)
+    Actual = SUT.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+    Assert.SequenceEquals ExpectedResult, ActualResult, "ActualResult <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+
 ''''''''''''''''''''''''''
 ' Method - FromCSVString '
 ''''''''''''''''''''''''''
@@ -8642,6 +8676,30 @@ TestExit:
     Exit Sub
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_FromCSVString")
+Private Sub FromCSVString_EmptyString_RaisesNullStringError()
+    Const ExpectedError As Long = ErrorCodes.EC_NULL_STRING
+    On Error GoTo TestFail
+
+    'Arrange:
+    '@Ignore VariableNotUsed
+    Dim Actual() As Variant
+
+    'Act:
+    Actual = SUT.FromCSVString(vbNullString).Items
+Assert:
+    Assert.Fail "Expected error was not raised"
+
+TestExit:
+    Exit Sub
+TestFail:
+    If Err.Number = ExpectedError Then
+        Resume TestExit
+    Else
+        Resume Assert
+    End If
 End Sub
 
 '''''''''''''''

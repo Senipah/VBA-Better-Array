@@ -1231,10 +1231,10 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
     Dim LocalArgs() As Variant
     Dim Result() As Variant
     Dim i As Long
-    Dim TempArray() As Variant
     Dim ItemCount As Long
     Dim TempItems() As Variant
     Dim FinalLength As Long
+    Dim NewUpperBound As Long
     
     LocalArgs = Args
     LocalItems = InternalItems
@@ -1265,6 +1265,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         RaiseError EC_EXCEEDS_MAX_ARRAY_LENGTH, "Splice"
         Exit Function
     End If
+    FinalLength = LogicalLength - ActualDeleteCount + ItemCount
 
     ' get items to be deleted for return val
     If ActualDeleteCount > 0 Then
@@ -1292,28 +1293,21 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
             LetOrSetElement LocalItems(i + ItemCount), LocalItems(i + ActualDeleteCount)
             inc i
         Loop
-        
-        
-        i = EndExclusive
-        Dim TempBetterArray As BetterArray
-        Set TempBetterArray = New BetterArray
-        TempBetterArray.Items = LocalItems
-        Do While i > (EndExclusive - ActualDeleteCount + ItemCount)
-            TempBetterArray.Remove (i - 1)
-            ' Perform ? DeletePropertyOrThrow(O, ! ToString(k - 1)).
-            dec i
-        Loop
-        LocalItems = TempBetterArray.Items
-        Set TempBetterArray = Nothing
+
+        If FinalLength > 0 Then
+            NewUpperBound = LocalLowerBound + FinalLength - 1
+            ReDim Preserve LocalItems(LocalLowerBound To NewUpperBound)
+        Else
+            LocalItems = GetEmptyArray
+        End If
     ElseIf ItemCount > ActualDeleteCount Then
         i = (EndExclusive - ActualDeleteCount)
-        TempArray = LocalItems
-        ReDim Preserve TempArray(LocalLowerBound To i + ItemCount - 1) As Variant
+        NewUpperBound = LocalLowerBound + FinalLength - 1
+        ReDim Preserve LocalItems(LocalLowerBound To NewUpperBound)
         Do While i > ActualStart
-            LetOrSetElement TempArray(i + ItemCount - 1), LocalItems(i + ActualDeleteCount - 1)
+            LetOrSetElement LocalItems(i + ItemCount - 1), LocalItems(i + ActualDeleteCount - 1)
             dec i
         Loop
-        LocalItems = TempArray
     End If
     
     If ItemCount > 0 Then
@@ -1326,7 +1320,6 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
     End If
     
     InternalItems = LocalItems
-    FinalLength = LogicalLength - ActualDeleteCount + ItemCount
     This.Length = FinalLength
     
     Splice = Result
@@ -2756,10 +2749,11 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     RowDelim = StringFactory(RowDelimiter)
     LiteralDelim = StringFactory(Quote)
     
-    If Expr.ByteLength = 0 Or RowDelim.ByteLength = 0 Then
-        ' TODO: Raise Err?
-        ParseCSV = Array()
-        Exit Function
+    If Expr.ByteLength = 0 Then
+        RaiseError EC_NULL_STRING, "ParseCSV", "Expression"
+    End If
+    If RowDelim.ByteLength = 0 Then
+        RaiseError EC_NULL_STRING, "ParseCSV", "RowDelimiter"
     End If
 
     CSVRows = GetCSVRows(Expr, RowDelim, LiteralDelim)
