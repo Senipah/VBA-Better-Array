@@ -1098,19 +1098,19 @@ Attribute IndexOf.VB_Description = "returns the first index at which a given ele
     IndexOf = MISSING_LONG
 End Function
 
-'@Description("returns the first index at which a given element can be found in the array")
+'@Description("returns the last index at which a given element can be found in the array")
 Public Function LastIndexOf( _
         ByVal SearchElement As Variant, _
         Optional ByVal FromIndex As Long = MISSING_LONG, _
         Optional ByVal CompType As ComparisonType _
     ) As Long
-Attribute LastIndexOf.VB_Description = "returns the first index at which a given element can be found in the array"
+Attribute LastIndexOf.VB_Description = "returns the last index at which a given element can be found in the array"
     Dim LocalItems() As Variant
     Dim CurrentIndex As Long
     
     If CompType = CT_LIKENESS Then
         If TypeName(SearchElement) <> "String" Then
-            RaiseError EC_STRING_TYPE_EXPECTED, "IndexOf", "searchElement"
+            RaiseError EC_STRING_TYPE_EXPECTED, "LastIndexOf", "searchElement"
         End If
     End If
     
