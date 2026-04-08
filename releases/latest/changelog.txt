@@ -1,2 +1,2 @@
-52f5199 fix: harden shuffle and transpose edge cases
-1cfdee0 fix: support multi-area ranges in FromExcelRange
+cc5f2e3 feat: add At and Some parity methods with regression tests
+9329066 fix: harden ParseCSV empty-input handling and streamline splice shrink path
