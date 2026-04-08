@@ -8336,7 +8336,7 @@ Private Sub LastIndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex
     SUT.Items = TestArray
     
     'Act:
-    Actual = SUT.IndexOf(Pattern, , CT_LIKENESS)
+    Actual = SUT.LastIndexOf(Pattern, , CT_LIKENESS)
     
     'Assert:
     Assert.AreEqual Expected, Actual, "Actual <> expected"
@@ -8365,7 +8365,7 @@ Private Sub LastIndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
     SUT.Items = TestArray
     
     'Act:
-    Actual = SUT.IndexOf(Pattern, , CT_LIKENESS)
+    Actual = SUT.LastIndexOf(Pattern, , CT_LIKENESS)
 Assert:
     Assert.Fail "Expected error was not raised"
 
