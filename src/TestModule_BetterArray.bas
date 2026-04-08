@@ -5588,6 +5588,35 @@ TestFail:
 End Sub
 
 '@TestMethod("BetterArray_Shuffle")
+Private Sub Shuffle_OneDimArrayNegativeBase_PreservesValues()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim ExpectedSorted() As Variant
+    Dim ActualShuffled() As Variant
+    Dim ActualSorted() As Variant
+
+    Gen.LowerBound = -10
+    TestArray = Gen.GetArray(AG_DOUBLE)
+    SUT.Items = TestArray
+    ExpectedSorted = SUT.Sort.Items
+
+    SUT.Items = TestArray
+    'Act:
+    ActualShuffled = SUT.Shuffle.Items
+    SUT.Items = ActualShuffled
+    ActualSorted = SUT.Sort.Items
+
+    'Assert:
+    Assert.SequenceEquals ExpectedSorted, ActualSorted, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Shuffle")
 Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
@@ -6812,6 +6841,41 @@ Private Sub Transpose_JaggedArray_ArrayTransposed()
     
     'Assert:
     Assert.IsTrue SequenceEquals_JaggedArray(Expected, Actual), "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Transpose")
+Private Sub Transpose_JaggedArraySingleOuterColumn_ArrayTransposed()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Nested() As Variant
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+
+    ReDim TestArray(1 To 1)
+    ReDim Nested(1 To 3)
+    Nested(1) = "A"
+    Nested(2) = "B"
+    Nested(3) = "C"
+    TestArray(1) = Nested
+
+    ReDim Expected(1 To 3)
+    Expected(1) = "A"
+    Expected(2) = "B"
+    Expected(3) = "C"
+
+    SUT.Items = TestArray
+
+    'Act:
+    Actual = SUT.Transpose.Items
+
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
 TestExit:
     Exit Sub
 TestFail:

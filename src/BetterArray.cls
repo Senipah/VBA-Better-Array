@@ -26,6 +26,8 @@ Private Const OBJECT_REPR As String = "OBJECT"
 Private Const MISSING_LONG As Long = -9999
 Private Const CHR_QUOTE As String = """"
 Private Const CHR_COMMA As String = ","
+Private Const XL_TO_LEFT As Long = -4159
+Private Const XL_UP As Long = -4162
 
 Public Enum ArrayTypes
     BA_UNDEFINED
@@ -716,11 +718,11 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
         
         With FromRange.Parent
             If DetectLastColumn Then
-                EndColumn = .Cells.Item(StartRow, .Columns.Count).End(xlToLeft).Column
+                EndColumn = .Cells.Item(StartRow, .Columns.Count).End(XL_TO_LEFT).Column
             End If
             
             If DetectLastRow Then
-                EndRow = .Cells.Item(.Rows.Count, StartColumn).End(xlUp).Row
+                EndRow = .Cells.Item(.Rows.Count, StartColumn).End(XL_UP).Row
             End If
             
             Me.Items = .Range(.Cells(StartRow, StartColumn), .Cells(EndRow, EndColumn)).Value
@@ -786,11 +788,11 @@ Attribute GetEffectiveRange.VB_Description = "Returns the effective range after 
 
     With SourceRange.Parent
         If DetectLastColumn Then
-            EndColumn = .Cells.Item(StartRow, .Columns.Count).End(xlToLeft).Column
+            EndColumn = .Cells.Item(StartRow, .Columns.Count).End(XL_TO_LEFT).Column
         End If
 
         If DetectLastRow Then
-            EndRow = .Cells.Item(.Rows.Count, StartColumn).End(xlUp).Row
+            EndRow = .Cells.Item(.Rows.Count, StartColumn).End(XL_UP).Row
         End If
 
         Set GetEffectiveRange = .Range(.Cells(StartRow, StartColumn), .Cells(EndRow, EndColumn))
@@ -2907,7 +2909,7 @@ Attribute RecursiveShuffle.VB_Description = "shuffles the order of the passed ar
             Nested = SourceArray(i)
             SourceArray(i) = RecursiveShuffle(Nested, Recurse)
         End If
-        j = Int(Rnd * (i - Lower) + 1)
+        j = Int(Rnd * (i - Lower + 1)) + Lower
         If IsArray(SourceArray(j)) And Recurse Then
             Nested = SourceArray(j)
             SourceArray(j) = RecursiveShuffle(Nested, Recurse)
@@ -3716,7 +3718,7 @@ Attribute TransposeArrayOfArrays.VB_Description = "Transposes the values in a ja
     ElseIf LowerBoundCol = UpperBoundCol Then
         ReDim Result(LowerBoundRow To UpperBoundRow)
         CurrentColumn = LowerBoundCol
-        For CurrentRow = UpperBoundRow To UpperBoundRow
+        For CurrentRow = LowerBoundRow To UpperBoundRow
             Result(CurrentRow) = SourceArray(CurrentColumn)(CurrentRow)
         Next
     Else
