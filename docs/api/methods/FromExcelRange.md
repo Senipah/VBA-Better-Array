@@ -12,6 +12,8 @@ The `FromExcelRange()` method accepts an Excel Range object as an argument and s
 
 If the Range contains both multiple Rows and Columns the default behaviour is that the array returned by accessing the `Items` get accessor will be returned as a multi-dimension array.
 
+If `FromRange` contains multiple non-contiguous areas, each row from each area is appended in area order and returned as a jagged array.
+
 If `DetectLastColumn` is set to true, the range will be expanded along the first row of the `FromRange` until the last column containing data is found. If `DetectLastRow` is set to true, the range will be expanded down the first column of the `FromRange` until the last row containing data is found.
 
 For example, assume you have a table of data starting at "A2" of a worksheet with 100 rows and 50 columns of data. Supplying the argument:

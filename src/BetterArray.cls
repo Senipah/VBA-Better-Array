@@ -696,11 +696,17 @@ Public Function FromExcelRange( _
 Attribute FromExcelRange.VB_Description = "Stores the values contained in an Excel range in the internal array"
 
     If TypeName(FromRange) = "Range" Then
+        If FromRange.Areas.Count > 1 Then
+            Me.Items = ReadMultiAreaRange(FromRange, DetectLastRow, DetectLastColumn)
+            Set FromExcelRange = Me
+            Exit Function
+        End If
+
         Dim StartColumn As Long
         Dim EndColumn As Long
         Dim StartRow As Long
         Dim EndRow As Long
-        
+
         With FromRange
             StartColumn = .Column
             StartRow = .Row
@@ -732,6 +738,85 @@ Attribute FromExcelRange.VB_Description = "Stores the values contained in an Exc
     End If
     
     Set FromExcelRange = Me
+End Function
+
+'@Description("Reads a multi-area excel range and returns its rows as a jagged array.")
+Private Function ReadMultiAreaRange( _
+        ByRef SourceRange As Object, _
+        ByVal DetectLastRow As Boolean, _
+        ByVal DetectLastColumn As Boolean _
+    ) As Variant()
+Attribute ReadMultiAreaRange.VB_Description = "Reads a multi-area excel range and returns its rows as a jagged array."
+    Dim CurrentArea As Object
+    Dim CurrentRow As Object
+    Dim AreaRange As Object
+    Dim Result As BetterArray
+
+    Set Result = New BetterArray
+    Result.LowerBound = 1
+
+    For Each CurrentArea In SourceRange.Areas
+        Set AreaRange = GetEffectiveRange(CurrentArea, DetectLastRow, DetectLastColumn)
+        For Each CurrentRow In AreaRange.Rows
+            Result.Push ExcelRangeRowToArray(CurrentRow)
+        Next
+    Next
+
+    ReadMultiAreaRange = Result.Items
+End Function
+
+'@Description("Returns the effective range after applying detect-last-row/column options.")
+Private Function GetEffectiveRange( _
+        ByRef SourceRange As Object, _
+        ByVal DetectLastRow As Boolean, _
+        ByVal DetectLastColumn As Boolean _
+    ) As Object
+Attribute GetEffectiveRange.VB_Description = "Returns the effective range after applying detect-last-row/column options."
+    Dim StartColumn As Long
+    Dim EndColumn As Long
+    Dim StartRow As Long
+    Dim EndRow As Long
+
+    With SourceRange
+        StartColumn = .Column
+        StartRow = .Row
+        EndColumn = .Column + .Columns.Count - 1
+        EndRow = .Row + .Rows.Count - 1
+    End With
+
+    With SourceRange.Parent
+        If DetectLastColumn Then
+            EndColumn = .Cells.Item(StartRow, .Columns.Count).End(xlToLeft).Column
+        End If
+
+        If DetectLastRow Then
+            EndRow = .Cells.Item(.Rows.Count, StartColumn).End(xlUp).Row
+        End If
+
+        Set GetEffectiveRange = .Range(.Cells(StartRow, StartColumn), .Cells(EndRow, EndColumn))
+    End With
+End Function
+
+'@Description("Converts a single excel row range to a one-dimensional array.")
+Private Function ExcelRangeRowToArray(ByRef SourceRow As Object) As Variant()
+Attribute ExcelRangeRowToArray.VB_Description = "Converts a single excel row range to a one-dimensional array."
+    Dim Result() As Variant
+    Dim RowValues As Variant
+    Dim i As Long
+    Dim LastColumn As Long
+
+    LastColumn = SourceRow.Columns.Count
+    ReDim Result(1 To LastColumn)
+    If LastColumn = 1 Then
+        LetOrSetElement Result(1), SourceRow.Value
+    Else
+        RowValues = SourceRow.Value
+        For i = 1 To LastColumn
+            LetOrSetElement Result(i), RowValues(1, i)
+        Next
+    End If
+
+    ExcelRangeRowToArray = Result
 End Function
 
 '@Description("Extracts the segment of the array located at the specified indices.")

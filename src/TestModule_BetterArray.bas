@@ -5821,6 +5821,70 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_FromExcelRange")
+Private Sub FromExcelRange_MultiAreaRange_Success()
+    On Error GoTo TestFail
+
+    'Arrange:
+    Dim ExcelApp As ExcelProvider
+    Set ExcelApp = New ExcelProvider
+
+    Dim TopLeft(1 To 2, 1 To 2) As Variant
+    TopLeft(1, 1) = "A"
+    TopLeft(1, 2) = "B"
+    TopLeft(2, 1) = "C"
+    TopLeft(2, 2) = "D"
+    ExcelApp.CurrentWorksheet.Range("A1:B2").Value = TopLeft
+    ExcelApp.CurrentWorksheet.Range("A3").Value = "E"
+
+    Dim Bottom(1 To 1, 1 To 3) As Variant
+    Bottom(1, 1) = "F"
+    Bottom(1, 2) = "G"
+    Bottom(1, 3) = "H"
+    ExcelApp.CurrentWorksheet.Range("B5:D5").Value = Bottom
+
+    Dim Expected() As Variant
+    ReDim Expected(1 To 4)
+
+    Dim RowValues() As Variant
+    ReDim RowValues(1 To 2)
+    RowValues(1) = "A"
+    RowValues(2) = "B"
+    Expected(1) = RowValues
+
+    ReDim RowValues(1 To 2)
+    RowValues(1) = "C"
+    RowValues(2) = "D"
+    Expected(2) = RowValues
+
+    ReDim RowValues(1 To 1)
+    RowValues(1) = "E"
+    Expected(3) = RowValues
+
+    ReDim RowValues(1 To 3)
+    RowValues(1) = "F"
+    RowValues(2) = "G"
+    RowValues(3) = "H"
+    Expected(4) = RowValues
+
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+
+    'Act:
+    SUT.FromExcelRange ExcelApp.CurrentWorksheet.Range("A1:B2, A3, B5:D5")
+    Actual = SUT.Items
+    TestResult = SequenceEquals_JaggedArray(Expected, Actual)
+
+    'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Debug.Print EXCEL_DEPENDENCY_WARNING
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 
 '''''''''''''''''''''''''
 ' Method - ToExcelRange '
