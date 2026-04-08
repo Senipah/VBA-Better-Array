@@ -177,7 +177,7 @@ End Property
 Public Property Get Item(ByVal Index As Long) As Variant
 Attribute Item.VB_Description = "Returns the element in the array stored at the specified index."
 Attribute Item.VB_UserMemId = 0
-    If Index <= This.Length Then
+    If Index >= This.LowerBound And Index <= Me.UpperBound Then
         ' not using letOrSetElement here as it might try to access the Items letter
         If IsObject(This.Items(Index)) Then
             Set Item = This.Items(Index)
@@ -518,14 +518,8 @@ Attribute Includes.VB_Description = "Determines whether the array includes a cer
         Includes = False
         Exit Function
     End If
-        
-    If FromIndex > This.LowerBound Then
-        CurrentIndex = FromIndex
-    ElseIf FromIndex = MISSING_LONG Then
-        CurrentIndex = This.LowerBound
-    Else
-        CurrentIndex = LocalLength + FromIndex
-    End If
+
+    CurrentIndex = NormalizeFromIndex(FromIndex, LocalLength, This.LowerBound)
     
     Includes = RecursiveIncludes(SearchElement, SearchArray, CurrentIndex, Recurse:=Recurse)
 End Function
@@ -548,14 +542,8 @@ Attribute IncludesType.VB_Description = "Determines whether the type of any of t
         IncludesType = False
         Exit Function
     End If
-        
-    If FromIndex > This.LowerBound Then
-        CurrentIndex = FromIndex
-    ElseIf FromIndex = MISSING_LONG Then
-        CurrentIndex = This.LowerBound
-    Else
-        CurrentIndex = LocalLength + FromIndex
-    End If
+
+    CurrentIndex = NormalizeFromIndex(FromIndex, LocalLength, This.LowerBound)
     
     IncludesType = RecursiveIncludes(SearchTypeName, SearchArray, CurrentIndex, True, Recurse)
 End Function
@@ -578,14 +566,8 @@ Attribute Every.VB_Description = "Determines whether all elements in the array m
         Every = False
         Exit Function
     End If
-        
-    If FromIndex > This.LowerBound Then
-        CurrentIndex = FromIndex
-    ElseIf FromIndex = MISSING_LONG Then
-        CurrentIndex = This.LowerBound
-    Else
-        CurrentIndex = LocalLength + FromIndex
-    End If
+
+    CurrentIndex = NormalizeFromIndex(FromIndex, LocalLength, This.LowerBound)
     
     Every = RecursiveEvery(SearchElement, SearchArray, CurrentIndex)
 End Function
@@ -608,14 +590,8 @@ Attribute EveryType.VB_Description = "Determines whether the type of all element
         EveryType = False
         Exit Function
     End If
-        
-    If FromIndex > This.LowerBound Then
-        CurrentIndex = FromIndex
-    ElseIf FromIndex = MISSING_LONG Then
-        CurrentIndex = This.LowerBound
-    Else
-        CurrentIndex = LocalLength + FromIndex
-    End If
+
+    CurrentIndex = NormalizeFromIndex(FromIndex, LocalLength, This.LowerBound)
     
     EveryType = RecursiveEvery(SearchTypeName, SearchArray, CurrentIndex, True)
     
@@ -2917,6 +2893,27 @@ Attribute RecursiveEvery.VB_Description = "Recursively checks if the passed arra
     Next
     
     RecursiveEvery = True
+End Function
+
+'@Description("Normalizes a from-index argument to an absolute lower-bound-aware index.")
+Private Function NormalizeFromIndex( _
+        ByVal SourceFromIndex As Long, _
+        ByVal LocalLength As Long, _
+        ByVal LocalLowerBound As Long _
+    ) As Long
+Attribute NormalizeFromIndex.VB_Description = "Normalizes a from-index argument to an absolute lower-bound-aware index."
+    If SourceFromIndex = MISSING_LONG Then
+        NormalizeFromIndex = LocalLowerBound
+    ElseIf SourceFromIndex >= LocalLowerBound Then
+        NormalizeFromIndex = SourceFromIndex
+    ElseIf SourceFromIndex < 0 Then
+        NormalizeFromIndex = LocalLowerBound + LocalLength + SourceFromIndex
+        If NormalizeFromIndex < LocalLowerBound Then
+            NormalizeFromIndex = LocalLowerBound
+        End If
+    Else
+        NormalizeFromIndex = LocalLowerBound
+    End If
 End Function
 
 '@Description("shuffles the order of the passed array.")
