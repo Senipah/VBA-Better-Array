@@ -5229,6 +5229,55 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_Slice")
+Private Sub Slice_OneDimArrayBase1StartOverEnd_ReturnsEmpty()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    
+    SUT.LowerBound = 1
+    SUT.Items = Array(1, 2, 3)
+    
+    'Act:
+    Actual = SUT.Slice(4)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_Slice")
+Private Sub Slice_OneDimArrayBase1StartBeforeLowerBound_ReturnsCopy()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Expected() As Variant
+    Dim Actual() As Variant
+    
+    SUT.LowerBound = 1
+    SUT.Items = Array(1, 2, 3)
+    
+    ReDim Expected(1 To 3)
+    Expected(1) = 1
+    Expected(2) = 2
+    Expected(3) = 3
+    
+    'Act:
+    Actual = SUT.Slice(0)
+    
+    'Assert:
+    Assert.SequenceEquals Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 ''''''''''''''''''''
 ' Method - Reverse '
 ''''''''''''''''''''
@@ -5914,6 +5963,29 @@ Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
     TestResult = SequenceEquals_JaggedArray(Expected, Actual)
     
     'Assert:
+    Assert.IsTrue TestResult, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_ParseFromString")
+Private Sub ParseFromString_OneDimensionInvariantDotDecimals_ReturnsDoubles()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Const SourceString As String = "{252.002128362656,47.45,31.79}"
+    Dim Actual() As Variant
+    Dim TestResult As Boolean
+    
+    'Act:
+    Actual = SUT.ParseFromString(SourceString).Items
+    
+    'Assert:
+    TestResult = ElementsAreEqual(CDbl(252.002128362656#), Actual(0)) _
+              And ElementsAreEqual(CDbl(47.45), Actual(1)) _
+              And ElementsAreEqual(CDbl(31.79), Actual(2))
     Assert.IsTrue TestResult, "Actual <> expected"
 TestExit:
     Exit Sub

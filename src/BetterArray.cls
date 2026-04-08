@@ -639,8 +639,8 @@ Public Function Slice( _
     ) As Variant()
 Attribute Slice.VB_Description = "Returns a new array containing the portion of the stored array between the StartIndex and EndIndex"
     Dim LocalLength As Long
-    Dim RelativeStart As Long
-    Dim RelativeEnd As Long
+    Dim LocalLowerBound As Long
+    Dim EndExclusive As Long
     Dim OldIndex As Long
     Dim Final As Long
     Dim Count As Long
@@ -650,31 +650,27 @@ Attribute Slice.VB_Description = "Returns a new array containing the portion of 
     
     LocalItems = InternalItems
     LocalLength = This.Length
-    RelativeStart = StartIndex
-    If RelativeStart < LBound(LocalItems) Then
-        If RelativeStart < 0 Then
-            OldIndex = Max((LocalLength + RelativeStart), LBound(LocalItems))
-        Else
-            OldIndex = Max((LocalLength - RelativeStart), LBound(LocalItems))
-        End If
+    LocalLowerBound = LBound(LocalItems)
+    EndExclusive = LocalLowerBound + LocalLength
+    
+    If StartIndex < 0 Then
+        OldIndex = Max(EndExclusive + StartIndex, LocalLowerBound)
     Else
-        OldIndex = Min(RelativeStart, LocalLength)
-    End If
-    If EndIndex = MISSING_LONG Then
-        RelativeEnd = LocalLength + LBound(LocalItems)
-    Else
-        RelativeEnd = EndIndex
-    End If
-    If RelativeEnd < LBound(LocalItems) Then
-        Final = Max((LocalLength + RelativeEnd), LBound(LocalItems))
-    Else
-        Final = Min(RelativeEnd, LocalLength + LBound(LocalItems))
+        OldIndex = Min(Max(StartIndex, LocalLowerBound), EndExclusive)
     End If
     
-    NewIndex = LBound(LocalItems)
-    Count = Max(Final - OldIndex, 0) + LBound(LocalItems)
-    If Count > NewIndex Then
-        ReDim Result(NewIndex To Count - 1)
+    If EndIndex = MISSING_LONG Then
+        Final = EndExclusive
+    ElseIf EndIndex < 0 Then
+        Final = Max(EndExclusive + EndIndex, LocalLowerBound)
+    Else
+        Final = Min(Max(EndIndex, LocalLowerBound), EndExclusive)
+    End If
+    
+    NewIndex = LocalLowerBound
+    Count = Final - OldIndex
+    If Count > 0 Then
+        ReDim Result(NewIndex To NewIndex + Count - 1)
         Do While OldIndex < Final
             If OldIndex >= LBound(LocalItems) And OldIndex <= UBound(LocalItems) Then
                 LetOrSetElement Result(NewIndex), LocalItems(OldIndex)
@@ -2135,10 +2131,16 @@ Attribute EncodeCSVField.VB_Description = "Applies RFC 4180 business rules to th
         On Error Resume Next
         LocalField = Format$(Field, DateFormat)
         On Error GoTo 0
+        If LocalField <> vbNullString Then
+            LocalField = NormalizeDateStringForFormat(LocalField, DateFormat)
+        End If
     ElseIf IsNumeric(Field) And NumberFormat <> vbNullString Then
         On Error Resume Next
         LocalField = Format$(Field, NumberFormat)
         On Error GoTo 0
+        If LocalField <> vbNullString Then
+            LocalField = NormalizeNumberStringForFormat(LocalField, NumberFormat)
+        End If
     End If
     If LocalField = vbNullString Then
         LocalField = CStr(Field)
@@ -2152,6 +2154,142 @@ Attribute EncodeCSVField.VB_Description = "Applies RFC 4180 business rules to th
     
     EncodeCSVField = LocalField
     Exit Function
+End Function
+
+'@Description("Normalizes date separators in formatted output to match requested date format separators.")
+Private Function NormalizeDateStringForFormat(ByVal Formatted As String, ByVal DateFormat As String) As String
+Attribute NormalizeDateStringForFormat.VB_Description = "Normalizes date separators in formatted output to match requested date format separators."
+    Dim Result As String
+    Dim LocalSeparator As String
+    Dim TargetSeparator As String
+    
+    Result = Formatted
+    TargetSeparator = GetDateSeparatorFromFormat(DateFormat)
+    LocalSeparator = GetSystemDateSeparator()
+    If TargetSeparator <> vbNullString _
+       And LocalSeparator <> vbNullString _
+       And LocalSeparator <> TargetSeparator Then
+        Result = Replace(Result, LocalSeparator, TargetSeparator)
+    End If
+    NormalizeDateStringForFormat = Result
+End Function
+
+'@Description("Normalizes number separators in formatted output to match requested number format separators.")
+Private Function NormalizeNumberStringForFormat(ByVal Formatted As String, ByVal NumberFormat As String) As String
+Attribute NormalizeNumberStringForFormat.VB_Description = "Normalizes number separators in formatted output to match requested number format separators."
+    Const THOUSANDS_TOKEN As String = "__BA_THOUSANDS__"
+    Const DECIMAL_TOKEN As String = "__BA_DECIMAL__"
+    Dim Result As String
+    Dim LocalDecimal As String
+    Dim LocalThousands As String
+    Dim TargetDecimal As String
+    Dim TargetThousands As String
+    
+    Result = Formatted
+    LocalDecimal = GetSystemDecimalSeparator()
+    LocalThousands = GetSystemThousandsSeparator()
+    TargetDecimal = GetDecimalSeparatorFromFormat(NumberFormat)
+    TargetThousands = GetThousandsSeparatorFromFormat(NumberFormat, TargetDecimal)
+    
+    If TargetThousands <> vbNullString _
+       And LocalThousands <> vbNullString _
+       And LocalThousands <> TargetThousands Then
+        Result = Replace(Result, LocalThousands, THOUSANDS_TOKEN)
+    End If
+    If TargetDecimal <> vbNullString _
+       And LocalDecimal <> vbNullString _
+       And LocalDecimal <> TargetDecimal Then
+        Result = Replace(Result, LocalDecimal, DECIMAL_TOKEN)
+    End If
+    
+    If TargetThousands <> vbNullString Then
+        Result = Replace(Result, THOUSANDS_TOKEN, TargetThousands)
+    Else
+        Result = Replace(Result, THOUSANDS_TOKEN, vbNullString)
+    End If
+    
+    If TargetDecimal <> vbNullString Then
+        Result = Replace(Result, DECIMAL_TOKEN, TargetDecimal)
+    Else
+        Result = Replace(Result, DECIMAL_TOKEN, vbNullString)
+    End If
+    
+    NormalizeNumberStringForFormat = Result
+End Function
+
+'@Description("Extracts the date separator from a date format string.")
+Private Function GetDateSeparatorFromFormat(ByVal DateFormat As String) As String
+Attribute GetDateSeparatorFromFormat.VB_Description = "Extracts the date separator from a date format string."
+    Dim i As Long
+    Dim CurrentChar As String
+    For i = 1 To Len(DateFormat)
+        CurrentChar = Mid$(DateFormat, i, 1)
+        If CurrentChar = "/" Or CurrentChar = "-" Or CurrentChar = "." Then
+            GetDateSeparatorFromFormat = CurrentChar
+            Exit Function
+        End If
+    Next
+End Function
+
+'@Description("Returns the decimal separator in a number format string.")
+Private Function GetDecimalSeparatorFromFormat(ByVal NumberFormat As String) As String
+Attribute GetDecimalSeparatorFromFormat.VB_Description = "Returns the decimal separator in a number format string."
+    Dim LastDot As Long
+    Dim LastComma As Long
+    LastDot = InStrRev(NumberFormat, ".")
+    LastComma = InStrRev(NumberFormat, ",")
+    If LastDot = 0 And LastComma = 0 Then Exit Function
+    If LastDot > LastComma Then
+        GetDecimalSeparatorFromFormat = "."
+    Else
+        GetDecimalSeparatorFromFormat = ","
+    End If
+End Function
+
+'@Description("Returns the thousands separator in a number format string.")
+Private Function GetThousandsSeparatorFromFormat(ByVal NumberFormat As String, ByVal DecimalSeparator As String) As String
+Attribute GetThousandsSeparatorFromFormat.VB_Description = "Returns the thousands separator in a number format string."
+    If DecimalSeparator = "." Then
+        If InStr(NumberFormat, ",") > 0 Then
+            GetThousandsSeparatorFromFormat = ","
+        End If
+    ElseIf DecimalSeparator = "," Then
+        If InStr(NumberFormat, ".") > 0 Then
+            GetThousandsSeparatorFromFormat = "."
+        End If
+    End If
+End Function
+
+'@Description("Returns the host system decimal separator.")
+Private Function GetSystemDecimalSeparator() As String
+Attribute GetSystemDecimalSeparator.VB_Description = "Returns the host system decimal separator."
+    GetSystemDecimalSeparator = GetFirstNonDigitChar(Format$(0.5, "0.0"))
+End Function
+
+'@Description("Returns the host system thousands separator.")
+Private Function GetSystemThousandsSeparator() As String
+Attribute GetSystemThousandsSeparator.VB_Description = "Returns the host system thousands separator."
+    GetSystemThousandsSeparator = GetFirstNonDigitChar(Format$(1000, "#,##0"))
+End Function
+
+'@Description("Returns the host system date separator.")
+Private Function GetSystemDateSeparator() As String
+Attribute GetSystemDateSeparator.VB_Description = "Returns the host system date separator."
+    GetSystemDateSeparator = GetFirstNonDigitChar(Format$(DateSerial(2001, 12, 31), "m/d/yyyy"))
+End Function
+
+'@Description("Returns the first non-digit character in a string, or null string if none.")
+Private Function GetFirstNonDigitChar(ByVal Source As String) As String
+Attribute GetFirstNonDigitChar.VB_Description = "Returns the first non-digit character in a string, or null string if none."
+    Dim i As Long
+    Dim CurrentChar As String
+    For i = 1 To Len(Source)
+        CurrentChar = Mid$(Source, i, 1)
+        If CurrentChar < "0" Or CurrentChar > "9" Then
+            GetFirstNonDigitChar = CurrentChar
+            Exit Function
+        End If
+    Next
 End Function
 
 '@Description("Escapes a substring in a string using a provided Escape substring")
@@ -3175,6 +3313,8 @@ Attribute DuckTypeElement.VB_Description = "Takes a string. Returns a Variant wi
     LocalElement = Element
     If UCase$(LocalElement) = "TRUE" Or UCase$(Element) = "FALSE" Then
         Result = CBool(LocalElement)
+    ElseIf ShouldParseInvariantNumericString(LocalElement) Then
+        Result = ParseInvariantNumericString(LocalElement)
     ElseIf IsNumeric(LocalElement) Then
         Const Epsilon As Double = 2 ^ -52
         Dim Diff As Double
@@ -3189,6 +3329,61 @@ Attribute DuckTypeElement.VB_Description = "Takes a string. Returns a Variant wi
         Result = UnquoteString(LocalElement)
     End If
     DuckTypeElement = Result
+End Function
+
+'@Description("Returns True if the provided string should be parsed as an invariant numeric (dot-decimal) string.")
+Private Function ShouldParseInvariantNumericString(ByVal Source As String) As Boolean
+Attribute ShouldParseInvariantNumericString.VB_Description = "Returns True if the provided string should be parsed as an invariant numeric (dot-decimal) string."
+    Dim LocalDecimal As String
+    LocalDecimal = GetSystemDecimalSeparator()
+    If LocalDecimal <> "." _
+       And InStr(Source, ".") > 0 _
+       And InStr(Source, ",") = 0 _
+       And IsInvariantNumericString(Source) Then
+        ShouldParseInvariantNumericString = True
+    End If
+End Function
+
+'@Description("Parses an invariant numeric string where decimal separator is dot.")
+Private Function ParseInvariantNumericString(ByVal Source As String) As Variant
+Attribute ParseInvariantNumericString.VB_Description = "Parses an invariant numeric string where decimal separator is dot."
+    Dim LocalDecimal As String
+    Dim Normalized As String
+    
+    LocalDecimal = GetSystemDecimalSeparator()
+    Normalized = Replace(Source, ".", LocalDecimal)
+    If InStr(Source, ".") > 0 Then
+        ParseInvariantNumericString = CDbl(Normalized)
+    Else
+        ParseInvariantNumericString = CLng(Normalized)
+    End If
+End Function
+
+'@Description("Returns True if source contains a valid simple invariant numeric format.")
+Private Function IsInvariantNumericString(ByVal Source As String) As Boolean
+Attribute IsInvariantNumericString.VB_Description = "Returns True if source contains a valid simple invariant numeric format."
+    Dim i As Long
+    Dim DotCount As Long
+    Dim CurrentChar As String
+    Dim HasDigit As Boolean
+    
+    If Len(Source) = 0 Then Exit Function
+    
+    For i = 1 To Len(Source)
+        CurrentChar = Mid$(Source, i, 1)
+        If i = 1 And (CurrentChar = "+" Or CurrentChar = "-") Then
+            ' valid sign prefix
+        ElseIf CurrentChar >= "0" And CurrentChar <= "9" Then
+            HasDigit = True
+        ElseIf CurrentChar = "." Then
+            inc DotCount
+            If DotCount > 1 Then Exit Function
+        Else
+            Exit Function
+        End If
+    Next
+    
+    IsInvariantNumericString = HasDigit
 End Function
 
 '@Description("Takes a string array. Returns a Variant array with the elements converted to an appropriate type")
@@ -3880,14 +4075,40 @@ Attribute RecursiveToString.VB_Description = "Recursively parses an array to a s
             StringBuilder Sep
         Else
             ' ensure no arrays passed to GetScalar as it clears string builder
+            Dim ScalarRepresentation As String
+            ScalarRepresentation = CStr(GetScalarRepresentation(SourceArray(i), QuoteStrings))
+            If IsNumeric(SourceArray(i)) Then
+                ScalarRepresentation = NormalizeNumericScalarForDelimitedOutput( _
+                    ScalarRepresentation, _
+                    Separator _
+                )
+            End If
             StringBuilder Replace( _
-                    CStr(GetScalarRepresentation(SourceArray(i), QuoteStrings)), _
+                    ScalarRepresentation, _
                     Separator, _
                     vbNullString _
                 ) & Sep
         End If
     Next
 End Sub
+
+'@Description("Normalizes numeric scalar output to avoid delimiter collisions in string serialization.")
+Private Function NormalizeNumericScalarForDelimitedOutput( _
+        ByVal ScalarRepresentation As String, _
+        ByVal Separator As String _
+    ) As String
+Attribute NormalizeNumericScalarForDelimitedOutput.VB_Description = "Normalizes numeric scalar output to avoid delimiter collisions in string serialization."
+    Dim Result As String
+    Dim LocalDecimal As String
+    
+    Result = ScalarRepresentation
+    LocalDecimal = GetSystemDecimalSeparator()
+    If Separator = CHR_COMMA And LocalDecimal = CHR_COMMA Then
+        Result = Replace(Result, LocalDecimal, ".")
+    End If
+    
+    NormalizeNumericScalarForDelimitedOutput = Result
+End Function
 
 '@Description("Returns scalar values as is or appropriate representation if not scalar.")
 Private Function GetScalarRepresentation( _
