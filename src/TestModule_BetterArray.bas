@@ -4839,6 +4839,31 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
+'@TestMethod("BetterArray_IncludesType")
+Private Sub IncludesType_OneDimArrayBaseNegative1FromIndexNegative1SkipsEarlierMatch_ReturnsFalse()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim TestArray() As Variant
+    Dim Expected As Boolean
+    Dim Actual As Boolean
+    
+    SUT.LowerBound = -1
+    TestArray = Array("Foo", CLng(1), CLng(2))
+    Expected = False
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.IncludesType("String", -1)
+    
+    'Assert:
+    Assert.AreEqual Expected, Actual, "Actual <> expected"
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
 
 '@TestMethod("BetterArray_IncludesType")
 Private Sub IncludesType_JaggedArrayContainsType_ReturnsTrue()
@@ -8067,6 +8092,30 @@ Private Sub EveryType_OneDimArrayBase10FromIndexAtLowerBound_ReturnsFalse()
     
     'Assert:
     Assert.IsFalse Actual, "Actual <> expected"
+
+TestExit:
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+End Sub
+
+'@TestMethod("BetterArray_EveryType")
+Private Sub EveryType_OneDimArrayBaseNegative1FromIndexNegative1UsesTailElementOnly_ReturnsTrue()
+    On Error GoTo TestFail
+    
+    'Arrange:
+    Dim Actual As Boolean
+    Dim TestArray() As Variant
+    
+    SUT.LowerBound = -1
+    TestArray = Array(CLng(1), "Foo", "Bar")
+    SUT.Items = TestArray
+    
+    'Act:
+    Actual = SUT.EveryType("String", -1)
+    
+    'Assert:
+    Assert.IsTrue Actual, "Actual <> expected"
 
 TestExit:
     Exit Sub

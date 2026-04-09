@@ -20,7 +20,6 @@ Option Explicit
 '''''''''''''''''''
 
 Private Const DEFAULT_CAPACITY As Long = 4
-' NOTE: placeholder
 Private Const MAX_ARRAY_LENGTH As Long = &H7FEFFFFF
 Private Const OBJECT_REPR As String = "OBJECT"
 Private Const MISSING_LONG As Long = -9999
@@ -2942,7 +2941,6 @@ Attribute RecursiveReverse.VB_Description = "reverses the order of the passed ar
     Middle = Int(LocalLength / 2) + Lower
     
     Do While Lower <> Middle
-        ' TODO: check this works with any lb
         Upper = UBound(SourceArray) + LBound(SourceArray) - Lower
         If IsArray(SourceArray(Lower)) And Recurse Then
             PassThruArray = SourceArray(Lower)
