@@ -1,7 +1,7 @@
-92e6ea2 test: add lower-bound type from-index regressions and clean stale comments
-47f5a12 refactor: standardize splice empty-array helper usage
-b7afdeb chore: align LastIndexOf descriptions and error source text
-e0bee9e test/docs: fix LastIndexOf tests and align index method docs
-fce58d5 fix: normalize IndexOf and LastIndexOf from-index handling
-383694d fix: correct index bounds and from-index normalization edge cases
-b3f98b0 docs: add At/Some API pages and align CSV/includes docs
+0381ede Use neutral VBATests runner output prefix
+89e4029 Update contributing workflow to use devCheck
+c0dc777 Add FromIndex regression tests and devCheck workflow script
+f39c50b Fix negative FromIndex normalization and jagged sort test bounds
+34ba53e Replace Rubberduck test dependency with built-in runner
+5b71f90 Merge pull request #30 from Mo-Gul/master
+4173200 docs: fix typos
