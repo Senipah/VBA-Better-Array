@@ -19,6 +19,20 @@ Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an Excel
 
 ' TODO: Ensure test coverage of all paths - ongoing
 
+Private Function BuildBaseOneRow( _
+        ByVal Value1 As Variant, _
+        ByVal Value2 As Variant, _
+        ByVal Value3 As Variant, _
+        ByVal Value4 As Variant _
+    ) As Variant
+    Dim Result(1 To 4) As Variant
+    Result(1) = Value1
+    Result(2) = Value2
+    Result(3) = Value3
+    Result(4) = Value4
+    BuildBaseOneRow = Result
+End Function
+
 Public Sub ModuleInitialize()
     'this method runs once per module.
     Set Assert = New AssertClass
@@ -3305,12 +3319,12 @@ Public Sub Sort_JaggedArrayTimSortMixedDirectionStable_OrderPreserved()
     TestArray(6) = Array(2, 1, 20, "r6")
 
     ReDim Expected(1 To 6)
-    Expected(1) = Array(1, 2, 20, "r5")
-    Expected(2) = Array(2, 1, 20, "r6")
-    Expected(3) = Array(1, 1, 10, "r3")
-    Expected(4) = Array(1, 2, 10, "r2")
-    Expected(5) = Array(2, 1, 10, "r4")
-    Expected(6) = Array(2, 2, 10, "r1")
+    Expected(1) = BuildBaseOneRow(1, 2, 20, "r5")
+    Expected(2) = BuildBaseOneRow(2, 1, 20, "r6")
+    Expected(3) = BuildBaseOneRow(1, 1, 10, "r3")
+    Expected(4) = BuildBaseOneRow(1, 2, 10, "r2")
+    Expected(5) = BuildBaseOneRow(2, 1, 10, "r4")
+    Expected(6) = BuildBaseOneRow(2, 2, 10, "r1")
 
     SUT.Items = TestArray
     SUT.SortMethod = SM_TIMSORT

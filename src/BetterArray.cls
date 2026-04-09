@@ -2881,13 +2881,13 @@ Private Function NormalizeFromIndex( _
 Attribute NormalizeFromIndex.VB_Description = "Normalizes a from-index argument to an absolute lower-bound-aware index."
     If SourceFromIndex = MISSING_LONG Then
         NormalizeFromIndex = LocalLowerBound
-    ElseIf SourceFromIndex >= LocalLowerBound Then
-        NormalizeFromIndex = SourceFromIndex
     ElseIf SourceFromIndex < 0 Then
         NormalizeFromIndex = LocalLowerBound + LocalLength + SourceFromIndex
         If NormalizeFromIndex < LocalLowerBound Then
             NormalizeFromIndex = LocalLowerBound
         End If
+    ElseIf SourceFromIndex >= LocalLowerBound Then
+        NormalizeFromIndex = SourceFromIndex
     Else
         NormalizeFromIndex = LocalLowerBound
     End If
