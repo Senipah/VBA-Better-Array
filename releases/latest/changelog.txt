@@ -1,2 +1,7 @@
-cc5f2e3 feat: add At and Some parity methods with regression tests
-9329066 fix: harden ParseCSV empty-input handling and streamline splice shrink path
+92e6ea2 test: add lower-bound type from-index regressions and clean stale comments
+47f5a12 refactor: standardize splice empty-array helper usage
+b7afdeb chore: align LastIndexOf descriptions and error source text
+e0bee9e test/docs: fix LastIndexOf tests and align index method docs
+fce58d5 fix: normalize IndexOf and LastIndexOf from-index handling
+383694d fix: correct index bounds and from-index normalization edge cases
+b3f98b0 docs: add At/Some API pages and align CSV/includes docs
