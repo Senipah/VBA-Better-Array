@@ -1,7 +1,7 @@
 Attribute VB_Name = "TestRunner"
 Option Explicit
 
-Private Const RUNNER_PREFIX As String = "[NoRDTests]"
+Private Const RUNNER_PREFIX As String = "[VBATests]"
 Private Const RUNNER_ERROR As Long = vbObjectError + 514
 
 Public Sub RunAllTests( _
