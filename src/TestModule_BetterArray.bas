@@ -8512,6 +8512,7 @@ Private Sub Splice_OneDimArrayBase1Length3InsertNoDelete_PreservesTail()
     Assert.SequenceEquals Expected, Actual, "Actual <> expected"
     Assert.AreEqual 4&, SUT.Length, "Actual length <> expected"
     Assert.SequenceEquals ExpectedResult, ActualResult, "ActualResult <> expected"
+    Assert.AreEqual 0&, LBound(ActualResult), "ActualResult lower bound <> expected"
 TestExit:
     Exit Sub
 TestFail:

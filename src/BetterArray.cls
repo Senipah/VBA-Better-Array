@@ -1267,7 +1267,7 @@ Attribute Splice.VB_Description = "changes the contents of the array by removing
         Loop
     Else
         ' return empty array if nothing to be deleted
-        ReDim Result(0)
+        Result = GetZeroBasedEmptyArray
     End If
     
     If ItemCount > 0 Then
@@ -3739,12 +3739,24 @@ Attribute TransposeArrayOfArrays.VB_Description = "Transposes the values in a ja
     TransposeArrayOfArrays = Result
 End Function
 
-'@Description("Returns an empty 1d array with 1 slot.")
+'@Description("Returns an empty 1d array with 1 slot at the class lower bound.")
 Private Function GetEmptyArray() As Variant()
-Attribute GetEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot."
+Attribute GetEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot at the class lower bound."
+    GetEmptyArray = GetEmptyArrayAtBound(This.LowerBound)
+End Function
+
+'@Description("Returns an empty 1d array with 1 slot at a zero lower bound.")
+Private Function GetZeroBasedEmptyArray() As Variant()
+Attribute GetZeroBasedEmptyArray.VB_Description = "Returns an empty 1d array with 1 slot at a zero lower bound."
+    GetZeroBasedEmptyArray = GetEmptyArrayAtBound(0)
+End Function
+
+'@Description("Returns an empty 1d array with 1 slot at the provided lower bound.")
+Private Function GetEmptyArrayAtBound(ByVal TargetLowerBound As Long) As Variant()
+Attribute GetEmptyArrayAtBound.VB_Description = "Returns an empty 1d array with 1 slot at the provided lower bound."
     Dim Result() As Variant
-    ReDim Result(This.LowerBound To This.LowerBound)
-    GetEmptyArray = Result
+    ReDim Result(TargetLowerBound To TargetLowerBound)
+    GetEmptyArrayAtBound = Result
 End Function
 
 '@Description("Used to apply the correct specified sort algorithm.")
