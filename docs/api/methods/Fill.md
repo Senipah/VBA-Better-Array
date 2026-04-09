@@ -40,7 +40,7 @@ Necessity
 : Optional
 
 Description
-: The first index of the outermost array to begin filling with the passed value. If ommited the array will be filled from the first index.
+: The first index of the outermost array to begin filling with the passed value. If omitted the array will be filled from the first index.
 
 ---
 
@@ -62,7 +62,7 @@ Type
 : BetterArray `Object`
 
 Description
-: The current instance of the BetterArray object array filled with the passed value between the specified indices. If ommited the array will be filled to the last index.
+: The current instance of the BetterArray object array filled with the passed value between the specified indices. If omitted the array will be filled to the last index.
 
 ## Example
 

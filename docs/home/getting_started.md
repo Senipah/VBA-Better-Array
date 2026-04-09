@@ -47,7 +47,7 @@ End Sub
 
 ## Accessing elements in the array
 
-To access individual elements stored in the array, use the [Item](https://senipah.github.io/VBA-Better-Array/api/properties/item/Item.html) property. As Item is the default member of the better array class, it can be accessed explicilty or implicitly.
+To access individual elements stored in the array, use the [Item](https://senipah.github.io/VBA-Better-Array/api/properties/item/Item.html) property. As Item is the default member of the better array class, it can be accessed explicitly or implicitly.
 
 ### Retrieving elements
 
@@ -223,4 +223,4 @@ End Sub
 
 #### NOTE
 
-Multi-dimension arrays are converted to jagged arrays on assignment and converted back to a multi-dimension (tabular) structur on retrieval.
+Multi-dimension arrays are converted to jagged arrays on assignment and converted back to a multi-dimension (tabular) structure on retrieval.
