@@ -19,12 +19,13 @@ Please ensure any changes submitted to the codebase are accompanied with appropr
 ## Development Workflow
 
 1. Make your changes in `src/` and update/add tests as needed.
-2. Rebuild the workbook from source:
+2. Run the one-command local check (rebuild + full test run):
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/devCheck.ps1
+```
+3. Optional troubleshooting commands (if you need to isolate workbook build vs test run):
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/createDevWorkbook.ps1
-```
-3. Run tests:
-```powershell
 powershell -ExecutionPolicy Bypass -File scripts/runTests.ps1
 ```
 4. If tests pass:
