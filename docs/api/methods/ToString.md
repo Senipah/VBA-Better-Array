@@ -39,7 +39,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `separator` will be used to separate individual elements within the array. If ommitted, the default character of `,` will be used.
+: If provided, the string passed to `separator` will be used to separate individual elements within the array. If omitted, the default character of `,` will be used.
 
 ---
 
@@ -53,7 +53,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `OpeningDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `{` will be used.
+: If provided, the string passed to `OpeningDelimiter` will be used to mark the beginning of arrays. If omitted, the default character of `{` will be used.
 
 ---
 
@@ -67,7 +67,7 @@ Necessity
 : Optional
 
 Description
-: If provided, the string passed to `ClosingDelimiter` will be used to mark the beginning of arrays. If ommitted, the default character of `}` will be used.
+: If provided, the string passed to `ClosingDelimiter` will be used to mark the beginning of arrays. If omitted, the default character of `}` will be used.
 
 ---
 

@@ -1,14 +1,14 @@
 ---
 title: Home
-has_children: true 
+has_children: true
 nav_order: 1
 ---
 
 # VBA Better Array Documentation
 
-VBA Better Array provides a cross-platform array class with a focus on developer convenience. 
+VBA Better Array provides a cross-platform array class with a focus on developer convenience.
 
-Working with arrays in VBA can be a pain. While accessing native arrays is fast in VBA, adding new entries to the end of an exising array essentially means copying the whole array into a new array and requires multiple statements to do so. In addition, VBA arrays don't come with many of the built-in methods found in more modern languages, such as the ability to easily sort, slice and join to other arrays.
+Working with arrays in VBA can be a pain. While accessing native arrays is fast in VBA, adding new entries to the end of an existing array essentially means copying the whole array into a new array and requires multiple statements to do so. In addition, VBA arrays don't come with many of the built-in methods found in more modern languages, such as the ability to easily sort, slice and join to other arrays.
 
 This project aims to help bridge that gap, making working with arrays in VBA both simpler and more convenient.
 

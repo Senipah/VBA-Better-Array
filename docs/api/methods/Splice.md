@@ -11,7 +11,7 @@ The `Splice()` method changes the contents of an array by removing or replacing 
 
 ## Syntax
 
-*expression*.**Splice**(*StartIndex*, [*DeleteCount*,[*Item1*[, *Item2*[, ...[, *ItemN*]]]])
+*expression*.**Splice**(*StartIndex*, [*DeleteCount*,[*Item1*[, *Item2*[, ...[, *ItemN*]]]]])
 
 ### Parameters
 
