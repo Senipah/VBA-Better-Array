@@ -2,58 +2,34 @@ Attribute VB_Name = "TestModule_ExcelProvider"
 Option Explicit
 Option Private Module
 
-'@TestModule
-'@Folder("VBABetterArray.Tests.Dependencies.ExcelProvider.Tests")
 
-'@IgnoreModule VariableNotUsed, ProcedureNotUsed
-'@IgnoreModule LineLabelNotUsed
-'@IgnoreModule EmptyMethod
 
-' Uncomment for late binding
-Private Assert As Object
-' Move to early bind
-'Private Assert As AssertClass
-
-' Uncomment for late binding
-Private Fakes As Object
-' Uncomment for early  binding
-'Private Fakes As FakesProvider
+Private Assert As AssertClass
 
 ' Module level declaration of system under test
 Private SUT As ExcelProvider
 
-'@ModuleInitialize
-Private Sub ModuleInitialize()
+Public Sub ModuleInitialize()
     'this method runs once per module.
-    ' Uncomment for late binding
-    Set Assert = CreateObject("Rubberduck.AssertClass")
-    Set Fakes = CreateObject("Rubberduck.FakesProvider")
-    ' Uncomment for early  binding
-    ' Set Assert = New AssertClass
-    ' Set Fakes = New FakesProvider
+    Set Assert = New AssertClass
 End Sub
 
-'@ModuleCleanup
-Private Sub ModuleCleanup()
+Public Sub ModuleCleanup()
     'this method runs once per module.
     Set Assert = Nothing
-    Set Fakes = Nothing
 End Sub
 
-'@TestInitialize
-Private Sub TestInitialize()
+Public Sub TestInitialize()
     'this method runs before every test in the module.
     Set SUT = New ExcelProvider
 End Sub
 
-'@TestCleanup
-Private Sub TestCleanup()
+Public Sub TestCleanup()
     'this method runs after every test in the module.
     Set SUT = Nothing
 End Sub
 
-'@TestMethod("ExcelProvider_Constructor")
-Private Sub Constructor_CanInstantiate_SUTNotNothing()
+Public Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
@@ -69,8 +45,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("ExcelProvider_ExcelApplication")
-Private Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
+Public Sub ExcelApplication_ReturnsExcelInstance_InstanceIsCorrectType()
     On Error GoTo TestFail
     
     'Arrange:
@@ -91,8 +66,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("ExcelProvider_CurrentWorkbook")
-Private Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
+Public Sub CurrentWorkbook_ReturnsWorkbook_CurrentWorkbookNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
@@ -115,8 +89,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("ExcelProvider_CurrentWorksheet")
-Private Sub CurrentWorksheet_ReturnsWorksheet_ReturnsTypeWorksheet()
+Public Sub CurrentWorksheet_ReturnsWorksheet_ReturnsTypeWorksheet()
     On Error GoTo TestFail
     
     'Arrange:
@@ -138,8 +111,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("ExcelProvider_CurrentWorksheet")
-Private Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook()
+Public Sub CurrentWorksheet_ReturnsWorksheet_WorksheetIsChildOfCurrentWorkbook()
     On Error GoTo TestFail
     
     'Arrange:
@@ -158,8 +130,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("ExcelProvider_CurrentWorksheet")
-Private Sub CurrentWorksheet_CanSetRangeValue_ReturnsCorrectValue()
+Public Sub CurrentWorksheet_CanSetRangeValue_ReturnsCorrectValue()
     On Error GoTo TestFail
     
     'Arrange:

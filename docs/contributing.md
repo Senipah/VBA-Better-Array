@@ -14,4 +14,21 @@ If the issue raised is deemed appropriate and you would like to be assigned to d
 You should then fork the repository, make your changes and submit a pull request to merge the changes back into the master branch. Upon review, your changes will be merged.
 
 #### Note
-Please ensure any changes submitted to the codebase are accompanied with appropriate (Rubberduck compatible) unit tests.
+Please ensure any changes submitted to the codebase are accompanied with appropriate unit tests.
+
+## Development Workflow
+
+1. Make your changes in `src/` and update/add tests as needed.
+2. Rebuild the workbook from source:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/createDevWorkbook.ps1
+```
+3. Run tests:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/runTests.ps1
+```
+4. If tests pass:
+   - For normal contribution work, commit and push your branch.
+   - For release work, run `scripts/build.ps1 <major|minor|patch>` from a clean state.
+
+`scripts/build.ps1` creates release artifacts and then runs `git add --all`, `git commit`, `git tag`, and `git push`.

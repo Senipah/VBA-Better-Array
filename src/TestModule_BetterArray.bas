@@ -3,24 +3,9 @@ Attribute VB_Description = "Unit Tests for 'BetterArray.cls'"
 Option Explicit
 Option Private Module
 
-'@TestModule
-'@Folder("VBABetterArray.Tests")
-'@ModuleDescription("Unit Tests for 'BetterArray.cls'")
 
-'@IgnoreModule VariableNotUsed, AssignmentNotUsed, ProcedureNotUsed
-'@IgnoreModule LineLabelNotUsed
-'@IgnoreModule EmptyMethod
-'@IgnoreModule FunctionReturnValueDiscarded
 
-' Uncomment for late binding
-Private Assert As Object
-' Move to early bind
-'Private Assert As AssertClass
-
-' Uncomment for late binding
-Private Fakes As Object
-' Uncomment for early  binding
-'Private Fakes As FakesProvider
+Private Assert As AssertClass
 
 ' Module level declaration of system under test
 Private SUT As BetterArray
@@ -34,33 +19,23 @@ Private Const EXCEL_DEPENDENCY_WARNING As String = "A test depending on an Excel
 
 ' TODO: Ensure test coverage of all paths - ongoing
 
-'@ModuleInitialize
-Private Sub ModuleInitialize()
+Public Sub ModuleInitialize()
     'this method runs once per module.
-    ' Uncomment for late binding
-    Set Assert = CreateObject("Rubberduck.AssertClass")
-    Set Fakes = CreateObject("Rubberduck.FakesProvider")
-    ' Uncomment for early  binding
-    ' Set Assert = New AssertClass
-    ' Set Fakes = New FakesProvider
+    Set Assert = New AssertClass
 End Sub
 
-'@ModuleCleanup
-Private Sub ModuleCleanup()
+Public Sub ModuleCleanup()
     'this method runs once per module.
     Set Assert = Nothing
-    Set Fakes = Nothing
 End Sub
 
-'@TestInitialize
-Private Sub TestInitialize()
+Public Sub TestInitialize()
     'this method runs before every test in the module.
     Set SUT = New BetterArray
     Set Gen = New ArrayGenerator
 End Sub
 
-'@TestCleanup
-Private Sub TestCleanup()
+Public Sub TestCleanup()
     'this method runs after every test in the module.
     Set SUT = Nothing
     Set Gen = Nothing
@@ -70,8 +45,7 @@ End Sub
 ' Instantiation '
 '''''''''''''''''
 
-'@TestMethod("BetterArray_Constructor")
-Private Sub Constructor_CanInstantiate_SUTNotNothing()
+Public Sub Constructor_CanInstantiate_SUTNotNothing()
     On Error GoTo TestFail
     
     'Arrange:
@@ -86,8 +60,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Constructor")
-Private Sub Constructor_CreatesWithDefaultCapacity_CapacityIsFour()
+Public Sub Constructor_CreatesWithDefaultCapacity_CapacityIsFour()
     On Error GoTo TestFail
 
     'Arrange:
@@ -111,8 +84,7 @@ End Sub
 ' Attribute - DefaultMember - Item '
 ''''''''''''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_Items")
-Private Sub Items_DefaultMember_DefaultMemberAccessReturnsItems()
+Public Sub Items_DefaultMember_DefaultMemberAccessReturnsItems()
     On Error GoTo TestFail
 
     'Arrange:
@@ -124,7 +96,6 @@ Private Sub Items_DefaultMember_DefaultMemberAccessReturnsItems()
     
     'Act:
     For i = LBound(Expected) To UBound(Expected)
-        '@Ignore IndexedDefaultMemberAccess
         SUT(i) = Expected(i)
     Next
     Actual = SUT.Items
@@ -143,9 +114,7 @@ End Sub
 ' Prop - Capacity '
 '''''''''''''''''''
 
-'@TestMethod("BetterArray_Capacity")
-'@Ignore DuplicatedAnnotation
-Private Sub Capacity_CanSetCapacity_ReturnedCapacityMatchesSetCapacity()
+Public Sub Capacity_CanSetCapacity_ReturnedCapacityMatchesSetCapacity()
     On Error GoTo TestFail
     
     'Arrange:
@@ -170,8 +139,7 @@ End Sub
 ' Prop - Items '
 ''''''''''''''''
 
-'@TestMethod("BetterArray_Items")
-Private Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Public Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -193,8 +161,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Items")
-Private Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Public Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -216,9 +183,8 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Items")
-' NOTE: does not use SequenceEquals due to Rubberduck issue: https://github.com/rubberduck-vba/Rubberduck/issues/5161
-Private Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
+' NOTE: does not use SequenceEquals here because this case compares jagged arrays.
+Public Sub Items_CanAssignJaggedArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -247,8 +213,7 @@ End Sub
 ' Prop - Length '
 '''''''''''''''''
 
-'@TestMethod("BetterArray_Length")
-Private Sub Length_NewUninitArray_EmptyArrayHasLengthZero()
+Public Sub Length_NewUninitArray_EmptyArrayHasLengthZero()
     On Error GoTo TestFail
     
     'Arrange:
@@ -269,8 +234,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Length")
-Private Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalArray()
+Public Sub Length_FromAssignedOneDimensionalArray_ReturnedLengthEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -294,8 +258,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Length")
-Private Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOriginalArray()
+Public Sub Length_FromAssignedMultiDimensionalArray_ReturnedLengthEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -319,8 +282,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Length")
-Private Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
+Public Sub Length_FromAssignedJaggedArray_ReturnedLengthEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -345,8 +307,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Length")
-Private Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsOriginalArray()
+Public Sub Upperbound_FromAssignedOneDimensionalArray_ReturnedUpperBoundEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -375,8 +336,7 @@ End Sub
 '''''''''''''''
 
 
-'@TestMethod("BetterArray_LowerBound")
-Private Sub LowerBound_FromAssignedOneDimensionalArray_ReturnedLowerBoundEqualsOriginalArray()
+Public Sub LowerBound_FromAssignedOneDimensionalArray_ReturnedLowerBoundEqualsOriginalArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -401,8 +361,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_LowerBound")
-Private Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowerBound()
+Public Sub LowerBound_ChangingLowerBoundOfAssignedArray_ReturnedArrayHasNewLowerBound()
     On Error GoTo TestFail
     
     'Arrange:
@@ -439,8 +398,7 @@ End Sub
 ' Prop - Item '
 '''''''''''''''
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_ChangingExistingIndex_ItemIsChanged()
+Public Sub Item_ChangingExistingIndex_ItemIsChanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -469,8 +427,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
+Public Sub Item_ChangingIndexOverUpperBound_ItemIsPushed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -500,8 +457,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_ChangingIndexBelowLowerBound_ItemIsUnshifted()
+Public Sub Item_ChangingIndexBelowLowerBound_ItemIsUnshifted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -532,8 +488,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_GetScalarValue_ValueReturned()
+Public Sub Item_GetScalarValue_ValueReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -557,8 +512,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_GetScalarValueHighLowerBound_ValueReturned()
+Public Sub Item_GetScalarValueHighLowerBound_ValueReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -584,8 +538,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Item")
-Private Sub Item_GetObject_SameObjectReturned()
+Public Sub Item_GetObject_SameObjectReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -616,8 +569,7 @@ End Sub
 'Starting Undefined not tested - status not settable externally
 
 ' Starting Unalloc - Change to Undefined
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_UnallocToUndefined_ThrowsError()
+Public Sub ArrayType_UnallocToUndefined_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -641,8 +593,7 @@ TestFail:
 End Sub
 
 ' Starting Unalloc - Change to Unalloc
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_UnallocToUnalloc_Success()
+Public Sub ArrayType_UnallocToUnalloc_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -672,8 +623,7 @@ TestFail:
 End Sub
 
 ' Starting Unalloc - Change to OneDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_UnallocToOneDimension_Success()
+Public Sub ArrayType_UnallocToOneDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -704,8 +654,7 @@ End Sub
 
 
 ' Starting Unalloc - Change to MultiDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_UnallocToMultiDimension_Success()
+Public Sub ArrayType_UnallocToMultiDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -735,8 +684,7 @@ TestFail:
 End Sub
 
 ' Starting Unalloc - Change to Jagged
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_UnallocToJagged_Success()
+Public Sub ArrayType_UnallocToJagged_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -767,8 +715,7 @@ End Sub
 
 
 ' Starting OneDimension - Change to Undefined
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_OneDimensionToUndefined_ThrowsError()
+Public Sub ArrayType_OneDimensionToUndefined_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -800,8 +747,7 @@ TestFail:
 End Sub
 
 ' Starting OneDimension - Change to Unalloc
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_OneDimensionToUnalloc_Success()
+Public Sub ArrayType_OneDimensionToUnalloc_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -834,8 +780,7 @@ TestFail:
 End Sub
 
 ' Starting OneDimension - Change to OneDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_OneDimensionToOneDimension_Success()
+Public Sub ArrayType_OneDimensionToOneDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -869,8 +814,7 @@ End Sub
 
 
 ' Starting OneDimension - Change to MultiDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_OneDimensionToMultiDimension_Success()
+Public Sub ArrayType_OneDimensionToMultiDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -904,8 +848,7 @@ End Sub
 
 
 ' Starting OneDimension - Change to Jagged
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_OneDimensionToJagged_Success()
+Public Sub ArrayType_OneDimensionToJagged_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -938,8 +881,7 @@ TestFail:
 End Sub
 
 ' Starting MultiDimension - Change to Undefined
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_MultiDimensionToUndefined_ThrowsError()
+Public Sub ArrayType_MultiDimensionToUndefined_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -973,8 +915,7 @@ TestFail:
 End Sub
 
 ' Starting MultiDimension - Change to Unalloc
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_MultiDimensionToUnalloc_Success()
+Public Sub ArrayType_MultiDimensionToUnalloc_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1007,8 +948,7 @@ TestFail:
 End Sub
 
 ' Starting MultiDimension - Change to OneDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_MultiDimensionToOneDimension_ThrowsError()
+Public Sub ArrayType_MultiDimensionToOneDimension_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -1042,8 +982,7 @@ TestFail:
 End Sub
 
 ' Starting MultiDimension - Change to MultiDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_MultiDimensionToMultiDimension_Success()
+Public Sub ArrayType_MultiDimensionToMultiDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1077,8 +1016,7 @@ End Sub
 
 
 ' Starting MultiDimension - Change to Jagged
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_MultiDimensionToJagged_Success()
+Public Sub ArrayType_MultiDimensionToJagged_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1110,8 +1048,7 @@ End Sub
 
 
 ' Starting Jagged - Change to Undefined
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_JaggedToUndefined_ThrowsError()
+Public Sub ArrayType_JaggedToUndefined_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -1146,8 +1083,7 @@ End Sub
 
 
 ' Starting Jagged - Change to Unalloc
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_JaggedToUnalloc_Success()
+Public Sub ArrayType_JaggedToUnalloc_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1180,8 +1116,7 @@ TestFail:
 End Sub
 
 ' Starting Jagged - Change to OneDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_JaggedToOneDimension_ThrowsError()
+Public Sub ArrayType_JaggedToOneDimension_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_CONVERT_TO_REQUESTED_STRUCTURE
     On Error GoTo TestFail
     
@@ -1214,8 +1149,7 @@ TestFail:
 End Sub
 
 ' Starting Jagged - Change to MultiDimension
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_JaggedToMultiDimension_Success()
+Public Sub ArrayType_JaggedToMultiDimension_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1246,8 +1180,7 @@ TestFail:
 End Sub
 
 ' Starting Jagged - Change to Jagged
-'@TestMethod("BetterArray_ArrayType")
-Private Sub ArrayType_JaggedToJagged_Success()
+Public Sub ArrayType_JaggedToJagged_Success()
     On Error GoTo TestFail
        
     'Arrange:
@@ -1284,8 +1217,7 @@ End Sub
 ' Method - Push '
 '''''''''''''''''
 
-'@TestMethod("BetterArray_Push")
-Private Sub Push_AddToNewBetterArray_ItemAdded()
+Public Sub Push_AddToNewBetterArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1314,8 +1246,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Push")
-Private Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
+Public Sub Push_AddToExistingOneDimensionalArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1341,8 +1272,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Push")
-Private Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
+Public Sub Push_AddToExistingMultidimensionalArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1371,8 +1301,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Push")
-Private Sub Push_AddToExistingJaggedArray_ItemAdded()
+Public Sub Push_AddToExistingJaggedArray_ItemAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1401,8 +1330,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Push")
-Private Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
+Public Sub Push_AddMultipleToNewBetterArray_ItemsAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1436,8 +1364,7 @@ End Sub
 ' Method - Pop '
 ''''''''''''''''
 
-'@TestMethod("BetterArray_Pop")
-Private Sub Pop_ItemsRemovedByPopUntilEmpty_EmptyArrayHasLengthZero()
+Public Sub Pop_ItemsRemovedByPopUntilEmpty_EmptyArrayHasLengthZero()
     ' Added for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
     On Error GoTo TestFail
     
@@ -1463,8 +1390,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Pop")
-Private Sub Pop_OneDimensionalArray_LastItemRemoved()
+Public Sub Pop_OneDimensionalArray_LastItemRemoved()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1496,8 +1422,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Pop")
-Private Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
+Public Sub Pop_ArrayLengthIsZero_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1538,8 +1463,7 @@ End Sub
 ' Method - Shift '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Shift")
-Private Sub Shift_ItemsRemovedByShiftUntilEmpty_EmptyArrayHasLengthZero()
+Public Sub Shift_ItemsRemovedByShiftUntilEmpty_EmptyArrayHasLengthZero()
     ' Agged for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
     On Error GoTo TestFail
     
@@ -1564,8 +1488,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shift")
-Private Sub Shift_OneDimensionalArray_FirstItemRemoved()
+Public Sub Shift_OneDimensionalArray_FirstItemRemoved()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1596,8 +1519,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shift")
-Private Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
+Public Sub Shift_ArrayLengthIsZero_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1633,8 +1555,7 @@ End Sub
 ' Method - Unshift '
 ''''''''''''''''''''
 
-'@TestMethod("BetterArray_Unshift")
-Private Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
+Public Sub Unshift_OneDimensionalArray_ItemAddedToBeginning()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1668,8 +1589,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Unshift")
-Private Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
+Public Sub Unshift_ArrayLengthIsZero_ItemIsPushedToEmptyArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1702,8 +1622,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Unshift")
-Private Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
+Public Sub Unshift_MultidimensionalArray_ItemAddedToBeginning()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1744,8 +1663,7 @@ End Sub
 '''''''''''''''''''
 ' Method - Concat '
 '''''''''''''''''''
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddOneDimArrayToOneDimIssue7Coverage_SuccessAdded()
+Public Sub Concat_AddOneDimArrayToOneDimIssue7Coverage_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1790,8 +1708,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
+Public Sub Concat_AddOneDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1821,8 +1738,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
+Public Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1856,8 +1772,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
+Public Sub Concat_AddOneDimArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1893,8 +1808,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
+Public Sub Concat_AddMultiDimArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1924,8 +1838,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
+Public Sub Concat_AddMultiDimArrayToExistingMultiDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1960,8 +1873,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
+Public Sub Concat_AddJaggedArrayToEmptyInternal_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1993,8 +1905,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
+Public Sub Concat_AddJaggedArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2032,8 +1943,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
+Public Sub Concat_AddOneDimArrayToExistingJagged_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2071,8 +1981,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
+Public Sub Concat_AddOneDimArrayToExistingMulti_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2125,8 +2034,7 @@ TestFail:
     
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
+Public Sub Concat_AddMultiDimArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2177,8 +2085,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddMultiDimArrayDepth3ToExistingOneDimArray_SuccessAdded()
+Public Sub Concat_AddMultiDimArrayDepth3ToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2236,8 +2143,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
+Public Sub Concat_AddJaggedArrayToExistingOneDimArray_SuccessAdded()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2275,8 +2181,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Concat")
-Private Sub Concat_AddEmptyToEmpty_ReturnsEmptyArrayWith1Slot()
+Public Sub Concat_AddEmptyToEmpty_ReturnsEmptyArrayWith1Slot()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2301,8 +2206,7 @@ End Sub
 ' Method - CopyFromCollection '
 '''''''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_CopyFromCollection")
-Private Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
+Public Sub CopyFromCollection_AddCollectionToEmpty_CollectionConverted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2328,8 +2232,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyFromCollection")
-Private Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWithCollectionValues()
+Public Sub CopyFromCollection_AddCollectionToExistingOneDimArray_ArrayReplacedWithCollectionValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2363,8 +2266,7 @@ End Sub
 ' Method - ToString '
 '''''''''''''''''''''
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
+Public Sub ToString_FromOneDimArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2384,8 +2286,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
+Public Sub ToString_FromOneDimArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     Const Expected As String = "{1, 2, 3}"
@@ -2404,8 +2305,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromOneDimArrayCustomDelimiters_CorrectStringRepresentationReturned()
+Public Sub ToString_FromOneDimArrayCustomDelimiters_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     Const Expected As String = "[1,2,3]"
@@ -2424,8 +2324,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
+Public Sub ToString_FromJaggedArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2446,8 +2345,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturned()
+Public Sub ToString_FromJaggedArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2472,8 +2370,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
+Public Sub ToString_FromEmptyArray_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2493,8 +2390,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToString")
-Private Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturned()
+Public Sub ToString_FromEmptyArrayPrettyPrint_CorrectStringRepresentationReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2518,8 +2414,7 @@ End Sub
 ' Method - IsSorted '
 '''''''''''''''''''''
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_SortedOneDimArray_ReturnsTrue()
+Public Sub IsSorted_SortedOneDimArray_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2541,8 +2436,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_UnsortedOneDimArray_ReturnsFalse()
+Public Sub IsSorted_UnsortedOneDimArray_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2564,8 +2458,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_SortedMultiDimArray_ReturnsTrue()
+Public Sub IsSorted_SortedMultiDimArray_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2590,8 +2483,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_UnsortedMultiDimArray_ReturnsFalse()
+Public Sub IsSorted_UnsortedMultiDimArray_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2617,8 +2509,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_SortedJaggedArray_ReturnsTrue()
+Public Sub IsSorted_SortedJaggedArray_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2640,8 +2531,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_UnsortedJaggedArray_ReturnsFalse()
+Public Sub IsSorted_UnsortedJaggedArray_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2663,8 +2553,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_EmptyArray_ReturnsTrue()
+Public Sub IsSorted_EmptyArray_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2683,14 +2572,12 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IsSorted")
-Private Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
+Public Sub IsSorted_JaggedArrayWithMoreThan2Dimensions_RaisesError()
     Const ExpectedError As Long = ErrorCodes.EC_EXCEEDS_MAX_SORT_DEPTH
     On Error GoTo TestFail
 
     'Arrange
     Dim TestArray() As Variant
-    '@Ignore VariableNotUsed
     Dim Actual As Boolean
     TestArray = Gen.GetArray(ArrayType:=AG_JAGGED, Depth:=3)
     SUT.Items = TestArray
@@ -2715,8 +2602,7 @@ End Sub
 ' Method - Sort '
 '''''''''''''''''
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayObjects_Throws()
+Public Sub Sort_OneDimArrayObjects_Throws()
     Const ExpectedError As Long = ErrorCodes.EC_CANNOT_SORT_OBJECTS
     On Error GoTo TestFail
     
@@ -2741,8 +2627,7 @@ TestFail:
     End If
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortRecursive_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2764,8 +2649,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2788,8 +2672,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2813,8 +2696,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2834,8 +2716,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2858,8 +2739,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2882,8 +2762,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortRecursive_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortRecursive_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2903,8 +2782,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortRecursiveNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2927,8 +2805,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortRecursivePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2952,8 +2829,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortIterative_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortIterative_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2975,8 +2851,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -2999,8 +2874,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3024,8 +2898,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortIterative_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3045,8 +2918,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3069,8 +2941,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayQuicksortIterativePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3093,8 +2964,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortIterative_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortIterative_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3114,8 +2984,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortIterativeNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3138,8 +3007,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayQuicksortIterativePositiveBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayQuicksortIterativePositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3163,8 +3031,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayTimSort_ArrayIsSorted()
+Public Sub Sort_OneDimArrayTimSort_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3186,8 +3053,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayTimSort10kEntries_ArrayIsSorted()
+Public Sub Sort_OneDimArrayTimSort10kEntries_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3209,8 +3075,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayTimSortNegativeBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayTimSortNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3233,8 +3098,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_OneDimArrayTimSortPositiveBase_ArrayIsSorted()
+Public Sub Sort_OneDimArrayTimSortPositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3258,8 +3122,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayTimSort_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayTimSort_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3279,8 +3142,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayTimSortNegativeBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayTimSortNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3303,8 +3165,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_MultiDimArrayTimSortPositiveBase_ArrayIsSorted()
+Public Sub Sort_MultiDimArrayTimSortPositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3327,8 +3188,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayTimSort_ArrayIsSorted()
+Public Sub Sort_JaggedArrayTimSort_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3348,8 +3208,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayTimSortNegativeBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayTimSortNegativeBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3372,8 +3231,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayTimSortPositiveBase_ArrayIsSorted()
+Public Sub Sort_JaggedArrayTimSortPositiveBase_ArrayIsSorted()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3396,8 +3254,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayTimSortColumnDescending_ArrayIsSortedDescending()
+Public Sub Sort_JaggedArrayTimSortColumnDescending_ArrayIsSortedDescending()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3430,8 +3287,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Sort")
-Private Sub Sort_JaggedArrayTimSortMixedDirectionStable_OrderPreserved()
+Public Sub Sort_JaggedArrayTimSortMixedDirectionStable_OrderPreserved()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3477,8 +3333,7 @@ End Sub
 ' Method - CopyWithin '
 '''''''''''''''''''''''
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3500,8 +3355,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayElements3ToEndToIndex1_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayElements3ToEndToIndex1_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3523,8 +3377,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayFirstTwoElementsToLastTwoElements_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayFirstTwoElementsToLastTwoElements_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3546,8 +3399,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNoStartNoEnd_NothingChanged()
+Public Sub CopyWithin_OneDimArrayNoStartNoEnd_NothingChanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3569,8 +3421,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayPositiveStartNoEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3592,8 +3443,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayNegativeStartNoEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3615,8 +3465,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayPositiveStartPositiveEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3638,8 +3487,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayPositiveStartNegativeEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3661,8 +3509,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_OneDimArrayNegativeStartNegativeEnd_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3684,8 +3531,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_JaggedArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
+Public Sub CopyWithin_JaggedArrayElement3ToIndex0_SelectionCopiedLengthUnchanged()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3709,13 +3555,11 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_CopyWithin")
-Private Sub CopyWithin_EmptyInternal_RaisesError()
+Public Sub CopyWithin_EmptyInternal_RaisesError()
     Const ExpectedError As Long = ErrorCodes.EC_UNALLOCATED_ARRAY
     On Error GoTo TestFail
     
     'Arrange:
-    '@Ignore VariableNotUsed
     Dim Actual() As Variant
     'Act:
     Actual = SUT.CopyWithin(0, 3, 4).Items
@@ -3736,8 +3580,7 @@ End Sub
 ' Method - Filter '
 '''''''''''''''''''
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_OneDimExclude_ReturnsFilteredArray()
+Public Sub Filter_OneDimExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3759,8 +3602,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_OneDimInclude_ReturnsFilteredArray()
+Public Sub Filter_OneDimInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -3782,8 +3624,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayExclude_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3806,8 +3647,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayInclude_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3831,8 +3671,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayExclude_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3864,8 +3703,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayInclude_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3893,8 +3731,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3925,8 +3762,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3956,8 +3792,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -3980,8 +3815,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4005,8 +3839,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayExcludeByIncorrectColumn_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayExcludeByIncorrectColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4035,8 +3868,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_MultiDimArrayIncludeByIncorrectColumn_ReturnsFilteredArray()
+Public Sub Filter_MultiDimArrayIncludeByIncorrectColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4064,8 +3896,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayExcludeIncorrectColumnIndex_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayExcludeIncorrectColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4088,8 +3919,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Filter")
-Private Sub Filter_JaggedArrayIncludeIncorrectColumnIndex_ReturnsFilteredArray()
+Public Sub Filter_JaggedArrayIncludeIncorrectColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4117,8 +3947,7 @@ End Sub
 ' Method - FilterType '
 '''''''''''''''''''''''
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_OneDimExclude_ReturnsFilteredArray()
+Public Sub FilterType_OneDimExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4140,8 +3969,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_OneDimInclude_ReturnsFilteredArray()
+Public Sub FilterType_OneDimInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4163,8 +3991,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_JaggedArrayExclude_ReturnsFilteredArray()
+Public Sub FilterType_JaggedArrayExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4187,8 +4014,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_JaggedArrayInclude_ReturnsFilteredArray()
+Public Sub FilterType_JaggedArrayInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4212,8 +4038,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_MultiDimArrayExclude_ReturnsFilteredArray()
+Public Sub FilterType_MultiDimArrayExclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4245,8 +4070,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_MultiDimArrayInclude_ReturnsFilteredArray()
+Public Sub FilterType_MultiDimArrayInclude_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4274,8 +4098,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
+Public Sub FilterType_MultiDimArrayExcludeByColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4306,8 +4129,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
+Public Sub FilterType_MultiDimArrayIncludeByColumn_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4337,8 +4159,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
+Public Sub FilterType_JaggedArrayExcludeColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4361,8 +4182,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FilterType")
-Private Sub FilterType_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
+Public Sub FilterType_JaggedArrayIncludeColumnIndex_ReturnsFilteredArray()
     On Error GoTo TestFail
 
     'Arrange:
@@ -4390,8 +4210,7 @@ End Sub
 ' Method - At '
 ''''''''''''''''
 
-'@TestMethod("BetterArray_At")
-Private Sub At_OneDimArrayBase1Index0_ReturnsFirstElement()
+Public Sub At_OneDimArrayBase1Index0_ReturnsFirstElement()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4415,8 +4234,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_At")
-Private Sub At_OneDimArrayBase1NegativeIndex1_ReturnsLastElement()
+Public Sub At_OneDimArrayBase1NegativeIndex1_ReturnsLastElement()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4440,8 +4258,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_At")
-Private Sub At_OneDimArrayOutOfRange_ReturnsEmpty()
+Public Sub At_OneDimArrayOutOfRange_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4465,8 +4282,7 @@ End Sub
 ' Method - Some '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Some")
-Private Sub Some_OneDimArrayContainsTarget_ReturnsTrue()
+Public Sub Some_OneDimArrayContainsTarget_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4488,8 +4304,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Some")
-Private Sub Some_OneDimArrayDoesntContainTarget_ReturnsFalse()
+Public Sub Some_OneDimArrayDoesntContainTarget_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4511,8 +4326,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Some")
-Private Sub Some_JaggedArrayContains_ReturnsTrue()
+Public Sub Some_JaggedArrayContains_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4534,8 +4348,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Some")
-Private Sub Some_EmptyInternal_ReturnsFalse()
+Public Sub Some_EmptyInternal_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4558,8 +4371,7 @@ End Sub
 ' Method - Includes '
 '''''''''''''''''''''
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
+Public Sub Includes_OneDimArrayContainsTarget_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4580,8 +4392,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayDoesntContainTarget_ReturnsFalse()
+Public Sub Includes_OneDimArrayDoesntContainTarget_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4602,8 +4413,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayDoesContainTargetAfterStartIndex_ReturnsFalse()
+Public Sub Includes_OneDimArrayDoesContainTargetAfterStartIndex_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4624,8 +4434,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayDoesntContainTargetAfterStartIndex_ReturnsFalse()
+Public Sub Includes_OneDimArrayDoesntContainTargetAfterStartIndex_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4646,8 +4455,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayBase10ContainsTargetAtLowerBound_ReturnsTrue()
+Public Sub Includes_OneDimArrayBase10ContainsTargetAtLowerBound_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4671,8 +4479,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_OneDimArrayBase1NegativeFromIndexStartsAtEnd_ReturnsTrue()
+Public Sub Includes_OneDimArrayBase1NegativeFromIndexStartsAtEnd_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4696,8 +4503,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_JaggedArrayContains_ReturnsTrue()
+Public Sub Includes_JaggedArrayContains_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4718,8 +4524,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_JaggedArrayDoesntContains_ReturnsFalse()
+Public Sub Includes_JaggedArrayDoesntContains_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4740,8 +4545,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Includes")
-Private Sub Includes_EmptyInternal_ReturnsFalse()
+Public Sub Includes_EmptyInternal_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4764,8 +4568,7 @@ End Sub
 ' Method - IncludesType '
 '''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_IncludesType")
-Private Sub IncludesType_OneDimArrayContainsType_ReturnsTrue()
+Public Sub IncludesType_OneDimArrayContainsType_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4788,8 +4591,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IncludesType")
-Private Sub IncludesType_OneDimArrayDoesntContainType_ReturnsFalse()
+Public Sub IncludesType_OneDimArrayDoesntContainType_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4812,8 +4614,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IncludesType")
-Private Sub IncludesType_OneDimArrayBase10ContainsTypeAtLowerBound_ReturnsTrue()
+Public Sub IncludesType_OneDimArrayBase10ContainsTypeAtLowerBound_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4839,8 +4640,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IncludesType")
-Private Sub IncludesType_OneDimArrayBaseNegative1FromIndexNegative1SkipsEarlierMatch_ReturnsFalse()
+Public Sub IncludesType_OneDimArrayBaseNegative1FromIndexNegative1SkipsEarlierMatch_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4865,8 +4665,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_IncludesType")
-Private Sub IncludesType_JaggedArrayContainsType_ReturnsTrue()
+Public Sub IncludesType_JaggedArrayContainsType_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4893,8 +4692,7 @@ End Sub
 ' Method - Keys '
 '''''''''''''''''
 
-'@TestMethod("BetterArray_Keys")
-Private Sub Keys_OneDimArrayDefaultBase_ReturnsCorrectKeys()
+Public Sub Keys_OneDimArrayDefaultBase_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4919,8 +4717,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Keys")
-Private Sub Keys_OneDimArraySpecifiedBase_ReturnsCorrectKeys()
+Public Sub Keys_OneDimArraySpecifiedBase_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4946,8 +4743,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Keys")
-Private Sub Keys_MultiDimArray_ReturnsCorrectKeys()
+Public Sub Keys_MultiDimArray_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4972,8 +4768,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Keys")
-Private Sub Keys_JaggedArray_ReturnsCorrectKeys()
+Public Sub Keys_JaggedArray_ReturnsCorrectKeys()
     On Error GoTo TestFail
     
     'Arrange:
@@ -4998,13 +4793,11 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Keys")
-Private Sub Keys_EmptyInternal_RaisesUnallocError()
+Public Sub Keys_EmptyInternal_RaisesUnallocError()
     Const ExpectedError As Long = ErrorCodes.EC_UNALLOCATED_ARRAY
     On Error GoTo TestFail
     
     'Arrange:
-    '@Ignore VariableNotUsed
     Dim Actual() As Variant
     
     'Act:
@@ -5028,8 +4821,7 @@ End Sub
 ' Method - Max '
 ''''''''''''''''
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayNumericInternal_ReturnsLargest()
+Public Sub Max_OneDimArrayNumericInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5051,8 +4843,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayStringsInternal_ReturnsLargest()
+Public Sub Max_OneDimArrayStringsInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5074,8 +4865,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayVariantsInternal_ReturnsLargest()
+Public Sub Max_OneDimArrayVariantsInternal_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5098,8 +4888,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_OneDimArrayObjects_ReturnsEmpty()
+Public Sub Max_OneDimArrayObjects_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5121,8 +4910,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_ParamArray_ReturnsLargest()
+Public Sub Max_ParamArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5144,8 +4932,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_PassedArray_ReturnsLargest()
+Public Sub Max_PassedArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5168,8 +4955,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_JaggedArray_Returnslargest()
+Public Sub Max_JaggedArray_Returnslargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5189,8 +4975,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Max")
-Private Sub Max_EmptyInternal_ReturnsEmpty()
+Public Sub Max_EmptyInternal_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5214,8 +4999,7 @@ End Sub
 ' Method - Min '
 ''''''''''''''''
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayNumericInternal_ReturnsSmallest()
+Public Sub Min_OneDimArrayNumericInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5237,8 +5021,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayStringsInternal_ReturnsSmallest()
+Public Sub Min_OneDimArrayStringsInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5260,8 +5043,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayVariantsInternal_ReturnsSmallest()
+Public Sub Min_OneDimArrayVariantsInternal_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5284,8 +5066,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_OneDimArrayObjects_ReturnsEmpty()
+Public Sub Min_OneDimArrayObjects_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5307,8 +5088,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_ParamArray_ReturnsSmallest()
+Public Sub Min_ParamArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5330,8 +5110,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_PassedArray_ReturnsSmallest()
+Public Sub Min_PassedArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5354,8 +5133,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_JaggedArray_ReturnsSmallest()
+Public Sub Min_JaggedArray_ReturnsSmallest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5375,8 +5153,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Min")
-Private Sub Min_EmptyInternal_ReturnsEmpty()
+Public Sub Min_EmptyInternal_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5399,8 +5176,7 @@ End Sub
 ' Method - Slice '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimNoEndArg_ReturnsCopy()
+Public Sub Slice_OneDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5422,8 +5198,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimNoEndArgObjects_ReturnsCopy()
+Public Sub Slice_OneDimNoEndArgObjects_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5445,8 +5220,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimWithEndArg_ReturnsCopy()
+Public Sub Slice_OneDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5469,8 +5243,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_MultiDimNoEndArg_ReturnsCopy()
+Public Sub Slice_MultiDimNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5500,8 +5273,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_MultiDimWithEndArg_ReturnsCopy()
+Public Sub Slice_MultiDimWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5533,8 +5305,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_JaggedNoEndArg_ReturnsCopy()
+Public Sub Slice_JaggedNoEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5555,8 +5326,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_JaggedWithEndArg_ReturnsCopy()
+Public Sub Slice_JaggedWithEndArg_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5583,8 +5353,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_EmptyInternal_GracefulDegradation()
+Public Sub Slice_EmptyInternal_GracefulDegradation()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5601,8 +5370,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimArrayBase1StartOverEnd_ReturnsEmpty()
+Public Sub Slice_OneDimArrayBase1StartOverEnd_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5623,8 +5391,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Slice")
-Private Sub Slice_OneDimArrayBase1StartBeforeLowerBound_ReturnsCopy()
+Public Sub Slice_OneDimArrayBase1StartBeforeLowerBound_ReturnsCopy()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5654,8 +5421,7 @@ End Sub
 ' Method - Reverse '
 ''''''''''''''''''''
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_OneDimArray_ArrayIsReversed()
+Public Sub Reverse_OneDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5677,8 +5443,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_OneDimArrayBase10_ArrayIsReversed()
+Public Sub Reverse_OneDimArrayBase10_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5700,8 +5465,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_MultiDimArray_ArrayIsReversed()
+Public Sub Reverse_MultiDimArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5733,8 +5497,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
+Public Sub Reverse_MultiDimArrayRecursive_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5766,8 +5529,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_JaggedArray_ArrayIsReversed()
+Public Sub Reverse_JaggedArray_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5788,8 +5550,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_JaggedArrayRecurse_ArrayIsReversed()
+Public Sub Reverse_JaggedArrayRecurse_ArrayIsReversed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5810,8 +5571,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Reverse")
-Private Sub Reverse_EmptyInternal_ReturnsEmpty()
+Public Sub Reverse_EmptyInternal_ReturnsEmpty()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5836,8 +5596,7 @@ End Sub
 ' Method - Shuffle '
 ''''''''''''''''''''
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_OneDimArray_ArrayIsShuffled()
+Public Sub Shuffle_OneDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5859,8 +5618,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_OneDimArrayBase1_ArrayIsShuffled()
+Public Sub Shuffle_OneDimArrayBase1_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5883,8 +5641,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_OneDimArrayNegativeBase_PreservesValues()
+Public Sub Shuffle_OneDimArrayNegativeBase_PreservesValues()
     On Error GoTo TestFail
 
     'Arrange:
@@ -5912,8 +5669,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_MultiDimArray_ArrayIsShuffled()
+Public Sub Shuffle_MultiDimArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5935,8 +5691,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_JaggedArray_ArrayIsShuffled()
+Public Sub Shuffle_JaggedArray_ArrayIsShuffled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5959,8 +5714,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Shuffle")
-Private Sub Shuffle_EmptyInternal_ReturnsEmptyArray()
+Public Sub Shuffle_EmptyInternal_ReturnsEmptyArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5983,8 +5737,7 @@ End Sub
 ' Method - FromExcelRange '
 '''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_FromExcelRange")
-Private Sub FromExcelRange_NoDetection_Success()
+Public Sub FromExcelRange_NoDetection_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6024,8 +5777,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromExcelRange")
-Private Sub FromExcelRange_ColumnDetection_Success()
+Public Sub FromExcelRange_ColumnDetection_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6066,8 +5818,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromExcelRange")
-Private Sub FromExcelRange_RowDetection_Success()
+Public Sub FromExcelRange_RowDetection_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6108,8 +5859,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromExcelRange")
-Private Sub FromExcelRange_ColumnAndRowDetection_Success()
+Public Sub FromExcelRange_ColumnAndRowDetection_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6146,8 +5896,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromExcelRange")
-Private Sub FromExcelRange_MultiAreaRange_Success()
+Public Sub FromExcelRange_MultiAreaRange_Success()
     On Error GoTo TestFail
 
     'Arrange:
@@ -6215,8 +5964,7 @@ End Sub
 ' Method - ToExcelRange '
 '''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_ToExcelRange")
-Private Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
+Public Sub ToExcelRange_OneDimensionNotTransposed_WritesValuesCorrectly()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6249,8 +5997,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToExcelRange")
-Private Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
+Public Sub ToExcelRange_OneDimensionTransposed_WritesValuesCorrectly()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6285,8 +6032,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToExcelRange")
-Private Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
+Public Sub ToExcelRange_TwoDimensionNotTransposed_WritesValuesCorrectly()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6317,8 +6063,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToExcelRange")
-Private Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
+Public Sub ToExcelRange_TwoDimensionTransposed_WritesValuesCorrectly()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6349,8 +6094,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ToExcelRange")
-Private Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDimension()
+Public Sub ToExcelRange_JaggedDepthOfThree_WritesScalarRepresentationOfThirdDimension()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6405,8 +6149,7 @@ End Sub
 ' Method - ParseFromString '
 ''''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_ParseFromString")
-Private Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
+Public Sub ParseFromString_OneDimensionArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6435,8 +6178,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ParseFromString")
-Private Sub ParseFromString_OneDimensionInvariantDotDecimals_ReturnsDoubles()
+Public Sub ParseFromString_OneDimensionInvariantDotDecimals_ReturnsDoubles()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6459,8 +6201,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ParseFromString")
-Private Sub ParseFromString_Jagged2DeepArrayFromToString_ReturnsCorrectValues()
+Public Sub ParseFromString_Jagged2DeepArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6490,8 +6231,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ParseFromString")
-Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
+Public Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6510,7 +6250,7 @@ Private Sub ParseFromString_Jagged3DeepArrayFromToString_ReturnsCorrectValues()
     Actual = SUT.ParseFromString(SourceString).Items
     
     ' can't use Assert.SequenceEquals due to type comparison - Bytes Will be Long in actual
-    ' also, Assert.SeqenceEquals doesn't support jagged arrays: https://github.com/rubberduck-vba/Rubberduck/issues/5161
+    ' SequenceEquals is not used here because this case compares jagged arrays.
     TestResult = SequenceEquals_JaggedArray(Expected, Actual)
     
     
@@ -6522,8 +6262,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ParseFromString")
-Private Sub ParseFromString_Jagged5DeepArrayFromToString_ReturnsCorrectValues()
+Public Sub ParseFromString_Jagged5DeepArrayFromToString_ReturnsCorrectValues()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6551,8 +6290,7 @@ End Sub
 ' Method - Flatten '
 ''''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_OneDimArray_ReturnsSame()
+Public Sub Flatten_OneDimArray_ReturnsSame()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6573,8 +6311,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_MultiDimArray_ReturnsFlattenned()
+Public Sub Flatten_MultiDimArray_ReturnsFlattenned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6604,8 +6341,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_JaggedArray_ReturnsFlattenned()
+Public Sub Flatten_JaggedArray_ReturnsFlattenned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6633,8 +6369,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Flatten")
-Private Sub Flatten_EmptyInternal_ReturnsArraySizeOne()
+Public Sub Flatten_EmptyInternal_ReturnsArraySizeOne()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6657,8 +6392,7 @@ End Sub
 ' Method - Clear '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Clear")
-Private Sub Clear_OneDimArray_Clears()
+Public Sub Clear_OneDimArray_Clears()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6689,8 +6423,7 @@ End Sub
 ' Method - ResetToDefault '
 '''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_ResetToDefault")
-Private Sub ResetToDefault_OneDimArray_Resets()
+Public Sub ResetToDefault_OneDimArray_Resets()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6722,8 +6455,7 @@ End Sub
 ' Method - Clone '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Clone")
-Private Sub Clone_OneDimArray_CloneIsNotOriginalItemsAreSame()
+Public Sub Clone_OneDimArray_CloneIsNotOriginalItemsAreSame()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6752,8 +6484,7 @@ End Sub
 ' Method - ExtractSegment '
 '''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_OneDimArrayNoArgs_FullArrayReturned()
+Public Sub ExtractSegment_OneDimArrayNoArgs_FullArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6775,8 +6506,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_OneDimArrayJustRowArg_ArrayReturned()
+Public Sub ExtractSegment_OneDimArrayJustRowArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6801,8 +6531,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_OneDimArrayJustColArg_ArrayReturned()
+Public Sub ExtractSegment_OneDimArrayJustColArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6827,8 +6556,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_OneDimArrayRowAndColArgs_ArrayReturned()
+Public Sub ExtractSegment_OneDimArrayRowAndColArgs_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6855,8 +6583,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_JaggedArrayNoArgs_FullArrayReturned()
+Public Sub ExtractSegment_JaggedArrayNoArgs_FullArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6878,8 +6605,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_JaggedArrayJustRowArg_ArrayReturned()
+Public Sub ExtractSegment_JaggedArrayJustRowArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6904,8 +6630,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_JaggedArrayJustColArg_ArrayReturned()
+Public Sub ExtractSegment_JaggedArrayJustColArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6934,8 +6659,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_JaggedDimArrayRowAndColArgs_ArrayReturned()
+Public Sub ExtractSegment_JaggedDimArrayRowAndColArgs_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6962,8 +6686,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_MultiDimArrayNoArgs_FullArrayReturned()
+Public Sub ExtractSegment_MultiDimArrayNoArgs_FullArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6985,8 +6708,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_MultiDimArrayJustRowArg_ArrayReturned()
+Public Sub ExtractSegment_MultiDimArrayJustRowArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7015,8 +6737,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_MultiDimArrayJustColArg_ArrayReturned()
+Public Sub ExtractSegment_MultiDimArrayJustColArg_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7045,8 +6766,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_ExtractSegment")
-Private Sub ExtractSegment_MultiDimDimArrayRowAndColArgs_ArrayReturned()
+Public Sub ExtractSegment_MultiDimDimArrayRowAndColArgs_ArrayReturned()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7076,8 +6796,7 @@ End Sub
 ''''''''''''''''''''''
 ' Method - Transpose '
 ''''''''''''''''''''''
-'@TestMethod("BetterArray_Transpose")
-Private Sub Transpose_OneDimArray_ArrayTransposed()
+Public Sub Transpose_OneDimArray_ArrayTransposed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7107,8 +6826,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Transpose")
-Private Sub Transpose_JaggedArray_ArrayTransposed()
+Public Sub Transpose_JaggedArray_ArrayTransposed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7143,8 +6861,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Transpose")
-Private Sub Transpose_JaggedArraySingleOuterColumn_ArrayTransposed()
+Public Sub Transpose_JaggedArraySingleOuterColumn_ArrayTransposed()
     On Error GoTo TestFail
 
     'Arrange:
@@ -7178,8 +6895,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Transpose")
-Private Sub Transpose_MultiDimArray_ArrayTransposed()
+Public Sub Transpose_MultiDimArray_ArrayTransposed()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7216,8 +6932,7 @@ End Sub
 ' Method - IndexOf '
 ''''''''''''''''''''''
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
+Public Sub IndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7241,8 +6956,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
+Public Sub IndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7267,15 +6981,12 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
+Public Sub IndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_STRING_TYPE_EXPECTED
     On Error GoTo TestFail
     
     'Arrange:
-    '@Ignore VariableNotUsed
     Dim Expected As Long
-    '@Ignore VariableNotUsed
     Dim Actual As Long
     Dim TestArray() As Variant
     Dim Pattern As Collection
@@ -7300,8 +7011,7 @@ TestFail:
     End If
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
+Public Sub IndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7325,8 +7035,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_JaggedArray_ReturnsCorrectIndex()
+Public Sub IndexOf_JaggedArray_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7350,8 +7059,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
+Public Sub IndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7375,8 +7083,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_IndexOf")
-Private Sub IndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
+Public Sub IndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7404,8 +7111,7 @@ End Sub
 ' Method - Unique '
 ''''''''''''''''''''''
 
-'@TestMethod("BetterArray_Unique")
-Private Sub Unique_OneDimArray_ReturnsUniqueList()
+Public Sub Unique_OneDimArray_ReturnsUniqueList()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7430,8 +7136,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Unique")
-Private Sub Unique_JaggedArray_ReturnsUniqueList()
+Public Sub Unique_JaggedArray_ReturnsUniqueList()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7465,8 +7170,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Unique")
-Private Sub Unique_JaggedArrayColumnIndexBase0_ReturnsUniqueList()
+Public Sub Unique_JaggedArrayColumnIndexBase0_ReturnsUniqueList()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7504,8 +7208,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Unique")
-Private Sub Unique_JaggedArrayColumnIndexBaseNegativeBase_ReturnsUniqueList()
+Public Sub Unique_JaggedArrayColumnIndexBaseNegativeBase_ReturnsUniqueList()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7554,8 +7257,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Unique")
-Private Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
+Public Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7603,8 +7305,7 @@ End Sub
 '''''''''''''''''''
 ' Method - Remove '
 '''''''''''''''''''
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_OneDimArraySingleEntry_ResultsInEmptyArray()
+Public Sub Remove_OneDimArraySingleEntry_ResultsInEmptyArray()
     On Error GoTo TestFail
     ' Coverage added following issue 17
     ' https://github.com/Senipah/VBA-Better-Array/issues/17
@@ -7635,8 +7336,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_OneDimArray_RemovesElementAtIndex()
+Public Sub Remove_OneDimArray_RemovesElementAtIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7667,8 +7367,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_JaggedArray_RemovesElementAtIndex()
+Public Sub Remove_JaggedArray_RemovesElementAtIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7710,8 +7409,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_MultiDimArray_RemovesElementAtIndex()
+Public Sub Remove_MultiDimArray_RemovesElementAtIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7751,8 +7449,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_OneDimArrayRemoveFirst_RemovesElementAtIndex()
+Public Sub Remove_OneDimArrayRemoveFirst_RemovesElementAtIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7782,8 +7479,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_OneDimArrayRemoveLast_RemovesElementAtIndex()
+Public Sub Remove_OneDimArrayRemoveLast_RemovesElementAtIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7813,8 +7509,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Remove")
-Private Sub Remove_OneDimArrayIndexExceedsBounds_NothingRemoved()
+Public Sub Remove_OneDimArrayIndexExceedsBounds_NothingRemoved()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7848,8 +7543,7 @@ End Sub
 ' Method - Every '
 ''''''''''''''''''
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_OneDimArrayOfSameString_ReturnsTrue()
+Public Sub Every_OneDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7872,8 +7566,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_OneDimArrayOfDifferentString_ReturnsFalse()
+Public Sub Every_OneDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7896,8 +7589,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_OneDimArrayBase10FromIndexAtLowerBound_ReturnsFalse()
+Public Sub Every_OneDimArrayBase10FromIndexAtLowerBound_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7920,8 +7612,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_JaggedDimArrayOfSameString_ReturnsTrue()
+Public Sub Every_JaggedDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7944,8 +7635,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_JaggedDimArrayOfSameString_ReturnsFalse()
+Public Sub Every_JaggedDimArrayOfSameString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7968,8 +7658,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_MiltiDimArrayOfSameString_ReturnsTrue()
+Public Sub Every_MiltiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7995,8 +7684,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Every")
-Private Sub Every_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Public Sub Every_MiltiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8027,8 +7715,7 @@ End Sub
 ' Method - EveryType'
 '''''''''''''''''''''
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_OneDimArrayOfSameString_ReturnsTrue()
+Public Sub EveryType_OneDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8051,8 +7738,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_OneDimArrayOfDifferentTypes_ReturnsFalse()
+Public Sub EveryType_OneDimArrayOfDifferentTypes_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8075,8 +7761,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_OneDimArrayBase10FromIndexAtLowerBound_ReturnsFalse()
+Public Sub EveryType_OneDimArrayBase10FromIndexAtLowerBound_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8099,8 +7784,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_OneDimArrayBaseNegative1FromIndexNegative1UsesTailElementOnly_ReturnsTrue()
+Public Sub EveryType_OneDimArrayBaseNegative1FromIndexNegative1UsesTailElementOnly_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8123,8 +7807,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_JaggedDimArrayOfSameString_ReturnsTrue()
+Public Sub EveryType_JaggedDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8150,8 +7833,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_JaggedDimArrayOfSameString_ReturnsFalse()
+Public Sub EveryType_JaggedDimArrayOfSameString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8177,8 +7859,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_MiltiDimArrayOfSameString_ReturnsTrue()
+Public Sub EveryType_MiltiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8204,8 +7885,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_EveryType")
-Private Sub EveryType_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Public Sub EveryType_MiltiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8236,8 +7916,7 @@ End Sub
 ' Method - Fill  '
 ''''''''''''''''''''''
 
-'@TestMethod("BetterArray_Fill")
-Private Sub Fill_OneDimArray2To4_SpecifiedIndicesFilled()
+Public Sub Fill_OneDimArray2To4_SpecifiedIndicesFilled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8271,8 +7950,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Fill")
-Private Sub Fill_OneDimArray1ToEnd_SpecifiedIndicesFilled()
+Public Sub Fill_OneDimArray1ToEnd_SpecifiedIndicesFilled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8306,8 +7984,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Fill")
-Private Sub Fill_OneDimArrayAll_SpecifiedIndicesFilled()
+Public Sub Fill_OneDimArrayAll_SpecifiedIndicesFilled()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8344,8 +8021,7 @@ End Sub
 ' Method - LastIndexOf '
 ''''''''''''''''''''''
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
+Public Sub LastIndexOf_OneDimArrayValueExists_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8369,8 +8045,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
+Public Sub LastIndexOf_OneDimArrayValueExistsLikeComparison_ReturnsCorrectIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8395,15 +8070,12 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
+Public Sub LastIndexOf_OneDimArrayLikeComparisonPatternNotString_ThrowsError()
     Const ExpectedError As Long = ErrorCodes.EC_STRING_TYPE_EXPECTED
     On Error GoTo TestFail
     
     'Arrange:
-    '@Ignore VariableNotUsed
     Dim Expected As Long
-    '@Ignore VariableNotUsed
     Dim Actual As Long
     Dim TestArray() As Variant
     Dim Pattern As Collection
@@ -8428,8 +8100,7 @@ TestFail:
     End If
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
+Public Sub LastIndexOf_OneDimArrayValueMissing_ReturnsMISSING_LONG()
     On Error GoTo TestFail
 
     'Arrange:
@@ -8453,8 +8124,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_JaggedArray_ReturnsCorrectIndex()
+Public Sub LastIndexOf_JaggedArray_ReturnsCorrectIndex()
     On Error GoTo TestFail
 
     'Arrange:
@@ -8478,8 +8148,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
+Public Sub LastIndexOf_OneDimArrayBase10FromIndex0_ReturnsLowerBoundIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8503,8 +8172,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_LastIndexOf")
-Private Sub LastIndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
+Public Sub LastIndexOf_OneDimArrayBase1FromIndexNegative1_ReturnsLastIndex()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8533,8 +8201,7 @@ End Sub
 ' Method - Splice '
 '''''''''''''''''''
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1Length3InsertNoDelete_PreservesTail()
+Public Sub Splice_OneDimArrayBase1Length3InsertNoDelete_PreservesTail()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8568,8 +8235,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1Length3InsertTwoNoDelete_PreservesTail()
+Public Sub Splice_OneDimArrayBase1Length3InsertTwoNoDelete_PreservesTail()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8603,8 +8269,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayInsertAtIndex1_Success()
+Public Sub Splice_OneDimArrayInsertAtIndex1_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8632,8 +8297,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayInsertAtIndex1Delete1_Success()
+Public Sub Splice_OneDimArrayInsertAtIndex1Delete1_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8664,8 +8328,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayInsertAtIndex2Delete0Insert2_Success()
+Public Sub Splice_OneDimArrayInsertAtIndex2Delete0Insert2_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8696,8 +8359,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayInsertAtIndex2Delete1Insert2_Success()
+Public Sub Splice_OneDimArrayInsertAtIndex2Delete1Insert2_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8728,8 +8390,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayInsertAtIndex2Delete2Insert0_Success()
+Public Sub Splice_OneDimArrayInsertAtIndex2Delete2Insert0_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8759,8 +8420,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete0Insert2_Success()
+Public Sub Splice_OneDimArrayBase1InsertAtIndex2Delete0Insert2_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8799,8 +8459,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete1Insert2_Success()
+Public Sub Splice_OneDimArrayBase1InsertAtIndex2Delete1Insert2_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8837,8 +8496,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1InsertAtIndex2Delete2Insert0_Success()
+Public Sub Splice_OneDimArrayBase1InsertAtIndex2Delete2Insert0_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8874,8 +8532,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete0Insert2_Success()
+Public Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete0Insert2_Success()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8914,8 +8571,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete1Insert2_Success()
+Public Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete1Insert2_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8952,8 +8608,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete2Insert0_Success()
+Public Sub Splice_OneDimArrayBaseNegative1InsertAtIndex2Delete2Insert0_Success()
     On Error GoTo TestFail
         
     'Arrange:
@@ -8988,8 +8643,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_Splice")
-Private Sub Splice_OneDimArrayBase1SmallArrayDeleteTail_Success()
+Public Sub Splice_OneDimArrayBase1SmallArrayDeleteTail_Success()
     On Error GoTo TestFail
 
     'Arrange:
@@ -9026,8 +8680,7 @@ End Sub
 ' Method - FromCSVString '
 ''''''''''''''''''''''''''
 
-'@TestMethod("BetterArray_FromCSVString")
-Private Sub FromCSVString_Simple10RowWithHeaders_ReturnsJagged()
+Public Sub FromCSVString_Simple10RowWithHeaders_ReturnsJagged()
     On Error GoTo TestFail
         
     'Arrange:
@@ -9070,16 +8723,12 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromCSVString")
-Private Sub FromCSVString_RFC4180_ReturnsJagged()
+Public Sub FromCSVString_RFC4180_ReturnsJagged()
     On Error GoTo TestFail
         
     'Arrange:
-    '@Ignore UseMeaningfulName
     Dim Line1 As String
-    '@Ignore UseMeaningfulName
     Dim Line2 As String
-    '@Ignore UseMeaningfulName
     Dim Line3 As String
     Dim CSVData As String
     Line1 = _
@@ -9116,8 +8765,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromCSVString")
-Private Sub FromCSVString_NullString_ReturnsJagged()
+Public Sub FromCSVString_NullString_ReturnsJagged()
     On Error GoTo TestFail
         
     'Arrange:
@@ -9147,13 +8795,11 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-'@TestMethod("BetterArray_FromCSVString")
-Private Sub FromCSVString_EmptyString_RaisesNullStringError()
+Public Sub FromCSVString_EmptyString_RaisesNullStringError()
     Const ExpectedError As Long = ErrorCodes.EC_NULL_STRING
     On Error GoTo TestFail
 
     'Arrange:
-    '@Ignore VariableNotUsed
     Dim Actual() As Variant
 
     'Act:
@@ -9175,8 +8821,7 @@ End Sub
 ' ToCSVString '
 '''''''''''''''
 
-'@TestMethod("BetterArray_ToCSVString")
-Private Sub ToCSVString_Simple10RowWithHeaders_ValidStringReturned()
+Public Sub ToCSVString_Simple10RowWithHeaders_ValidStringReturned()
     On Error GoTo TestFail
 
     'Arrange:
@@ -9222,8 +8867,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToCSVString")
-Private Sub ToCSVString_Simple10RowNoHeaders_ValidStringReturned()
+Public Sub ToCSVString_Simple10RowNoHeaders_ValidStringReturned()
     On Error GoTo TestFail
 
     'Arrange:
@@ -9269,8 +8913,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToCSVString")
-Private Sub ToCSVString_1DArray_ValidStringReturned()
+Public Sub ToCSVString_1DArray_ValidStringReturned()
     On Error GoTo TestFail
 
     'Arrange:
@@ -9309,8 +8952,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToCSVString")
-Private Sub ToCSVString_Simple2RowNoHeadersDatesAndDoubles_ValidStringReturned()
+Public Sub ToCSVString_Simple2RowNoHeadersDatesAndDoubles_ValidStringReturned()
     On Error GoTo TestFail
 
     'Arrange:
@@ -9342,8 +8984,7 @@ TestFail:
 End Sub
 
 
-'@TestMethod("BetterArray_ToCSVString")
-Private Sub ToCSVString_Simple2RowNoHeadersEscapeCommasQuotesAndCRLF_ValidStringReturned()
+Public Sub ToCSVString_Simple2RowNoHeadersEscapeCommasQuotesAndCRLF_ValidStringReturned()
     On Error GoTo TestFail
 
     'Arrange:
