@@ -1,7 +1,3 @@
-0381ede Use neutral VBATests runner output prefix
-89e4029 Update contributing workflow to use devCheck
-c0dc777 Add FromIndex regression tests and devCheck workflow script
-f39c50b Fix negative FromIndex normalization and jagged sort test bounds
-34ba53e Replace Rubberduck test dependency with built-in runner
-5b71f90 Merge pull request #30 from Mo-Gul/master
-4173200 docs: fix typos
+6c5edd6 Merge pull request #32 from Mo-Gul/master
+9c5fea9 fix: remove duplicate SequenceEquals alias
+ff906e6 chore: fix typos
