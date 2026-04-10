@@ -71,10 +71,6 @@ Public Sub SequenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Op
     End If
 End Sub
 
-Public Sub SeqenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As Variant)
-    SequenceEquals Expected, Actual, Message
-End Sub
-
 Public Sub NotSequenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As Variant)
     If ValuesAreEqual(Expected, Actual) Then
         Fail BuildMessage("Expected sequences to be different.", Message)
