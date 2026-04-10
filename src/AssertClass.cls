@@ -71,7 +71,7 @@ Public Sub SequenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Op
     End If
 End Sub
 
-Public Sub SeqenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As Variant)
+Public Sub SequenceEquals(ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As Variant)
     SequenceEquals Expected, Actual, Message
 End Sub
 

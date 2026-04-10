@@ -345,9 +345,9 @@ End Property
 ' Public Methods '
 ''''''''''''''''''
 
-'@Description("Adds the provided argments to the array at the next available index.")
+'@Description("Adds the provided arguments to the array at the next available index.")
 Public Function Push(ParamArray Args() As Variant) As Variant
-Attribute Push.VB_Description = "Adds the provided argments to the array at the next available index."
+Attribute Push.VB_Description = "Adds the provided arguments to the array at the next available index."
     Dim Element As Variant
 
     If This.ArrayType = ArrayTypes.BA_UNALLOCATED Or _
@@ -1319,13 +1319,13 @@ End Function
 ' Chainable Public Methods '
 ''''''''''''''''''''''''''''
 
-'@Description("Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
+'@Description("Recursively fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value.")
 Public Function Fill( _
         ByVal Value As Variant, _
         Optional ByVal StartIndex As Long = MISSING_LONG, _
         Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As BetterArray
-Attribute Fill.VB_Description = "Recursvely fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value."
+Attribute Fill.VB_Description = "Recursively fills (modifies) all the elements of an array from a start index (default zero) to an end index (default array length) with a passed value."
     Dim LocalItems() As Variant
     Dim RelativeStart As Long
     Dim RelativeEnd As Long
@@ -1378,7 +1378,7 @@ Attribute ParseFromString.VB_Description = "Parses a string representing an arra
             FirstChar = Left$(SourceString, 1)
             LastChar = Right$(SourceString, 1)
             ' no array delimiters supplied
-            ' see if the diff in ascii values are for first and last chars are less than 3
+            ' see if the diff in ASCII values are for first and last chars are less than 3
             ' this covers () [] {} <>
             ' escape numbers incase array is "1,2,3"
             ' escape ucase letters incase array is "A,B,C"
@@ -1425,7 +1425,7 @@ Attribute Transpose.VB_Description = "Swaps rows for columns & vice versa."
     Case ArrayTypes.BA_ONEDIMENSION
         Result = Transpose1DArray(LocalItems)
     Case ArrayTypes.BA_MULTIDIMENSION
-        ' Sould Never match as MD arrs stored as jagged internally
+        ' Should Never match as MD arrs stored as jagged internally
         Result = Transpose2DArray(LocalItems)
     Case ArrayTypes.BA_JAGGED
         Result = TransposeArrayOfArrays(LocalItems)
@@ -2021,7 +2021,7 @@ Attribute ToCSVFile.VB_Description = "Writes stored array to CSV file"
     Dim Content As String
     ' test if path valid - if not handle err
     
-    ' get ouput string
+    ' get output string
     If IsMissing(Headers) Then
         Content = Me.ToCSVString( _
             ColumnDelimiter:=ColumnDelimiter, _
@@ -2669,7 +2669,7 @@ Private Function CountCSVColumns(ByRef FirstRow As String, ByRef LiteralDelim As
 Attribute CountCSVColumns.VB_Description = "Counts the number of delimited columns in a provided string"
     ' Each line should contain the same number of fields
     ' https://www.loc.gov/preservation/digital/formats/fdd/fdd000323.shtml
-    ' so we can just count the columnd in the first row
+    ' so we can just count the columned in the first row
     Dim i As Long
     Dim InQuote As Boolean
     Dim CountColumns As Long
@@ -2799,14 +2799,14 @@ Attribute ParseCSV.VB_Description = "Parses CSV string into a 2d or jagged array
     ParseCSV = Results
 End Function
 
-'@Description("Recursvely fills the array (and nested arrays) with the passed value.")
+'@Description("Recursively fills the array (and nested arrays) with the passed value.")
 Private Function RecursiveFill( _
         ByRef SourceArray() As Variant, _
         ByVal Value As Variant, _
         Optional ByVal StartIndex As Long = MISSING_LONG, _
         Optional ByVal EndIndex As Long = MISSING_LONG _
     ) As Variant()
-Attribute RecursiveFill.VB_Description = "Recursvely fills the array (and nested arrays) with the passed value."
+Attribute RecursiveFill.VB_Description = "Recursively fills the array (and nested arrays) with the passed value."
     Dim RelativeStart As Long
     Dim RelativeEnd As Long
     Dim i As Long
@@ -3143,7 +3143,7 @@ Private Function FilterOneDimension( _
     FilterOneDimension = Result.Items
 End Function
 
-'@Description("Filters a jaggged array by column.")
+'@Description("Filters a jagged array by column.")
 Private Function FilterByColumn( _
         ByRef SourceArray() As Variant, _
         ByVal Match As Variant, _
@@ -3216,7 +3216,7 @@ Attribute RecursiveFilter.VB_Description = "Recursively filters a passed array."
                     Result.Push LocalItems
                 End If
             Else
-                ' push an empty array if current is an unalocated rray
+                ' push an empty array if current is an unallocated array
                 If CompareTypeNames Then
                     IsMatch = (InStr( _
                         UCase$(TypeName(SourceArray(i))), _
@@ -4585,7 +4585,7 @@ Attribute MapMultidimensionArray.VB_Description = "Returns an array representing
     MapMultidimensionArray = LocalMap
 End Function
 
-'@Description("Recursively Converts typred multidimension arrays to variant md arrays arrays. For md arrays with more than 2d.")
+'@Description("Recursively converts typred multidimension arrays to variant md arrays arrays. For md arrays with more than 2d.")
 Private Function RecursiveTypedMultiToVariantMulti( _
         ByRef SourceArray As Variant, _
         Optional ByVal Depth As Long, _
@@ -4594,7 +4594,7 @@ Private Function RecursiveTypedMultiToVariantMulti( _
         Optional ByRef Result As Variant, _
         Optional ByVal EnsureScalar As Boolean _
     ) As Variant()
-Attribute RecursiveTypedMultiToVariantMulti.VB_Description = "Recursively Converts typred multidimension arrays to variant md arrays arrays. For md arrays with more than 2d."
+Attribute RecursiveTypedMultiToVariantMulti.VB_Description = "Recursively converts typred multidimension arrays to variant md arrays arrays. For md arrays with more than 2d."
     Dim i As Long
     Dim LocalLowerBound As Long
     Dim LocalUpperBound As Long
@@ -4896,13 +4896,13 @@ Attribute GetJaggedArrayDepth.VB_Description = "Returns a number representing ho
     GetJaggedArrayDepth = Depth
 End Function
 
-'@Description("Gets the maximium bound values for a specified dimension of a jagged array.")
+'@Description("Gets the maximum bound values for a specified dimension of a jagged array.")
 Private Function GetMaxBoundsAtDimension( _
         ByRef SourceArray() As Variant, _
         Optional ByVal Dimension As Long = 1, _
         Optional ByVal CurrentDimension As Long = 1 _
     ) As Long()
-Attribute GetMaxBoundsAtDimension.VB_Description = "Gets the maximium bound values for a specified dimension of a jagged array."
+Attribute GetMaxBoundsAtDimension.VB_Description = "Gets the maximum bound values for a specified dimension of a jagged array."
     Dim MaxBounds() As Long
     
     If CurrentDimension < Dimension Then
@@ -5057,13 +5057,13 @@ Attribute GetElementByBreadcrumb.VB_Description = "Returns the element stored in
     GetElementByBreadcrumb = Result
 End Function
 
-'@Description("Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
+'@Description("Assigns an element to a location in a multidimensional array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot.")
 Private Function LetElementByBreadcrumb( _
         ByRef SourceArray() As Variant, _
         ByRef Crumb() As Variant, _
         ByVal Element As Variant _
     ) As Variant
-Attribute LetElementByBreadcrumb.VB_Description = "Assigns an element to a location in a multidimensonal array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
+Attribute LetElementByBreadcrumb.VB_Description = "Assigns an element to a location in a multidimensional array based on a crumb argument. A crumb is an array representing the location of the multidimension array slot."
     Select Case UBound(Crumb)
     Case 0
         LetOrSetElement SourceArray(Crumb(0)), Element

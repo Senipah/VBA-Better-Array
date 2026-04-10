@@ -153,7 +153,7 @@ End Sub
 ' Prop - Items '
 ''''''''''''''''
 
-Public Sub Items_CanAssignOneDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Public Sub Items_CanAssignOneDimensionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -175,7 +175,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Items_CanAssignMultiDimemsionalArray_ReturnedArrayEqualsAssignedArray()
+Public Sub Items_CanAssignMultiDimensionalArray_ReturnedArrayEqualsAssignedArray()
     On Error GoTo TestFail
     
     'Arrange:
@@ -1050,7 +1050,7 @@ Public Sub ArrayType_MultiDimensionToJagged_Success()
     Actual = SUT.Items
     
     'Assert:
-    Assert.IsTrue SequenceEqualsMutiVsJagged(TestArray, Actual)
+    Assert.IsTrue SequenceEqualsMultiVsJagged(TestArray, Actual)
     Assert.AreEqual NewType, SUT.ArrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
@@ -1183,7 +1183,7 @@ Public Sub ArrayType_JaggedToMultiDimension_Success()
     Actual = SUT.Items
     
     'Assert:
-    Assert.IsTrue SequenceEqualsMutiVsJagged(Actual, TestArray)
+    Assert.IsTrue SequenceEqualsMultiVsJagged(Actual, TestArray)
     Assert.AreEqual NewType, SUT.ArrayType, "Actual type <> Expected"
     Assert.AreEqual TEST_ARRAY_LENGTH, SUT.Length, "Actual length <> Expected"
 
@@ -1478,7 +1478,7 @@ End Sub
 ''''''''''''''''''
 
 Public Sub Shift_ItemsRemovedByShiftUntilEmpty_EmptyArrayHasLengthZero()
-    ' Agged for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
+    ' Added for coverage of issue #15 - https://github.com/Senipah/VBA-Better-Array/issues/15
     On Error GoTo TestFail
     
     'Arrange:
@@ -1762,17 +1762,17 @@ Public Sub Concat_AddMultipleOneDimArrayToEmptyInternal_SuccessAdded()
     Dim ActualLength As Long
     Dim ExpectedUpperBound As Long
     Dim ActualUpperBound As Long
-    Dim FirstAray() As Variant
+    Dim FirstArray() As Variant
     Dim SecondArray() As Variant
     
-    FirstAray = Array(1, 2, 3)
+    FirstArray = Array(1, 2, 3)
     SecondArray = Array(4, 5, 6)
     Expected = Array(1, 2, 3, 4, 5, 6)
     ExpectedLength = 6
     ExpectedUpperBound = UBound(Expected)
     
     'Act:
-    Actual = SUT.Concat(FirstAray, SecondArray).Items
+    Actual = SUT.Concat(FirstArray, SecondArray).Items
     ActualLength = SUT.Length
     ActualUpperBound = SUT.UpperBound
     
@@ -5057,7 +5057,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Max_JaggedArray_Returnslargest()
+Public Sub Max_JaggedArray_ReturnsLargest()
     On Error GoTo TestFail
     
     'Arrange:
@@ -5713,7 +5713,7 @@ Public Sub Shuffle_OneDimArray_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shufled"
+    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -5736,7 +5736,7 @@ Public Sub Shuffle_OneDimArrayBase1_ArrayIsShuffled()
     Actual = SUT.Shuffle.Items
 
     'Assert:
-    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shufled"
+    Assert.NotSequenceEquals SortedArray, Actual, "Array is not shuffled"
 TestExit:
     Exit Sub
 TestFail:
@@ -6413,7 +6413,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Flatten_MultiDimArray_ReturnsFlattenned()
+Public Sub Flatten_MultiDimArray_ReturnsFlattened()
     On Error GoTo TestFail
     
     'Arrange:
@@ -6443,7 +6443,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Flatten_JaggedArray_ReturnsFlattenned()
+Public Sub Flatten_JaggedArray_ReturnsFlattened()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7387,7 +7387,7 @@ Public Sub Unique_JaggedArrayColumnIndexPositiveBase_ReturnsUniqueList()
     
     SUT.LowerBound = 10
     
-    ' rebase expected itms
+    ' rebase expected ietms
     SUT.Items = Expected
     Expected = SUT.Items
     
@@ -7829,7 +7829,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Every_MiltiDimArrayOfSameString_ReturnsTrue()
+Public Sub Every_MultiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -7855,7 +7855,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub Every_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Public Sub Every_MultiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8076,7 +8076,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub EveryType_MiltiDimArrayOfSameString_ReturnsTrue()
+Public Sub EveryType_MultiDimArrayOfSameString_ReturnsTrue()
     On Error GoTo TestFail
     
     'Arrange:
@@ -8102,7 +8102,7 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
 
-Public Sub EveryType_MiltiDimArrayOfDifferentString_ReturnsFalse()
+Public Sub EveryType_MultiDimArrayOfDifferentString_ReturnsFalse()
     On Error GoTo TestFail
     
     'Arrange:
@@ -9229,5 +9229,3 @@ TestExit:
 TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
 End Sub
-
-

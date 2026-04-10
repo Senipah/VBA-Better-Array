@@ -35,7 +35,7 @@ Attribute Class_Initialize.VB_Description = "Constructor"
 ErrHandler:
     On Error Resume Next
     pExcelApplication.Visible = True
-    Err.Raise ErrCode, TypeName(Me), "An error ocurred during initialization."
+    Err.Raise ErrCode, TypeName(Me), "An error occurred during initialization."
     On Error GoTo 0
 End Sub
 
@@ -57,7 +57,7 @@ Attribute Class_Terminate.VB_Description = "Destructor"
 ErrHandler:
     On Error Resume Next
     pExcelApplication.Visible = True
-    Err.Raise ErrCode, TypeName(Me), "An error ocurred in the destructor." _
+    Err.Raise ErrCode, TypeName(Me), "An error occurred in the destructor." _
         & vbCrLf & "Ensure no orphan Excel application processes exist on system."
     On Error GoTo 0
 End Sub
